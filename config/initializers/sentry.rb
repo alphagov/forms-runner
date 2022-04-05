@@ -1,5 +1,3 @@
-require 'dotenv/load'
-
 Sentry.init do |config|
     config.dsn = ENV["SENTRY_DSN"]
     config.breadcrumbs_logger = [:sentry_logger, :http_logger]
