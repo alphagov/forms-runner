@@ -73,3 +73,7 @@ group :test do
   gem "selenium-webdriver"
   gem "webdrivers"
 end
+
+gem "rubocop-rails", "~> 2.14"
+
+gem "bundler-audit", "~> 0.9.0"
