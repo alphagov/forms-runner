@@ -2,7 +2,7 @@ name: Deploy to GOV.UK PaaS
 
 on:
   push:
-    branches: [ main ]
+    branches: [ deployment-action ]
 
 jobs:
   deploy:
