@@ -1,0 +1,10 @@
+---
+applications:
+- name: forms-runner-dev
+  memory: 256M
+  command: rake db:migrate && bin/rails server
+  services:
+    - forms-runner-dev-db
+  env:
+    RAILS_ENV: production
+    RACK_ENV: production
