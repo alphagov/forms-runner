@@ -13,13 +13,13 @@ class NotifyService
 
     client = Notifications::Client.new(@notify_api_key)
     client.send_email(
-          email_address: email_address,
-        template_id: 'template id tbd',
-        personalisation: {
-          title: title,
-          text_input: text_input,
-          submission_time: submission_time
-        }
+      email_address: email_address,
+      template_id: 'template id tbd',
+      personalisation: {
+        title: title,
+        text_input: text_input,
+        submission_time: submission_time
+      }
     )
   end
 end
