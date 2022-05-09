@@ -5,7 +5,7 @@ class NotifyService
     @notify_api_key = ENV['NOTIFY_API_KEY']
   end
 
-  def send_test_email(email_address)
+  def send_email(email_address, title, text_input, submission_time)
     unless @notify_api_key
       Rails.logger.warn 'Warning: no NOTIFY_API_KEY set.'
       return nil
@@ -14,12 +14,12 @@ class NotifyService
     client = Notifications::Client.new(@notify_api_key)
     client.send_email(
           email_address: email_address,
-        template_id: 'f33517ff-2a88-4f6e-b855-c550268ce08a',
+        template_id: 'template id tbd',
         personalisation: {
+          title: title,
+          text_input: text_input,
+          submission_time: submission_time
         }
     )
   end
 end
-
-notify_service = NotifyService.new
-notify_service.send_test_email('email@email.com')
