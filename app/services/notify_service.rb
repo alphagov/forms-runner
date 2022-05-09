@@ -23,4 +23,4 @@ class NotifyService
 end
 
 notify_service = NotifyService.new
-notify_service.test_email("email@email.com)
+notify_service.test_email("email@email.com")
