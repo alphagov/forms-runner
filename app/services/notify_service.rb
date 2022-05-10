@@ -14,7 +14,7 @@ class NotifyService
     client = Notifications::Client.new(@notify_api_key)
     client.send_email(
       email_address: email_address,
-      template_id: 'template id tbd',
+      template_id: 'c10a4cea-b937-4f9e-be6f-f18583e55806',
       personalisation: {
         title: title,
         text_input: text_input,
