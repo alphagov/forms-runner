@@ -8,3 +8,5 @@ applications:
   env:
     RAILS_ENV: production
     RACK_ENV: production
+    API_BASE: ((API_BASE))
+    NOTIFY_API_KEY: ((NOTIFY_API_KEY))
