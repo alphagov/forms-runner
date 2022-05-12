@@ -9,7 +9,6 @@ RSpec.describe Form, :type => :model do
   end
 
   it "returns a simple form" do
-    expect(described_class.find(1).id).to eq 1
+    expect(described_class.find(1)).to have_attributes(id: 1, name: "form name", submission_email: "user@example.com")
   end
 end
-#
