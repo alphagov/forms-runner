@@ -30,6 +30,7 @@ cd forms-runner
 bundle install
 
 # 3. Set up the database
+# You can check the DB details in .env.development and overide them if needed using .env.development.local
 rake db:prepare
 
 # 4. Install the node dependencies
@@ -38,6 +39,12 @@ yarn
 # 5. Run the frontend build tasks
 yarn build & yarn build:css
 ```
+
+#### Add Notify API Keys (Optional)
+If you want to test the notify function, you will need to get a test API key
+from the [notify service](https://www.notifications.service.gov.uk/) Add it as
+an environment vairable under `NOTIFY_API_KEY=` in `.env.development.local` and
+use the 'api intergration' tab on notify dashboard to check emails sent.
 
 ### Running the app
 
@@ -57,6 +64,8 @@ bin/rails server
 # When running the server, you can use any of the frontend tasks, e.g.:
 yarn dev
 ```
+
+For now, to test the API integration, you will also need to run the [API service](https://github.com/alphagov/forms-api).
 
 ## Configuration and deployment
 
