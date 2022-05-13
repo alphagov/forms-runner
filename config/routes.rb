@@ -5,8 +5,8 @@ Rails.application.routes.draw do
   root "home#index"
 
   resources :form, only: [], path: '/' do
-   resource :page, only: [:new, :create], module: 'forms', path_names: { new: '/' }, path: '/' do
-     get :submitted
-   end
- end
+    resource :page, only: [:new, :create], module: 'forms', path_names: { new: '/' }, path: '/' do
+      get :submitted
+    end
+  end
 end
