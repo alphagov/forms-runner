@@ -1,16 +1,20 @@
 module Forms
   class PagesController < ApplicationController
-    before_action :prepare_form, :page_params
+    before_action :prepare_form
 
-    def show; end
+    def new
+      @page = Page.new
+    end
 
     def create
       @page = Page.new(page_params)
 
       if @page.valid? && submit
+        # could be if submit successful
         redirect_to :submitted_form_page
+        # if unsuccessful redirect to an error
       else
-        render :show
+        render :new
       end
     end
 
@@ -19,15 +23,11 @@ module Forms
     private
 
     def page_params
-      { text: params[:text] }
-    end
-
-    def allow_params
-      params.permit(:text, :form_id)
+      params.require(:page).permit(:text)
     end
 
     def prepare_form
-      @form = Form.find(params[:form_id])
+      @form = Form.find(params.require(:form_id))
     end
 
     def submit
