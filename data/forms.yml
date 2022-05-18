@@ -1,0 +1,6 @@
+- id: 1
+  name: The Test form
+  submission_email: test@exmple.org
+- id: 2
+  name: The Second Test form
+  submission_email: test@exmple.org

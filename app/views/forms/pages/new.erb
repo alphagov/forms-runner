@@ -1,5 +1,5 @@
 <h1 class="govuk-heading-l"><%= @form.name %></h1>
-<%= form_with(model: @page, url: form_page_path(@form, @page)) do |form| %>
+<%= form_with(model: @page, url: form_page_path(@form.id, @page)) do |form| %>
   <% if @page&.errors.any? %>
     <%= form.govuk_error_summary %>
   <% end %>
