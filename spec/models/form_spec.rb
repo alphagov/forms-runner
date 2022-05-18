@@ -1,10 +1,11 @@
-require 'rails_helper'
+require "rails_helper"
 
-RSpec.describe Form, :type => :model do
-  before(:each) do
-    @respose_data  = { :person => {"id"=>1, "name"=>"form name", "submission_email"=>"user@example.com"} }.to_json
+RSpec.describe Form, type: :model do
+  let(:response_data) { { person: { "id" => 1, "name" => "form name", "submission_email" => "user@example.com" } }.to_json }
+
+  before do
     ActiveResource::HttpMock.respond_to do |mock|
-      mock.get "/api/v1/forms/1", {}, @respose_data , 200
+      mock.get "/api/v1/forms/1", {}, response_data, 200
     end
   end
 
