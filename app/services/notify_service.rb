@@ -2,10 +2,12 @@ require "notifications/client"
 
 class NotifyService
   def initialize
-    @notify_api_key = ENV["NOTIFY_API_KEY"]
+    @notify_api_key = ENV.fetch("NOTIFY_API_KEY")
   end
 
   def send_email(email_address, title, text_input, submission_time)
+    return if HostingEnvironment.sandbox_mode?
+
     unless @notify_api_key
       Rails.logger.warn "Warning: no NOTIFY_API_KEY set."
       return nil
