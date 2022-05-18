@@ -13,8 +13,8 @@ gem "sprockets-rails"
 gem "pg", "~> 1.1"
 
 # Use the Puma web server [https://github.com/puma/puma]
-gem "puma", "~> 5.6.4"
 gem "nokogiri", "~> 1.13.4"
+gem "puma", "~> 5.6.4"
 
 # Bundle and transpile JavaScript [https://github.com/rails/jsbundling-rails]
 gem "jsbundling-rails"
@@ -26,12 +26,12 @@ gem "cssbundling-rails"
 gem "jbuilder"
 
 # Use Sentry (https://sentry.io/for/ruby/?platform=sentry.ruby.rails#)
-gem "sentry-ruby"
 gem "sentry-rails"
+gem "sentry-ruby"
 
-gem 'dotenv-rails', groups: [:development, :test]
+gem "dotenv-rails", groups: %i[development test]
 
-gem 'notifications-ruby-client'
+gem "notifications-ruby-client"
 # Use Redis adapter to run Action Cable in production
 # gem "redis", "~> 4.0"
 
@@ -42,7 +42,7 @@ gem 'notifications-ruby-client'
 # gem "bcrypt", "~> 3.1.7"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem "tzinfo-data", platforms: %i[ mingw mswin x64_mingw jruby ]
+gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]
 
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
@@ -54,15 +54,16 @@ gem "bootsnap", require: false
 # gem "image_processing", "~> 1.2"
 
 # For forms-api
-gem 'activeresource'
+gem "activeresource"
 
-gem 'govuk-components', '~> 3.0.3'
-gem 'govuk_design_system_formbuilder', '~> 3.0.2'
+gem "govuk-components", "~> 3.0.3"
+gem "govuk_design_system_formbuilder", "~> 3.0.2"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
-  gem "debug", platforms: %i[ mri mingw x64_mingw ]
-  gem 'rspec-rails'
+  gem "debug", platforms: %i[mri mingw x64_mingw]
+  gem "rspec-rails"
+  gem "rubocop-govuk", require: false
 end
 
 group :development do
@@ -82,8 +83,6 @@ group :test do
   gem "selenium-webdriver"
   gem "webdrivers"
 end
-
-gem "rubocop-rails", "~> 2.14"
 
 gem "bundler-audit", "~> 0.9.0"
 

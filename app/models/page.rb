@@ -8,6 +8,6 @@ class Page
   validates :text, presence: true
 
   def attributes
-    { 'text' => nil }
+    { "text" => nil }
   end
 end
