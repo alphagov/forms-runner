@@ -85,6 +85,7 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
   gem "webdrivers"
+  gem "climate_control"
 end
 
 gem "bundler-audit", "~> 0.9.0"
