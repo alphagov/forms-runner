@@ -1,14 +1,6 @@
 module HostingEnvironment
   TEST_ENVIRONMENTS = %w[development test].freeze
 
-  def self.application_url
-    if Rails.env.production?
-      "https://#{hostname}"
-    else
-      "http://localhost:#{ENV.fetch('PORT', 3000)}"
-    end
-  end
-
   def self.environment_name
     ENV.fetch("HOSTING_ENVIRONMENT_NAME", "unknown-environment")
   end
