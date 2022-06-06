@@ -56,8 +56,11 @@ gem "bootsnap", require: false
 # For forms-api
 gem "activeresource"
 
-gem "govuk-components", "~> 3.0.3"
-gem "govuk_design_system_formbuilder", "~> 3.0.2"
+# For local descriptions of forms
+gem 'active_hash'
+
+gem 'govuk-components', '~> 3.0.3'
+gem 'govuk_design_system_formbuilder', '~> 3.0.2'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -82,6 +85,7 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
   gem "webdrivers"
+  gem "climate_control"
 end
 
 gem "bundler-audit", "~> 0.9.0"

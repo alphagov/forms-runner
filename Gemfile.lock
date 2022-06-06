@@ -46,6 +46,8 @@ GEM
       erubi (~> 1.4)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.1, >= 1.2.0)
+    active_hash (3.1.0)
+      activesupport (>= 5.0.0)
     activejob (7.0.2.4)
       activesupport (= 7.0.2.4)
       globalid (>= 0.3.6)
@@ -95,6 +97,7 @@ GEM
       regexp_parser (>= 1.5, < 3.0)
       xpath (~> 3.2)
     childprocess (4.1.0)
+    climate_control (1.0.1)
     concurrent-ruby (1.1.10)
     crass (1.0.6)
     cssbundling-rails (1.1.0)
@@ -300,11 +303,13 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  active_hash
   activeresource
   bootsnap
   brakeman (~> 5.2)
   bundler-audit (~> 0.9.0)
   capybara
+  climate_control
   cssbundling-rails
   debug
   dotenv-rails

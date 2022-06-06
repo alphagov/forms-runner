@@ -27,7 +27,15 @@ module Forms
     end
 
     def prepare_form
-      @form = Form.find(params.require(:form_id))
+      @form = form_repository.find(params.require(:form_id))
+    end
+
+    def form_repository
+      if HostingEnvironment.sandbox_mode?
+        FormRepository.new(resource: FormLocalResource)
+      else
+        FormRepository.new
+      end
     end
 
     def submit
