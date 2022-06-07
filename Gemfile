@@ -32,8 +32,10 @@ gem "sentry-ruby"
 gem "dotenv-rails", groups: %i[development test]
 
 gem "notifications-ruby-client"
-# Use Redis adapter to run Action Cable in production
-# gem "redis", "~> 4.0"
+
+# Use Redis for session storage
+gem "redis"
+gem "redis-session-store"
 
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
 # gem "kredis"

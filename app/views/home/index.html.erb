@@ -1,2 +1,5 @@
 <h1 class="govuk-heading-xl">GOV.UK Forms Runner</h1>
 <p class="govuk-body">Under construction, coming soon<p>
+
+<p class="govuk-body">Last seen: <%= session[:last_seen] %><p>
+<% session[:last_seen] = "last_seen", DateTime.now.strftime("%A %B %d %Y, at %I:%M.") %>
