@@ -60,6 +60,10 @@ yarn dev
 
 For now, to test the API integration, you will also need to run the [API service](https://github.com/alphagov/forms-api).
 
+#### Using Redis based sessions (optional)
+
+Redis sessions can be enabled by providing the redis connection URL in the environment variable `REDIS_URL`
+
 ## Configuration and deployment
 
 TODO: Add these details once we've got our deployment running.
