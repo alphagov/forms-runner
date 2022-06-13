@@ -36,7 +36,7 @@ module FormsRunner
 
     if redis_url
       config.session_store :redis_session_store,
-        servers: ENV['REDIS_URL'],
+        servers: redis_url,
         key: '_app_session_key'
     end
   end
