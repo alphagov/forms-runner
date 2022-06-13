@@ -37,7 +37,8 @@ module FormsRunner
           redis: {
             host: host,
             password: password,
-            port: port
+            port: port,
+            ssl: true
           },
           on_redis_down: ->(e, env, sid) { puts "Redis down" }
       end
