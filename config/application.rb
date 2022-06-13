@@ -25,19 +25,29 @@ module FormsRunner
     # Get redis url based on VCAP_SERVICES or REDIS_URL depending on environment
     # GovPaaS provides the URI in VCAP_SERVICES
 
-    redis_url = if ENV['VCAP_SERVICES']
-                  vcap_services = JSON.parse(ENV['VCAP_SERVICES'])
-                  if(vcap_services["redis"])
-                    vcap_services["redis"][0]["credentials"]["uri"]
-                  end
-                elsif ENV['REDIS_URL']
-                  ENV['REDIS_URL']
-                end
+    if ENV['VCAP_SERVICES']
+      vcap_services = JSON.parse(ENV['VCAP_SERVICES'])
+      if(vcap_services["redis"])
+        host = vcap_services["redis"][0]["credentials"]["host"]
+        password = vcap_services["redis"][0]["credentials"]["password"]
+        port = vcap_services["redis"][0]["credentials"]["port"]
 
-    if redis_url
+        config.session_store :redis_session_store,
+          key: '_app_session_key',
+          redis: {
+            host: host,
+            password: password,
+            port: port
+          },
+          on_redis_down: ->(e, env, sid) { puts "Redis down" }
+      end
+    elsif ENV['REDIS_URL']
       config.session_store :redis_session_store,
-        servers: redis_url,
-        key: '_app_session_key'
+        key: '_app_session_key',
+        redis: {
+          url: ENV['REDIS_URL']
+        },
+        on_redis_down: ->(e, env, sid) { puts "Redis down" }
     end
   end
 end
