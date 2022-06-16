@@ -39,6 +39,15 @@ from the [notify service](https://www.notifications.service.gov.uk/) Add it as
 an environment vairable under `NOTIFY_API_KEY=` in `.env.development.local` and
 use the 'api intergration' tab on notify dashboard to check emails sent.
 
+### Environment variables
+
+| Name           | Purpose                                                            |
+| -------------- | ------------------------------------------------------------------ |
+| `DATABASE_URL` | The URL to the postgres instance (without the database at the end) |
+| `REDIS_URL`    | The URL for Redis (optional)                                       |
+| `SENTRY_DSN`   | The DSN provided by Sentry                                         |
+| `API_BASE`     | The base url for the API - E.g. `http://localhost:9090`            |
+
 ### Running the app
 
 You can either run the development task:
