@@ -21,8 +21,26 @@ RSpec.describe "Form controller", type: :request do
       get form_path(id: 2)
     end
 
-    it "Redirects to the first page" do
-      expect(response).to redirect_to(form_page_path(form_id: 2, id: 1))
+    context "When the form has a start page" do
+      it "Redirects to the first page" do
+        expect(response).to redirect_to(form_page_path(form_id: 2, id: 1))
+      end
+    end
+
+    context "When the form has no start page" do
+      let(:form_response_data) do
+        {
+          id: 2,
+          name: "Form name",
+          submission_email: "submission@email.com",
+          start_page: nil,
+        }.to_json
+      end
+
+      it "Displays the form show page" do
+        expect(response.status).to eq(200)
+        expect(response.body).to include("Form name")
+      end
     end
   end
 end
