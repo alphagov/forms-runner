@@ -5,8 +5,10 @@ Rails.application.routes.draw do
   root "home#index"
 
   resources :form, only: %i[show], path: "/" do
-    resources :page, only: %i[show], path: "/" do
-      get :submitted
+    get :check_your_answers
+
+    resources :page, only: %i[show], path: "/", param: :page_id do
+      post :submit, on: :member
     end
   end
 end

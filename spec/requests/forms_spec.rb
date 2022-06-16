@@ -10,9 +10,26 @@ RSpec.describe "Form controller", type: :request do
     }.to_json
   end
 
+  let(:pages_data) do
+    [
+      {
+        id: 1,
+        question_text: "Question one",
+        answer_type: "date",
+        next: 2
+      },
+      {
+        id: 2,
+        question_text: "Question two",
+        answer_type: "date"
+      }
+    ].to_json
+  end
+
   before do
     ActiveResource::HttpMock.respond_to do |mock|
       mock.get "/api/v1/forms/2", {}, form_response_data, 200
+      mock.get "/api/v1/forms/2/pages", {}, pages_data, 200
     end
   end
 
@@ -23,7 +40,7 @@ RSpec.describe "Form controller", type: :request do
 
     context "When the form has a start page" do
       it "Redirects to the first page" do
-        expect(response).to redirect_to(form_page_path(form_id: 2, id: 1))
+        expect(response).to redirect_to(form_page_path(2, 1))
       end
     end
 
@@ -41,6 +58,13 @@ RSpec.describe "Form controller", type: :request do
         expect(response.status).to eq(200)
         expect(response.body).to include("Form name")
       end
+    end
+  end
+
+  describe "#check_your_answers" do
+    it "Displays a back link to the last page of the form" do
+      get form_check_your_answers_path(2)
+      expect(response.body).to include(form_page_path(2,2))
     end
   end
 end
