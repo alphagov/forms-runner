@@ -4,8 +4,8 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root "home#index"
 
-  resources :form, only: [], path: "/" do
-    resource :page, only: %i[new create], module: "forms", path_names: { new: "/" }, path: "/" do
+  resources :form, only: %i[show], path: "/" do
+    resources :page, only: %i[show], path: "/" do
       get :submitted
     end
   end
