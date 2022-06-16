@@ -6,7 +6,7 @@ RSpec.describe "Form controller", type: :request do
       id: 2,
       name: "Form name",
       submission_email: "submission@email.com",
-      start_page: 1
+      start_page: 1,
     }.to_json
   end
 

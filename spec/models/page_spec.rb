@@ -5,7 +5,7 @@ RSpec.describe Page, type: :model do
     {
       id: 1,
       question_text: "Question text",
-      answer_type: "date"
+      answer_type: "date",
     }.to_json
   end
 
@@ -16,6 +16,6 @@ RSpec.describe Page, type: :model do
   end
 
   it "returns the page for a form" do
-    expect(described_class.find(1, params: {form_id: 2})).to have_attributes(id: 1, question_text: "Question text", answer_type: "date")
+    expect(described_class.find(1, params: { form_id: 2 })).to have_attributes(id: 1, question_text: "Question text", answer_type: "date")
   end
 end

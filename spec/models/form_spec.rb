@@ -5,8 +5,8 @@ RSpec.describe Form, type: :model do
 
   let(:pages_data) do
     [
-      {id: 9, next: 10, answer_type: "date", question_text: "Question one"},
-      {id: 10, answer_type: "address", question_text: "Question two"}
+      { id: 9, next: 10, answer_type: "date", question_text: "Question one" },
+      { id: 10, answer_type: "address", question_text: "Question two" },
     ].to_json
   end
 

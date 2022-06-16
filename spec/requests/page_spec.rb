@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe "Page Controller", type: :request do
   let(:response_data) do
     {
-      question_text: "Question text"
+      question_text: "Question text",
     }.to_json
   end
 
