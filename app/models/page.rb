@@ -1,13 +1,7 @@
-class Page
-  include ActiveModel::Model
-  include ActiveModel::Validations
-  include ActiveModel::Serialization
+class Page < ActiveResource::Base
+  self.site = "#{ENV.fetch('API_BASE')}"
+  self.prefix = "/api/v1/forms/:form_id/"
+  self.include_format_in_path = false
 
-  attr_accessor :text
-
-  validates :text, presence: true
-
-  def attributes
-    { "text" => nil }
-  end
+  belongs_to :form
 end
