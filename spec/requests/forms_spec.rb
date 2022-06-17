@@ -16,13 +16,13 @@ RSpec.describe "Form controller", type: :request do
         id: 1,
         question_text: "Question one",
         answer_type: "date",
-        next: 2
+        next: 2,
       },
       {
         id: 2,
         question_text: "Question two",
-        answer_type: "date"
-      }
+        answer_type: "date",
+      },
     ].to_json
   end
 
@@ -38,13 +38,13 @@ RSpec.describe "Form controller", type: :request do
       get form_path(id: 2)
     end
 
-    context "When the form has a start page" do
+    context "when the form has a start page" do
       it "Redirects to the first page" do
         expect(response).to redirect_to(form_page_path(2, 1))
       end
     end
 
-    context "When the form has no start page" do
+    context "when the form has no start page" do
       let(:form_response_data) do
         {
           id: 2,
@@ -64,7 +64,7 @@ RSpec.describe "Form controller", type: :request do
   describe "#check_your_answers" do
     it "Displays a back link to the last page of the form" do
       get form_check_your_answers_path(2)
-      expect(response.body).to include(form_page_path(2,2))
+      expect(response.body).to include(form_page_path(2, 2))
     end
   end
 end

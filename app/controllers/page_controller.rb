@@ -19,7 +19,7 @@ class PageController < ApplicationController
     end
   end
 
-  private
+private
 
   def fetch_pages
     @form = Form.find(params.require(:form_id))
@@ -30,6 +30,7 @@ class PageController < ApplicationController
     page_id = params.require(:page_id)
     previous_page = @pages.find do |p|
       next unless p.attributes["next"]
+
       p.next.to_i == page_id.to_i
     end
 

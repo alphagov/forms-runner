@@ -5,7 +5,7 @@ RSpec.describe "Page Controller", type: :request do
     {
       id: 2,
       name: "Form",
-      submission_email: "submission@email.com"
+      submission_email: "submission@email.com",
     }.to_json
   end
 
@@ -15,13 +15,13 @@ RSpec.describe "Page Controller", type: :request do
         id: 1,
         question_text: "Question one",
         answer_type: "date",
-        next: 2
+        next: 2,
       },
       {
         id: 2,
         question_text: "Question two",
-        answer_type: "date"
-      }
+        answer_type: "date",
+      },
     ].to_json
   end
 
@@ -43,7 +43,7 @@ RSpec.describe "Page Controller", type: :request do
       expect(response.body).to include("Question one")
     end
 
-    context "With a page that has a previous page" do
+    context "with a page that has a previous page" do
       it "Displays a link to the previous page" do
         get form_page_path(2, 2)
         expect(response.body).to include(form_page_path(2, 1))
@@ -54,12 +54,12 @@ RSpec.describe "Page Controller", type: :request do
   describe "#submit" do
     it "Redirects to the next page" do
       post submit_form_page_path(2, 1)
-      expect(response).to redirect_to(form_page_path(2,2))
+      expect(response).to redirect_to(form_page_path(2, 2))
     end
 
-    context "On the final page" do
+    context "with the final page" do
       it "Redirects to the check your answers page" do
-        post submit_form_page_path(2,2)
+        post submit_form_page_path(2, 2)
         expect(response).to redirect_to(form_check_your_answers_path(2))
       end
     end
