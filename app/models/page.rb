@@ -4,4 +4,12 @@ class Page < ActiveResource::Base
   self.include_format_in_path = false
 
   belongs_to :form
+
+  def form_id
+    @prefix_options[:form_id]
+  end
+
+  def has_next?
+    @attributes.include?("next") && !@attributes["next"].nil?
+  end
 end
