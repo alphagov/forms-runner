@@ -49,6 +49,11 @@ RSpec.describe "Page Controller", type: :request do
         expect(response.body).to include(form_page_path(2, 1))
       end
     end
+
+    it "Returns the correct X-Robots-Tag header" do
+      get form_page_path(2, 1)
+      expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
+    end
   end
 
   describe "#submit" do
