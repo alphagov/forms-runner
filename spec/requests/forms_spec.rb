@@ -67,7 +67,7 @@ RSpec.describe "Form controller", type: :request do
 
   describe "#check_your_answers" do
     before do
-      get form_path(id: 2)
+      get form_check_your_answers_path(2)
     end
 
     it "Displays a back link to the last page of the form" do
