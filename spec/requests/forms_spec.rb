@@ -59,12 +59,23 @@ RSpec.describe "Form controller", type: :request do
         expect(response.body).to include("Form name")
       end
     end
+
+    it "Returns the correct X-Robots-Tag header" do
+      expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
+    end
   end
 
   describe "#check_your_answers" do
-    it "Displays a back link to the last page of the form" do
+    before do
       get form_check_your_answers_path(2)
+    end
+
+    it "Displays a back link to the last page of the form" do
       expect(response.body).to include(form_page_path(2, 2))
+    end
+
+    it "Returns the correct X-Robots-Tag header" do
+      expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
     end
   end
 end
