@@ -20,7 +20,7 @@
             N/A
           </dd>
           <dd class="govuk-summary-list__actions">
-            <%= link_to form_page_path(@form, page.id), class: "govuk-link" do %>
+            <%= link_to change_form_page_path(@form, page.id), class: "govuk-link" do %>
                 Change<span class="govuk-visually-hidden"> <%= page.question_short_name %></span>
             <% end %>
           </dd>

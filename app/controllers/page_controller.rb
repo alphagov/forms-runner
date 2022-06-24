@@ -2,6 +2,7 @@ class PageController < ApplicationController
   before_action :fetch_pages
 
   def show
+    @changing_existing_answer = params[:changing_existing_answer]
     back_link
 
     page_id = params.require(:page_id)
@@ -12,7 +13,9 @@ class PageController < ApplicationController
     page_id = params.require(:page_id)
     @page = @pages.find { |p| p.id == page_id.to_i }
 
-    if @page.has_next?
+    changing_existing_answer = params[:changing_existing_answer]
+
+    if @page.has_next? && changing_existing_answer.blank?
       redirect_to form_page_path(@form.id, @page.next)
     else
       redirect_to form_check_your_answers_path(@form.id)
@@ -33,8 +36,9 @@ private
 
       p.next.to_i == page_id.to_i
     end
-
-    if previous_page
+    if @changing_existing_answer
+      @back_link = form_check_your_answers_path(@form.id)
+    elsif previous_page
       @back_link = form_page_path(@form.id, previous_page.id)
     end
   end

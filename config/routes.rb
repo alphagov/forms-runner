@@ -11,4 +11,6 @@ Rails.application.routes.draw do
       post :submit, on: :member
     end
   end
+
+  get "/:form_id/:page_id/change" => "page#show", as: :change_form_page, defaults: { changing_existing_answer: true }
 end

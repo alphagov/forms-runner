@@ -7,7 +7,7 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
     <h1 class="govuk-heading-l"><%= @page.question_text %></h1>
-    <%= form_with model: @page, url: submit_form_page_path(@page.form_id, @page.id), method: :post do |form| %>
+    <%= form_with model: @page, url: submit_form_page_path(@page.form_id, @page.id, :changing_existing_answer => @changing_existing_answer), method: :post do |form| %>
       <%= form.govuk_submit %>
     <% end %>
   </div>
