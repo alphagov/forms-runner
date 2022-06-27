@@ -6,8 +6,11 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <h1 class="govuk-heading-l"><%= @page.question_text %></h1>
-    <%= form_with model: @page, url: submit_form_page_path(@page.form_id, @page.id), method: :post do |form| %>
+    <%= form_with model: @question, url: submit_form_page_path(@page.form_id, @page.id), scope: :question, builder: GOVUKDesignSystemFormBuilder::FormBuilder, method: :post do |form| %>
+      <% if @question&.errors&.any? %>
+        <%= form.govuk_error_summary %>
+      <% end %>
+        <%= render :partial => ActiveSupport::Inflector.underscore(@question.model_name.name), :locals => { :page => @page, :form => form } %>
       <%= form.govuk_submit %>
     <% end %>
   </div>

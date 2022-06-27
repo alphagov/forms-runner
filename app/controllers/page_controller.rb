@@ -6,16 +6,23 @@ class PageController < ApplicationController
 
     page_id = params.require(:page_id)
     @page = @pages.find { |p| p.id == page_id.to_i }
+    answer = get_stored_answer(page_id)
+    @question = @page.question.new(answer)
   end
 
   def submit
     page_id = params.require(:page_id)
     @page = @pages.find { |p| p.id == page_id.to_i }
-
-    if @page.has_next?
-      redirect_to form_page_path(@form.id, @page.next)
+    @question = @page.question.new(params.permit(question: {})[:question])
+    if @question.valid?
+      store_answer(page_id, @question.serializable_hash)
+      if @page.has_next?
+        redirect_to form_page_path(@form.id, @page.next)
+      else
+        redirect_to form_check_your_answers_path(@form.id)
+      end
     else
-      redirect_to form_check_your_answers_path(@form.id)
+      render :show
     end
   end
 
@@ -37,5 +44,14 @@ private
     if previous_page
       @back_link = form_page_path(@form.id, previous_page.id)
     end
+  end
+
+  def store_answer(page_id, answer)
+    session[:answers] ||= {}
+    session[:answers][page_id] = answer
+  end
+
+  def get_stored_answer(page_id)
+    session.dig(:answers, page_id)
   end
 end

@@ -12,4 +12,23 @@ class Page < ActiveResource::Base
   def has_next?
     @attributes.include?("next") && !@attributes["next"].nil?
   end
+
+  def question
+    case answer_type.to_sym
+    when :single_line
+      Question::SingleLine
+    when :date
+      Question::Date
+    when :address
+      Question::Address
+    when :email
+      Question::Email
+    when :national_insurance_number
+      Question::NationalInsuranceNumber
+    when :phone_number
+      Question::PhoneNumber
+    else
+      raise ArgumentError, "Unexpected answer_type: #{answer_type}"
+    end
+  end
 end
