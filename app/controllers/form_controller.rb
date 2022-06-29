@@ -8,7 +8,7 @@ class FormController < ApplicationController
 
   def check_your_answers
     @form = Form.find(params.require(:form_id))
-    @answers = session[:answers][@form.id.to_s]
+    @answers = session[:answers][@form.id.to_s] || {}
     last_page = @form.pages.find { |p| !p.has_next? }
     @back_link = form_page_path(@form.id, last_page.id)
     @rows = check_your_answers_rows(@form, @answers)
@@ -16,10 +16,11 @@ class FormController < ApplicationController
 
   def submit_answers
     @form = Form.find(params.require(:form_id))
-    # Comment out submission until we are ready to use notify to send answers
-    # answers = session[:answers]
-    # submit(answers)
-    clear_answers(:form_id)
+    answers = session[:answers][@form.id.to_s]
+    submit_form(formatted_answers(@form, answers))
+    logger.info session[:answers]
+    clear_answers(@form)
+    logger.info session[:answers]
     redirect_to :form_submitted
   end
 
@@ -29,15 +30,15 @@ class FormController < ApplicationController
 
 private
 
-  def submit(answers)
+  def submit_form(text)
     # in the controller for now but can be moved to service object, maybe use actionmailer fo easier testing?
-    NotifyService.new.send_email(@form.submission_email, @form.name, answers, Time.zone.now)
+    NotifyService.new.send_email(@form.submission_email, @form.name, text, Time.zone.now)
     # forms always submit corectly, to add error handling
     true
   end
 
-  def clear_answers(form_id)
-    session[:answers][form_id] = nil
+  def clear_answers(form)
+    session[:answers][form.id.to_s] = nil
   end
 
   def check_your_answers_rows(form, answers = {})
@@ -50,5 +51,13 @@ private
         actions: [{ href: form_page_url(form, page) }],
       }
     end
+  end
+
+  def formatted_answers(form, answers = {})
+    form.pages.map { |page|
+      answer = answers[page.id.to_s]
+      question = QuestionRegister.from_page(page).new(answer)
+      "#{page.question_text}: #{question.show_answer}"
+    }.join("\n")
   end
 end
