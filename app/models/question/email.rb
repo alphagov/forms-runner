@@ -10,4 +10,8 @@ class Question::Email
   def attributes
     { "email" => nil }
   end
+
+  def value
+    email
+  end
 end

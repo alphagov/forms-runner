@@ -10,4 +10,8 @@ class Question::NationalInsuranceNumber
   def attributes
     { "national_insurance_number" => nil }
   end
+
+  def value
+    national_insurance_number
+  end
 end

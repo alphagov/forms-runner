@@ -10,4 +10,8 @@ class Question::PhoneNumber
   def attributes
     { "phone_number" => nil }
   end
+
+  def value
+    phone_number
+  end
 end

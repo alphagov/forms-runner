@@ -10,4 +10,8 @@ class Question::SingleLine
   def attributes
     { "text" => nil }
   end
+
+  def value
+    text
+  end
 end

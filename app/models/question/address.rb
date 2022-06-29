@@ -12,4 +12,8 @@ class Question::Address
   def attributes
     { "address1" => nil, "address2" => nil, "city" => nil, "postcode" => nil }
   end
+
+  def value
+    [address1, address2, city, postcode].join(",")
+  end
 end

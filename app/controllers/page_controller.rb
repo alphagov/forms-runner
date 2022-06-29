@@ -6,7 +6,7 @@ class PageController < ApplicationController
 
     page_id = params.require(:page_id)
     @page = @pages.find { |p| p.id == page_id.to_i }
-    answer = get_stored_answer(page_id)
+    answer = get_stored_answer(@form.id, page_id)
     @question = @page.question.new(answer)
   end
 
@@ -15,7 +15,7 @@ class PageController < ApplicationController
     @page = @pages.find { |p| p.id == page_id.to_i }
     @question = @page.question.new(params.permit(question: {})[:question])
     if @question.valid?
-      store_answer(page_id, @question.serializable_hash)
+      store_answer(@form.id, page_id, @question.serializable_hash)
       if @page.has_next?
         redirect_to form_page_path(@form.id, @page.next)
       else
@@ -46,12 +46,17 @@ private
     end
   end
 
-  def store_answer(page_id, answer)
+  def store_answer(form_id, page_id, answer)
     session[:answers] ||= {}
-    session[:answers][page_id] = answer
+    session[:answers][form_id.to_s] ||= {}
+    session[:answers][form_id.to_s][page_id] = answer
+    logger.info "Saving \"#{answer}\" under [#{form_id}][#{page_id}]"
   end
 
-  def get_stored_answer(page_id)
-    session.dig(:answers, page_id)
+  def get_stored_answer(form_id, page_id)
+    logger.info "session \"#{session[:answers]}\""
+    answer = session.dig(:answers, form_id.to_s, page_id)
+    logger.info "retrieving \"#{answer}\" from [#{form_id}][#{page_id}]"
+    answer
   end
 end

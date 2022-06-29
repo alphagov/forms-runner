@@ -6,6 +6,8 @@ Rails.application.routes.draw do
 
   resources :form, only: %i[show], path: "/" do
     get :check_your_answers
+    get :submitted
+    post :submit_answers
 
     resources :page, only: %i[show create], path: "/", param: :page_id do
       post :submit, on: :member

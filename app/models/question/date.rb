@@ -12,4 +12,8 @@ class Question::Date
   def attributes
     { "date" => nil }
   end
+
+  def value
+    date.strftime("%m/%d/%Y")
+  end
 end
