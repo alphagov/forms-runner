@@ -1,17 +1,4 @@
-class Question::Email
-  include ActiveModel::Model
-  include ActiveModel::Validations
-  include ActiveModel::Serialization
-
-  attr_accessor :email
-
+class Question::Email < Question::ApplicationQuestion
+  attribute :email
   validates :email, presence: true
-
-  def attributes
-    { "email" => nil }
-  end
-
-  def value
-    email
-  end
 end

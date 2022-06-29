@@ -1,17 +1,4 @@
-class Question::SingleLine
-  include ActiveModel::Model
-  include ActiveModel::Validations
-  include ActiveModel::Serialization
-
-  attr_accessor :text
-
+class Question::SingleLine < Question::ApplicationQuestion
+  attribute :text
   validates :text, presence: true
-
-  def attributes
-    { "text" => nil }
-  end
-
-  def value
-    text
-  end
 end

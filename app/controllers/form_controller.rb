@@ -41,14 +41,13 @@ private
   end
 
   def check_your_answers_rows(form, answers = {})
-    logger.info "answers: #{answers}"
-    answers&.to_a&.sort_by(&:first)&.map do |page_id, answer|
-      page = form.pages.find { |p| p.id == page_id.to_i }
-      logger.info "p = #{page_id}"
+    form.pages.map do |page|
+      answer = answers[page.id.to_s]
+      question = page.question.new(answer)
       {
         key: { text: page.question_text },
-        value: { text: page.question.new(answer).value },
-        actions: [{ href: form_page_url(form, page), visually_hidden_text: "" }],
+        value: { text: question.show_answer },
+        actions: [{ href: form_page_url(form, page) }],
       }
     end
   end

@@ -1,19 +1,10 @@
-class Question::Address
-  include ActiveModel::Model
-  include ActiveModel::Validations
-  include ActiveModel::Serialization
-
-  attr_accessor :address1, :address2, :city, :postcode
+class Question::Address < Question::ApplicationQuestion
+  attribute :address1
+  attribute :address2
+  attribute :city
+  attribute :postcode
 
   validates :address1, presence: true
   validates :city, presence: true
   validates :postcode, presence: true
-
-  def attributes
-    { "address1" => nil, "address2" => nil, "city" => nil, "postcode" => nil }
-  end
-
-  def value
-    [address1, address2, city, postcode].join(",")
-  end
 end
