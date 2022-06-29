@@ -1,4 +1,4 @@
-class Question::Address < Question::ApplicationQuestion
+class Question::Address < Question::QuestionBase
   attribute :address1
   attribute :address2
   attribute :city

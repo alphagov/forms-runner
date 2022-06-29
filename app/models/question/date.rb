@@ -1,4 +1,4 @@
-class Question::Date < Question::ApplicationQuestion
+class Question::Date < Question::QuestionBase
   include ActiveRecord::AttributeAssignment
 
   attribute :date, :date

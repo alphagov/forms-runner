@@ -1,4 +1,4 @@
-class Question::Email < Question::ApplicationQuestion
+class Question::Email < Question::QuestionBase
   attribute :email
   validates :email, presence: true
 end

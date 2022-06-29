@@ -43,7 +43,7 @@ private
   def check_your_answers_rows(form, answers = {})
     form.pages.map do |page|
       answer = answers[page.id.to_s]
-      question = page.question.new(answer)
+      question = QuestionRegister.from_page(page).new(answer)
       {
         key: { text: page.question_text },
         value: { text: question.show_answer },

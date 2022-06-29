@@ -1,4 +1,4 @@
-class Question::SingleLine < Question::ApplicationQuestion
+class Question::SingleLine < Question::QuestionBase
   attribute :text
   validates :text, presence: true
 end

@@ -1,4 +1,4 @@
-class Question::ApplicationQuestion
+class Question::QuestionBase
   include ActiveModel::Model
   include ActiveModel::Validations
   include ActiveModel::Serialization
