@@ -50,6 +50,18 @@ RSpec.describe "Page Controller", type: :request do
       end
     end
 
+    context "with a change answers page" do
+      it "Displays a back link to the check your answers page" do
+        get change_form_page_path(2, 1)
+        expect(response.body).to include(form_check_your_answers_path(2))
+      end
+
+      it "Passes the changing answers parameter in its submit request" do
+        get change_form_page_path(2, 1)
+        expect(response.body).to include(submit_form_page_path(2, 1, changing_existing_answer: true))
+      end
+    end
+
     it "Returns the correct X-Robots-Tag header" do
       get form_page_path(2, 1)
       expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
@@ -58,8 +70,15 @@ RSpec.describe "Page Controller", type: :request do
 
   describe "#submit" do
     it "Redirects to the next page" do
-      post submit_form_page_path(2, 1)
+      post submit_form_page_path(2, 1, changing_existing_answer: false)
       expect(response).to redirect_to(form_page_path(2, 2))
+    end
+
+    context "when changing an existing answer" do
+      it "Redirects to the check your answers page" do
+        post submit_form_page_path(2, 1, changing_existing_answer: true)
+        expect(response).to redirect_to(form_check_your_answers_path(2))
+      end
     end
 
     context "with the final page" do
