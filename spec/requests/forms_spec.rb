@@ -15,12 +15,14 @@ RSpec.describe "Form controller", type: :request do
       {
         id: 1,
         question_text: "Question one",
+        question_short_name: nil,
         answer_type: "date",
         next: 2,
       },
       {
         id: 2,
         question_text: "Question two",
+        question_short_name: nil,
         answer_type: "date",
       },
     ].to_json

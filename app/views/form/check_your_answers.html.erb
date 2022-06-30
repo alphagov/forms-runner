@@ -6,42 +6,16 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds-from-desktop">
+    <h1 class="govuk-heading-l">Check your answers</h1>
 
-    <h1 class="govuk-heading-l">Check your answers before sending your application</h1>
-
-    <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-
-      <% @pages.each do |page| %>
-        <div class="govuk-summary-list__row">
-          <dt class="govuk-summary-list__key">
-            <%= page.question_short_name.presence || page.question_text %>
-          </dt>
-          <dd class="govuk-summary-list__value">
-            N/A
-          </dd>
-          <dd class="govuk-summary-list__actions">
-            <%= link_to change_form_page_path(@form, page.id), class: "govuk-link" do %>
-                Change <span class="govuk-visually-hidden"><%= page.question_short_name.presence || page.question_text %></span>
-            <% end %>
-          </dd>
-        </div>
-      <% end %>
-
-    </dl>
+    <%= govuk_summary_list(rows: @rows) %>
 
     <h2 class="govuk-heading-m">Now send your application</h2>
 
     <p class="govuk-body">By submitting this application you are confirming that, to the best of your knowledge, the details you are providing are correct.</p>
 
-    <form action="" method="post" novalidate>
-
-      <input type="hidden" name="answers-checked" value="true">
-
-      <button class="govuk-button" data-module="govuk-button">
-        Accept and send
-      </button>
-
-    </form>
-
+    <%= form_with url: form_submit_answers_path do |form| %>
+      <%= form.govuk_submit 'Accept and send' %>
+    <% end %>
   </div>
 </div>

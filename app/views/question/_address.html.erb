@@ -1,0 +1,6 @@
+<%= form.govuk_fieldset legend: { text: page.question_text, tag: 'h1', size: 'l' }, hint: { text: page.hint_text } do %>
+  <%= form.govuk_text_field :address1, label: { tag: 'h2', size: 'm', text: "Address line 1" }, width: 'one-half' %>
+  <%= form.govuk_text_field :address2, label: { tag: 'h2', size: 'm', text: "Address line 2"  }, width: 'one-half' %>
+  <%= form.govuk_text_field :city, label: { tag: 'h2', size: 'm', text: "Town or City"  }, width: 'one-third' %>
+  <%= form.govuk_text_field :postcode, label: { tag: 'h2', size: 'm', text: "Postcode" }, width: 'one-quarter' %>
+<% end %>

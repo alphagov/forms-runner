@@ -14,13 +14,15 @@ RSpec.describe "Page Controller", type: :request do
       {
         id: 1,
         question_text: "Question one",
-        answer_type: "date",
+        answer_type: "single_line",
+        hint_text: "",
         next: 2,
       },
       {
         id: 2,
         question_text: "Question two",
-        answer_type: "date",
+        hint_text: "Q2 hint text",
+        answer_type: "single_line",
       },
     ].to_json
   end
@@ -70,20 +72,20 @@ RSpec.describe "Page Controller", type: :request do
 
   describe "#submit" do
     it "Redirects to the next page" do
-      post submit_form_page_path(2, 1, changing_existing_answer: false)
+      post submit_form_page_path(2, 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
       expect(response).to redirect_to(form_page_path(2, 2))
     end
 
     context "when changing an existing answer" do
       it "Redirects to the check your answers page" do
-        post submit_form_page_path(2, 1, changing_existing_answer: true)
+        post submit_form_page_path(2, 1, params: { question: { text: "answer text" }, changing_existing_answer: true })
         expect(response).to redirect_to(form_check_your_answers_path(2))
       end
     end
 
     context "with the final page" do
       it "Redirects to the check your answers page" do
-        post submit_form_page_path(2, 2)
+        post submit_form_page_path(2, 2), params: { question: { text: "answer text" } }
         expect(response).to redirect_to(form_check_your_answers_path(2))
       end
     end
