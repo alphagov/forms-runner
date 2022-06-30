@@ -14,14 +14,14 @@
       <% @pages.each do |page| %>
         <div class="govuk-summary-list__row">
           <dt class="govuk-summary-list__key">
-            <%= !page.question_short_name.blank? ? page.question_short_name : page.question_text %>
+            <%= page.question_short_name.presence || page.question_text %>
           </dt>
           <dd class="govuk-summary-list__value">
             N/A
           </dd>
           <dd class="govuk-summary-list__actions">
             <%= link_to change_form_page_path(@form, page.id), class: "govuk-link" do %>
-                Change<span class="govuk-visually-hidden"> <%= page.question_short_name %></span>
+                Change <span class="govuk-visually-hidden"><%= page.question_short_name.presence || page.question_text %></span>
             <% end %>
           </dd>
         </div>
