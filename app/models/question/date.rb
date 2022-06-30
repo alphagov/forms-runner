@@ -5,6 +5,6 @@ class Question::Date < Question::QuestionBase
   validates :date, date: true
 
   def show_answer
-    date&.strftime("%m/%d/%Y")
+    date&.strftime("%d/%m/%Y") || ""
   end
 end
