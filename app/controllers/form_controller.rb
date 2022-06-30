@@ -8,7 +8,7 @@ class FormController < ApplicationController
 
   def check_your_answers
     @form = Form.find(params.require(:form_id))
-    @answers = session[:answers][@form.id.to_s] || {}
+    @answers = session.fetch(:answers, {}).fetch(@form.id.to_s, {})
     last_page = @form.pages.find { |p| !p.has_next? }
     @back_link = form_page_path(@form.id, last_page.id)
     @rows = check_your_answers_rows(@form, @answers)
@@ -16,7 +16,7 @@ class FormController < ApplicationController
 
   def submit_answers
     @form = Form.find(params.require(:form_id))
-    answers = session[:answers][@form.id.to_s]
+    answers = session.fetch(:answers, {}).fetch(@form.id.to_s, {})
     submit_form(formatted_answers(@form, answers))
     logger.info session[:answers]
     clear_answers(@form)
@@ -38,7 +38,7 @@ private
   end
 
   def clear_answers(form)
-    session[:answers][form.id.to_s] = nil
+    session[:answers][form.id.to_s] = nil if session[:answers]
   end
 
   def check_your_answers_rows(form, answers = {})
