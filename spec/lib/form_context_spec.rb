@@ -1,8 +1,8 @@
 require "rails_helper"
 require "ostruct"
-require_relative "../../app/lib/journey_context"
+require_relative "../../app/lib/form_context"
 
-RSpec.describe JourneyContext do
+RSpec.describe FormContext do
   let(:form) { OpenStruct.new({ id: "5" }) }
   let(:form2) { OpenStruct.new({ id: "8" }) }
   let(:page) { OpenStruct.new({ id: "1" }) }

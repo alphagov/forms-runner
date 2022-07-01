@@ -1,11 +1,13 @@
-class JourneyContext
+class FormContext
   ROOT_KEY = :answers
   def initialize(store, form)
     @store = store
     @store[ROOT_KEY] ||= {}
-    form_key = form.id.to_s
-    @store[ROOT_KEY][form_key] ||= {}
-    @form_store = @store[ROOT_KEY][form_key]
+
+    @form_key = form.id.to_s
+    @store[ROOT_KEY][@form_key] ||= {}
+
+    @form_store = @store[ROOT_KEY][@form_key]
   end
 
   def store_answer(page, answer)
@@ -17,7 +19,7 @@ class JourneyContext
   end
 
   def clear_answers
-    @form_store = nil
+    @store[ROOT_KEY][@form_key] = nil
   end
 
   def answers

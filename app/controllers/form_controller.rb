@@ -9,17 +9,17 @@ class FormController < ApplicationController
   end
 
   def check_your_answers
-    journey_context = JourneyContext.new(session, @form)
-    @answers = journey_context.answers
+    form_context = FormContext.new(session, @form)
+    @answers = form_context.answers
     @back_link = form_page_path(@form, @form.last_page)
     @rows = check_your_answers_rows(@form, @answers)
   end
 
   def submit_answers
-    journey_context = JourneyContext.new(session, @form)
-    answers = journey_context.answers
+    form_context = FormContext.new(session, @form)
+    answers = form_context.answers
     submit_form(formatted_answers(@form, answers))
-    journey_context.clear_answers
+    form_context.clear_answers
     redirect_to :form_submitted
   end
 
