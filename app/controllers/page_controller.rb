@@ -5,7 +5,8 @@ class PageController < ApplicationController
     changing_existing_answer
     back_link
 
-    answer = get_stored_answer(@form.id, @page.id)
+    journey_context = JourneyContext.new(session, @form)
+    answer = journey_context.get_stored_answer(@page)
     question_klass = QuestionRegister.from_page(@page)
     @question = question_klass.new(answer)
   end
@@ -18,8 +19,9 @@ class PageController < ApplicationController
     question_klass = QuestionRegister.from_page(@page)
     question_params = question_params(question_klass)
     @question = question_klass.new(question_params)
+    journey_context = JourneyContext.new(session, @form)
     if @question.valid?
-      store_answer(@form.id, @page.id, @question.serializable_hash)
+      journey_context.store_answer(@page, @question.serializable_hash)
       if @page.has_next? && !@changing_existing_answer
         redirect_to form_page_path(@form.id, @page.next)
       else
@@ -55,16 +57,6 @@ private
     elsif previous_page
       @back_link = form_page_path(@form.id, previous_page.id)
     end
-  end
-
-  def store_answer(form_id, page_id, answer)
-    session[:answers] ||= {}
-    session[:answers][form_id.to_s] ||= {}
-    session[:answers][form_id.to_s][page_id.to_s] = answer
-  end
-
-  def get_stored_answer(form_id, page_id)
-    session.dig(:answers, form_id.to_s, page_id.to_s)
   end
 
   def question_params(question)
