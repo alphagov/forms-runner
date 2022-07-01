@@ -2,6 +2,7 @@ class PageController < ApplicationController
   before_action :fetch_pages
 
   def show
+    changing_existing_answer
     back_link
 
     answer = get_stored_answer(@form.id, @page.id)
@@ -10,12 +11,16 @@ class PageController < ApplicationController
   end
 
   def submit
+    changing_existing_answer
+    page_id = params.require(:page_id)
+    @page = @pages.find { |p| p.id == page_id.to_i }
+
     question_klass = QuestionRegister.from_page(@page)
     question_params = question_params(question_klass)
     @question = question_klass.new(question_params)
     if @question.valid?
       store_answer(@form.id, @page.id, @question.serializable_hash)
-      if @page.has_next?
+      if @page.has_next? && !@changing_existing_answer
         redirect_to form_page_path(@form.id, @page.next)
       else
         redirect_to form_check_your_answers_path(@form.id)
@@ -34,6 +39,10 @@ private
     @page = @pages.find { |p| p.id == page_id.to_i }
   end
 
+  def changing_existing_answer
+    @changing_existing_answer = ActiveModel::Type::Boolean.new.cast(params[:changing_existing_answer])
+  end
+
   def back_link
     page_id = params.require(:page_id)
     previous_page = @pages.find do |p|
@@ -41,8 +50,9 @@ private
 
       p.next.to_i == page_id.to_i
     end
-
-    if previous_page
+    if @changing_existing_answer
+      @back_link = form_check_your_answers_path(@form.id)
+    elsif previous_page
       @back_link = form_page_path(@form.id, previous_page.id)
     end
   end

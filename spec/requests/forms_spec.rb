@@ -15,12 +15,14 @@ RSpec.describe "Form controller", type: :request do
       {
         id: 1,
         question_text: "Question one",
+        question_short_name: nil,
         answer_type: "date",
         next: 2,
       },
       {
         id: 2,
         question_text: "Question two",
+        question_short_name: nil,
         answer_type: "date",
       },
     ].to_json
@@ -76,6 +78,11 @@ RSpec.describe "Form controller", type: :request do
 
     it "Returns the correct X-Robots-Tag header" do
       expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
+    end
+
+    it "Contains a change link for each page" do
+      expect(response.body).to include(change_form_page_path(2, 1))
+      expect(response.body).to include(change_form_page_path(2, 2))
     end
   end
 end

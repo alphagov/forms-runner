@@ -4,14 +4,18 @@
   <% end %>
 <% end %>
 
-
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds-from-desktop">
     <h1 class="govuk-heading-l">Check your answers</h1>
-  <%= govuk_summary_list(rows: @rows) %>
 
-  <%= form_with url: form_submit_answers_path do |form| %>
-    <%= form.govuk_submit 'Accept and send' %>
-  <% end %>
+    <%= govuk_summary_list(rows: @rows) %>
+
+    <h2 class="govuk-heading-m">Now send your application</h2>
+
+    <p class="govuk-body">By submitting this application you are confirming that, to the best of your knowledge, the details you are providing are correct.</p>
+
+    <%= form_with url: form_submit_answers_path do |form| %>
+      <%= form.govuk_submit 'Accept and send' %>
+    <% end %>
   </div>
 </div>

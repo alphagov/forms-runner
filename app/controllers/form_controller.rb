@@ -8,8 +8,9 @@ class FormController < ApplicationController
 
   def check_your_answers
     @form = Form.find(params.require(:form_id))
+    @pages = @form.pages
+    last_page = @pages.find { |p| !p.has_next? }
     @answers = session.fetch(:answers, {}).fetch(@form.id.to_s, {})
-    last_page = @form.pages.find { |p| !p.has_next? }
     @back_link = form_page_path(@form.id, last_page.id)
     @rows = check_your_answers_rows(@form, @answers)
   end
@@ -44,11 +45,12 @@ private
   def check_your_answers_rows(form, answers = {})
     form.pages.map do |page|
       answer = answers[page.id.to_s]
+      question_name = page.question_short_name.presence || page.question_text
       question = QuestionRegister.from_page(page).new(answer)
       {
-        key: { text: page.question_text },
+        key: { text: question_name },
         value: { text: question.show_answer },
-        actions: [{ href: form_page_url(form, page) }],
+        actions: [{ href: change_form_page_path(form, page), visually_hidden_text: question_name }],
       }
     end
   end
