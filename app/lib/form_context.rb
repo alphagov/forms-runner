@@ -7,15 +7,15 @@ class FormContext
     @form_key = form.id.to_s
     @store[ROOT_KEY][@form_key] ||= {}
 
-    @form_store = @store[ROOT_KEY][@form_key]
+    # @form_store = @store[ROOT_KEY][@form_key]
   end
 
   def store_answer(page, answer)
-    @form_store[page_key(page)] = answer
+    @store[ROOT_KEY][@form_key][page_key(page)] = answer
   end
 
   def get_stored_answer(page)
-    @form_store[page_key(page)]
+    @store[ROOT_KEY][@form_key][page_key(page)]
   end
 
   def clear_answers
@@ -23,7 +23,7 @@ class FormContext
   end
 
   def answers
-    @form_store || {}
+    @store[ROOT_KEY][@form_key] || {}
   end
 
 private
