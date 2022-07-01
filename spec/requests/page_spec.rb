@@ -6,6 +6,7 @@ RSpec.describe "Page Controller", type: :request do
       id: 2,
       name: "Form",
       submission_email: "submission@email.com",
+      start_page: 1,
     }.to_json
   end
 
@@ -17,12 +18,14 @@ RSpec.describe "Page Controller", type: :request do
         answer_type: "single_line",
         hint_text: "",
         next: 2,
+        question_short_name: nil
       },
       {
         id: 2,
         question_text: "Question two",
         hint_text: "Q2 hint text",
         answer_type: "single_line",
+        question_short_name: nil
       },
     ].to_json
   end
@@ -40,6 +43,11 @@ RSpec.describe "Page Controller", type: :request do
       expect(response.status).to eq(200)
     end
 
+    it "redirects to first page if second request before first complete" do
+      get form_page_path(2, 2)
+      expect(response).to redirect_to(form_page_path(2, 1))
+    end
+
     it "Displays the question text on the page" do
       get form_page_path(2, 1)
       expect(response.body).to include("Question one")
@@ -55,7 +63,7 @@ RSpec.describe "Page Controller", type: :request do
     context "with a change answers page" do
       it "Displays a back link to the check your answers page" do
         get form_change_answer_path(2, 1)
-        expect(response.body).to include(form_check_your_answers_path(2))
+        expect(response.body).to include(check_your_answers_path(2))
       end
 
       it "Passes the changing answers parameter in its submit request" do
@@ -68,6 +76,14 @@ RSpec.describe "Page Controller", type: :request do
       get form_page_path(2, 1)
       expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
     end
+
+    context 'with no questions answered' do
+      it 'redirects if a later page is requested' do
+        get check_your_answers_path(2)
+        expect(response.status).to eq(302)
+        expect(response.location).to eq(form_page_url(2, 1))
+      end
+    end
   end
 
   describe "#submit" do
@@ -79,14 +95,14 @@ RSpec.describe "Page Controller", type: :request do
     context "when changing an existing answer" do
       it "Redirects to the check your answers page" do
         post submit_form_page_path(2, 1, params: { question: { text: "answer text" }, changing_existing_answer: true })
-        expect(response).to redirect_to(form_check_your_answers_path(2))
+        expect(response).to redirect_to(check_your_answers_path(2))
       end
     end
 
     context "with the final page" do
       it "Redirects to the check your answers page" do
         post submit_form_page_path(2, 2), params: { question: { text: "answer text" } }
-        expect(response).to redirect_to(form_check_your_answers_path(2))
+        expect(response).to redirect_to(check_your_answers_path(2))
       end
     end
   end

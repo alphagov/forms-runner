@@ -8,4 +8,8 @@ class Form < ActiveResource::Base
   def last_page
     pages.find { |p| !p.has_next? }
   end
+
+  def page_by_id(page_id)
+    pages.find { |p| p.id == page_id.to_i }
+  end
 end
