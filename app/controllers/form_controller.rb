@@ -1,4 +1,6 @@
 class FormController < ApplicationController
+  before_action :prepare_form, except: [:show]
+
   def show
     @form = Form.find(params.require(:id))
     if @form.start_page
@@ -7,16 +9,13 @@ class FormController < ApplicationController
   end
 
   def check_your_answers
-    @form = Form.find(params.require(:form_id))
     journey_context = JourneyContext.new(session, @form)
     @answers = journey_context.answers
-    last_page = @form.pages.find { |p| !p.has_next? }
-    @back_link = form_page_path(@form.id, last_page.id)
+    @back_link = form_page_path(@form, @form.last_page)
     @rows = check_your_answers_rows(@form, @answers)
   end
 
   def submit_answers
-    @form = Form.find(params.require(:form_id))
     journey_context = JourneyContext.new(session, @form)
     answers = journey_context.answers
     submit_form(formatted_answers(@form, answers))
@@ -24,22 +23,17 @@ class FormController < ApplicationController
     redirect_to :form_submitted
   end
 
-  def submitted
-    @form = Form.find(params.require(:form_id))
-  end
+  def submitted; end
 
 private
 
-  def submit_form(text)
-    # in the controller for now but can be moved to service object, maybe use actionmailer fo easier testing?
-    logger.info "Submitted: #{text}"
-    NotifyService.new.send_email(@form.submission_email, @form.name, text, Time.zone.now)
-    # forms always submit corectly, to add error handling
-    true
+  def prepare_form
+    @form = Form.find(params.require(:form_id))
   end
 
-  def clear_answers(form)
-    session[:answers][form.id.to_s] = nil if session[:answers]
+  def submit_form(text)
+    # in the controller for now but can be moved to service object, maybe use actionmailer fo easier testing?
+    NotifyService.new.send_email(@form.submission_email, @form.name, text, Time.zone.now)
   end
 
   def check_your_answers_rows(form, answers = {})
