@@ -1,3 +1,6 @@
+require_relative "../../app/models/question/question_base"
+require_relative "../../app/models/question/single_line"
+
 class QuestionRegister
   def self.from_page(page)
     case page.answer_type.to_sym

@@ -6,7 +6,7 @@ RSpec.describe "Form controller", type: :request do
       id: 2,
       name: "Form name",
       submission_email: "submission@email.com",
-      start_page: 1,
+      start_page: "1",
     }.to_json
   end
 
@@ -17,7 +17,7 @@ RSpec.describe "Form controller", type: :request do
         question_text: "Question one",
         question_short_name: nil,
         answer_type: "date",
-        next: 2,
+        next: "2",
       },
       {
         id: 2,
@@ -26,6 +26,15 @@ RSpec.describe "Form controller", type: :request do
         answer_type: "date",
       },
     ].to_json
+  end
+
+  let(:session) do
+    {
+      answers: {
+        "1": { date_day: 1, date_month: 2, date_year: 2022 },
+        "2": { date_day: 1, date_month: 2, date_year: 2022 },
+      },
+    }
   end
 
   before do
@@ -64,25 +73,6 @@ RSpec.describe "Form controller", type: :request do
 
     it "Returns the correct X-Robots-Tag header" do
       expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
-    end
-  end
-
-  describe "#check_your_answers" do
-    before do
-      get form_check_your_answers_path(2)
-    end
-
-    it "Displays a back link to the last page of the form" do
-      expect(response.body).to include(form_page_path(2, 2))
-    end
-
-    it "Returns the correct X-Robots-Tag header" do
-      expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
-    end
-
-    it "Contains a change link for each page" do
-      expect(response.body).to include(form_change_answer_path(2, 1))
-      expect(response.body).to include(form_change_answer_path(2, 2))
     end
   end
 end
