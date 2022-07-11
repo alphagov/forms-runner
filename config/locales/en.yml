@@ -12,5 +12,11 @@ en:
               invalid_postcode: Enter a valid postcode.
             town_or_city:
               blank: Enter the town or city of your address.
+        question/date:
+          attributes:
+            date:
+              blank: Enter a date
+              blank_date_fields: Enter a day, month and year
+              invalid_date: Enter a date
   form:
     no_pages: This form has no pages
