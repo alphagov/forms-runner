@@ -23,11 +23,20 @@ en:
             email:
               blank: Enter an email address
               invalid_email: Enter a valid email address
+        question/national_insurance_number:
+          attributes:
+            national_insurance_number:
+              blank: Enter a national insrance number
+              invalid_national_insurance_number: Enter a national insurance number
         question/phone_number:
           attributes:
             phone_number:
               blank: Enter a phone number
               phone_too_long: The phone number is too long, it should have 15 digits or less
               phone_too_short: The phone number is too short, it should have 8 digits or more
+        question/single_line:
+          attributes:
+            text:
+              blank: Enter a value
   form:
     no_pages: This form has no pages
