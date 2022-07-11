@@ -5,10 +5,18 @@ class PageController < ApplicationController
     changing_existing_answer
     back_link
 
+    # extract an answer from the sesssion, test it to make sure it's still
+    # valid
     form_context = FormContext.new(session, @form)
     answer = form_context.get_stored_answer(@page)
     question_klass = QuestionRegister.from_page(@page)
-    @question = question_klass.new(answer)
+    begin
+      @question = question_klass.new(answer)
+    rescue ActiveModel::UnknownAttributeError
+      @question = question_klass.new
+    end
+
+    @question = question_klass.new unless @question&.valid?
   end
 
   def submit
