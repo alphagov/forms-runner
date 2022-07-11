@@ -9,6 +9,6 @@ class Question::QuestionBase
   end
 
   def show_answer
-    attribute_names.map { |attribute| send(attribute) }.reject(&:blank?)&.join(",")
+    attribute_names.map { |attribute| send(attribute) }.reject(&:blank?)&.join(", ")
   end
 end
