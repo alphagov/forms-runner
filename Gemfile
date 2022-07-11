@@ -63,6 +63,10 @@ gem "govuk_design_system_formbuilder", "~> 3.0.2"
 
 # Very simple date validation
 gem "date_validator"
+
+# validate postcodes
+gem "uk_postcode"
+
 # Support for locale tasks
 gem "i18n-tasks", "~> 1.0.11"
 

@@ -1,3 +1,16 @@
+---
 en:
+  activemodel:
+    errors:
+      models:
+        question/address:
+          attributes:
+            address1:
+              blank: Enter the first line of your address.
+            postcode:
+              blank: Enter the postcode.
+              invalid_postcode: Enter a valid postcode.
+            town_or_city:
+              blank: Enter the town or city of your address.
   form:
-    no_pages: "This form has no pages"
+    no_pages: This form has no pages
