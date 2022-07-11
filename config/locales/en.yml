@@ -18,5 +18,10 @@ en:
               blank: Enter a date
               blank_date_fields: Enter a day, month and year
               invalid_date: Enter a date
+        question/email:
+          attributes:
+            email:
+              blank: Enter an email address
+              invalid_email: Enter a valid email address
   form:
     no_pages: This form has no pages
