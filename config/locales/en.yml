@@ -23,5 +23,11 @@ en:
             email:
               blank: Enter an email address
               invalid_email: Enter a valid email address
+        question/phone_number:
+          attributes:
+            phone_number:
+              blank: Enter a phone number
+              phone_too_long: The phone number is too long, it should have 15 digits or less
+              phone_too_short: The phone number is too short, it should have 8 digits or more
   form:
     no_pages: This form has no pages
