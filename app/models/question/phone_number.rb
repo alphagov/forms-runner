@@ -3,7 +3,7 @@ class Question::PhoneNumber < Question::QuestionBase
   # Allow a large range of values - we would probably need more information to
   # provide better validation - e.g. UK or international number
   # We check the characters and that the number is in a reasonable range
-  # some code and tests inspired by git@github.com:DFE-Digital/apply-for-teacher-training.git
+  # some code and tests inspired by https://github.com/DFE-Digital/apply-for-teacher-training
 
   PHONE_REGEX = /\A[ext\-()+.\s 0-9]+\z/
   attribute :phone_number
