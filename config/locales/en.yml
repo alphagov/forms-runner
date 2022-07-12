@@ -26,8 +26,8 @@ en:
         question/national_insurance_number:
           attributes:
             national_insurance_number:
-              blank: Enter a national insrance number
-              invalid_national_insurance_number: Enter a national insurance number
+              blank: Enter a National Insurance number
+              invalid_national_insurance_number: Enter a National Insurance number
         question/phone_number:
           attributes:
             phone_number:
