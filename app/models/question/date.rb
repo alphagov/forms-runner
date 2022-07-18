@@ -41,7 +41,7 @@ private
   end
 
   def invalid?
-    !date.is_a?(Date) || outside_acceptable_date_range
+    !date.is_a?(Date)
   end
 
   def blank?
@@ -55,10 +55,6 @@ private
     return [] if date.is_a?(Date)
 
     date.to_h.select { |_, v| v.blank? }.keys
-  end
-
-  def outside_acceptable_date_range
-    !(150.years.ago.year..2999).cover?(date.year)
   end
 
   def valid_or_invalid_date(year, month, day)

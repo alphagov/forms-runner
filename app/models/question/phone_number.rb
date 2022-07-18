@@ -8,7 +8,7 @@ class Question::PhoneNumber < Question::QuestionBase
   PHONE_REGEX = /\A[ext\-()+.\s 0-9]+\z/
   attribute :phone_number
   validates :phone_number, presence: true
-  validates :phone_number, format: { with: PHONE_REGEX, message: "Enter a telephone number" }, allow_blank: true
+  validates :phone_number, format: { with: PHONE_REGEX, message: :invalid_phone_number }, allow_blank: true
   validate :phone_number, :not_enough_digits?
   validate :phone_number, :too_many_digits?
 

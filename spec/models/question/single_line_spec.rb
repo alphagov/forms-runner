@@ -19,4 +19,24 @@ RSpec.describe Question::SingleLine, type: :model do
       expect(question.show_answer).to eq ""
     end
   end
+
+  context "when given a short string" do
+    it "validates without errors" do
+      question = described_class.new
+      question.validate
+      question.text = "testing"
+      question.validate
+      expect(question).to be_valid
+    end
+  end
+
+  context "when given a string which is too long" do
+    it "validates without errors" do
+      question = described_class.new
+      question.validate
+      question.text = "a" * 500
+      question.validate
+      expect(question.errors[:text]).to include(I18n.t("activemodel.errors.models.question/single_line.attributes.text.too_long"))
+    end
+  end
 end
