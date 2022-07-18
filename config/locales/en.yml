@@ -6,37 +6,39 @@ en:
         question/address:
           attributes:
             address1:
-              blank: Enter the first line of your address.
+              blank: Enter the first line of the address
             postcode:
-              blank: Enter the postcode.
-              invalid_postcode: Enter a valid postcode.
+              blank: Enter the postcode
+              invalid_postcode: Enter a real postcode
             town_or_city:
-              blank: Enter the town or city of your address.
+              blank: Enter the town or city of the address
         question/date:
           attributes:
             date:
               blank: Enter a date
               blank_date_fields: Enter a day, month and year
-              invalid_date: Enter a date
+              invalid_date: Enter a real date
         question/email:
           attributes:
             email:
               blank: Enter an email address
-              invalid_email: Enter a valid email address
+              invalid_email: Enter an email address in the correct format, like name@example.com
         question/national_insurance_number:
           attributes:
             national_insurance_number:
               blank: Enter a National Insurance number
-              invalid_national_insurance_number: Enter a National Insurance number
+              invalid_national_insurance_number: Enter a National Insurance number that is 2 letters, 6 numbers, then A, B, C or D, like QQ 12 34 56 C
         question/phone_number:
           attributes:
             phone_number:
               blank: Enter a phone number
-              phone_too_long: The phone number is too long, it should have 15 digits or less
-              phone_too_short: The phone number is too short, it should have 8 digits or more
+              invalid_phone_number: Enter a phone number using only numbers, spaces,’ext’, ‘-’ or ‘+’
+              phone_too_long: The phone number should have 15 digits or less
+              phone_too_short: The phone number should have 8 digits or more
         question/single_line:
           attributes:
             text:
-              blank: Enter a value
+              blank: Enter an answer
+              too_long: The answer must be shorter than 500 characters
   form:
     no_pages: This form has no pages

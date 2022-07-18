@@ -74,16 +74,4 @@ RSpec.describe Question::Date, type: :model do
       end
     end
   end
-
-  context "when given a date outside a reasonable range" do
-    it "isn't valid" do
-      # !(150.years.ago.year..2999).cover?(date.year)
-      invalid_years = [1871, 0, 3000, 1542]
-      invalid_years.each do |year|
-        question = described_class.new({ date_day: "31", date_month: "02", date_year: year })
-        question.validate
-        expect(question.errors[:date]).to include(I18n.t("activemodel.errors.models.question/date.attributes.date.invalid_date"))
-      end
-    end
-  end
 end
