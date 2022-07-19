@@ -2,9 +2,8 @@
 applications:
 - name: forms-runner-dev
   memory: 256M
-  command: rake db:migrate && bin/rails server
+  command: bin/rails server
   services:
-    - forms-runner-dev-db
     - forms-runner-dev-redis
   env:
     RAILS_ENV: production

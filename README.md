@@ -1,6 +1,6 @@
 # GOV.UK Forms Runner [![Ruby on Rails CI](https://github.com/alphagov/forms-runner/actions/workflows/rubyonrails.yml/badge.svg)](https://github.com/alphagov/forms-runner/actions/workflows/rubyonrails.yml) [![Deploy to GOV.UK PaaS](https://github.com/alphagov/forms-runner/actions/workflows/deploy.yml/badge.svg)](https://github.com/alphagov/forms-runner/actions/workflows/deploy.yml)
 
-GOV.UK Forms is a service for creating forms. GOV.UK Forms Runner is a an application which displays those forms to end users so that they can be filled in. It's a Ruby on Rails application built on a PostgreSQL database.
+GOV.UK Forms is a service for creating forms. GOV.UK Forms Runner is a an application which displays those forms to end users so that they can be filled in. It's a Ruby on Rails application without a database. It uses redis for state.
 
 ## Before you start
 
@@ -43,7 +43,6 @@ use the 'api intergration' tab on notify dashboard to check emails sent.
 
 | Name           | Purpose                                                            |
 | -------------- | ------------------------------------------------------------------ |
-| `DATABASE_URL` | The URL to the postgres instance (without the database at the end) |
 | `REDIS_URL`    | The URL for Redis (optional)                                       |
 | `SENTRY_DSN`   | The DSN provided by Sentry                                         |
 | `API_BASE`     | The base url for the API - E.g. `http://localhost:9090`            |
