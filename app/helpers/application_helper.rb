@@ -21,4 +21,8 @@ module ApplicationHelper
   def format_paragraphs(text)
     simple_format(html_escape(text), class: "govuk-body", sanitize: true)
   end
+
+  def main_classes(form)
+    form.nil? || form.live? ? "" : "main--draft"
+  end
 end

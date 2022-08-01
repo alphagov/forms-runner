@@ -44,7 +44,7 @@
       <% end %>
       <%= yield(:before_content) %>
 
-      <main class="govuk-main-wrapper " id="main-content" role="main">
+      <main class="govuk-main-wrapper <%=main_classes(@current_form)%>" id="main-content" role="main">
         <%= yield %>
       </main>
     </div>
