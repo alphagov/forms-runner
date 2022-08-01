@@ -136,6 +136,7 @@ RSpec.describe "Base controller", type: :request do
               form_slug: "form-name",
               submission_email: "submission@email.com",
               start_page: nil,
+              live_at: nil,
               privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
             }.to_json
           end
