@@ -42,3 +42,7 @@ en:
               too_long: The answer must be shorter than 500 characters
   form:
     no_pages: This form has no pages
+  phase_banner:
+    before_link: This is a new service, your
+    link: feedback
+    after_link: will help us improve it.
