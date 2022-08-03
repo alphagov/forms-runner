@@ -43,6 +43,6 @@ en:
   form:
     no_pages: This form has no pages
   phase_banner:
+    after_link: will help us improve it.
     before_link: This is a new service, your
     link: feedback
-    after_link: will help us improve it.
