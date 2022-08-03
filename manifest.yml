@@ -5,6 +5,7 @@ applications:
   command: bin/rails server
   services:
     - forms-runner-dev-redis
+    - forms-runner-dev-splunk
   env:
     RAILS_ENV: production
     RACK_ENV: production
