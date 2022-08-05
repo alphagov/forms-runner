@@ -62,5 +62,8 @@ module FormsRunner
                            },
                            on_redis_down: ->(_e, _env, _sid) { Rails.logger.debug "Redis down" }
     end
+
+    # Use custom error pages
+    config.exceptions_app = routes
   end
 end
