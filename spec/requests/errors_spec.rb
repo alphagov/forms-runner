@@ -24,9 +24,22 @@ RSpec.describe "Errors", type: :request do
   end
 
   describe "Submission error" do
+    let(:form_response_data) do
+      {
+        id: 2,
+        name: "Form name",
+        submission_email: "submission@email.com",
+        start_page: 1,
+      }.to_json
+    end
+
     let(:notify_service) { instance_double(NotifyService) }
 
     before do
+      ActiveResource::HttpMock.respond_to do |mock|
+        mock.get "/api/v1/forms/2", {}, form_response_data, 200
+      end
+
       allow(notify_service).to receive(:send_email).and_throw("Oh no!").with(any_args)
       allow(NotifyService).to receive(:new).and_return(notify_service)
     end
