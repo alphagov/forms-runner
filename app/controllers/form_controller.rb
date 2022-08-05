@@ -21,6 +21,8 @@ class FormController < ApplicationController
     submit_form(formatted_answers(@form, answers))
     form_context.clear_answers
     redirect_to :form_submitted
+  rescue StandardError
+    render "errors/submission_error", status: :internal_server_error
   end
 
   def submitted; end
