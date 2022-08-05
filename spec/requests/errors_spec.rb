@@ -22,4 +22,18 @@ RSpec.describe "Errors", type: :request do
       expect(response).to have_http_status(:service_unavailable)
     end
   end
+
+  describe "Submission error" do
+    let(:notify_service) { instance_double(NotifyService) }
+
+    before do
+      allow(notify_service).to receive(:send_email).and_throw("Oh no!").with(any_args)
+      allow(NotifyService).to receive(:new).and_return(notify_service)
+    end
+
+    it "returns http code 500" do
+      post form_submit_answers_path(form_id: 2)
+      expect(response).to have_http_status(:internal_server_error)
+    end
+  end
 end
