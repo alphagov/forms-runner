@@ -1,6 +1,6 @@
 describe('Form', function () {
   beforeEach(function () {
-    cy.visit(`/${this.formId}`)
+    cy.visit(`/form/${this.formId}`)
   })
 
   it('contains the beta phase banner', function () {

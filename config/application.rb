@@ -47,9 +47,9 @@ module FormsRunner
         config.session_store :redis_session_store,
                              key: "_app_session_key",
                              redis: {
-                               host: host,
-                               password: password,
-                               port: port,
+                               host:,
+                               password:,
+                               port:,
                                ssl: true,
                              },
                              on_redis_down: ->(_e, _env, _sid) { Rails.logger.debug "Redis down" }
@@ -62,5 +62,8 @@ module FormsRunner
                            },
                            on_redis_down: ->(_e, _env, _sid) { Rails.logger.debug "Redis down" }
     end
+
+    # Use custom error pages
+    config.exceptions_app = routes
   end
 end
