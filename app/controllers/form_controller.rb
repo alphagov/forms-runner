@@ -45,8 +45,7 @@ private
       question = QuestionRegister.from_page(page).new(answer)
       {
         key: { text: question_name },
-        value: { text: question.show_answer },
-        actions: [{ href: change_form_page_path(form, page), visually_hidden_text: question_name }],
+        value: { text: question.show_answer },actions: [{ href: form_change_answer_path(form, page), visually_hidden_text: question_name }],
       }
     end
   end

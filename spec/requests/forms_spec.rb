@@ -81,8 +81,8 @@ RSpec.describe "Form controller", type: :request do
     end
 
     it "Contains a change link for each page" do
-      expect(response.body).to include(change_form_page_path(2, 1))
-      expect(response.body).to include(change_form_page_path(2, 2))
+      expect(response.body).to include(form_change_answer_path(2, 1))
+      expect(response.body).to include(form_change_answer_path(2, 2))
     end
   end
 end
