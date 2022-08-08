@@ -41,11 +41,12 @@ use the 'api intergration' tab on notify dashboard to check emails sent.
 
 ### Environment variables
 
-| Name           | Purpose                                                            |
-| -------------- | ------------------------------------------------------------------ |
-| `REDIS_URL`    | The URL for Redis (optional)                                       |
-| `SENTRY_DSN`   | The DSN provided by Sentry                                         |
-| `API_BASE`     | The base url for the API - E.g. `http://localhost:9090`            |
+| Name                  | Purpose                                                      |
+| --------------------- | ------------------------------------------------------------ |
+| `REDIS_URL`           | The URL for Redis (optional)                                 |
+| `SENTRY_DSN`          | The DSN provided by Sentry                                   |
+| `API_BASE`            | The base url for the API - E.g. `http://localhost:9090`      |
+| `SERVICE_UNAVAILABLE` | All pages will render 'Service unavailable' if set to `true` |
 
 ### Running the app
 

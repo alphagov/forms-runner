@@ -21,6 +21,8 @@ class FormController < ApplicationController
     submit_form(formatted_answers(@form, answers))
     form_context.clear_answers
     redirect_to :form_submitted
+  rescue StandardError
+    render "errors/submission_error", status: :internal_server_error
   end
 
   def submitted; end
@@ -44,7 +46,7 @@ private
       {
         key: { text: question_name },
         value: { text: question.show_answer },
-        actions: [{ href: change_form_page_path(form, page), visually_hidden_text: question_name }],
+        actions: [{ href: form_change_answer_path(form, page), visually_hidden_text: question_name }],
       }
     end
   end

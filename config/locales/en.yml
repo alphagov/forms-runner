@@ -42,7 +42,24 @@ en:
               too_long: The answer must be shorter than 500 characters
   form:
     no_pages: This form has no pages
+  internal_server_error:
+    body: Please try again later.
+    title: Sorry, there is a problem with the service
+  not_found:
+    body: |
+      If you typed the web address, check it is correct.
+      If you pasted the web address, check you copied the entire address.
+    title: Page not found
   phase_banner:
     after_link: will help us improve it.
     before_link: This is a new service, your
     link: feedback
+  service_unavailable:
+    body: Contact the GOV.UK Forms team if you need to make changes to your forms or speak to someone about the service.
+    title: Sorry, the service is unavailable
+  submission_error:
+    body: |
+      There was a problem with the service and we have been unable to submit your answers.
+
+      Please try again later.
+    title: Sorry, we could not submit your answers
