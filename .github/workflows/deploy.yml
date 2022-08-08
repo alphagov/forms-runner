@@ -37,5 +37,6 @@ jobs:
           cf auth "${{ secrets.CF_USER }}" "${{ secrets.CF_PASSWORD }}"
           cf target -o ${{ secrets.CF_ORGANISATION }} -s ${{ secrets.CF_SPACE }}
           cf push --strategy rolling \
+            --var PAAS_ENVIRONMENT=dev \
             --var API_BASE=${{ secrets.API_BASE }} \
             --var NOTIFY_API_KEY=${{ secrets.NOTIFY_API_KEY }}
