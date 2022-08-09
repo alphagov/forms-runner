@@ -1,10 +1,11 @@
 ---
 applications:
-- name: forms-runner-dev
+- name: forms-runner-((PAAS_ENVIRONMENT))
   memory: 256M
   command: bin/rails server
   services:
-    - forms-runner-dev-redis
+    - forms-runner-((PAAS_ENVIRONMENT))-redis
+    - forms-runner-((PAAS_ENVIRONMENT))-splunk
   env:
     RAILS_ENV: production
     RACK_ENV: production
