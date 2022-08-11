@@ -5,6 +5,8 @@ SimpleCov.formatters = [
   SimpleCov::Formatter::HTMLFormatter,
 ]
 
+SimpleCov.coverage_dir("coverage/backend")
+SimpleCov.minimum_coverage 80
 SimpleCov.start "rails" do
   enable_coverage :branch
 end
