@@ -2,13 +2,12 @@ class Step
   attr_accessor :page_id, :form_id, :question
   attr_reader :next_page_slug, :page_slug
 
-  def initialize(question:, page_id:, form_id:, next_page_slug:, is_start_page:, page_slug:)
+  def initialize(question:, page_id:, form_id:, next_page_slug:, page_slug:)
     @question = question
     @page_id = page_id
     @page_slug = page_slug
     @form_id = form_id
 
-    @is_start_page = is_start_page
     @next_page_slug = next_page_slug
   end
 
@@ -17,7 +16,11 @@ class Step
   end
 
   def ==(other)
-    @page_id == other.page_id
+    other.class == self.class && other.state == state
+  end
+
+  def state
+    instance_variables.map { |variable| instance_variable_get variable }
   end
 
   def save_to_context(form_context)
@@ -66,9 +69,5 @@ class Step
 
   def end_page?
     next_page_slug.nil?
-  end
-
-  def start_page?
-    @is_start_page
   end
 end

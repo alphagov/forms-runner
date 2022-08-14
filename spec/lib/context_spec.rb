@@ -1,10 +1,4 @@
-require "spec_helper"
-require 'active_model'
-require 'active_resource'
-
-require_relative "../../app/models/page"
-require_relative "../../app/models/form"
-require_relative "../../app/lib/context"
+require "rails_helper"
 
 RSpec.describe Context do
   before do
@@ -41,10 +35,10 @@ RSpec.describe Context do
   end
 
   [
-    ['no input', { answers: [], request_step: 1 }, {next_page_slug: "2", start_id: 1, next_incomplete_page_id: "1", current_step_id: 1, previous_step_id: nil, complete?: false  }],
-    ['first question complete, request second step', { answers: [{text: 'q1 answer'}], request_step: 2 }, {next_page_slug: nil, start_id: 1, previous_step_id: 1, next_incomplete_page_id: "2", current_step_id: 2, complete?: false }],
-    ['first question complete, request first step', { answers: [{text: 'q1 answer'}], request_step: 1 }, {next_page_slug: "2", start_id: 1, previous_step_id: nil, next_incomplete_page_id: "2", current_step_id: 1, complete?: false  }],
-    ['all questions complete, request second step', { answers: [{text: 'q1 answer'},{text: 'q2 answer'}], request_step: 2 }, {next_page_slug: nil, start_id: 1, previous_step_id: 1, next_incomplete_page_id: nil, current_step_id: 2, complete?: true  }],
+    ['no input', { answers: [], request_step: 1 }, {next_page_slug: "2", start_id: 1, next_incomplete_page_id: "1", current_step_id: 1, previous_step_id: nil }],
+    ['first question complete, request second step', { answers: [{text: 'q1 answer'}], request_step: 2 }, {next_page_slug: 'check_your_answers', start_id: 1, previous_step_id: 1, next_incomplete_page_id: "2", current_step_id: 2 }],
+    ['first question complete, request first step', { answers: [{text: 'q1 answer'}], request_step: 1 }, {next_page_slug: "2", start_id: 1, previous_step_id: nil, next_incomplete_page_id: "2", current_step_id: 1 }],
+    ['all questions complete, request second step', { answers: [{text: 'q1 answer'},{text: 'q2 answer'}], request_step: 2 }, {next_page_slug: 'check_your_answers', start_id: 1, previous_step_id: 1, next_incomplete_page_id: 'check_your_answers', current_step_id: 2  }],
   ].each do |variation, input, expected_output|
     context "with #{variation}" do
       before do
@@ -69,15 +63,11 @@ RSpec.describe Context do
       end
 
       it "has the correct previous step" do
-        expect(@context.previous_step(@step)).to eq(expected_output[:previous_step_id])
+        expect(@context.previous_step(@step.page_slug)).to eq(expected_output[:previous_step_id])
       end
 
       it "has the correct next incomplete step" do
         expect(@context.next_page_slug).to eq(expected_output[:next_incomplete_page_id])
-      end
-
-      it "has the correct value for complete" do
-        expect(@context.complete?).to eq(expected_output[:complete?])
       end
 
       describe "step" do
@@ -91,4 +81,8 @@ RSpec.describe Context do
       end
     end
   end
+
+  # context 'with a form with no pages' do
+  #   form.pages = []
+  # end
 end

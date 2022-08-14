@@ -1,9 +1,9 @@
-require_relative "../../app/models/step"
-require_relative "../../app/lib/question_register"
-
 class StepFactory
+  START_PAGE = "_start".freeze
+  CHECK_YOUR_ANSWERS_PAGE = "check_your_answers".freeze
+
   class PageNotFoundError < StandardError
-    def initialize(msg = "My default message")
+    def initialize(msg = "Page not found.")
       super
     end
   end
@@ -19,30 +19,23 @@ class StepFactory
   end
 
   def create_step(page_slug_or_start)
-    # Raise notfound if there is no page?
-
-    page_slug = page_slug_or_start.to_s == "_start" ? @form.start_page : page_slug_or_start
-
+    # Normalize the id or constant passed in
+    page_slug = page_slug_or_start.to_s == START_PAGE ? @form.start_page : page_slug_or_start
     page_slug = page_slug.to_s
+
+    return CheckYourAnswersStep.new(form_id: @form_id) if page_slug == CHECK_YOUR_ANSWERS_PAGE
+
     # for now, we use the page id as slug
     page = @pages.find { |p| p.id.to_s == page_slug }
     raise PageNotFoundError, "Can't find page #{page_slug}" if page.nil?
 
-    question = QuestionRegister.from_page(page).new
-    question.question_text = page.question_text
-    question.question_short_name = page.question_short_name
-    question.hint_text = page.respond_to?(:hint_text) ? page.hint_text : nil
-    next_page_slug = page.has_next? ? page.next.to_s : nil
-    is_start_page = page.id.to_s == start_step_id
+    next_page_slug = page.has_next? ? page.next.to_s : CHECK_YOUR_ANSWERS_PAGE
+    question = QuestionRegister.from_page(page)
 
-    Step.new(question:, page_id: page.id, form_id: @form.id, next_page_slug:, is_start_page:, page_slug:)
+    Step.new(question:, page_id: page.id, form_id: @form_id, next_page_slug:, page_slug:)
   end
 
   def start_step
-    create_step("_start")
-  end
-
-  def start_step_id
-    @form.start_page.to_s
+    create_step(START_PAGE)
   end
 end
