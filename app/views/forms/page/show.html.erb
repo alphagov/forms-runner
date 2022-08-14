@@ -1,5 +1,5 @@
 <% content_for :before_content do %>
-  <% if @back_link %>
+  <% if @back_link.present? %>
     <%= link_to "Back", @back_link, class: "govuk-back-link" %>
   <% end %>
 <% end %>

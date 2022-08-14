@@ -1,7 +1,3 @@
-require_relative "./form_context"
-require_relative "./journey"
-require_relative "./step_factory"
-
 class Context
   attr_reader :form_name
 
@@ -27,7 +23,7 @@ class Context
   end
 
   def previous_step(page_slug)
-    index = @completed_steps.find_index(page_slug)
+    index = @completed_steps.find_index { |step| step.page_slug == page_slug }
     return nil if @completed_steps.empty? || index&.zero?
 
     return @completed_steps.last.page_id if index.nil?
@@ -43,14 +39,6 @@ class Context
 
   def can_visit?(page_slug)
     (@completed_steps.map(&:page_slug).include? page_slug) || page_slug == next_page_slug
-  end
-
-  def complete?
-    !!(@completed_steps.first&.start_page? && @completed_steps.last&.end_page?)
-  end
-
-  def highest_step
-    @completed_steps.last
   end
 
   def steps

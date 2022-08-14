@@ -1,9 +1,10 @@
 module Forms
   class CheckYourAnswersController < FormController
     def show
-      return redirect_to form_page_path(current_context.form, current_context.next_page_slug) unless current_context.complete?
+      return redirect_to form_page_path(current_context.form, current_context.next_page_slug) unless current_context.can_visit?("check_your_answers")
 
-      @back_link = form_page_path(current_context.form, current_context.highest_step.page_slug)
+      previous_step = current_context.previous_step("check_your_answers")
+      @back_link = form_page_path(current_context.form, previous_step)
       @rows = check_your_answers_rows
     end
 

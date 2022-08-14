@@ -24,7 +24,7 @@ private
       @completed_steps << current_step
       next_page_slug = current_step.next_page_slug
 
-      break if next_page_slug.nil? || next_page_slug == :_check_your_answers
+      break if next_page_slug.nil?
 
       current_step = find_existing_step(next_page_slug)
     end
