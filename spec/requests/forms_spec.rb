@@ -30,7 +30,9 @@ RSpec.describe "Form controller", type: :request do
 
   before do
     ActiveResource::HttpMock.respond_to do |mock|
+      allow(EventLogger).to receive(:log).at_least(:once)
       mock.get "/api/v1/forms/2", {}, form_response_data, 200
+      mock.get "/api/v1/forms/2/pages", {}, pages_data, 200
       mock.get "/api/v1/forms/2/pages", {}, pages_data, 200
     end
   end
@@ -43,6 +45,10 @@ RSpec.describe "Form controller", type: :request do
     context "when the form has a start page" do
       it "Redirects to the first page" do
         expect(response).to redirect_to(form_page_path(2, 1))
+      end
+
+      it "Logs the form_visit event" do
+        expect(EventLogger).to have_received(:log).with("form_visit", { form: "Form name", method: "GET", url: "http://www.example.com/form/2", user_agent: nil })
       end
     end
 
@@ -83,6 +89,20 @@ RSpec.describe "Form controller", type: :request do
     it "Contains a change link for each page" do
       expect(response.body).to include(form_change_answer_path(2, 1))
       expect(response.body).to include(form_change_answer_path(2, 2))
+    end
+
+    it "Logs the form_check_answers event" do
+      expect(EventLogger).to have_received(:log).with("form_check_answers", { form: "Form name", method: "GET", url: "http://www.example.com/form/2/check_your_answers", user_agent: nil })
+    end
+  end
+
+  describe "#submit_answers" do
+    before do
+      post form_submit_answers_path(2, 1)
+    end
+
+    it "Logs the form_check_answers event" do
+      expect(EventLogger).to have_received(:log).with("form_submission", { form: "Form name", method: "POST", url: "http://www.example.com/form/2/submit_answers.1", user_agent: nil })
     end
   end
 end
