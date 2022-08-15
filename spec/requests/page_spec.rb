@@ -6,6 +6,7 @@ RSpec.describe "Page Controller", type: :request do
       id: 2,
       name: "Form",
       submission_email: "submission@email.com",
+      start_page: 1,
     }.to_json
   end
 
@@ -80,6 +81,40 @@ RSpec.describe "Page Controller", type: :request do
       it "Redirects to the check your answers page" do
         post submit_form_page_path(2, 1, params: { question: { text: "answer text" }, changing_existing_answer: true })
         expect(response).to redirect_to(form_check_your_answers_path(2))
+      end
+
+      it "Logs the change_answer_page_submission event" do
+        expect(EventLogger).to receive(:log).with("change_answer_page_submission",
+                                                  { form: "Form",
+                                                    method: "POST",
+                                                    question_text: "Question one",
+                                                    url: "http://www.example.com/form/2/1/submit?changing_existing_answer=true&question%5Btext%5D=answer+text",
+                                                    user_agent: nil })
+        post submit_form_page_path(2, 1, params: { question: { text: "answer text" }, changing_existing_answer: true })
+      end
+    end
+
+    context "with the first page" do
+      it "Logs the first_page_submission event" do
+        expect(EventLogger).to receive(:log).with("first_page_submission",
+                                                  { form: "Form",
+                                                    method: "POST",
+                                                    question_text: "Question one",
+                                                    url: "http://www.example.com/form/2/1/submit",
+                                                    user_agent: nil })
+        post submit_form_page_path(2, 1), params: { question: { text: "answer text" } }
+      end
+    end
+
+    context "with a subsequent page" do
+      it "Logs the first_page_submission event" do
+        expect(EventLogger).to receive(:log).with("page_submission",
+                                                  { form: "Form",
+                                                    method: "POST",
+                                                    question_text: "Question two",
+                                                    url: "http://www.example.com/form/2/2/submit",
+                                                    user_agent: nil })
+        post submit_form_page_path(2, 2), params: { question: { text: "answer text" } }
       end
     end
 

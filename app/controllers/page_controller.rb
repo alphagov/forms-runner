@@ -30,6 +30,7 @@ class PageController < ApplicationController
     form_context = FormContext.new(session, @form)
     if @question.valid?
       form_context.store_answer(@page, @question.serializable_hash)
+      log_page_submission(@form, @page, request, changing_existing_answer)
       if @page.has_next? && !@changing_existing_answer
         redirect_to form_page_path(@form.id, @page.next)
       else
@@ -69,5 +70,29 @@ private
 
   def question_params(question)
     params.require(:question).permit(*question.attribute_names)
+  end
+
+  def is_starting_form(form, page)
+    form.start_page == page.id
+  end
+
+  def log_page_submission(form, page, request, changing_existing_answer)
+    item_to_log = {
+      url: request&.url,
+      method: request&.method,
+      form: form&.name,
+      question_text: page&.question_text,
+      user_agent: request&.user_agent,
+    }
+
+    log_event = if changing_existing_answer
+                  "change_answer_page_submission"
+                elsif is_starting_form(form, page)
+                  "first_page_submission"
+                else
+                  "page_submission"
+                end
+
+    EventLogger.log(log_event, item_to_log)
   end
 end
