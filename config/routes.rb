@@ -11,7 +11,7 @@ Rails.application.routes.draw do
     get "/:page_id/change" => "page#show", as: :change_answer, defaults: { changing_existing_answer: true }
 
     resources :page, only: %i[show create], path: "/", param: :page_id do
-      post :submit, on: :member
+      post :save, on: :member
     end
   end
 

@@ -61,7 +61,7 @@ RSpec.describe "Page Controller", type: :request do
 
       it "Passes the changing answers parameter in its submit request" do
         get form_change_answer_path(2, 1)
-        expect(response.body).to include(submit_form_page_path(2, 1, changing_existing_answer: true))
+        expect(response.body).to include(save_form_page_path(2, 1, changing_existing_answer: true))
       end
     end
 
@@ -71,56 +71,56 @@ RSpec.describe "Page Controller", type: :request do
     end
   end
 
-  describe "#submit" do
+  describe "#save" do
     it "Redirects to the next page" do
-      post submit_form_page_path(2, 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
+      post save_form_page_path(2, 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
       expect(response).to redirect_to(form_page_path(2, 2))
     end
 
     context "when changing an existing answer" do
       it "Redirects to the check your answers page" do
-        post submit_form_page_path(2, 1, params: { question: { text: "answer text" }, changing_existing_answer: true })
+        post save_form_page_path(2, 1, params: { question: { text: "answer text" }, changing_existing_answer: true })
         expect(response).to redirect_to(form_check_your_answers_path(2))
       end
 
-      it "Logs the change_answer_page_submission event" do
-        expect(EventLogger).to receive(:log).with("change_answer_page_submission",
+      it "Logs the change_answer_page_save event" do
+        expect(EventLogger).to receive(:log).with("change_answer_page_save",
                                                   { form: "Form",
                                                     method: "POST",
                                                     question_text: "Question one",
-                                                    url: "http://www.example.com/form/2/1/submit?changing_existing_answer=true&question%5Btext%5D=answer+text",
+                                                    url: "http://www.example.com/form/2/1/save?changing_existing_answer=true&question%5Btext%5D=answer+text",
                                                     user_agent: nil })
-        post submit_form_page_path(2, 1, params: { question: { text: "answer text" }, changing_existing_answer: true })
+        post save_form_page_path(2, 1, params: { question: { text: "answer text" }, changing_existing_answer: true })
       end
     end
 
     context "with the first page" do
-      it "Logs the first_page_submission event" do
-        expect(EventLogger).to receive(:log).with("first_page_submission",
+      it "Logs the first_page_save event" do
+        expect(EventLogger).to receive(:log).with("first_page_save",
                                                   { form: "Form",
                                                     method: "POST",
                                                     question_text: "Question one",
-                                                    url: "http://www.example.com/form/2/1/submit",
+                                                    url: "http://www.example.com/form/2/1/save",
                                                     user_agent: nil })
-        post submit_form_page_path(2, 1), params: { question: { text: "answer text" } }
+        post save_form_page_path(2, 1), params: { question: { text: "answer text" } }
       end
     end
 
     context "with a subsequent page" do
-      it "Logs the first_page_submission event" do
-        expect(EventLogger).to receive(:log).with("page_submission",
+      it "Logs the first_page_save event" do
+        expect(EventLogger).to receive(:log).with("page_save",
                                                   { form: "Form",
                                                     method: "POST",
                                                     question_text: "Question two",
-                                                    url: "http://www.example.com/form/2/2/submit",
+                                                    url: "http://www.example.com/form/2/2/save",
                                                     user_agent: nil })
-        post submit_form_page_path(2, 2), params: { question: { text: "answer text" } }
+        post save_form_page_path(2, 2), params: { question: { text: "answer text" } }
       end
     end
 
     context "with the final page" do
       it "Redirects to the check your answers page" do
-        post submit_form_page_path(2, 2), params: { question: { text: "answer text" } }
+        post save_form_page_path(2, 2), params: { question: { text: "answer text" } }
         expect(response).to redirect_to(form_check_your_answers_path(2))
       end
     end

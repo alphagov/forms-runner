@@ -19,7 +19,7 @@ class PageController < ApplicationController
     @question = question_klass.new unless @question&.valid?
   end
 
-  def submit
+  def save
     changing_existing_answer
     page_id = params.require(:page_id)
     @page = @pages.find { |p| p.id == page_id.to_i }
@@ -30,7 +30,7 @@ class PageController < ApplicationController
     form_context = FormContext.new(session, @form)
     if @question.valid?
       form_context.store_answer(@page, @question.serializable_hash)
-      log_page_submission(@form, @page, request, changing_existing_answer)
+      log_page_save(@form, @page, request, changing_existing_answer)
       if @page.has_next? && !@changing_existing_answer
         redirect_to form_page_path(@form.id, @page.next)
       else
@@ -76,7 +76,7 @@ private
     form.start_page == page.id
   end
 
-  def log_page_submission(form, page, request, changing_existing_answer)
+  def log_page_save(form, page, request, changing_existing_answer)
     item_to_log = {
       url: request&.url,
       method: request&.method,
@@ -86,11 +86,11 @@ private
     }
 
     log_event = if changing_existing_answer
-                  "change_answer_page_submission"
+                  "change_answer_page_save"
                 elsif is_starting_form(form, page)
-                  "first_page_submission"
+                  "first_page_save"
                 else
-                  "page_submission"
+                  "page_save"
                 end
 
     EventLogger.log(log_event, item_to_log)

@@ -6,7 +6,7 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full">
-    <%= form_with model: @question, url: submit_form_page_path(@page.form_id, @page.id, :changing_existing_answer => @changing_existing_answer), scope: :question, builder: GOVUKDesignSystemFormBuilder::FormBuilder, method: :post do |form| %>
+    <%= form_with model: @question, url: save_form_page_path(@page.form_id, @page.id, :changing_existing_answer => @changing_existing_answer), scope: :question, builder: GOVUKDesignSystemFormBuilder::FormBuilder, method: :post do |form| %>
       <% if @question&.errors&.any? %>
         <%= form.govuk_error_summary %>
       <% end %>
