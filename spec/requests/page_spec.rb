@@ -18,22 +18,29 @@ RSpec.describe "Page Controller", type: :request do
         answer_type: "single_line",
         hint_text: "",
         next: 2,
-        question_short_name: nil
+        question_short_name: nil,
       },
       {
         id: 2,
         question_text: "Question two",
         hint_text: "Q2 hint text",
         answer_type: "single_line",
-        question_short_name: nil
+        question_short_name: nil,
       },
     ].to_json
   end
 
+  let(:req_headers) do
+    {
+      "X-API-Token" => ENV["API_KEY"],
+      "Accept" => "application/json",
+    }
+  end
+
   before do
     ActiveResource::HttpMock.respond_to do |mock|
-      mock.get "/api/v1/forms/2", {}, form_data, 200
-      mock.get "/api/v1/forms/2/pages", {}, pages_data, 200
+      mock.get "/api/v1/forms/2", req_headers, form_data, 200
+      mock.get "/api/v1/forms/2/pages", req_headers, pages_data, 200
     end
   end
 
@@ -77,8 +84,8 @@ RSpec.describe "Page Controller", type: :request do
       expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
     end
 
-    context 'with no questions answered' do
-      it 'redirects if a later page is requested' do
+    context "with no questions answered" do
+      it "redirects if a later page is requested" do
         get check_your_answers_path(2)
         expect(response.status).to eq(302)
         expect(response.location).to eq(form_page_url(2, 1))

@@ -5,7 +5,7 @@ RSpec.describe QuestionRegister do
   it "returns a class given a valid answer_type" do
     %i[date single_line address email national_insurance_number phone_number].each do |type|
       page = OpenStruct.new(answer_type: type)
-      expect { described_class.from_page(page) }.to_not raise_error
+      expect { described_class.from_page(page) }.not_to raise_error
     end
   end
 

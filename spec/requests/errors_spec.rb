@@ -35,9 +35,16 @@ RSpec.describe "Errors", type: :request do
 
     let(:notify_service) { instance_double(NotifyService) }
 
+    let(:req_headers) do
+      {
+        "X-API-Token" => ENV["API_KEY"],
+        "Accept" => "application/json",
+      }
+    end
+
     before do
       ActiveResource::HttpMock.respond_to do |mock|
-        mock.get "/api/v1/forms/2", {}, form_response_data, 200
+        mock.get "/api/v1/forms/2", req_headers, form_response_data, 200
       end
 
       allow(notify_service).to receive(:send_email).and_throw("Oh no!").with(any_args)
