@@ -1,6 +1,7 @@
 module Forms
   class SubmitAnswersController < FormController
     def submit_answers
+      EventLogger.log_form_event(current_context, request, "submission")
       submit_form(answers)
       current_context.clear
       redirect_to :form_submitted
