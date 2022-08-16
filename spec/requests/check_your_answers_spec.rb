@@ -30,17 +30,10 @@ RSpec.describe "Check Your Answers Controller", type: :request do
     ].to_json
   end
 
-  let(:req_headers) do
-    {
-      "X-API-Token" => ENV["API_KEY"],
-      "Accept" => "application/json",
-    }
-  end
-
   before do
     ActiveResource::HttpMock.respond_to do |mock|
-      mock.get "/api/v1/forms/2", req_headers, form_data, 200
-      mock.get "/api/v1/forms/2/pages", req_headers, pages_data, 200
+      mock.get "/api/v1/forms/2", {}, form_data, 200
+      mock.get "/api/v1/forms/2/pages", {}, pages_data, 200
     end
   end
 

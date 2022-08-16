@@ -11,4 +11,3 @@ applications:
     RACK_ENV: production
     API_BASE: ((API_BASE))
     NOTIFY_API_KEY: ((NOTIFY_API_KEY))
-    API_KEY: ((API_KEY))
