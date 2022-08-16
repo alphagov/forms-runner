@@ -1,5 +1,5 @@
 class Context
-  attr_reader :form_name
+  attr_reader :form_name, :form_start_page
 
   def initialize(form:, store:)
     @form_context = FormContext.new(store)
@@ -9,6 +9,7 @@ class Context
     @completed_steps = @journey.completed_steps
     @form_id = form.id
     @form_name = form.name
+    @form_start_page = form.start_page
   end
 
   def find_or_create(page_slug)

@@ -7,11 +7,12 @@ module Forms
       back_link(@step.page_slug)
     end
 
-    def submit
+    def save
       page_params = params.require(:question).permit(*@step.params)
       @step.update!(page_params)
 
       if current_context.save_step(@step)
+        log_page_save(@step, request, changing_existing_answer)
         redirect_to next_page
       else
         render :show
@@ -46,6 +47,22 @@ module Forms
       else
         form_page_path(@step.form_id, @step.next_page_slug)
       end
+    end
+
+    def is_starting_form(step)
+      current_context.form_start_page == step.id
+    end
+
+    def log_page_save(step, request, changing_existing_answer)
+      log_event = if changing_existing_answer
+                    "change_answer_page_save"
+                  elsif is_starting_form(step)
+                    "first_page_save"
+                  else
+                    "page_save"
+                  end
+
+      EventLogger.log_page_event(current_context, step, request, log_event)
     end
   end
 end
