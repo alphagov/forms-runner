@@ -4,16 +4,15 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root "home#index"
 
-  resources :form, only: %i[show] do
-    get :check_your_answers
-    get :submitted
-    post :submit_answers
-    get "/:page_id/change" => "page#show", as: :change_answer, defaults: { changing_existing_answer: true }
+  get "/form/:id" => "form#show", as: :form
 
-    resources :page, only: %i[show create], path: "/", param: :page_id do
-      post :save, on: :member
-    end
-  end
+  get "/form/:form_id/check_your_answers" => "forms/check_your_answers#show", as: :check_your_answers
+  post "/form/:form_id/submit_answers" => "forms/submit_answers#submit_answers", as: :form_submit_answers
+  get "/form/:form_id/submitted" => "forms/submitted#submitted", as: :form_submitted
+
+  get "/form/:form_id/:page_slug/change" => "forms/page#show", as: :form_change_answer, defaults: { changing_existing_answer: true }
+  get "/form/:form_id/:page_slug" => "forms/page#show", as: :form_page
+  post "/form/:form_id/:page_slug" => "forms/page#submit", as: :submit_form_page
 
   match "/404", to: "errors#not_found", via: :all
   match "/500", to: "errors#internal_server_error", via: :all

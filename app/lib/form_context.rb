@@ -1,34 +1,30 @@
 class FormContext
   ROOT_KEY = :answers
-  def initialize(store, form)
+  def initialize(store)
     @store = store
     @store[ROOT_KEY] ||= {}
-
-    @form_key = form.id.to_s
-    @store[ROOT_KEY][@form_key] ||= {}
-
-    # @form_store = @store[ROOT_KEY][@form_key]
   end
 
-  def store_answer(page, answer)
-    @store[ROOT_KEY][@form_key][page_key(page)] = answer
+  def save_step(step, answer)
+    @store[ROOT_KEY][form_key(step)] ||= {}
+    @store[ROOT_KEY][form_key(step)][page_key(step)] = answer
   end
 
-  def get_stored_answer(page)
-    @store[ROOT_KEY][@form_key][page_key(page)]
+  def get_stored_answer(step)
+    @store.dig(ROOT_KEY, form_key(step), page_key(step))
   end
 
-  def clear_answers
-    @store[ROOT_KEY][@form_key] = nil
-  end
-
-  def answers
-    @store[ROOT_KEY][@form_key] || {}
+  def clear(form_id)
+    @store[ROOT_KEY][form_id.to_s] = nil
   end
 
 private
 
-  def page_key(page)
-    page.id.to_s
+  def page_key(step)
+    step.page_id.to_s
+  end
+
+  def form_key(step)
+    step.form_id.to_s
   end
 end

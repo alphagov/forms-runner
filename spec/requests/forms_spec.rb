@@ -6,7 +6,7 @@ RSpec.describe "Form controller", type: :request do
       id: 2,
       name: "Form name",
       submission_email: "submission@email.com",
-      start_page: 1,
+      start_page: "1",
     }.to_json
   end
 
@@ -17,7 +17,7 @@ RSpec.describe "Form controller", type: :request do
         question_text: "Question one",
         question_short_name: nil,
         answer_type: "date",
-        next: 2,
+        next: "2",
       },
       {
         id: 2,
@@ -26,6 +26,15 @@ RSpec.describe "Form controller", type: :request do
         answer_type: "date",
       },
     ].to_json
+  end
+
+  let(:session) do
+    {
+      answers: {
+        "1": { date_day: 1, date_month: 2, date_year: 2022 },
+        "2": { date_day: 1, date_month: 2, date_year: 2022 },
+      },
+    }
   end
 
   before do
@@ -89,20 +98,6 @@ RSpec.describe "Form controller", type: :request do
     it "Contains a change link for each page" do
       expect(response.body).to include(form_change_answer_path(2, 1))
       expect(response.body).to include(form_change_answer_path(2, 2))
-    end
-
-    it "Logs the form_check_answers event" do
-      expect(EventLogger).to have_received(:log).with("form_check_answers", { form: "Form name", method: "GET", url: "http://www.example.com/form/2/check_your_answers", user_agent: nil })
-    end
-  end
-
-  describe "#submit_answers" do
-    before do
-      post form_submit_answers_path(2, 1)
-    end
-
-    it "Logs the form_check_answers event" do
-      expect(EventLogger).to have_received(:log).with("form_submission", { form: "Form name", method: "POST", url: "http://www.example.com/form/2/submit_answers.1", user_agent: nil })
     end
   end
 end
