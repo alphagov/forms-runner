@@ -6,6 +6,7 @@ module Forms
       previous_step = current_context.previous_step("check_your_answers")
       @back_link = form_page_path(current_context.form, previous_step)
       @rows = check_your_answers_rows
+      EventLogger.log_form_event(current_context, request, "check_answers")
     end
 
   private

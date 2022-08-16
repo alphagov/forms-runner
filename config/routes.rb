@@ -12,7 +12,7 @@ Rails.application.routes.draw do
 
   get "/form/:form_id/:page_slug/change" => "forms/page#show", as: :form_change_answer, defaults: { changing_existing_answer: true }
   get "/form/:form_id/:page_slug" => "forms/page#show", as: :form_page
-  post "/form/:form_id/:page_slug" => "forms/page#submit", as: :submit_form_page
+  post "/form/:form_id/:page_slug" => "forms/page#save", as: :save_form_page
 
   match "/404", to: "errors#not_found", via: :all
   match "/500", to: "errors#internal_server_error", via: :all

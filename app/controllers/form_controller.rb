@@ -3,7 +3,7 @@ class FormController < ApplicationController
     @form = Form.find(params.require(:id))
     if @form.start_page
       redirect_to form_page_path(params.require(:id), @form.start_page)
-      log_form_event(@form, request, "visit")
+      EventLogger.log_form_event(Context.new(form: @form, store: session), request, "visit")
     end
   end
 

@@ -42,7 +42,6 @@ RSpec.describe "Form controller", type: :request do
       allow(EventLogger).to receive(:log).at_least(:once)
       mock.get "/api/v1/forms/2", {}, form_response_data, 200
       mock.get "/api/v1/forms/2/pages", {}, pages_data, 200
-      mock.get "/api/v1/forms/2/pages", {}, pages_data, 200
     end
   end
 
@@ -82,22 +81,13 @@ RSpec.describe "Form controller", type: :request do
     end
   end
 
-  describe "#check_your_answers" do
+  describe "#submit_answers" do
     before do
-      get form_check_your_answers_path(2)
+      post form_submit_answers_path(2, 1)
     end
 
-    it "Displays a back link to the last page of the form" do
-      expect(response.body).to include(form_page_path(2, 2))
-    end
-
-    it "Returns the correct X-Robots-Tag header" do
-      expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
-    end
-
-    it "Contains a change link for each page" do
-      expect(response.body).to include(form_change_answer_path(2, 1))
-      expect(response.body).to include(form_change_answer_path(2, 2))
+    it "Logs the form_submission event" do
+      expect(EventLogger).to have_received(:log).with("form_submission", { form: "Form name", method: "POST", url: "http://www.example.com/form/2/submit_answers.1", user_agent: nil })
     end
   end
 end
