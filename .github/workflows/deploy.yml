@@ -39,4 +39,5 @@ jobs:
           cf push --strategy rolling \
             --var PAAS_ENVIRONMENT=dev \
             --var API_BASE=${{ secrets.API_BASE }} \
+            --var API_KEY=${{ secrets.API_KEY }} \
             --var NOTIFY_API_KEY=${{ secrets.NOTIFY_API_KEY }}

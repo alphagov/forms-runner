@@ -47,6 +47,7 @@ use the 'api intergration' tab on notify dashboard to check emails sent.
 | `SENTRY_DSN`          | The DSN provided by Sentry                                   |
 | `API_BASE`            | The base url for the API - E.g. `http://localhost:9090`      |
 | `SERVICE_UNAVAILABLE` | All pages will render 'Service unavailable' if set to `true` |
+| `API_KEY`             | The API key for authentication                               |
 
 ### Running the app
 
