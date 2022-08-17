@@ -5,7 +5,8 @@ module Forms
       submit_form(answers)
       current_context.clear
       redirect_to :form_submitted
-    rescue StandardError
+    rescue StandardError => exception
+      Sentry.capture_exception(exception)
       render "errors/submission_error", status: :internal_server_error
     end
 

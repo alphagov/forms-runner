@@ -24,7 +24,8 @@ module Forms
     def prepare_step
       page_slug = params.require(:page_slug)
       @step = current_context.find_or_create(page_slug)
-    rescue StepFactory::PageNotFoundError
+    rescue StepFactory::PageNotFoundError => exception
+      Sentry.capture_exception(exception)
       render "errors/not_found", status: :not_found
     end
 
