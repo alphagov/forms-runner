@@ -40,4 +40,5 @@ jobs:
             --var PAAS_ENVIRONMENT=dev \
             --var API_BASE=${{ secrets.API_BASE }} \
             --var API_KEY=${{ secrets.API_KEY }} \
+            --var SENTRY_DSN=${{ secrets.SENTRY_DSN }} \
             --var NOTIFY_API_KEY=${{ secrets.NOTIFY_API_KEY }}

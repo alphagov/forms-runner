@@ -1,14 +1,15 @@
 ---
 applications:
-- name: forms-runner-((PAAS_ENVIRONMENT))
-  memory: 256M
-  command: bin/rails server
-  services:
-    - forms-runner-((PAAS_ENVIRONMENT))-redis
-    - forms-runner-((PAAS_ENVIRONMENT))-splunk
-  env:
-    RAILS_ENV: production
-    RACK_ENV: production
-    API_BASE: ((API_BASE))
-    API_KEY: ((API_KEY))
-    NOTIFY_API_KEY: ((NOTIFY_API_KEY))
+  - name: forms-runner-((PAAS_ENVIRONMENT))
+    memory: 256M
+    command: bin/rails server
+    services:
+      - forms-runner-((PAAS_ENVIRONMENT))-redis
+      - forms-runner-((PAAS_ENVIRONMENT))-splunk
+    env:
+      RAILS_ENV: production
+      RACK_ENV: production
+      API_BASE: ((API_BASE))
+      API_KEY: ((API_KEY))
+      NOTIFY_API_KEY: ((NOTIFY_API_KEY))
+      PAAS_ENVIRONMENT: ((PAAS_ENVIRONMENT))
