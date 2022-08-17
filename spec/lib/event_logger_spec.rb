@@ -6,7 +6,7 @@ RSpec.describe EventLogger do
     Page.new({
       id: 1,
       question_text: "Question one",
-    answer_type: "single_line",
+      answer_type: "single_line",
       next: 2,
       question_short_name: nil,
     })
