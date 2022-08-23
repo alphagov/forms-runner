@@ -1,6 +1,6 @@
 module Forms
   class PageController < FormController
-    before_action :prepare_step, :changing_existing_answer
+    before_action :prepare_step, :changing_existing_answer, :set_privacy_policy_url
 
     def show
       redirect_to form_page_path(@step.form_id, current_context.next_page_slug) unless current_context.can_visit?(@step.page_slug)
@@ -64,6 +64,10 @@ module Forms
                   end
 
       EventLogger.log_page_event(current_context, step, request, log_event)
+    end
+
+    def set_privacy_policy_url
+      @privacy_policy_url = current_context.privacy_policy_url
     end
   end
 end

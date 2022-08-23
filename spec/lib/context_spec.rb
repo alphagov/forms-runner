@@ -28,7 +28,7 @@ RSpec.describe Context do
   end
 
   let(:form) do
-    f = Form.new({ id: 1, name: "Form", submission_email: "jimbo@example.gov.uk", start_page: "1", pages: })
+    f = Form.new({ id: 1, name: "Form", submission_email: "jimbo@example.gov.uk", start_page: "1", privacy_policy_url: "http://www.example.gov.uk", pages: })
     f.pages[0].form = f
     f.pages[1].form = f
     f

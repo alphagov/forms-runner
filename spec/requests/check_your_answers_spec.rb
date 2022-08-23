@@ -7,6 +7,7 @@ RSpec.describe "Check Your Answers Controller", type: :request do
       name: "Form",
       submission_email: "submission@email.com",
       start_page: 1,
+      privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
     }.to_json
   end
 
