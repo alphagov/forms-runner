@@ -7,6 +7,7 @@ RSpec.describe "Page Controller", type: :request do
       name: "Form",
       submission_email: "submission@email.com",
       start_page: 1,
+      privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
     }.to_json
   end
 
@@ -58,6 +59,11 @@ RSpec.describe "Page Controller", type: :request do
     it "Displays the question text on the page" do
       get form_page_path(2, 1)
       expect(response.body).to include("Question one")
+    end
+
+    it "Displays the privacy policy link on the page" do
+      get form_page_path(2, 1)
+      expect(response.body).to include("Privacy policy")
     end
 
     context "with a page that has a previous page" do

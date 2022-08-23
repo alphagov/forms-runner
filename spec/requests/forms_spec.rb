@@ -7,6 +7,7 @@ RSpec.describe "Form controller", type: :request do
       name: "Form name",
       submission_email: "submission@email.com",
       start_page: "1",
+      privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
     }.to_json
   end
 
@@ -74,6 +75,7 @@ RSpec.describe "Form controller", type: :request do
           name: "Form name",
           submission_email: "submission@email.com",
           start_page: nil,
+          privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
         }.to_json
       end
 
