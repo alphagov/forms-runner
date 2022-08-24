@@ -1,0 +1,28 @@
+{
+  "redis": [
+    {
+      "binding_guid": "d003755a-352d-4bc9-b427-f931570f8cab",
+      "binding_name": null,
+      "credentials": {
+        "host": "redis.example.org",
+        "name": "cf-name",
+        "password": "password",
+        "port": 6379,
+        "tls_enabled": true,
+        "uri": "rediss://:password@redis.example.org:6379"
+      },
+      "instance_guid": "24989eb3-0b52-48f5-9538-13017082e26c",
+      "instance_name": "forms-runner-redis",
+      "label": "redis",
+      "name": "forms-runner-redis",
+      "plan": "micro-6.x",
+      "provider": null,
+      "syslog_drain_url": null,
+      "tags": [
+        "elasticache",
+        "redis"
+      ],
+      "volume_mounts": []
+    }
+  ]
+}

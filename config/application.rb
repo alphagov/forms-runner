@@ -33,35 +33,6 @@ module FormsRunner
     config.generators do |g|
       g.test_framework :rspec
     end
-    #
-    # Get redis url based on VCAP_SERVICES or REDIS_URL depending on environment
-    # GovPaaS provides the URI in VCAP_SERVICES
-
-    if ENV["VCAP_SERVICES"]
-      vcap_services = JSON.parse(ENV["VCAP_SERVICES"])
-      if vcap_services["redis"]
-        host = vcap_services["redis"][0]["credentials"]["host"]
-        password = vcap_services["redis"][0]["credentials"]["password"]
-        port = vcap_services["redis"][0]["credentials"]["port"]
-
-        config.session_store :redis_session_store,
-                             key: "_app_session_key",
-                             redis: {
-                               host:,
-                               password:,
-                               port:,
-                               ssl: true,
-                             },
-                             on_redis_down: ->(_e, _env, _sid) { Rails.logger.debug "Redis down" }
-      end
-    elsif ENV["REDIS_URL"]
-      config.session_store :redis_session_store,
-                           key: "_app_session_key",
-                           redis: {
-                             url: ENV["REDIS_URL"],
-                           },
-                           on_redis_down: ->(_e, _env, _sid) { Rails.logger.debug "Redis down" }
-    end
 
     # Use custom error pages
     config.exceptions_app = routes
