@@ -1,5 +1,6 @@
 require "pry"
 require "simplecov"
+require "climate_control"
 
 SimpleCov.formatters = [
   SimpleCov::Formatter::HTMLFormatter,

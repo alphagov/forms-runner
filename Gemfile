@@ -90,6 +90,7 @@ group :test do
   gem "selenium-webdriver"
   gem "simplecov"
   gem "webdrivers"
+  gem "climate_control"
 end
 
 gem "bundler-audit", "~> 0.9.0"
