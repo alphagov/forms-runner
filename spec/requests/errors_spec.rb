@@ -8,6 +8,13 @@ RSpec.describe "Errors", type: :request do
     end
   end
 
+  describe "root path" do
+    it "returns http code 404" do
+      get "/"
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
   describe "Internal server error" do
     it "returns http code 500" do
       get "/500"
