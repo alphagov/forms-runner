@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   get :ping, controller: :heartbeat
 
   # Defines the root path route ("/")
-  root "home#index"
+  root "errors#not_found"
 
   get "/form/:id" => "form#show", as: :form
 
