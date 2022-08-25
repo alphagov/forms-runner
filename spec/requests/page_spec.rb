@@ -63,7 +63,7 @@ RSpec.describe "Page Controller", type: :request do
 
     it "Displays the privacy policy link on the page" do
       get form_page_path(2, 1)
-      expect(response.body).to include("Privacy policy")
+      expect(response.body).to include("Privacy")
     end
 
     context "with a page that has a previous page" do
