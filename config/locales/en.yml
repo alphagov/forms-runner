@@ -41,7 +41,7 @@ en:
               blank: Enter an answer
               too_long: The answer must be shorter than 500 characters
   footer:
-    privacy_policy: Privacy policy
+    privacy_policy: Privacy
   form:
     no_pages: This form has no pages
   phase_banner:
