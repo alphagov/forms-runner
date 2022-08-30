@@ -5,7 +5,7 @@ RSpec.describe Form, type: :model do
 
   let(:pages_data) do
     [
-      { id: 9, next: 10, answer_type: "date", question_text: "Question one" },
+      { id: 9, next_page: 10, answer_type: "date", question_text: "Question one" },
       { id: 10, answer_type: "address", question_text: "Question two" },
     ].to_json
   end
@@ -32,7 +32,7 @@ RSpec.describe Form, type: :model do
     it "returns the pages for a form" do
       pages = described_class.find(1).pages
       expect(pages.length).to eq(2)
-      expect(pages[0]).to have_attributes(id: 9, next: 10, answer_type: "date", question_text: "Question one")
+      expect(pages[0]).to have_attributes(id: 9, next_page: 10, answer_type: "date", question_text: "Question one")
       expect(pages[1]).to have_attributes(id: 10, answer_type: "address", question_text: "Question two")
     end
   end

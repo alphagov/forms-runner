@@ -29,7 +29,7 @@ class StepFactory
     page = @pages.find { |p| p.id.to_s == page_slug }
     raise PageNotFoundError, "Can't find page #{page_slug}" if page.nil?
 
-    next_page_slug = page.has_next? ? page.next.to_s : CHECK_YOUR_ANSWERS_PAGE
+    next_page_slug = page.has_next_page? ? page.next_page.to_s : CHECK_YOUR_ANSWERS_PAGE
     question = QuestionRegister.from_page(page)
 
     Step.new(question:, page_id: page.id, form_id: @form_id, next_page_slug:, page_slug:)

@@ -1,6 +1,6 @@
 require "spec_helper"
 
-require_relative "../../app/lib/redis_config.rb"
+require_relative "../../app/lib/redis_config"
 
 RSpec.describe RedisConfig do
   let(:vcap_env) { nil }
@@ -13,34 +13,33 @@ RSpec.describe RedisConfig do
   end
 
   context "when VCAP_SERVICES is set" do
-    let(:vcap_env) { File.read(File.join('spec', 'fixtures', "vcap_example.json")) }
+    let(:vcap_env) { File.read(File.join("spec", "fixtures", "vcap_example.json")) }
 
     it "extracts the uri from JSON" do
-      expect(RedisConfig.redis_url).to eq("rediss://:password@redis.example.org:6379")
+      expect(described_class.redis_url).to eq("rediss://:password@redis.example.org:6379")
     end
-
   end
 
   context "when REDIS_URL is set" do
     let(:redis_url_env) { "redis_url_value" }
 
     it "equals REDIS_URL" do
-      expect(RedisConfig.redis_url).to eq("redis_url_value")
+      expect(described_class.redis_url).to eq("redis_url_value")
     end
   end
 
   context "when VCAP_SERVICES and REDIS_URL are set" do
-    let(:vcap_env) { File.read(File.join('spec', 'fixtures', "vcap_example.json")) }
+    let(:vcap_env) { File.read(File.join("spec", "fixtures", "vcap_example.json")) }
     let(:redis_url_env) { "redis_url_value" }
 
     it "uses the VCAP_SERVICES url" do
-      expect(RedisConfig.redis_url).to eq("rediss://:password@redis.example.org:6379")
+      expect(described_class.redis_url).to eq("rediss://:password@redis.example.org:6379")
     end
   end
 
   context "when no redis url is set" do
     it "is nil" do
-      expect(RedisConfig.redis_url).to be_nil
+      expect(described_class.redis_url).to be_nil
     end
   end
 end

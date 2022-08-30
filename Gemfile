@@ -87,10 +87,10 @@ end
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
+  gem "climate_control"
   gem "selenium-webdriver"
   gem "simplecov"
   gem "webdrivers"
-  gem "climate_control"
 end
 
 gem "bundler-audit", "~> 0.9.0"

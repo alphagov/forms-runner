@@ -10,7 +10,7 @@ class Page < ActiveResource::Base
     @prefix_options[:form_id]
   end
 
-  def has_next?
-    @attributes.include?("next") && !@attributes["next"].nil?
+  def has_next_page?
+    @attributes.include?("next_page") && !@attributes["next_page"].nil?
   end
 end
