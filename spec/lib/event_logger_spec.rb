@@ -7,7 +7,7 @@ RSpec.describe EventLogger do
       id: 1,
       question_text: "Question one",
       answer_type: "single_line",
-      next: 2,
+      next_page: 2,
       question_short_name: nil,
     })
   end

@@ -12,7 +12,7 @@ RSpec.describe Context do
         question_text: "Question one",
         answer_type: "single_line",
         hint_text: "q1 hint",
-        next: 2,
+        next_page: 2,
         question_short_name: nil,
         form: nil,
       }),

@@ -18,7 +18,7 @@ RSpec.describe "Page Controller", type: :request do
         question_text: "Question one",
         answer_type: "single_line",
         hint_text: "",
-        next: 2,
+        next_page: 2,
         question_short_name: nil,
       },
       {

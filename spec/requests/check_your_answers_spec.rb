@@ -19,7 +19,7 @@ RSpec.describe "Check Your Answers Controller", type: :request do
         question_short_name: "one",
         answer_type: "single_line",
         hint_text: "",
-        next: 2,
+        next_page: 2,
       },
       {
         id: 2,

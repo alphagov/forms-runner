@@ -7,7 +7,7 @@ class Form < ActiveResource::Base
   has_many :pages
 
   def last_page
-    pages.find { |p| !p.has_next? }
+    pages.find { |p| !p.has_next_page? }
   end
 
   def page_by_id(page_id)
