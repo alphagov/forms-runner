@@ -11,7 +11,7 @@ class NotifyService
       return nil
     end
 
-    timestamp = Time.now.zone
+    timestamp = Time.zone.now
     submission_time = timestamp.strftime("%H:%M:%S")
     submission_date = timestamp.strftime("%-d %B %Y")
 
