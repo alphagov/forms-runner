@@ -44,6 +44,8 @@ en:
     privacy_policy: Privacy
   form:
     no_pages: This form has no pages
+    submitted:
+      title: Your form has been submitted
   phase_banner:
     after_link: will help us improve it.
     before_link: This is a new service, your
