@@ -116,8 +116,7 @@ RSpec.describe "Page Controller", type: :request do
                                                   { form: "Form",
                                                     method: "POST",
                                                     question_text: "Question one",
-                                                    url: "http://www.example.com/form/2/1?changing_existing_answer=true&question%5Btext%5D=answer+text",
-                                                    user_agent: nil })
+                                                    url: "http://www.example.com/form/2/1?changing_existing_answer=true&question%5Btext%5D=answer+text" })
         post save_form_page_path(2, 1, params: { question: { text: "answer text" }, changing_existing_answer: true })
       end
     end
@@ -128,8 +127,7 @@ RSpec.describe "Page Controller", type: :request do
                                                   { form: "Form",
                                                     method: "POST",
                                                     question_text: "Question one",
-                                                    url: "http://www.example.com/form/2/1",
-                                                    user_agent: nil })
+                                                    url: "http://www.example.com/form/2/1" })
         post save_form_page_path(2, 1), params: { question: { text: "answer text" } }
       end
     end
@@ -140,8 +138,7 @@ RSpec.describe "Page Controller", type: :request do
                                                   { form: "Form",
                                                     method: "POST",
                                                     question_text: "Question two",
-                                                    url: "http://www.example.com/form/2/2",
-                                                    user_agent: nil })
+                                                    url: "http://www.example.com/form/2/2" })
         post save_form_page_path(2, 2), params: { question: { text: "answer text" } }
       end
     end
