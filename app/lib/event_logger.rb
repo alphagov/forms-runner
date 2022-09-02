@@ -8,7 +8,6 @@ class EventLogger
       url: request&.url,
       method: request&.method,
       form: context.form_name,
-      user_agent: request&.user_agent,
     }
 
     log("form_#{event}", item_to_log)
@@ -20,7 +19,6 @@ class EventLogger
       method: request&.method,
       form: context.form_name,
       question_text: page.question.question_text,
-      user_agent: request&.user_agent,
     }
 
     log(event.to_s, item_to_log)

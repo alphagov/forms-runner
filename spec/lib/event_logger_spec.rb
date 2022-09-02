@@ -15,7 +15,7 @@ RSpec.describe EventLogger do
   let(:context) { Context.new(form: Form.new({ id: 1, name: "Form", submission_email: "jimbo@example.gov.uk", start_page: "1", privacy_policy_url: "http://www.example.gov.uk/privacy_policy", pages: [page] }), store: {}) }
 
   let(:request) do
-    OpenStruct.new({ url: "http://example.gov.uk", method: "GET", user_agent: "agent" })
+    OpenStruct.new({ url: "http://example.gov.uk", method: "GET" })
   end
 
   let(:form_log_item) do
@@ -23,7 +23,6 @@ RSpec.describe EventLogger do
       url: "http://example.gov.uk",
       method: "GET",
       form: "Form",
-      user_agent: "agent",
     }
   end
 
@@ -33,7 +32,6 @@ RSpec.describe EventLogger do
       method: "GET",
       form: "Form",
       question_text: "Question one",
-      user_agent: "agent",
     }
   end
 

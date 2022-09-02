@@ -64,7 +64,7 @@ RSpec.describe "Form controller", type: :request do
       end
 
       it "Logs the form_visit event" do
-        expect(EventLogger).to have_received(:log).with("form_visit", { form: "Form name", method: "GET", url: "http://www.example.com/form/2", user_agent: nil })
+        expect(EventLogger).to have_received(:log).with("form_visit", { form: "Form name", method: "GET", url: "http://www.example.com/form/2" })
       end
     end
 
@@ -96,7 +96,7 @@ RSpec.describe "Form controller", type: :request do
     end
 
     it "Logs the form_submission event" do
-      expect(EventLogger).to have_received(:log).with("form_submission", { form: "Form name", method: "POST", url: "http://www.example.com/form/2/submit_answers.1", user_agent: nil })
+      expect(EventLogger).to have_received(:log).with("form_submission", { form: "Form name", method: "POST", url: "http://www.example.com/form/2/submit_answers.1" })
     end
   end
 end

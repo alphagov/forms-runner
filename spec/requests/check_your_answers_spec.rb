@@ -80,7 +80,7 @@ RSpec.describe "Check Your Answers Controller", type: :request do
       end
 
       it "Logs the form_check_answers event" do
-        expect(EventLogger).to have_received(:log).with("form_check_answers", { form: "Form", method: "GET", url: "http://www.example.com/form/2/check_your_answers", user_agent: nil })
+        expect(EventLogger).to have_received(:log).with("form_check_answers", { form: "Form", method: "GET", url: "http://www.example.com/form/2/check_your_answers" })
       end
     end
   end
