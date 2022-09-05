@@ -29,7 +29,12 @@
 
     <a href="#main-content" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
 
-    <%= govuk_header(service_name: @form.name) %>
+    <% if @current_context.present? %>
+      <%= govuk_header(service_name: @current_context.form_name) %>
+    <% else %>
+      <%= govuk_header %>
+    <% end %>
+
 
     <div class="govuk-width-container ">
       <%= govuk_phase_banner(tag: { text: "Beta" }) do %>
