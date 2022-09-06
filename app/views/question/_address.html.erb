@@ -1,4 +1,7 @@
-<%= form.govuk_fieldset legend: { text: page.question_text, tag: 'h1', size: 'l' }, hint: { text: page.hint_text } do %>
+<%= form.govuk_fieldset legend: { text: page.question_text, tag: 'h1', size: 'l' }, "aria-describedby": page.hint_text.present? ? "govuk-address-hint" : nil do %>
+  <% if page.hint_text.present? %>
+    <p id="govuk-address-hint" class="govuk-hint"><%= page.hint_text %></p>
+  <% end %>
   <%= form.govuk_text_field :address1, label: { text: "Address line 1" }, autocomplete: "address-line1" %>
   <%= form.govuk_text_field :address2, label: {  text: "Address line 2 (optional)"  }, autocomplete: "address-line2" %>
   <%= form.govuk_text_field :town_or_city, label: {  text: "Town or City" }, width: 'two-thirds', autocomplete: "address-level2" %>
