@@ -30,9 +30,9 @@
     <a href="#main-content" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
 
     <% if @current_context.present? %>
-      <%= govuk_header(service_name: @current_context.form_name) %>
+      <%= govuk_header(service_name: @current_context.form_name, homepage_url: "https://www.gov.uk/") %>
     <% else %>
-      <%= govuk_header %>
+      <%= govuk_header(homepage_url: "https://www.gov.uk/") %>
     <% end %>
 
 
