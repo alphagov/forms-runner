@@ -18,7 +18,7 @@ RSpec.describe "Form controller", type: :request do
         question_text: "Question one",
         question_short_name: nil,
         answer_type: "date",
-        next_page: "2",
+        next_page: 2,
       },
       {
         id: 2,
