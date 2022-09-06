@@ -1,4 +1,6 @@
 $govuk-images-path: "./images/";
 $govuk-fonts-path: "./fonts/";
+$govuk-new-link-styles: true;
+$govuk-global-styles: true;
 
 @import "govuk/all";

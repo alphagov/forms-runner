@@ -41,6 +41,8 @@ en:
               blank: Enter an answer
               too_long: The answer must be shorter than 500 characters
   footer:
+    accessibility_statement: Accessibility statement
+    helpful_links: Helpful links
     privacy_policy: Privacy
   form:
     no_pages: This form has no pages

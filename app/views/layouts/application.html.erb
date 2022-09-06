@@ -49,12 +49,12 @@
       </main>
     </div>
 
+    <% meta_links = {t("footer.accessibility_statement") => accessibility_statement_path} %>
     <% if @privacy_policy_url.present? %>
-      <%= govuk_footer meta_items_title: "Helpful links", meta_items: {t("footer.privacy_policy") => @privacy_policy_url} %>
-    <% else %>
-      <%= govuk_footer %>
-    <% end %>
+      <% meta_links[t("footer.privacy_policy")] = @privacy_policy_url %>
+    <% end -%>
 
+    <%= govuk_footer meta_items_title: t("footer.helpful_links"), meta_items: meta_links %>
 
     <%= javascript_include_tag "application" %>
   </body>
