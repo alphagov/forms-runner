@@ -2,7 +2,7 @@
 <html lang="en" class="govuk-template ">
   <head>
     <meta charset="utf-8">
-    <title>GOV.UK Forms Runner</title>
+    <title><%= page_title %></title>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#0b0c0c">
     <%= csrf_meta_tags %>
@@ -30,7 +30,7 @@
     <a href="#main-content" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
 
     <% if @current_context.present? %>
-      <%= govuk_header(service_name: @current_context.form_name, homepage_url: "https://www.gov.uk/") %>
+      <%= govuk_header(service_name: @current_context.form_name, homepage_url: "https://www.gov.uk/", service_url: form_path(@current_context.form)) %>
     <% else %>
       <%= govuk_header(homepage_url: "https://www.gov.uk/") %>
     <% end %>

@@ -1,3 +1,5 @@
+<% set_page_title("#{@page.question_text} - #{@form.name}") %>
+
 <h1 class="govuk-heading-l"><%= @form.name %></h1>
 <%= form_with(model: @page, url: form_page_path(@form, @page)) do |form| %>
   <% if @page&.errors.any? %>
