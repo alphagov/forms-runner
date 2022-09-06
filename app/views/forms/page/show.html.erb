@@ -1,3 +1,5 @@
+<% set_page_title(title_with_error_prefix("#{@step.question_text} - #{@current_context.form_name}", @step.question&.errors&.any?)) %>
+
 <% content_for :before_content do %>
   <% if @back_link.present? %>
     <%= link_to "Back", @back_link, class: "govuk-back-link" %>

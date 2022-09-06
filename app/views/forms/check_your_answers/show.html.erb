@@ -1,3 +1,5 @@
+<% set_page_title("Check your answers before submitting your form - #{@current_context.form_name}") %>
+
 <% content_for :before_content do %>
   <% if @back_link %>
     <%= link_to "Back", @back_link, class: "govuk-back-link" %>
