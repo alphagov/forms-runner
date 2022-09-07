@@ -7,4 +7,11 @@ RSpec.describe "Help pages", type: :request do
       expect(response).to have_http_status(:ok)
     end
   end
+
+  describe "Cookies page" do
+    it "returns http code 200" do
+      get cookies_path
+      expect(response).to have_http_status(:ok)
+    end
+  end
 end

@@ -8,6 +8,7 @@ Rails.application.routes.draw do
 
   get "/form/:id" => "form#show", as: :form
   get "/help/accessibility-statement" => "help#accessibility_statement", as: :accessibility_statement
+  get "/help/cookies" => "help#cookies", as: :cookies
 
   get "/form/:form_id/check_your_answers" => "forms/check_your_answers#show", as: :check_your_answers
   post "/form/:form_id/submit_answers" => "forms/submit_answers#submit_answers", as: :form_submit_answers

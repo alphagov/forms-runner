@@ -49,7 +49,7 @@
       </main>
     </div>
 
-    <% meta_links = {t("footer.accessibility_statement") => accessibility_statement_path} %>
+    <% meta_links = {t("footer.accessibility_statement") => accessibility_statement_path, t("footer.cookies") => cookies_path} %>
     <% if @privacy_policy_url.present? %>
       <% meta_links[t("footer.privacy_policy")] = @privacy_policy_url %>
     <% end -%>

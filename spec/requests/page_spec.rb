@@ -71,6 +71,11 @@ RSpec.describe "Page Controller", type: :request do
       expect(response.body).to include("Accessibility statement")
     end
 
+    it "Displays the Cookies link on the page" do
+      get form_page_path(2, 1)
+      expect(response.body).to include("Cookies")
+    end
+
     context "with a page that has a previous page" do
       it "Displays a link to the previous page" do
         get form_page_path(2, 2)

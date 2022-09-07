@@ -42,6 +42,7 @@ en:
               too_long: The answer must be shorter than 500 characters
   footer:
     accessibility_statement: Accessibility statement
+    cookies: Cookies
     helpful_links: Helpful links
     privacy_policy: Privacy
   form:
