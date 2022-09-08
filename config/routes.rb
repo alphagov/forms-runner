@@ -6,6 +6,9 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root "errors#not_found"
 
+  match "/404", to: "errors#not_found", as: :not_found_page, via: :all
+  match "/500", to: "errors#internal_server_error", as: :server_error_page, via: :all
+
   get "/form/:id" => "form#show", as: :form
   get "/help/accessibility-statement" => "help#accessibility_statement", as: :accessibility_statement
   get "/help/cookies" => "help#cookies", as: :cookies
@@ -17,7 +20,4 @@ Rails.application.routes.draw do
   get "/form/:form_id/:page_slug/change" => "forms/page#show", as: :form_change_answer, defaults: { changing_existing_answer: true }
   get "/form/:form_id/:page_slug" => "forms/page#show", as: :form_page
   post "/form/:form_id/:page_slug" => "forms/page#save", as: :save_form_page
-
-  match "/404", to: "errors#not_found", via: :all
-  match "/500", to: "errors#internal_server_error", via: :all
 end
