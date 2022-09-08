@@ -1,4 +1,8 @@
 class FormController < ApplicationController
+  rescue_from ActiveResource::ResourceNotFound do
+    redirect_to not_found_page_path
+  end
+
   def show
     @form = Form.find(params.require(:id))
     set_privacy_policy_url

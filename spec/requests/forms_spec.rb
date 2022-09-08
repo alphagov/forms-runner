@@ -11,6 +11,12 @@ RSpec.describe "Form controller", type: :request do
     }.to_json
   end
 
+  let(:no_data_found_response) do
+    {
+      "error": "not_found"
+    }
+  end
+
   let(:pages_data) do
     [
       {
@@ -50,43 +56,60 @@ RSpec.describe "Form controller", type: :request do
       allow(EventLogger).to receive(:log).at_least(:once)
       mock.get "/api/v1/forms/2", req_headers, form_response_data, 200
       mock.get "/api/v1/forms/2/pages", req_headers, pages_data, 200
-    end
+      mock.get "/api/v1/forms/9999", req_headers, no_data_found_response, 404
+     end
   end
 
   describe "#show" do
-    before do
-      get form_path(id: 2)
+    context "when a form exists" do
+      before do
+        get form_path(id: 2)
+      end
+
+      context "when the form has a start page" do
+        it "Redirects to the first page" do
+          expect(response).to redirect_to(form_page_path(2, 1))
+        end
+
+        it "Logs the form_visit event" do
+          expect(EventLogger).to have_received(:log).with("form_visit", { form: "Form name", method: "GET", url: "http://www.example.com/form/2" })
+        end
+      end
+
+      context "when the form has no start page" do
+        let(:form_response_data) do
+          {
+            id: 2,
+            name: "Form name",
+            submission_email: "submission@email.com",
+            start_page: nil,
+            privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
+          }.to_json
+        end
+
+        it "Displays the form show page" do
+          expect(response.status).to eq(200)
+          expect(response.body).to include("Form name")
+        end
+      end
+
+      it "Returns the correct X-Robots-Tag header" do
+        expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
+      end
     end
 
-    context "when the form has a start page" do
-      it "Redirects to the first page" do
-        expect(response).to redirect_to(form_page_path(2, 1))
+    context "when a form doesn't exists" do
+      before do
+        get form_path(id: 9999)
       end
 
-      it "Logs the form_visit event" do
-        expect(EventLogger).to have_received(:log).with("form_visit", { form: "Form name", method: "GET", url: "http://www.example.com/form/2" })
-      end
-    end
-
-    context "when the form has no start page" do
-      let(:form_response_data) do
-        {
-          id: 2,
-          name: "Form name",
-          submission_email: "submission@email.com",
-          start_page: nil,
-          privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
-        }.to_json
+      it "Redirects to the not found page" do
+        expect(response).to redirect_to(not_found_page_path)
       end
 
-      it "Displays the form show page" do
-        expect(response.status).to eq(200)
-        expect(response.body).to include("Form name")
+      it "returns 404" do
+        expect(response.status).to eq(302)
       end
-    end
-
-    it "Returns the correct X-Robots-Tag header" do
-      expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
     end
   end
 
