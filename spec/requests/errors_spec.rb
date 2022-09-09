@@ -15,6 +15,18 @@ RSpec.describe "Errors", type: :request do
     end
   end
 
+  describe "random non-exist path" do
+    it "returns http code 404" do
+      get "/random/string/"
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "renders the not found template" do
+      get "/random/string/"
+      expect(response.body).to include(I18n.t("not_found.title"))
+    end
+  end
+
   describe "Internal server error" do
     it "returns http code 500" do
       get "/500"
