@@ -1,6 +1,6 @@
 class FormController < ApplicationController
   rescue_from ActiveResource::ResourceNotFound do
-    redirect_to not_found_page_path
+    render template: "errors/not_found", status: :not_found
   end
 
   def show

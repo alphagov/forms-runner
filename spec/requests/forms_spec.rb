@@ -13,7 +13,7 @@ RSpec.describe "Form controller", type: :request do
 
   let(:no_data_found_response) do
     {
-      "error": "not_found"
+      "error": "not_found",
     }
   end
 
@@ -103,12 +103,12 @@ RSpec.describe "Form controller", type: :request do
         get form_path(id: 9999)
       end
 
-      it "Redirects to the not found page" do
-        expect(response).to redirect_to(not_found_page_path)
+      it "Render the not found page" do
+        expect(response.body).to include(I18n.t("not_found.title"))
       end
 
       it "returns 404" do
-        expect(response.status).to eq(302)
+        expect(response.status).to eq(404)
       end
     end
   end
