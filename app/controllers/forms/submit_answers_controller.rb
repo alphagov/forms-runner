@@ -18,7 +18,7 @@ module Forms
     end
 
     def answers
-      current_context.steps.map { |page| "# #{page.question_text}:\n#{page.show_answer}" }.join("\n\n---\n\n")
+      current_context.steps.map { |page| "# #{page.question_text}\n#{page.show_answer}" }.join("\n\n---\n\n")
     end
   end
 end
