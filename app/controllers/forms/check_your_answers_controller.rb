@@ -3,22 +3,27 @@ module Forms
     before_action :set_privacy_policy_url
 
     def show
-      return redirect_to form_page_path(current_context.form, current_context.next_page_slug) unless current_context.can_visit?("check_your_answers")
+      path_to_redirect = params[:preview] ? preview_form_page_path(current_context.form, current_context.next_page_slug) : form_page_path(current_context.form, current_context.next_page_slug)
+      return redirect_to path_to_redirect unless current_context.can_visit?("check_your_answers")
 
       previous_step = current_context.previous_step("check_your_answers")
-      @back_link = form_page_path(current_context.form, previous_step)
+      @back_link = params[:preview] ? preview_form_page_path(current_context.form, previous_step) : form_page_path(current_context.form, previous_step)
       @rows = check_your_answers_rows
-      EventLogger.log_form_event(current_context, request, "check_answers")
+      @submit_answers_path = params[:preview] ? preview_form_submit_answers_path : form_submit_answers_path
+      unless params[:preview]
+        EventLogger.log_form_event(current_context, request, "check_answers")
+      end
     end
 
   private
 
     def page_to_row(page)
+      change_answer_path = params[:preview] ? preview_form_change_answer_path(page.form_id, page.page_id) : form_change_answer_path(page.form_id, page.page_id)
       question_name = page.question_short_name.presence || page.question_text
       {
         key: { text: question_name },
         value: { text: page.show_answer },
-        actions: [{ href: form_change_answer_path(page.form_id, page.page_id), visually_hidden_text: question_name }],
+        actions: [{ href: change_answer_path, visually_hidden_text: question_name }],
       }
     end
 
