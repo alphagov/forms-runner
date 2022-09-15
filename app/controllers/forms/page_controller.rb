@@ -40,10 +40,18 @@ module Forms
     def back_link(page_slug)
       previous_step = current_context.previous_step(page_slug)
       if @changing_existing_answer
-        @back_link = params[:preview] ? preview_check_your_answers_path(form_id: current_context.form) : check_your_answers_path(form_id: current_context.form)
+        @back_link = changing_answer_path(current_context)
       elsif previous_step
-        @back_link = params[:preview] ? preview_form_page_path(@step.form_id, previous_step) : form_page_path(@step.form_id, previous_step)
+        @back_link = previous_step_path(previous_step)
       end
+    end
+
+    def changing_answer_path(context)
+      params[:preview] ? preview_check_your_answers_path(form_id: context.form) : check_your_answers_path(form_id: context.form)
+    end
+
+    def previous_step_path(previous_step)
+      params[:preview] ? preview_form_page_path(@step.form_id, previous_step) : form_page_path(@step.form_id, previous_step)
     end
 
     def next_page(preview)

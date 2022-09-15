@@ -7,10 +7,8 @@ class FormController < ApplicationController
     @form = Form.find(params.require(:id))
     set_privacy_policy_url
     if @form.start_page
-      if params[:preview]
-        redirect_to preview_form_page_path(params.require(:id), @form.start_page)
-      else
-        redirect_to form_page_path(params.require(:id), @form.start_page)
+      redirect_to start_page_path
+      unless params[:preview]
         EventLogger.log_form_event(Context.new(form: @form, store: session), request, "visit")
       end
     end
@@ -25,5 +23,9 @@ private
 
   def set_privacy_policy_url
     @privacy_policy_url = @form.privacy_policy_url
+  end
+
+  def start_page_path
+    params[:preview] ? preview_form_page_path(params.require(:id), @form.start_page) : form_page_path(params.require(:id), @form.start_page)
   end
 end
