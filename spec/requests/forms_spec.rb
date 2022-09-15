@@ -57,69 +57,136 @@ RSpec.describe "Form controller", type: :request do
       mock.get "/api/v1/forms/2", req_headers, form_response_data, 200
       mock.get "/api/v1/forms/2/pages", req_headers, pages_data, 200
       mock.get "/api/v1/forms/9999", req_headers, no_data_found_response, 404
-     end
+    end
   end
 
   describe "#show" do
     context "when a form exists" do
-      before do
-        get form_path(id: 2)
+      context "with preview mode off" do
+        before do
+          get form_path(id: 2)
+        end
+
+        context "when the form has a start page" do
+          it "Redirects to the first page" do
+            expect(response).to redirect_to(form_page_path(2, 1))
+          end
+
+          it "Logs the form_visit event" do
+            expect(EventLogger).to have_received(:log).with("form_visit", { form: "Form name", method: "GET", url: "http://www.example.com/form/2" })
+          end
+        end
+
+        context "when the form has no start page" do
+          let(:form_response_data) do
+            {
+              id: 2,
+              name: "Form name",
+              submission_email: "submission@email.com",
+              start_page: nil,
+              privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
+            }.to_json
+          end
+
+          it "Displays the form show page" do
+            expect(response.status).to eq(200)
+            expect(response.body).to include("Form name")
+          end
+        end
+
+        it "Returns the correct X-Robots-Tag header" do
+          expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
+        end
       end
 
-      context "when the form has a start page" do
-        it "Redirects to the first page" do
-          expect(response).to redirect_to(form_page_path(2, 1))
+      context "with preview mode on" do
+        before do
+          get preview_form_path(id: 2)
         end
 
-        it "Logs the form_visit event" do
-          expect(EventLogger).to have_received(:log).with("form_visit", { form: "Form name", method: "GET", url: "http://www.example.com/form/2" })
-        end
-      end
+        context "when the form has a start page" do
+          it "Redirects to the first page" do
+            expect(response).to redirect_to(preview_form_page_path(2, 1))
+          end
 
-      context "when the form has no start page" do
-        let(:form_response_data) do
-          {
-            id: 2,
-            name: "Form name",
-            submission_email: "submission@email.com",
-            start_page: nil,
-            privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
-          }.to_json
+          it "Does not log the form_visit event" do
+            expect(EventLogger).not_to have_received(:log)
+          end
         end
 
-        it "Displays the form show page" do
-          expect(response.status).to eq(200)
-          expect(response.body).to include("Form name")
-        end
-      end
+        context "when the form has no start page" do
+          let(:form_response_data) do
+            {
+              id: 2,
+              name: "Form name",
+              submission_email: "submission@email.com",
+              start_page: nil,
+              privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
+            }.to_json
+          end
 
-      it "Returns the correct X-Robots-Tag header" do
-        expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
+          it "Displays the form show page" do
+            expect(response.status).to eq(200)
+            expect(response.body).to include("Form name")
+          end
+        end
+
+        it "Returns the correct X-Robots-Tag header" do
+          expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
+        end
       end
     end
 
-    context "when a form doesn't exists" do
-      before do
-        get form_path(id: 9999)
+    context "when a form doesn't exist" do
+      context "with preview mode off" do
+        before do
+          get form_path(id: 9999)
+        end
+
+        it "Render the not found page" do
+          expect(response.body).to include(I18n.t("not_found.title"))
+        end
+
+        it "returns 404" do
+          expect(response.status).to eq(404)
+        end
       end
 
-      it "Render the not found page" do
-        expect(response.body).to include(I18n.t("not_found.title"))
-      end
+      context "with preview mode on" do
+        before do
+          get preview_form_path(id: 9999)
+        end
 
-      it "returns 404" do
-        expect(response.status).to eq(404)
+        it "Render the not found page" do
+          expect(response.body).to include(I18n.t("not_found.title"))
+        end
+
+        it "returns 404" do
+          expect(response.status).to eq(404)
+        end
       end
     end
   end
 
   describe "#submit_answers" do
-    before do
-      post form_submit_answers_path(2, 1)
+    context "with preview mode off" do
+      before do
+        post form_submit_answers_path(2, 1)
+      end
+
+      it "Logs the form_submission event" do
+        expect(EventLogger).to have_received(:log).with("form_submission", { form: "Form name", method: "POST", url: "http://www.example.com/form/2/submit_answers.1" })
+      end
     end
 
-    it "Logs the form_submission event" do
-      expect(EventLogger).to have_received(:log).with("form_submission", { form: "Form name", method: "POST", url: "http://www.example.com/form/2/submit_answers.1" })
+    context "with preview mode on" do
+      before do
+        post preview_form_submit_answers_path(2, 1)
+      end
+
+      it "Does not log the form_submission event" do
+        expect(EventLogger).not_to have_received(:log)
+      end
     end
   end
 end
