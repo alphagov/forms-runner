@@ -8,6 +8,7 @@ RSpec.describe "Check Your Answers Controller", type: :request do
       submission_email: "submission@email.com",
       start_page: 1,
       privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
+      what_happens_next_text: "Good things come to those that wait",
     }.to_json
   end
 

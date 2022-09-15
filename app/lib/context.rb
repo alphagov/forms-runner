@@ -1,5 +1,5 @@
 class Context
-  attr_reader :form_name, :form_start_page, :privacy_policy_url
+  attr_reader :form_name, :form_start_page, :privacy_policy_url, :what_happens_next_text
 
   def initialize(form:, store:)
     @form_context = FormContext.new(store)
@@ -11,6 +11,7 @@ class Context
     @form_name = form.name
     @form_start_page = form.start_page
     @privacy_policy_url = form.privacy_policy_url
+    @what_happens_next_text = form.what_happens_next_text
   end
 
   def find_or_create(page_slug)
