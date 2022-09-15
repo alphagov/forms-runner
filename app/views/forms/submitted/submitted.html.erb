@@ -3,5 +3,10 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
     <%= govuk_panel(title_text: t('form.submitted.title')) %>
+
+    <%if @current_context.what_happens_next_text.present? %>
+      <h2 class="govuk-heading-m govuk-!-margin-top-7">What happens next</h2>
+      <p class="govuk-body"><%= @current_context.what_happens_next_text %></p>
+  <% end %>
   </div>
 </div>

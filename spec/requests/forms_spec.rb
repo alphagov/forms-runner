@@ -8,6 +8,7 @@ RSpec.describe "Form controller", type: :request do
       submission_email: "submission@email.com",
       start_page: "1",
       privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
+      what_happens_next_text: "Good things come to those that wait",
     }.to_json
   end
 
@@ -100,6 +101,31 @@ RSpec.describe "Form controller", type: :request do
       end
 
       context "when a form doesn't exists" do
+        before do
+          get form_path(mode: "preview-form", form_id: 9999)
+        end
+
+        it "Render the not found page" do
+          expect(response.body).to include(I18n.t("not_found.title"))
+        end
+
+        it "returns 404" do
+          expect(response.status).to eq(404)
+        end
+      end
+
+      context "when the form has no start page" do
+        let(:form_response_data) do
+          {
+            id: 2,
+            name: "Form name",
+            submission_email: "submission@email.com",
+            start_page: nil,
+            privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
+            what_happens_next_text: "Good things come to those that wait",
+          }.to_json
+        end
+
         before do
           get form_path(mode: "preview-form", form_id: 9999)
         end
