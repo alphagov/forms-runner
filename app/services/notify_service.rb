@@ -11,20 +11,29 @@ class NotifyService
       return nil
     end
 
-    timestamp = Time.zone.now
-    submission_time = timestamp.strftime("%H:%M:%S")
-    submission_date = timestamp.strftime("%-d %B %Y")
-
     client = Notifications::Client.new(@notify_api_key)
-    client.send_email(
+    client.send_email(**email(email_address, title, text_input))
+  end
+
+  def email(email_address, title, text_input)
+    timestamp = submission_timestamp
+    {
       email_address:,
       template_id: "427eb8bc-ce0d-40a3-bf54-d76e8c3ec916",
       personalisation: {
         title:,
         text_input:,
-        submission_time:,
-        submission_date:,
+        submission_time: timestamp.strftime("%H:%M:%S"),
+        submission_date: timestamp.strftime("%-d %B %Y"),
       },
-    )
+    }
+  end
+
+  def submission_timezone
+    Rails.configuration.x.submission.time_zone || "UTC"
+  end
+
+  def submission_timestamp
+    Time.use_zone(submission_timezone) { Time.zone.now }
   end
 end
