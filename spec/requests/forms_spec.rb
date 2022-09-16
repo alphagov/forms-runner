@@ -57,13 +57,13 @@ RSpec.describe "Form controller", type: :request do
       mock.get "/api/v1/forms/2", req_headers, form_response_data, 200
       mock.get "/api/v1/forms/2/pages", req_headers, pages_data, 200
       mock.get "/api/v1/forms/9999", req_headers, no_data_found_response, 404
-     end
+    end
   end
 
   describe "#show" do
     context "when a form exists" do
       before do
-        get form_path(mode: "form", id: 2)
+        get form_path(mode: "form", form_id: 2)
       end
 
       context "when the form has a start page" do
@@ -100,7 +100,7 @@ RSpec.describe "Form controller", type: :request do
 
     context "when a form doesn't exists" do
       before do
-        get form_path(mode: "form", id: 9999)
+        get form_path(mode: "form", form_id: 9999)
       end
 
       it "Render the not found page" do
