@@ -1,13 +1,13 @@
 class Page < ActiveResource::Base
   self.site = ENV.fetch("API_BASE").to_s
-  self.prefix = "/api/v1/forms/:form_id/"
+  self.prefix = "/api/v1/forms/:form_slug/"
   self.include_format_in_path = false
   headers["X-API-Token"] = ENV["API_KEY"]
 
   belongs_to :form
 
-  def form_id
-    @prefix_options[:form_id]
+  def form_slug
+    @prefix_options[:form_slug]
   end
 
   def has_next_page?

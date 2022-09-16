@@ -12,10 +12,11 @@ class StepFactory
 
   def initialize(form:)
     @form = form
+    # require 'pry'; binding.pry
     @pages = form.pages
 
     @submission_email = form.submission_email
-    @form_id = form.id
+    @form_id = form.form_slug
   end
 
   def create_step(page_slug_or_start)
