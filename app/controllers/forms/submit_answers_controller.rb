@@ -1,12 +1,10 @@
 module Forms
   class SubmitAnswersController < FormController
     def submit_answers
-      unless params[:preview]
-        EventLogger.log_form_event(current_context, request, "submission")
-      end
+      EventLogger.log_form_event(current_context, request, "submission")
       submit_form(answers)
       current_context.clear
-      redirect_to params[:preview] ? :preview_form_submitted : :form_submitted
+      redirect_to :form_submitted
     rescue StandardError => e
       Sentry.capture_exception(e)
       render "errors/submission_error", status: :internal_server_error

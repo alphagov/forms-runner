@@ -46,225 +46,117 @@ RSpec.describe "Page Controller", type: :request do
   end
 
   describe "#show" do
-    context "with preview mode off" do
-      it "Returns a 200" do
-        get form_page_path(2, 1)
-        expect(response.status).to eq(200)
-      end
+    it "Returns a 200" do
+      get form_page_path(2, 1)
+      expect(response.status).to eq(200)
+    end
 
-      it "redirects to first page if second request before first complete" do
+    it "redirects to first page if second request before first complete" do
+      get form_page_path(2, 2)
+      expect(response).to redirect_to(form_page_path(2, 1))
+    end
+
+    it "Displays the question text on the page" do
+      get form_page_path(2, 1)
+      expect(response.body).to include("Question one")
+    end
+
+    it "Displays the privacy policy link on the page" do
+      get form_page_path(2, 1)
+      expect(response.body).to include("Privacy")
+    end
+
+    it "Displays the accessibility statement link on the page" do
+      get form_page_path(2, 1)
+      expect(response.body).to include("Accessibility statement")
+    end
+
+    it "Displays the Cookies link on the page" do
+      get form_page_path(2, 1)
+      expect(response.body).to include("Cookies")
+    end
+
+    context "with a page that has a previous page" do
+      it "Displays a link to the previous page" do
         get form_page_path(2, 2)
-        expect(response).to redirect_to(form_page_path(2, 1))
-      end
-
-      it "Displays the question text on the page" do
-        get form_page_path(2, 1)
-        expect(response.body).to include("Question one")
-      end
-
-      it "Displays the privacy policy link on the page" do
-        get form_page_path(2, 1)
-        expect(response.body).to include("Privacy")
-      end
-
-      it "Displays the accessibility statement link on the page" do
-        get form_page_path(2, 1)
-        expect(response.body).to include("Accessibility statement")
-      end
-
-      it "Displays the Cookies link on the page" do
-        get form_page_path(2, 1)
-        expect(response.body).to include("Cookies")
-      end
-
-      context "with a page that has a previous page" do
-        it "Displays a link to the previous page" do
-          get form_page_path(2, 2)
-          expect(response.body).to include(form_page_path(2, 1))
-        end
-      end
-
-      context "with a change answers page" do
-        it "Displays a back link to the check your answers page" do
-          get form_change_answer_path(2, 1)
-          expect(response.body).to include(check_your_answers_path(2))
-        end
-
-        it "Passes the changing answers parameter in its submit request" do
-          get form_change_answer_path(2, 1)
-          expect(response.body).to include(save_form_page_path(2, 1, changing_existing_answer: true))
-        end
-      end
-
-      it "Returns the correct X-Robots-Tag header" do
-        get form_page_path(2, 1)
-        expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
-      end
-
-      context "with no questions answered" do
-        it "redirects if a later page is requested" do
-          get check_your_answers_path(2)
-          expect(response.status).to eq(302)
-          expect(response.location).to eq(form_page_url(2, 1))
-        end
+        expect(response.body).to include(form_page_path(2, 1))
       end
     end
 
-    context "with preview mode on" do
-      it "Returns a 200" do
-        get preview_form_page_path(2, 1)
-        expect(response.status).to eq(200)
+    context "with a change answers page" do
+      it "Displays a back link to the check your answers page" do
+        get form_change_answer_path(2, 1)
+        expect(response.body).to include(check_your_answers_path(2))
       end
 
-      it "redirects to first page if second request before first complete" do
-        get preview_form_page_path(2, 2)
-        expect(response).to redirect_to(preview_form_page_path(2, 1))
+      it "Passes the changing answers parameter in its submit request" do
+        get form_change_answer_path(2, 1)
+        expect(response.body).to include(save_form_page_path(2, 1, changing_existing_answer: true))
       end
+    end
 
-      it "Displays the question text on the page" do
-        get preview_form_page_path(2, 1)
-        expect(response.body).to include("Question one")
-      end
+    it "Returns the correct X-Robots-Tag header" do
+      get form_page_path(2, 1)
+      expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
+    end
 
-      it "Displays the privacy policy link on the page" do
-        get preview_form_page_path(2, 1)
-        expect(response.body).to include("Privacy")
-      end
-
-      it "Displays the accessibility statement link on the page" do
-        get preview_form_page_path(2, 1)
-        expect(response.body).to include("Accessibility statement")
-      end
-
-      it "Displays the Cookies link on the page" do
-        get preview_form_page_path(2, 1)
-        expect(response.body).to include("Cookies")
-      end
-
-      context "with a page that has a previous page" do
-        it "Displays a link to the previous page" do
-          get preview_form_page_path(2, 2)
-          expect(response.body).to include(preview_form_page_path(2, 1))
-        end
-      end
-
-      context "with a change answers page" do
-        it "Displays a back link to the check your answers page" do
-          get preview_form_change_answer_path(2, 1)
-          expect(response.body).to include(preview_check_your_answers_path(2))
-        end
-
-        it "Passes the changing answers parameter in its submit request" do
-          get preview_form_change_answer_path(2, 1)
-          expect(response.body).to include(preview_save_form_page_path(2, 1, changing_existing_answer: true))
-        end
-      end
-
-      it "Returns the correct X-Robots-Tag header" do
-        get preview_form_page_path(2, 1)
-        expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
-      end
-
-      context "with no questions answered" do
-        it "redirects if a later page is requested" do
-          get preview_check_your_answers_path(2)
-          expect(response.status).to eq(302)
-          expect(response.location).to eq(preview_form_page_url(2, 1))
-        end
+    context "with no questions answered" do
+      it "redirects if a later page is requested" do
+        get check_your_answers_path(2)
+        expect(response.status).to eq(302)
+        expect(response.location).to eq(form_page_url(2, 1))
       end
     end
   end
 
   describe "#save" do
-    context "with preview mode off" do
-      it "Redirects to the next page" do
-        post save_form_page_path(2, 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
-        expect(response).to redirect_to(form_page_path(2, 2))
+    it "Redirects to the next page" do
+      post save_form_page_path(2, 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
+      expect(response).to redirect_to(form_page_path(2, 2))
+    end
+
+    context "when changing an existing answer" do
+      it "Redirects to the check your answers page" do
+        post save_form_page_path(2, 1, params: { question: { text: "answer text" }, changing_existing_answer: true })
+        expect(response).to redirect_to(check_your_answers_path(2))
       end
 
-      context "when changing an existing answer" do
-        it "Redirects to the check your answers page" do
-          post save_form_page_path(2, 1, params: { question: { text: "answer text" }, changing_existing_answer: true })
-          expect(response).to redirect_to(check_your_answers_path(2))
-        end
-
-        it "Logs the change_answer_page_save event" do
-          expect(EventLogger).to receive(:log).with("change_answer_page_save",
-                                                    { form: "Form",
-                                                      method: "POST",
-                                                      question_text: "Question one",
-                                                      url: "http://www.example.com/form/2/1?changing_existing_answer=true&question%5Btext%5D=answer+text" })
-          post save_form_page_path(2, 1, params: { question: { text: "answer text" }, changing_existing_answer: true })
-        end
-      end
-
-      context "with the first page" do
-        it "Logs the first_page_save event" do
-          expect(EventLogger).to receive(:log).with("first_page_save",
-                                                    { form: "Form",
-                                                      method: "POST",
-                                                      question_text: "Question one",
-                                                      url: "http://www.example.com/form/2/1" })
-          post save_form_page_path(2, 1), params: { question: { text: "answer text" } }
-        end
-      end
-
-      context "with a subsequent page" do
-        it "Logs the page_save event" do
-          expect(EventLogger).to receive(:log).with("page_save",
-                                                    { form: "Form",
-                                                      method: "POST",
-                                                      question_text: "Question two",
-                                                      url: "http://www.example.com/form/2/2" })
-          post save_form_page_path(2, 2), params: { question: { text: "answer text" } }
-        end
-      end
-
-      context "with the final page" do
-        it "Redirects to the check your answers page" do
-          post save_form_page_path(2, 2), params: { question: { text: "answer text" } }
-          expect(response).to redirect_to(check_your_answers_path(2))
-        end
+      it "Logs the change_answer_page_save event" do
+        expect(EventLogger).to receive(:log).with("change_answer_page_save",
+                                                  { form: "Form",
+                                                    method: "POST",
+                                                    question_text: "Question one",
+                                                    url: "http://www.example.com/form/2/1?changing_existing_answer=true&question%5Btext%5D=answer+text" })
+        post save_form_page_path(2, 1, params: { question: { text: "answer text" }, changing_existing_answer: true })
       end
     end
 
-    context "with preview mode on" do
-      it "Redirects to the next page" do
-        post preview_save_form_page_path(2, 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
-        expect(response).to redirect_to(preview_form_page_path(2, 2))
+    context "with the first page" do
+      it "Logs the first_page_save event" do
+        expect(EventLogger).to receive(:log).with("first_page_save",
+                                                  { form: "Form",
+                                                    method: "POST",
+                                                    question_text: "Question one",
+                                                    url: "http://www.example.com/form/2/1" })
+        post save_form_page_path(2, 1), params: { question: { text: "answer text" } }
       end
+    end
 
-      context "when changing an existing answer" do
-        it "Redirects to the check your answers page" do
-          post preview_save_form_page_path(2, 1, params: { question: { text: "answer text" }, changing_existing_answer: true })
-          expect(response).to redirect_to(preview_check_your_answers_path(2))
-        end
-
-        it "Does not log the change_answer_page_save event" do
-          expect(EventLogger).not_to receive(:log)
-          post preview_save_form_page_path(2, 1, params: { question: { text: "answer text" }, changing_existing_answer: true })
-        end
+    context "with a subsequent page" do
+      it "Logs the page_save event" do
+        expect(EventLogger).to receive(:log).with("page_save",
+                                                  { form: "Form",
+                                                    method: "POST",
+                                                    question_text: "Question two",
+                                                    url: "http://www.example.com/form/2/2" })
+        post save_form_page_path(2, 2), params: { question: { text: "answer text" } }
       end
+    end
 
-      context "with the first page" do
-        it "Does not log the first_page_save event" do
-          expect(EventLogger).not_to receive(:log)
-          post preview_save_form_page_path(2, 1), params: { question: { text: "answer text" } }
-        end
-      end
-
-      context "with a subsequent page" do
-        it "Does not log the page_save event" do
-          expect(EventLogger).not_to receive(:log)
-          post preview_save_form_page_path(2, 2), params: { question: { text: "answer text" } }
-        end
-      end
-
-      context "with the final page" do
-        it "Redirects to the check your answers page" do
-          post preview_save_form_page_path(2, 2), params: { question: { text: "answer text" } }
-          expect(response).to redirect_to(preview_check_your_answers_path(2))
-        end
+    context "with the final page" do
+      it "Redirects to the check your answers page" do
+        post save_form_page_path(2, 2), params: { question: { text: "answer text" } }
+        expect(response).to redirect_to(check_your_answers_path(2))
       end
     end
   end

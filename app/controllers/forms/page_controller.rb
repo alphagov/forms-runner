@@ -3,10 +3,8 @@ module Forms
     before_action :prepare_step, :changing_existing_answer, :set_privacy_policy_url
 
     def show
-      path_to_redirect = params[:preview] ? preview_form_page_path(@step.form_id, current_context.next_page_slug) : form_page_path(@step.form_id, current_context.next_page_slug)
-      redirect_to path_to_redirect unless current_context.can_visit?(@step.page_slug)
+      redirect_to form_page_path(@step.form_id, current_context.next_page_slug) unless current_context.can_visit?(@step.page_slug)
       back_link(@step.page_slug)
-      @save_path = params[:preview] ? preview_save_form_page_path(@step.form_id, @step.id, changing_existing_answer: @changing_existing_answer) : save_form_page_path(@step.form_id, @step.id, changing_existing_answer: @changing_existing_answer)
     end
 
     def save
@@ -14,10 +12,8 @@ module Forms
       @step.update!(page_params)
 
       if current_context.save_step(@step)
-        unless params[:preview]
-          log_page_save(@step, request, changing_existing_answer)
-        end
-        redirect_to next_page(params[:preview])
+        log_page_save(@step, request, changing_existing_answer)
+        redirect_to next_page
       else
         render :show
       end
@@ -40,29 +36,15 @@ module Forms
     def back_link(page_slug)
       previous_step = current_context.previous_step(page_slug)
       if @changing_existing_answer
-        @back_link = changing_answer_path(current_context)
+        @back_link = check_your_answers_path(form_id: current_context.form)
       elsif previous_step
-        @back_link = previous_step_path(previous_step)
+        @back_link = form_page_path(@step.form_id, previous_step)
       end
     end
 
-    def changing_answer_path(context)
-      params[:preview] ? preview_check_your_answers_path(form_id: context.form) : check_your_answers_path(form_id: context.form)
-    end
-
-    def previous_step_path(previous_step)
-      params[:preview] ? preview_form_page_path(@step.form_id, previous_step) : form_page_path(@step.form_id, previous_step)
-    end
-
-    def next_page(preview)
+    def next_page
       if @changing_existing_answer
-        if preview
-          preview_check_your_answers_path(current_context.form)
-        else
-          check_your_answers_path(current_context.form)
-        end
-      elsif preview
-        preview_form_page_path(@step.form_id, @step.next_page_slug)
+        check_your_answers_path(current_context.form)
       else
         form_page_path(@step.form_id, @step.next_page_slug)
       end
