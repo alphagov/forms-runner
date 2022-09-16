@@ -48,7 +48,7 @@ RSpec.describe "Check Your Answers Controller", type: :request do
   describe "#show" do
     context "without any questions answered" do
       it "redirects to first incomplete page of form" do
-        get check_your_answers_path(2)
+        get check_your_answers_path(mode: "form", form_id: 2)
         expect(response.status).to eq(302)
         expect(response.location).to eq(form_page_url(2, 1))
       end
@@ -56,10 +56,10 @@ RSpec.describe "Check Your Answers Controller", type: :request do
 
     context "with all questions answered and valid" do
       before do
-        post save_form_page_path(2, 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
-        post save_form_page_path(2, 2), params: { question: { text: "answer text" }, changing_existing_answer: false }
+        post save_form_page_path("form", 2, 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
+        post save_form_page_path("form", 2, 2), params: { question: { text: "answer text" }, changing_existing_answer: false }
         allow(EventLogger).to receive(:log).at_least(:once)
-        get check_your_answers_path(2)
+        get check_your_answers_path(mode: "form", form_id: 2)
       end
 
       it "returns 200" do
@@ -67,7 +67,7 @@ RSpec.describe "Check Your Answers Controller", type: :request do
       end
 
       it "Displays a back link to the last page of the form" do
-        expect(response.body).to include(form_page_path(2, 2))
+        expect(response.body).to include(form_page_path("form", 2, 2))
       end
 
       it "Returns the correct X-Robots-Tag header" do

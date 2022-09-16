@@ -12,7 +12,9 @@ module Forms
       @step.update!(page_params)
 
       if current_context.save_step(@step)
-        log_page_save(@step, request, changing_existing_answer)
+        unless preview?
+          log_page_save(@step, request, changing_existing_answer)
+        end
         redirect_to next_page
       else
         render :show

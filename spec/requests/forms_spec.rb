@@ -63,12 +63,12 @@ RSpec.describe "Form controller", type: :request do
   describe "#show" do
     context "when a form exists" do
       before do
-        get form_path(id: 2)
+        get form_path(mode: "form", id: 2)
       end
 
       context "when the form has a start page" do
         it "Redirects to the first page" do
-          expect(response).to redirect_to(form_page_path(2, 1))
+          expect(response).to redirect_to(form_page_path("form", 2, 1))
         end
 
         it "Logs the form_visit event" do
@@ -100,7 +100,7 @@ RSpec.describe "Form controller", type: :request do
 
     context "when a form doesn't exists" do
       before do
-        get form_path(id: 9999)
+        get form_path(mode: "form", id: 9999)
       end
 
       it "Render the not found page" do
@@ -115,7 +115,7 @@ RSpec.describe "Form controller", type: :request do
 
   describe "#submit_answers" do
     before do
-      post form_submit_answers_path(2, 1)
+      post form_submit_answers_path("form", 2, 1)
     end
 
     it "Logs the form_submission event" do
