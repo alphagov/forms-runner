@@ -71,7 +71,7 @@ RSpec.describe "Errors", type: :request do
     end
 
     it "returns http code 500" do
-      post form_submit_answers_path(form_id: 2)
+      post form_submit_answers_path(mode: "form", form_id: 2)
       expect(response).to have_http_status(:internal_server_error)
     end
   end

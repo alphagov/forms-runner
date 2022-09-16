@@ -16,7 +16,7 @@ RSpec.describe ApplicationHelper, type: :helper do
       end
     end
 
-    context "with errors present" do
+    context "with no errors present" do
       it "returns the title with no prefix" do
         expect(helper.title_with_error_prefix("Test", false)).to eq("Test")
       end
