@@ -1,7 +1,5 @@
 module Forms
   class CheckYourAnswersController < FormController
-    before_action :set_privacy_policy_url
-
     def show
       return redirect_to form_page_path(current_context.form, current_context.next_page_slug) unless current_context.can_visit?("check_your_answers")
 
@@ -26,10 +24,6 @@ module Forms
 
     def check_your_answers_rows
       current_context.steps.map { |page| page_to_row(page) }
-    end
-
-    def set_privacy_policy_url
-      @privacy_policy_url = current_context.privacy_policy_url
     end
   end
 end

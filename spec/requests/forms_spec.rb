@@ -98,6 +98,18 @@ RSpec.describe "Form controller", type: :request do
         it "Returns the correct X-Robots-Tag header" do
           expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
         end
+
+        describe "Privacy page" do
+          it "returns http code 200" do
+            get form_privacy_path(mode: "form", form_id: 2)
+            expect(response).to have_http_status(:ok)
+          end
+
+          it "contains link to data controller's privacy policy" do
+            get form_privacy_path(mode: "form", form_id: 2)
+            expect(response.body).to include("http://www.example.gov.uk/privacy_policy")
+          end
+        end
       end
 
       context "when a form doesn't exists" do
