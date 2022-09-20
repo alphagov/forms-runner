@@ -5,7 +5,6 @@ class FormController < Forms::FormController
 
   def show
     @form = Form.find(params.require(:form_id))
-    set_privacy_policy_url
     if @form.start_page
       redirect_to form_page_path(params.require(:form_id), @form.start_page)
       unless preview?
@@ -16,12 +15,5 @@ class FormController < Forms::FormController
 
   def submitted
     @form = Form.find(params.require(:form_id))
-    set_privacy_policy_url
-  end
-
-private
-
-  def set_privacy_policy_url
-    @privacy_policy_url = @form.privacy_policy_url
   end
 end
