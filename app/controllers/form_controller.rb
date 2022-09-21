@@ -3,6 +3,11 @@ class FormController < Forms::FormController
     render template: "errors/not_found", status: :not_found
   end
 
+  def redirect_to_user_friendly_url
+    @form = Form.find(params.require(:form_id))
+    redirect_to form_path(@form.id, @form.form_slug)
+  end
+
   def show
     @form = Form.find(params.require(:form_id))
     if @form.start_page
