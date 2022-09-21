@@ -62,6 +62,18 @@ RSpec.describe "Form controller", type: :request do
     end
   end
 
+  describe "#redirect_to_user_friendly_url" do
+    context "when the form exists and has no start page" do
+      before do
+        get form_id_path(mode:"form", form_id: 2)
+      end
+
+      it "Redirects to the form page that includes the form slug" do
+        expect(response).to redirect_to(form_path("form", 2, "form-name"))
+      end
+    end
+  end
+
   describe "#show" do
     context "with preview mode on" do
       context "when a form exists" do

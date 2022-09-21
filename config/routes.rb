@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   get "/help/cookies" => "help#cookies", as: :cookies
 
   scope "/:mode", mode: /preview-form|form/ do
+    get "/:form_id" => "form#redirect_to_user_friendly_url", as: :form_id
     scope "/:form_id/:form_slug" do
       get "/" => "form#show", as: :form
       get "/check_your_answers" => "forms/check_your_answers#show", as: :check_your_answers
