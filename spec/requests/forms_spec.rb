@@ -5,6 +5,7 @@ RSpec.describe "Form controller", type: :request do
     {
       id: 2,
       name: "Form name",
+      form_slug: "form-name",
       submission_email: "submission@email.com",
       start_page: "1",
       privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
@@ -65,12 +66,12 @@ RSpec.describe "Form controller", type: :request do
     context "with preview mode on" do
       context "when a form exists" do
         before do
-          get form_path(mode: "preview-form", form_id: 2)
+          get form_path(mode: "preview-form", form_id: 2, form_slug: "form-name")
         end
 
         context "when the form has a start page" do
           it "Redirects to the first page" do
-            expect(response).to redirect_to(form_page_path("preview-form", 2, 1))
+            expect(response).to redirect_to(form_page_path("preview-form", 2, "form-name", 1))
           end
 
           it "does not log the form_visit event" do
@@ -83,6 +84,7 @@ RSpec.describe "Form controller", type: :request do
             {
               id: 2,
               name: "Form name",
+              form_slug: "form-name",
               submission_email: "submission@email.com",
               start_page: nil,
               privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
@@ -101,12 +103,12 @@ RSpec.describe "Form controller", type: :request do
 
         describe "Privacy page" do
           it "returns http code 200" do
-            get form_privacy_path(mode: "form", form_id: 2)
+            get form_privacy_path(mode: "form", form_id: 2, form_slug: "form-name")
             expect(response).to have_http_status(:ok)
           end
 
           it "contains link to data controller's privacy policy" do
-            get form_privacy_path(mode: "form", form_id: 2)
+            get form_privacy_path(mode: "form", form_id: 2, form_slug: "form-name")
             expect(response.body).to include("http://www.example.gov.uk/privacy_policy")
           end
         end
@@ -114,7 +116,7 @@ RSpec.describe "Form controller", type: :request do
 
       context "when a form doesn't exists" do
         before do
-          get form_path(mode: "preview-form", form_id: 9999)
+          get form_path(mode: "preview-form", form_id: 9999, form_slug: "form-name-1")
         end
 
         it "Render the not found page" do
@@ -131,6 +133,7 @@ RSpec.describe "Form controller", type: :request do
           {
             id: 2,
             name: "Form name",
+            form_slug: "form-name",
             submission_email: "submission@email.com",
             start_page: nil,
             privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
@@ -139,7 +142,7 @@ RSpec.describe "Form controller", type: :request do
         end
 
         before do
-          get form_path(mode: "preview-form", form_id: 9999)
+          get form_path(mode: "preview-form", form_id: 9999, form_slug: "form-name")
         end
 
         it "Render the not found page" do
@@ -155,16 +158,16 @@ RSpec.describe "Form controller", type: :request do
     context "with preview mode off" do
       context "when a form exists" do
         before do
-          get form_path(mode: "form", form_id: 2)
+          get form_path(mode: "form", form_id: 2, form_slug: "form-name")
         end
 
         context "when the form has a start page" do
           it "Redirects to the first page" do
-            expect(response).to redirect_to(form_page_path("form", 2, 1))
+            expect(response).to redirect_to(form_page_path("form", 2, "form-name", 1))
           end
 
           it "Logs the form_visit event" do
-            expect(EventLogger).to have_received(:log).with("form_visit", { form: "Form name", method: "GET", url: "http://www.example.com/form/2" })
+            expect(EventLogger).to have_received(:log).with("form_visit", { form: "Form name", method: "GET", url: "http://www.example.com/form/2/form-name" })
           end
         end
 
@@ -173,6 +176,7 @@ RSpec.describe "Form controller", type: :request do
             {
               id: 2,
               name: "Form name",
+              form_slug: "form-name",
               submission_email: "submission@email.com",
               start_page: nil,
               privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
@@ -192,7 +196,7 @@ RSpec.describe "Form controller", type: :request do
 
       context "when a form doesn't exists" do
         before do
-          get form_path(mode: "form", form_id: 9999)
+          get form_path(mode: "form", form_id: 9999, form_slug: "form-name")
         end
 
         it "Render the not found page" do
@@ -209,7 +213,7 @@ RSpec.describe "Form controller", type: :request do
   describe "#submit_answers" do
     context "with preview mode on" do
       before do
-        post form_submit_answers_path("preview-form", 2, 1)
+        post form_submit_answers_path("preview-form", 2, "form-name", 1)
       end
 
       it "does not log the form_submission event" do
@@ -219,11 +223,11 @@ RSpec.describe "Form controller", type: :request do
 
     context "with preview mode off" do
       before do
-        post form_submit_answers_path("form", 2, 1)
+        post form_submit_answers_path("form", 2, "form-name", 1)
       end
 
       it "Logs the form_submission event" do
-        expect(EventLogger).to have_received(:log).with("form_submission", { form: "Form name", method: "POST", url: "http://www.example.com/form/2/submit_answers.1" })
+        expect(EventLogger).to have_received(:log).with("form_submission", { form: "Form name", method: "POST", url: "http://www.example.com/form/2/form-name/submit_answers.1" })
       end
     end
   end

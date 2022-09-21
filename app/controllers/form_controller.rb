@@ -6,7 +6,7 @@ class FormController < Forms::FormController
   def show
     @form = Form.find(params.require(:form_id))
     if @form.start_page
-      redirect_to form_page_path(params.require(:form_id), @form.start_page)
+      redirect_to form_page_path(params.require(:form_id), @form.form_slug, @form.start_page)
       unless preview?
         EventLogger.log_form_event(Context.new(form: @form, store: session), request, "visit")
       end

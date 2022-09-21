@@ -16,7 +16,8 @@ RSpec.describe EventLogger do
     Context.new(
       form: Form.new({
         id: 1,
-        name: "Form",
+        name: "Form 1",
+        form_slug: "form-1",
         submission_email: "jimbo@example.gov.uk",
         start_page: "1",
         privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
@@ -35,7 +36,7 @@ RSpec.describe EventLogger do
     {
       url: "http://example.gov.uk",
       method: "GET",
-      form: "Form",
+      form: "Form 1",
     }
   end
 
@@ -43,7 +44,7 @@ RSpec.describe EventLogger do
     {
       url: "http://example.gov.uk",
       method: "GET",
-      form: "Form",
+      form: "Form 1",
       question_text: "Question one",
     }
   end

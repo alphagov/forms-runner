@@ -1,13 +1,13 @@
 class Step
-  attr_accessor :page_id, :form_id, :question
+  attr_accessor :page_id, :form_id, :form_slug, :question
   attr_reader :next_page_slug, :page_slug
 
-  def initialize(question:, page_id:, form_id:, next_page_slug:, page_slug:)
+  def initialize(question:, page_id:, form_id:, form_slug:, next_page_slug:, page_slug:)
     @question = question
     @page_id = page_id
     @page_slug = page_slug
     @form_id = form_id
-
+    @form_slug = form_slug
     @next_page_slug = next_page_slug
   end
 
