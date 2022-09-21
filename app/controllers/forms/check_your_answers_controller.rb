@@ -1,10 +1,10 @@
 module Forms
   class CheckYourAnswersController < FormController
     def show
-      return redirect_to form_page_path(current_context.form, current_context.next_page_slug) unless current_context.can_visit?("check_your_answers")
+      return redirect_to form_page_path(current_context.form, current_context.form_slug, current_context.next_page_slug) unless current_context.can_visit?("check_your_answers")
 
       previous_step = current_context.previous_step("check_your_answers")
-      @back_link = form_page_path(current_context.form, previous_step)
+      @back_link = form_page_path(current_context.form, current_context.form_slug, previous_step)
       @rows = check_your_answers_rows
       unless preview?
         EventLogger.log_form_event(current_context, request, "check_answers")
@@ -18,7 +18,7 @@ module Forms
       {
         key: { text: question_name },
         value: { text: page.show_answer },
-        actions: [{ href: form_change_answer_path(page.form_id, page.page_id), visually_hidden_text: question_name }],
+        actions: [{ href: form_change_answer_path(page.form_id, page.form_slug, page.page_id), visually_hidden_text: question_name }],
       }
     end
 

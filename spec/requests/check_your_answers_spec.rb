@@ -4,7 +4,8 @@ RSpec.describe "Check Your Answers Controller", type: :request do
   let(:form_data) do
     {
       id: 2,
-      name: "Form",
+      name: "Form 1",
+      form_slug: "form-1",
       submission_email: "submission@email.com",
       start_page: 1,
       privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
@@ -50,18 +51,18 @@ RSpec.describe "Check Your Answers Controller", type: :request do
     context "with preview mode on" do
       context "without any questions answered" do
         it "redirects to first incomplete page of form" do
-          get check_your_answers_path(mode: "preview-form", form_id: 2)
+          get check_your_answers_path(mode: "preview-form", form_id: 2, form_slug: "form-1")
           expect(response.status).to eq(302)
-          expect(response.location).to eq(form_page_url(2, 1))
+          expect(response.location).to eq(form_page_url(2, "form-1", 1))
         end
       end
 
       context "with all questions answered and valid" do
         before do
-          post save_form_page_path("preview-form", 2, 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
-          post save_form_page_path("preview-form", 2, 2), params: { question: { text: "answer text" }, changing_existing_answer: false }
+          post save_form_page_path("preview-form", 2, "form-1", 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
+          post save_form_page_path("preview-form", 2, "form-1", 2), params: { question: { text: "answer text" }, changing_existing_answer: false }
           allow(EventLogger).to receive(:log).at_least(:once)
-          get check_your_answers_path(mode: "preview-form", form_id: 2)
+          get check_your_answers_path(mode: "preview-form", form_id: 2, form_slug: "form-1")
         end
 
         it "returns 200" do
@@ -69,7 +70,7 @@ RSpec.describe "Check Your Answers Controller", type: :request do
         end
 
         it "Displays a back link to the last page of the form" do
-          expect(response.body).to include(form_page_path("preview-form", 2, 2))
+          expect(response.body).to include(form_page_path("preview-form", 2, "form-1", 2))
         end
 
         it "Returns the correct X-Robots-Tag header" do
@@ -77,8 +78,8 @@ RSpec.describe "Check Your Answers Controller", type: :request do
         end
 
         it "Contains a change link for each page" do
-          expect(response.body).to include(form_change_answer_path(2, 1))
-          expect(response.body).to include(form_change_answer_path(2, 2))
+          expect(response.body).to include(form_change_answer_path(2, "form-1", 1))
+          expect(response.body).to include(form_change_answer_path(2, "form-1", 2))
         end
 
         it "does not log the form_check_answers event" do
@@ -90,18 +91,18 @@ RSpec.describe "Check Your Answers Controller", type: :request do
     context "with preview mode off" do
       context "without any questions answered" do
         it "redirects to first incomplete page of form" do
-          get check_your_answers_path(mode: "form", form_id: 2)
+          get check_your_answers_path(mode: "form", form_id: 2, form_slug: "form-1")
           expect(response.status).to eq(302)
-          expect(response.location).to eq(form_page_url(2, 1))
+          expect(response.location).to eq(form_page_url(2, "form-1", 1))
         end
       end
 
       context "with all questions answered and valid" do
         before do
-          post save_form_page_path("form", 2, 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
-          post save_form_page_path("form", 2, 2), params: { question: { text: "answer text" }, changing_existing_answer: false }
+          post save_form_page_path("form", 2, "form-1", 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
+          post save_form_page_path("form", 2, "form-1", 2), params: { question: { text: "answer text" }, changing_existing_answer: false }
           allow(EventLogger).to receive(:log).at_least(:once)
-          get check_your_answers_path(mode: "form", form_id: 2)
+          get check_your_answers_path(mode: "form", form_id: 2, form_slug: "form-1")
         end
 
         it "returns 200" do
@@ -109,7 +110,7 @@ RSpec.describe "Check Your Answers Controller", type: :request do
         end
 
         it "Displays a back link to the last page of the form" do
-          expect(response.body).to include(form_page_path("form", 2, 2))
+          expect(response.body).to include(form_page_path("form", 2, "form-1", 2))
         end
 
         it "Returns the correct X-Robots-Tag header" do
@@ -117,12 +118,12 @@ RSpec.describe "Check Your Answers Controller", type: :request do
         end
 
         it "Contains a change link for each page" do
-          expect(response.body).to include(form_change_answer_path(2, 1))
-          expect(response.body).to include(form_change_answer_path(2, 2))
+          expect(response.body).to include(form_change_answer_path(2, "form-1", 1))
+          expect(response.body).to include(form_change_answer_path(2, "form-1", 2))
         end
 
         it "Logs the form_check_answers event" do
-          expect(EventLogger).to have_received(:log).with("form_check_answers", { form: "Form", method: "GET", url: "http://www.example.com/form/2/check_your_answers" })
+          expect(EventLogger).to have_received(:log).with("form_check_answers", { form: "Form 1", method: "GET", url: "http://www.example.com/form/2/form-1/check_your_answers" })
         end
       end
     end

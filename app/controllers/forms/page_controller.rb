@@ -3,7 +3,7 @@ module Forms
     before_action :prepare_step, :changing_existing_answer
 
     def show
-      redirect_to form_page_path(@step.form_id, current_context.next_page_slug) unless current_context.can_visit?(@step.page_slug)
+      redirect_to form_page_path(@step.form_id, @step.form_slug, current_context.next_page_slug) unless current_context.can_visit?(@step.page_slug)
       back_link(@step.page_slug)
     end
 
@@ -46,9 +46,9 @@ module Forms
 
     def next_page
       if @changing_existing_answer
-        check_your_answers_path(current_context.form)
+        check_your_answers_path(form_id: current_context.form, form_slug: current_context.form_slug)
       else
-        form_page_path(@step.form_id, @step.next_page_slug)
+        form_page_path(@step.form_id, @step.form_slug, @step.next_page_slug)
       end
     end
 

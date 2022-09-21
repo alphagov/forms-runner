@@ -47,6 +47,7 @@ RSpec.describe "Errors", type: :request do
       {
         id: 2,
         name: "Form name",
+        form_slug: "form-name",
         submission_email: "submission@email.com",
         start_page: 1,
       }.to_json
@@ -71,7 +72,7 @@ RSpec.describe "Errors", type: :request do
     end
 
     it "returns http code 500" do
-      post form_submit_answers_path(mode: "form", form_id: 2)
+      post form_submit_answers_path(mode: "form", form_id: 2, form_slug: "form-name")
       expect(response).to have_http_status(:internal_server_error)
     end
   end
