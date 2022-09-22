@@ -6,8 +6,8 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root "errors#not_found"
 
-  get "/help/accessibility-statement" => "help#accessibility_statement", as: :accessibility_statement
-  get "/help/cookies" => "help#cookies", as: :cookies
+  get "/help/accessibility-statement" => "application#accessibility_statement", as: :accessibility_statement
+  get "/help/cookies" => "application#cookies", as: :cookies
 
   scope "/:mode", mode: /preview-form|form/ do
     get "/:form_id" => "forms/base#redirect_to_user_friendly_url", as: :form_id
