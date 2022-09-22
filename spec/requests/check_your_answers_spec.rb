@@ -1,12 +1,15 @@
 require "rails_helper"
 
 RSpec.describe "Check Your Answers Controller", type: :request do
+  let(:timestamp_of_request) { Time.utc(2022, 12, 14, 10, 00, 00) }
+
   let(:form_data) do
     {
       id: 2,
       name: "Form 1",
       form_slug: "form-1",
       submission_email: "submission@email.com",
+      live_at: "2022-08-18 09:16:50 +0100",
       start_page: 1,
       privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
       what_happens_next_text: "Good things come to those that wait",
@@ -86,6 +89,29 @@ RSpec.describe "Check Your Answers Controller", type: :request do
           expect(EventLogger).not_to have_received(:log)
         end
       end
+
+      context 'and a form has a live_at value in the future' do
+        let(:form_data) do
+          {
+            id: 2,
+            name: "Form name",
+            form_slug: "form-name",
+            submission_email: "submission@email.com",
+            live_at: "2023-01-01 09:00:00 +0100",
+            start_page: "1",
+            privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
+            what_happens_next_text: "Good things come to those that wait"
+          }.to_json
+        end
+
+        it "does not return 404" do
+          travel_to timestamp_of_request do
+            get check_your_answers_path(mode: "preview-form", form_id: 2, form_slug: "form-1")
+          end
+
+          expect(response.status).to_not eq(404)
+        end
+      end
     end
 
     context "with preview mode off" do
@@ -124,6 +150,27 @@ RSpec.describe "Check Your Answers Controller", type: :request do
 
         it "Logs the form_check_answers event" do
           expect(EventLogger).to have_received(:log).with("form_check_answers", { form: "Form 1", method: "GET", url: "http://www.example.com/form/2/form-1/check_your_answers" })
+        end
+      end
+
+      context 'and a form has a live_at value in the future' do
+        let(:form_response_data) do
+          {
+            id: 2,
+            name: "Form name",
+            form_slug: "form-name",
+            submission_email: "submission@email.com",
+            live_at: "2023-01-01 09:00:00 +0100",
+            start_page: "1",
+            privacy_policy_url: "http://www.example.gov.uk/privacy_policy"
+          }.to_json
+        end
+
+        it "returns 404" do
+          travel_to timestamp_of_request do
+            get form_path(mode: "form", form_id: 2, form_slug: "form-name")
+          end
+          get check_your_answers_path(mode: "form", form_id: 2, form_slug: "form-1")
         end
       end
     end
