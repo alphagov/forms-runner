@@ -1,6 +1,7 @@
 require "rails_helper"
 
-RSpec.describe "Form controller", type: :request do
+RSpec.describe "Base controller", type: :request do
+  let(:timestamp_of_request) { Time.utc(2022, 12, 14, 10, 00, 00) }
   let(:form_response_data) do
     {
       id: 2,
@@ -8,6 +9,7 @@ RSpec.describe "Form controller", type: :request do
       form_slug: "form-name",
       submission_email: "submission@email.com",
       start_page: "1",
+      live_at: "2022-08-18 09:16:50 +0100",
       privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
       what_happens_next_text: "Good things come to those that wait",
     }.to_json
@@ -79,6 +81,7 @@ RSpec.describe "Form controller", type: :request do
           name: "Form name",
           form_slug: "form-name",
           submission_email: "submission@email.com",
+          live_at: "2022-08-18 09:16:50 +0100",
           start_page: nil,
           privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
         }.to_json
@@ -97,7 +100,9 @@ RSpec.describe "Form controller", type: :request do
     context "with preview mode on" do
       context "when a form exists" do
         before do
-          get form_path(mode: "preview-form", form_id: 2, form_slug: "form-name")
+          travel_to timestamp_of_request do
+            get form_path(mode: "preview-form", form_id: 2, form_slug: "form-name")
+          end
         end
 
         context "when the form has a start page" do
@@ -142,7 +147,26 @@ RSpec.describe "Form controller", type: :request do
             expect(response.body).to include("http://www.example.gov.uk/privacy_policy")
           end
         end
+
+        context 'and a form has a live_at value in the future' do
+          let(:form_response_data) do
+            {
+              id: 2,
+              name: "Form name",
+              form_slug: "form-name",
+              submission_email: "submission@email.com",
+              live_at: "2023-01-01 09:00:00 +0100",
+              start_page: "1",
+              privacy_policy_url: "http://www.example.gov.uk/privacy_policy"
+            }.to_json
+          end
+
+          it "does not return 404" do
+            expect(response.status).to_not eq(404)
+          end
+        end
       end
+
 
       context "when a form doesn't exists" do
         before do
@@ -186,50 +210,83 @@ RSpec.describe "Form controller", type: :request do
     end
 
     context "with preview mode off" do
-      context "when a form exists" do
-        before do
-          get form_path(mode: "form", form_id: 2, form_slug: "form-name")
-        end
-
-        context "when the form has a start page" do
-          it "Redirects to the first page" do
-            expect(response).to redirect_to(form_page_path("form", 2, "form-name", 1))
+      context 'when a form is live' do
+        context "when a form exists" do
+          before do
+            travel_to timestamp_of_request do
+              get form_path(mode: "form", form_id: 2, form_slug: "form-name")
+            end
           end
 
-          it "Logs the form_visit event" do
-            expect(EventLogger).to have_received(:log).with("form_visit", { form: "Form name", method: "GET", url: "http://www.example.com/form/2/form-name" })
+          context "when the form has a start page" do
+            it "Redirects to the first page" do
+              expect(response).to redirect_to(form_page_path("form", 2, "form-name", 1))
+            end
+
+            it "Logs the form_visit event" do
+              expect(EventLogger).to have_received(:log).with("form_visit", { form: "Form name", method: "GET", url: "http://www.example.com/form/2/form-name" })
+            end
+          end
+
+          context "when the form has no start page" do
+            let(:form_response_data) do
+              {
+                id: 2,
+                name: "Form name",
+                form_slug: "form-name",
+                submission_email: "submission@email.com",
+                start_page: nil,
+                live_at: "2022-08-18 09:16:50 +0100",
+                privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
+              }.to_json
+            end
+
+            it "returns 404" do
+              expect(response.status).to eq(404)
+            end
+          end
+
+          it "Returns the correct X-Robots-Tag header" do
+            expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
           end
         end
 
-        context "when the form has no start page" do
-          let(:form_response_data) do
-            {
-              id: 2,
-              name: "Form name",
-              form_slug: "form-name",
-              submission_email: "submission@email.com",
-              start_page: nil,
-              privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
-            }.to_json
+        context "when a form doesn't exist" do
+          before do
+            get form_path(mode: "form", form_id: 9999, form_slug: "form-name")
+          end
+
+          it "returns 404" do
+            expect(response.status).to eq(404)
+          end
+
+          it "Render the not found page" do
+            expect(response.body).to include(I18n.t("not_found.title"))
           end
 
           it "returns 404" do
             expect(response.status).to eq(404)
           end
         end
-
-        it "Returns the correct X-Robots-Tag header" do
-          expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
-        end
       end
 
-      context "when a form doesn't exists" do
-        before do
-          get form_path(mode: "form", form_id: 9999, form_slug: "form-name")
+      context 'and a form has a live_at value in the future' do
+        let(:form_response_data) do
+          {
+            id: 2,
+            name: "Form name",
+            form_slug: "form-name",
+            submission_email: "submission@email.com",
+            live_at: "2023-08-18 09:16:50 +0100",
+            start_page: nil,
+            privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
+          }.to_json
         end
 
-        it "Render the not found page" do
-          expect(response.body).to include(I18n.t("not_found.title"))
+        before do
+          travel_to timestamp_of_request do
+            get form_path(mode: "form", form_id: 2, form_slug: "form-name")
+          end
         end
 
         it "returns 404" do

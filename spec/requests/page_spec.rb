@@ -1,6 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "Page Controller", type: :request do
+  let(:timestamp_of_request) { Time.utc(2022, 12, 14, 10, 00, 00) }
   let(:form_data) do
     {
       id: 2,
@@ -8,6 +9,7 @@ RSpec.describe "Page Controller", type: :request do
       form_slug: "form-1",
       submission_email: "submission@email.com",
       start_page: 1,
+      live_at: "2022-08-18 09:16:50 +0100",
       privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
       what_happens_next_text: "Good things come to those that wait",
     }.to_json
@@ -174,6 +176,28 @@ RSpec.describe "Page Controller", type: :request do
           expect(response.location).to eq(form_page_url("form", 2, "form-1", 1))
         end
       end
+
+      context 'and a form has a live_at value in the future' do
+        let(:form_data) do
+          {
+            id: 2,
+            name: "Form name",
+            form_slug: "form-name",
+            submission_email: "submission@email.com",
+            live_at: "2023-01-01 09:00:00 +0100",
+            start_page: "1",
+            privacy_policy_url: "http://www.example.gov.uk/privacy_policy"
+          }.to_json
+        end
+
+        it "returns 404" do
+          travel_to timestamp_of_request do
+            get form_page_path("form", 2, "form-1", 1)
+          end
+
+          expect(response.status).to eq(404)
+        end
+      end
     end
   end
 
@@ -215,6 +239,28 @@ RSpec.describe "Page Controller", type: :request do
           post save_form_page_path("preview-form", 2, "form-1", 2), params: { question: { text: "answer text" } }
           expect(response).to redirect_to(check_your_answers_path("preview-form", 2, "form-1"))
         end
+      end
+    end
+
+    context 'and a form has a live_at value in the future' do
+      let(:form_data) do
+        {
+          id: 2,
+          name: "Form name",
+          form_slug: "form-name",
+          submission_email: "submission@email.com",
+          live_at: "2023-01-01 09:00:00 +0100",
+          start_page: "1",
+          privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
+          what_happens_next_text: "Good things come to those that wait"
+        }.to_json
+      end
+
+      it "does not return 404" do
+        travel_to timestamp_of_request do
+          post save_form_page_path("preview-form", 2, "form-1", 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
+        end
+        expect(response.status).to_not eq(404)
       end
     end
 

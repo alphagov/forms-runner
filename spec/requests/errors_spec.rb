@@ -48,6 +48,7 @@ RSpec.describe "Errors", type: :request do
         id: 2,
         name: "Form name",
         form_slug: "form-name",
+        live_at: "2022-08-18 09:16:50 +0100",
         submission_email: "submission@email.com",
         start_page: 1,
       }.to_json

@@ -1,11 +1,10 @@
 module Forms
   class BaseController < ApplicationController
-    def redirect_to_user_friendly_url
-      redirect_to_friendly_url_start
-    end
+    before_action :check_available
 
-    def show
-      redirect_to_friendly_url_start
+    def redirect_to_friendly_url_start
+      redirect_to form_page_path(params.require(:form_id), current_form.form_slug, current_form.start_page)
+      EventLogger.log_form_event(Context.new(form: current_form, store: session), request, "visit") unless preview?
     end
 
     rescue_from ActiveResource::ResourceNotFound do
@@ -14,21 +13,12 @@ module Forms
 
   private
 
-    def redirect_to_friendly_url_start
-      # this will cleaned up in the PR which adds a guard to return 404 for all forms which either:
-      # don't have a start page or
-      # don't have a live_at date in the past outside of preview
-      @form = Form.find(params.require(:form_id))
-      if @form.start_page
-        redirect_to form_page_path(params.require(:form_id), @form.form_slug, @form.start_page)
-        EventLogger.log_form_event(Context.new(form: @form, store: session), request, "visit") unless preview?
-      else
-        raise ActiveResource::ResourceNotFound, "no start page"
-      end
+    def current_form
+      @current_form ||= Form.find(params.require(:form_id))
     end
 
     def current_context
-      @current_context ||= Context.new(form: Form.find(params.require(:form_id)), store: session)
+      @current_context ||= Context.new(form: current_form, store: session)
     end
 
     def preview?
@@ -41,6 +31,12 @@ module Forms
 
     def default_url_options
       { mode: }
+    end
+
+    def check_available
+      return if current_form.start_page && (preview? || current_form.live?)
+
+      raise ActiveResource::ResourceNotFound, "Not Found"
     end
   end
 end
