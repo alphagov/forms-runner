@@ -62,7 +62,7 @@ gem "govuk_design_system_formbuilder", "~> 3.0.2"
 gem "uk_postcode"
 
 # Support for locale tasks
-gem "i18n-tasks", "~> 1.0.11"
+gem "i18n-tasks", "~> 1.0.12"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
