@@ -63,13 +63,32 @@ RSpec.describe "Form controller", type: :request do
   end
 
   describe "#redirect_to_user_friendly_url" do
+    context "when the form exists and has a start page" do
+      before do
+        get form_id_path(mode:"form", form_id: 2)
+      end
+      it "rediretcs to the friendly URL start page" do
+        expect(response).to redirect_to(form_page_path("form", 2, "form-name", 1))
+      end
+    end
+
     context "when the form exists and has no start page" do
+      let(:form_response_data) do
+        {
+          id: 2,
+          name: "Form name",
+          form_slug: "form-name",
+          submission_email: "submission@email.com",
+          start_page: nil,
+          privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
+        }.to_json
+      end
       before do
         get form_id_path(mode:"form", form_id: 2)
       end
 
       it "Redirects to the form page that includes the form slug" do
-        expect(response).to redirect_to(form_path("form", 2, "form-name"))
+        expect(response.status).to eq(404)
       end
     end
   end
@@ -103,9 +122,8 @@ RSpec.describe "Form controller", type: :request do
             }.to_json
           end
 
-          it "Displays the form show page" do
-            expect(response.status).to eq(200)
-            expect(response.body).to include("Form name")
+          it "returns 404" do
+            expect(response.status).to eq(404)
           end
         end
 
@@ -195,9 +213,8 @@ RSpec.describe "Form controller", type: :request do
             }.to_json
           end
 
-          it "Displays the form show page" do
-            expect(response.status).to eq(200)
-            expect(response.body).to include("Form name")
+          it "returns 404" do
+            expect(response.status).to eq(404)
           end
         end
 
