@@ -1,5 +1,5 @@
 module Forms
-  class PageController < FormController
+  class PageController < BaseController
     before_action :prepare_step, :changing_existing_answer
 
     def show

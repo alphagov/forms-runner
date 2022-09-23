@@ -1,5 +1,5 @@
 module Forms
-  class CheckYourAnswersController < FormController
+  class CheckYourAnswersController < BaseController
     def show
       return redirect_to form_page_path(current_context.form, current_context.form_slug, current_context.next_page_slug) unless current_context.can_visit?("check_your_answers")
 
