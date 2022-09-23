@@ -67,7 +67,7 @@ RSpec.describe "Form controller", type: :request do
       before do
         get form_id_path(mode:"form", form_id: 2)
       end
-      it "rediretcs to the friendly URL start page" do
+      it "redirects to the friendly URL start page" do
         expect(response).to redirect_to(form_page_path("form", 2, "form-name", 1))
       end
     end
