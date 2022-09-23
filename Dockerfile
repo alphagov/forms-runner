@@ -26,7 +26,8 @@ ARG NODE_ENV="production"
 ENV RAILS_ENV="${RAILS_ENV}" \
     NODE_ENV="${NODE_ENV}" \
     PATH="${PATH}:/home/ruby/.local/bin:/node_modules/.bin" \
-    USER="ruby"
+    USER="ruby" \
+    REDIS_URL="${REDIS_URL:-redis://notset/}"
 
 COPY --chown=ruby:ruby . .
 
