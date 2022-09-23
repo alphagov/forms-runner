@@ -1,5 +1,5 @@
 module Forms
-  class SubmitAnswersController < FormController
+  class SubmitAnswersController < BaseController
     def submit_answers
       unless preview?
         EventLogger.log_form_event(current_context, request, "submission")

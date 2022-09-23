@@ -1,5 +1,5 @@
 module Forms
-  class SubmittedController < FormController
+  class SubmittedController < BaseController
     def submitted
       @current_context = current_context
     end
