@@ -54,7 +54,7 @@ RSpec.describe Form, type: :model do
       end
     end
 
-    context 'when live_at is a string which isn\'t a valid date' do
+    context "when live_at is a string which isn't a valid date" do
       let(:response_data) { { id: 1, name: "form name", live_at: "not a date!", submission_email: "user@example.com", start_page: 1 }.to_json }
 
       it "raises an error" do
