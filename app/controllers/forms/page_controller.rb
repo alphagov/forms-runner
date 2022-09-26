@@ -26,6 +26,10 @@ module Forms
     def prepare_step
       page_slug = params.require(:page_slug)
       @step = current_context.find_or_create(page_slug)
+
+      # TODO: delete these once we know what the API looks like
+      contact_link = OpenStruct.new(link_text: "This is a link", link_url: "https://gov.uk/contact-form")
+      @contact_details = OpenStruct.new(email: "hello@example.gov.uk", phone: "Call 01610123456\n\nThis line is only open on Tuesdays.", online: contact_link)
     rescue StepFactory::PageNotFoundError => e
       Sentry.capture_exception(e)
       render "errors/not_found", status: :not_found

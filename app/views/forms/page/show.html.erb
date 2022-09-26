@@ -15,5 +15,29 @@
         <%= render :partial => ActiveSupport::Inflector.underscore(@step.question.model_name.name), :locals => { :page => @step, :form => form } %>
       <%= form.govuk_submit %>
     <% end %>
+
+    <% if @contact_details %>
+      <%= govuk_details(summary_text: "Get help with this form") do %>
+        <% if @contact_details.email.present? %>
+          <h3 class="govuk-heading-s">Email</h3>
+          <p class="govuk-body">
+            <%= govuk_link_to @contact_details.email, "mailto:#{@contact_details.email}" %>
+          </p>
+        <% end %>
+        <% if @contact_details.phone.present? %>
+          <h3 class="govuk-heading-s">Phone</h3>
+          <%= simple_format(@contact_details.phone) %>
+          <p class="govuk-body">
+            <a class="govuk-link" href="https://www.gov.uk/call-charges" target="_blank">Find out about call charges</a>
+          </p>
+        <% end %>
+        <% if @contact_details[:online].present? %>
+          <h3 class="govuk-heading-s">Online</h3>
+          <p class="govuk-body">
+            <%= govuk_link_to "#{@contact_details.online.link_text} (opens in new tab)", @contact_details.online.link_url, target:"_blank" %>
+          </p>
+        <% end %>
+      <% end %>
+    <% end %>
   </div>
 </div>
