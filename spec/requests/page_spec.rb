@@ -83,6 +83,9 @@ RSpec.describe "Page Controller", type: :request do
 
       context "with a page that has a previous page" do
         it "Displays a link to the previous page" do
+          allow_any_instance_of(Context).to receive(:can_visit?)
+                                              .and_return(true)
+          allow_any_instance_of(Context).to receive(:previous_step).and_return(1)
           get form_page_path("preview-form", 2, "form-1", 2)
           expect(response.body).to include(form_page_path(2, "form-1", 1))
         end
@@ -147,6 +150,9 @@ RSpec.describe "Page Controller", type: :request do
 
       context "with a page that has a previous page" do
         it "Displays a link to the previous page" do
+          allow_any_instance_of(Context).to receive(:can_visit?)
+                                              .and_return(true)
+          allow_any_instance_of(Context).to receive(:previous_step).and_return(1)
           get form_page_path("form", 2, "form-1", 2)
           expect(response.body).to include(form_page_path(2, "form-1", 1))
         end
