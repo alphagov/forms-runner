@@ -40,7 +40,7 @@ module Forms
       if @changing_existing_answer
         @back_link = check_your_answers_path(form_id: current_context.form)
       elsif previous_step
-        @back_link = form_page_path(@step.form_id, previous_step)
+        @back_link = form_page_path(@step.form_id, @step.form_slug, previous_step)
       end
     end
 
