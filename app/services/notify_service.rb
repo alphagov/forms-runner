@@ -5,7 +5,8 @@ class NotifyService
     @notify_api_key = ENV["NOTIFY_API_KEY"]
   end
 
-  def send_email(email_address, title, text_input)
+  def send_email(email_address, title, text_input, preview_mode: false)
+    @preview_mode = preview_mode
     unless @notify_api_key
       Rails.logger.warn "Warning: no NOTIFY_API_KEY set."
       return nil
@@ -16,6 +17,7 @@ class NotifyService
   end
 
   def email(email_address, title, text_input)
+    title = "TEST FORM: #{title}" if @preview_mode
     timestamp = submission_timestamp
     {
       email_address:,
