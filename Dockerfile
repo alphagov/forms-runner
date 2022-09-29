@@ -1,30 +1,28 @@
-FROM ruby:3.1.1-slim-bullseye AS assets
+# NOTE: Before using in production we must consider the need to pin
+# images to a SHA
+FROM ruby:3.1.1-alpine3.15 AS build
 
 WORKDIR /app
 
-RUN bash -c "set -o pipefail && apt-get update \
-  && apt-get install -y --no-install-recommends build-essential curl git libpq-dev \
-  && curl -sSL https://deb.nodesource.com/setup_16.x | bash - \
-  && curl -sSL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
-  && echo 'deb https://dl.yarnpkg.com/debian/ stable main' | tee /etc/apt/sources.list.d/yarn.list \
-  && apt-get update && apt-get install -y --no-install-recommends nodejs yarn \
-  && rm -rf /var/lib/apt/lists/* /usr/share/doc /usr/share/man \
-  && apt-get clean \
-  && useradd --create-home ruby \
-  && mkdir /node_modules && chown ruby:ruby -R /node_modules /app"
+# Edge repo is necessary for Node 16 and openssl 3
+RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories
+RUN apk update
+RUN apk upgrade --available
+RUN apk add libc6-compat openssl-dev build-base libpq-dev yarn nodejs=16.16.0-r0
+RUN adduser -D ruby
+RUN mkdir /node_modules && chown ruby:ruby -R /node_modules /app
 
 USER ruby
 
 COPY --chown=ruby:ruby Gemfile* ./
+RUN gem install bundler -v 2.3.20
 RUN bundle install --jobs "$(nproc)"
 
 COPY --chown=ruby:ruby package.json *yarn* ./
 RUN yarn install --modules-folder /node_modules
 
-ARG RAILS_ENV="production"
-ARG NODE_ENV="production"
-ENV RAILS_ENV="${RAILS_ENV}" \
-    NODE_ENV="${NODE_ENV}" \
+ENV RAILS_ENV="${RAILS_ENV:-production}" \
+    NODE_ENV="${NODE_ENV:-production}" \
     PATH="${PATH}:/home/ruby/.local/bin:/node_modules/.bin" \
     USER="ruby" \
     REDIS_URL="${REDIS_URL:-redis://notset/}"
@@ -38,32 +36,31 @@ RUN if [ "${RAILS_ENV}" != "development" ]; then \
 
 CMD ["bash"]
 
-FROM ruby:3.1.1-slim-bullseye AS app
+FROM ruby:3.1.1-alpine3.15 AS app
 
-ARG RAILS_ENV="production"
-ENV RAILS_ENV="${RAILS_ENV}" \
+ENV RAILS_ENV="${RAILS_ENV:-production}" \
     PATH="${PATH}:/home/ruby/.local/bin" \
     USER="ruby"
 
 WORKDIR /app
 
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends build-essential curl libpq-dev \
-  && rm -rf /var/lib/apt/lists/* /usr/share/doc /usr/share/man \
-  && apt-get clean \
-  && useradd --create-home ruby \
-  && chown ruby:ruby -R /app
+# Edge repo is necessary for Node 16 and openssl 3
+RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories
+RUN apk update
+RUN apk upgrade --available
+RUN apk add libc6-compat openssl-dev
+
+RUN adduser -D ruby
+RUN chown ruby:ruby -R /app
 
 USER ruby
 
 COPY --chown=ruby:ruby bin/ ./bin
 RUN chmod 0755 bin/*
 
-COPY --chown=ruby:ruby --from=assets /usr/local/bundle /usr/local/bundle
-COPY --chown=ruby:ruby --from=assets /app/public /public
+COPY --chown=ruby:ruby --from=build /usr/local/bundle /usr/local/bundle
+COPY --chown=ruby:ruby --from=build /app/public /public
 COPY --chown=ruby:ruby . .
-
-ENTRYPOINT ["/app/bin/docker-entrypoint"]
 
 EXPOSE 3000
 
