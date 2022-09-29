@@ -15,10 +15,10 @@ class Context
     @privacy_policy_url = form.privacy_policy_url
     @what_happens_next_text = form.what_happens_next_text
     @support_details = OpenStruct.new({
-      email: form&.support_email,
-      phone: form&.support_phone,
-      url: form&.support_url,
-      url_text: form&.support_url_text,
+      email: form.support_email,
+      phone: form.support_phone,
+      url: form.support_url,
+      url_text: form.support_url_text,
     })
   end
 
