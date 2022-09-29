@@ -119,6 +119,67 @@ RSpec.describe "Page Controller", type: :request do
           expect(response.location).to eq(form_page_url("preview-form", 2, "form-1", 1))
         end
       end
+
+      [
+        ["only include phone", nil, "Call 01610123456\n\nThis line is only open on Tuesdays.", nil, nil],
+        ["only include email", "help@example.gov.uk", nil, nil, nil],
+        ["include the URL fields", nil, nil, "https://example.gov.uk/contact", "Contact form"],
+        ["include email and phone", "help@example.gov.uk", "Call 01610123456\n\nThis line is only open on Tuesdays.", nil, nil],
+        ["include email and URL fields", "help@example.gov.uk", nil, "https://example.gov.uk/contact", "Contact form"],
+        ["include phone and URL fields", nil, "Call 01610123456\n\nThis line is only open on Tuesdays.", "https://example.gov.uk/contact", "Contact form"],
+        ["include all fields", "help@example.gov.uk", "Call 01610123456\n\nThis line is only open on Tuesdays.", "https://example.gov.uk/contact", "Contact form"],
+
+      ].each do |variation, support_email, support_phone, support_url, support_url_text|
+        context "with contact details set to #{variation}" do
+          let(:form_data) do
+            {
+              id: 2,
+              name: "Form 1",
+              form_slug: "form-1",
+              submission_email: "submission@email.com",
+              start_page: 1,
+              live_at: "2022-08-18 09:16:50 +0100",
+              privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
+              what_happens_next_text: "Good things come to those that wait",
+              support_email:,
+              support_phone:,
+              support_url:,
+              support_url_text:,
+            }.to_json
+          end
+
+          it "displays the contact details section" do
+            get form_page_path("preview-form", 2, "form-1", 1)
+
+            expect(response.body).to include("Get help with this form")
+          end
+        end
+      end
+
+      context "without contact details set" do
+        let(:form_data) do
+          {
+            id: 2,
+            name: "Form 1",
+            form_slug: "form-1",
+            submission_email: "submission@email.com",
+            start_page: 1,
+            live_at: "2022-08-18 09:16:50 +0100",
+            privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
+            what_happens_next_text: "Good things come to those that wait",
+            support_email: nil,
+            support_phone: nil,
+            support_url: nil,
+            support_url_text: nil,
+          }.to_json
+        end
+
+        it "does not display the contact details section" do
+          get form_page_path("preview-form", 2, "form-1", 1)
+
+          expect(response.body).not_to include("Get help with this form")
+        end
+      end
     end
 
     context "with preview mode off" do
