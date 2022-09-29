@@ -16,28 +16,29 @@
       <%= form.govuk_submit %>
     <% end %>
 
-    <% if @contact_details %>
+    <% if [@support_details.email, @support_details.phone, @support_details.url, @support_details.url_text].any?(&:present?) %>
       <%= govuk_details(summary_text: "Get help with this form") do %>
-        <% if @contact_details.email.present? %>
+        <% if @support_details.email.present? %>
           <h3 class="govuk-heading-s">Email</h3>
           <p class="govuk-body">
-            <%= govuk_link_to @contact_details.email, "mailto:#{@contact_details.email}" %>
+            <%= govuk_link_to @support_details.email, "mailto:#{@support_details.email}" %>
           </p>
         <% end %>
-        <% if @contact_details.phone.present? %>
+        <% if @support_details.phone.present? %>
           <h3 class="govuk-heading-s">Phone</h3>
-          <%= simple_format(@contact_details.phone) %>
+          <%= simple_format(@support_details.phone) %>
           <p class="govuk-body">
             <a class="govuk-link" href="https://www.gov.uk/call-charges" target="_blank">Find out about call charges</a>
           </p>
         <% end %>
-        <% if @contact_details[:online].present? %>
+        <% if @support_details.url.present? && @support_details.url_text.present? %>
           <h3 class="govuk-heading-s">Online</h3>
           <p class="govuk-body">
-            <%= govuk_link_to "#{@contact_details.online.link_text} (opens in new tab)", @contact_details.online.link_url, target:"_blank" %>
+            <%= govuk_link_to "#{@support_details.url_text} (opens in new tab)", @support_details.url, target:"_blank" %>
           </p>
         <% end %>
       <% end %>
     <% end %>
+
   </div>
 </div>
