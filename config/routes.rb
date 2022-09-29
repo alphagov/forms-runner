@@ -21,7 +21,6 @@ Rails.application.routes.draw do
       get "/:page_slug" => "forms/page#show", as: :form_page
       post "/:page_slug" => "forms/page#save", as: :save_form_page
     end
-
   end
 
   get "/404", to: "errors#not_found", as: :error_404, via: :all

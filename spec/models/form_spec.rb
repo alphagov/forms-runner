@@ -38,7 +38,7 @@ RSpec.describe Form, type: :model do
   end
 
   describe "#live?" do
-    context 'when live_at is not set' do
+    context "when live_at is not set" do
       let(:response_data) { { id: 1, name: "form name", submission_email: "user@example.com", start_page: 1 }.to_json }
 
       it "raises an error" do
@@ -46,7 +46,7 @@ RSpec.describe Form, type: :model do
       end
     end
 
-    context 'when no live_at is set to empty string' do
+    context "when no live_at is set to empty string" do
       let(:response_data) { { id: 1, name: "form name", live_at: "", submission_email: "user@example.com", start_page: 1 }.to_json }
 
       it "returns false" do
@@ -62,7 +62,7 @@ RSpec.describe Form, type: :model do
       end
     end
 
-    context 'when live_at is not a string' do
+    context "when live_at is not a string" do
       let(:response_data) { { id: 1, name: "form name", live_at: 1, submission_email: "user@example.com", start_page: 1 }.to_json }
 
       it "raises an error" do
@@ -70,7 +70,7 @@ RSpec.describe Form, type: :model do
       end
     end
 
-    context 'when live_at is a date in the future' do
+    context "when live_at is a date in the future" do
       let(:response_data) { { id: 1, name: "form name", live_at: "2022-08-18 09:16:50Z", submission_email: "user@example.com", start_page: 1 }.to_json }
 
       it "returns false" do
@@ -78,7 +78,7 @@ RSpec.describe Form, type: :model do
       end
     end
 
-    context 'when live_at is a date in the past' do
+    context "when live_at is a date in the past" do
       let(:response_data) { { id: 1, name: "form name", live_at: "2022-08-18 09:16:50Z", submission_email: "user@example.com", start_page: 1 }.to_json }
 
       it "returns true" do
@@ -86,7 +86,7 @@ RSpec.describe Form, type: :model do
       end
     end
 
-    context 'when dates are the same' do
+    context "when dates are the same" do
       let(:response_data) { { id: 1, name: "form name", live_at: "2022-08-18 09:16:50Z", submission_email: "user@example.com", start_page: 1 }.to_json }
 
       it "returns false" do
