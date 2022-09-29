@@ -56,6 +56,29 @@ RSpec.describe NotifyService do
         end
       end
     end
+
+    context "with an email subject identifying that it was submitted from preview-form" do
+      let(:submission_datetime) { Time.utc(2022, 12, 14, 10, 00, 00) }
+      it "sends correct values to notify" do
+        fake_notify_client = instance_double(Notifications::Client)
+        allow(fake_notify_client).to receive(:send_email)
+        allow(Notifications::Client).to receive(:new).and_return(fake_notify_client)
+
+        travel_to submission_datetime do
+          notify_service = NotifyService.new
+          notify_service.send_email('fake-email','title','text', preview_mode: true)
+          expect(fake_notify_client).to have_received(:send_email).with(
+            {:email_address=>'fake-email',
+             :personalisation=>{
+               :submission_date=>"14 December 2022",
+               :submission_time=>"10:00:00",
+               :text_input=>'text',
+               :title=>'TEST FORM: title'
+             },
+             :template_id=>"427eb8bc-ce0d-40a3-bf54-d76e8c3ec916"}).once
+        end
+      end
+    end
   end
 
   context "with no api key set" do

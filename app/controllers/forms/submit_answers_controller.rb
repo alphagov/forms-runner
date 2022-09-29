@@ -16,7 +16,7 @@ module Forms
 
     def submit_form(text)
       # in the controller for now but can be moved to service object, maybe use actionmailer fo easier testing?
-      NotifyService.new.send_email(current_context.submission_email, current_context.form_name, text)
+      NotifyService.new.send_email(current_context.submission_email, current_context.form_name, text, preview?)
     end
 
     def answers
