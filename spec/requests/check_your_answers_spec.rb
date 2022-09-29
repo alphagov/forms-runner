@@ -13,6 +13,10 @@ RSpec.describe "Check Your Answers Controller", type: :request do
       start_page: 1,
       privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
       what_happens_next_text: "Good things come to those that wait",
+      support_email: "help@example.gov.uk",
+      support_phone: "Call 01610123456\n\nThis line is only open on Tuesdays.",
+      support_url: "https://example.gov.uk/contact",
+      support_url_text: "Contact us",
     }.to_json
   end
 
@@ -101,6 +105,10 @@ RSpec.describe "Check Your Answers Controller", type: :request do
             start_page: "1",
             privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
             what_happens_next_text: "Good things come to those that wait",
+            support_email: "help@example.gov.uk",
+            support_phone: "Call 01610123456\n\nThis line is only open on Tuesdays.",
+            support_url: "https://example.gov.uk/contact",
+            support_url_text: "Contact us",
           }.to_json
         end
 
