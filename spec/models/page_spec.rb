@@ -11,7 +11,7 @@ RSpec.describe Page, type: :model do
 
   let(:req_headers) do
     {
-      "X-API-Token" => ENV["API_KEY"],
+      "X-API-Token" => Settings.forms_api.auth_key,
       "Accept" => "application/json",
     }
   end
