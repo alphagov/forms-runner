@@ -1,5 +1,7 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require "spec_helper"
+require "view_component/test_helpers"
+require "capybara/rspec"
 ENV["RAILS_ENV"] ||= "test"
 require_relative "../config/environment"
 # Prevent database truncation if the environment is production
@@ -55,4 +57,7 @@ RSpec.configure do |config|
 
   # Add rails own time testing helpers
   config.include ActiveSupport::Testing::TimeHelpers
+
+  config.include ViewComponent::TestHelpers, type: :component
+  config.include Capybara::RSpecMatchers, type: :component
 end

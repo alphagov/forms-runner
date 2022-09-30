@@ -54,3 +54,10 @@ en:
     after_link: will help us improve it.
     before_link: This is a new service, your
     link: feedback
+  support_details:
+    call_charges: Find out about call charges
+    email: Email
+    get_help_with_this_form: Get help with this form
+    link_text: "%{link} (opens in new tab)"
+    online: Online
+    phone: Phone

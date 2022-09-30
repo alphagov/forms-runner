@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "Check Your Answers Controller", type: :request do
-  let(:timestamp_of_request) { Time.utc(2022, 12, 14, 10, 00, 00) }
+  let(:timestamp_of_request) { Time.utc(2022, 12, 14, 10, 0o0, 0o0) }
 
   let(:form_data) do
     {
@@ -13,6 +13,10 @@ RSpec.describe "Check Your Answers Controller", type: :request do
       start_page: 1,
       privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
       what_happens_next_text: "Good things come to those that wait",
+      support_email: "help@example.gov.uk",
+      support_phone: "Call 01610123456\n\nThis line is only open on Tuesdays.",
+      support_url: "https://example.gov.uk/contact",
+      support_url_text: "Contact us",
     }.to_json
   end
 
@@ -90,7 +94,7 @@ RSpec.describe "Check Your Answers Controller", type: :request do
         end
       end
 
-      context 'and a form has a live_at value in the future' do
+      context "and a form has a live_at value in the future" do
         let(:form_data) do
           {
             id: 2,
@@ -100,7 +104,11 @@ RSpec.describe "Check Your Answers Controller", type: :request do
             live_at: "2023-01-01 09:00:00 +0100",
             start_page: "1",
             privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
-            what_happens_next_text: "Good things come to those that wait"
+            what_happens_next_text: "Good things come to those that wait",
+            support_email: "help@example.gov.uk",
+            support_phone: "Call 01610123456\n\nThis line is only open on Tuesdays.",
+            support_url: "https://example.gov.uk/contact",
+            support_url_text: "Contact us",
           }.to_json
         end
 
@@ -109,7 +117,7 @@ RSpec.describe "Check Your Answers Controller", type: :request do
             get check_your_answers_path(mode: "preview-form", form_id: 2, form_slug: "form-1")
           end
 
-          expect(response.status).to_not eq(404)
+          expect(response.status).not_to eq(404)
         end
       end
     end
@@ -153,7 +161,7 @@ RSpec.describe "Check Your Answers Controller", type: :request do
         end
       end
 
-      context 'and a form has a live_at value in the future' do
+      context "and a form has a live_at value in the future" do
         let(:form_response_data) do
           {
             id: 2,
@@ -162,7 +170,7 @@ RSpec.describe "Check Your Answers Controller", type: :request do
             submission_email: "submission@email.com",
             live_at: "2023-01-01 09:00:00 +0100",
             start_page: "1",
-            privacy_policy_url: "http://www.example.gov.uk/privacy_policy"
+            privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
           }.to_json
         end
 

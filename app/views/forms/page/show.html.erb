@@ -15,5 +15,8 @@
         <%= render :partial => ActiveSupport::Inflector.underscore(@step.question.model_name.name), :locals => { :page => @step, :form => form } %>
       <%= form.govuk_submit %>
     <% end %>
+
+    <%= render SupportDetailsComponent::View.new(@support_details) %>
+
   </div>
 </div>

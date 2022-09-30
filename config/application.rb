@@ -13,6 +13,7 @@ require "action_mailer/railtie"
 require "action_view/railtie"
 require "action_cable/engine"
 require "rails/test_unit/railtie"
+require "./app/lib/hosting_environment"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -38,5 +39,9 @@ module FormsRunner
 
     # Use custom error pages
     config.exceptions_app = routes
+    config.view_component.preview_paths = [Rails.root.join("spec/components")]
+    config.view_component.preview_route = "/preview"
+    # Replace with value which will be true in local dev and PAAS dev
+    config.view_component.show_previews = HostingEnvironment.test_environment?
   end
 end

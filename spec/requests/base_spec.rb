@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "Base controller", type: :request do
-  let(:timestamp_of_request) { Time.utc(2022, 12, 14, 10, 00, 00) }
+  let(:timestamp_of_request) { Time.utc(2022, 12, 14, 10, 0o0, 0o0) }
   let(:form_response_data) do
     {
       id: 2,
@@ -12,6 +12,10 @@ RSpec.describe "Base controller", type: :request do
       live_at: "2022-08-18 09:16:50 +0100",
       privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
       what_happens_next_text: "Good things come to those that wait",
+      support_email: "help@example.gov.uk",
+      support_phone: "Call 01610123456\n\nThis line is only open on Tuesdays.",
+      support_url: "https://example.gov.uk/contact",
+      support_url_text: "Contact us",
     }.to_json
   end
 
@@ -67,8 +71,9 @@ RSpec.describe "Base controller", type: :request do
   describe "#redirect_to_user_friendly_url" do
     context "when the form exists and has a start page" do
       before do
-        get form_id_path(mode:"form", form_id: 2)
+        get form_id_path(mode: "form", form_id: 2)
       end
+
       it "redirects to the friendly URL start page" do
         expect(response).to redirect_to(form_page_path("form", 2, "form-name", 1))
       end
@@ -84,10 +89,15 @@ RSpec.describe "Base controller", type: :request do
           live_at: "2022-08-18 09:16:50 +0100",
           start_page: nil,
           privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
+          support_email: "help@example.gov.uk",
+          support_phone: "Call 01610123456\n\nThis line is only open on Tuesdays.",
+          support_url: "https://example.gov.uk/contact",
+          support_url_text: "Contact us",
         }.to_json
       end
+
       before do
-        get form_id_path(mode:"form", form_id: 2)
+        get form_id_path(mode: "form", form_id: 2)
       end
 
       it "Redirects to the form page that includes the form slug" do
@@ -148,7 +158,7 @@ RSpec.describe "Base controller", type: :request do
           end
         end
 
-        context 'and a form has a live_at value in the future' do
+        context "and a form has a live_at value in the future" do
           let(:form_response_data) do
             {
               id: 2,
@@ -157,16 +167,15 @@ RSpec.describe "Base controller", type: :request do
               submission_email: "submission@email.com",
               live_at: "2023-01-01 09:00:00 +0100",
               start_page: "1",
-              privacy_policy_url: "http://www.example.gov.uk/privacy_policy"
+              privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
             }.to_json
           end
 
           it "does not return 404" do
-            expect(response.status).to_not eq(404)
+            expect(response.status).not_to eq(404)
           end
         end
       end
-
 
       context "when a form doesn't exists" do
         before do
@@ -192,6 +201,10 @@ RSpec.describe "Base controller", type: :request do
             start_page: nil,
             privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
             what_happens_next_text: "Good things come to those that wait",
+            support_email: "help@example.gov.uk",
+            support_phone: "Call 01610123456\n\nThis line is only open on Tuesdays.",
+            support_url: "https://example.gov.uk/contact",
+            support_url_text: "Contact us",
           }.to_json
         end
 
@@ -210,7 +223,7 @@ RSpec.describe "Base controller", type: :request do
     end
 
     context "with preview mode off" do
-      context 'when a form is live' do
+      context "when a form is live" do
         context "when a form exists" do
           before do
             travel_to timestamp_of_request do
@@ -238,6 +251,10 @@ RSpec.describe "Base controller", type: :request do
                 start_page: nil,
                 live_at: "2022-08-18 09:16:50 +0100",
                 privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
+                support_email: "help@example.gov.uk",
+                support_phone: "Call 01610123456\n\nThis line is only open on Tuesdays.",
+                support_url: "https://example.gov.uk/contact",
+                support_url_text: "Contact us",
               }.to_json
             end
 
@@ -270,7 +287,7 @@ RSpec.describe "Base controller", type: :request do
         end
       end
 
-      context 'and a form has a live_at value in the future' do
+      context "and a form has a live_at value in the future" do
         let(:form_response_data) do
           {
             id: 2,
@@ -280,6 +297,10 @@ RSpec.describe "Base controller", type: :request do
             live_at: "2023-08-18 09:16:50 +0100",
             start_page: nil,
             privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
+            support_email: "help@example.gov.uk",
+            support_phone: "Call 01610123456\n\nThis line is only open on Tuesdays.",
+            support_url: "https://example.gov.uk/contact",
+            support_url_text: "Contact us",
           }.to_json
         end
 
