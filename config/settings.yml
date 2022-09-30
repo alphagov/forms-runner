@@ -1,3 +1,7 @@
+forms_api:
+  # URL to form-api endpoints
+  base_url: http://localhost:9292
+
 # Settings for GOV.UK Notify api & email templates
 govuk_notify:
   api_key: changeme

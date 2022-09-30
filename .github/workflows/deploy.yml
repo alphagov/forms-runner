@@ -38,7 +38,7 @@ jobs:
           cf target -o ${{ secrets.CF_ORGANISATION }} -s ${{ secrets.CF_SPACE }}
           cf push --strategy rolling \
             --var PAAS_ENVIRONMENT=dev \
-            --var API_BASE=${{ secrets.API_BASE }} \
+            --var SETTINGS__FORMS_API__BASE_URL=${{ secrets.API_BASE }} \
             --var API_KEY=${{ secrets.API_KEY }} \
             --var SENTRY_DSN=${{ secrets.SENTRY_DSN }} \
             --var INSTANCES=2 \
