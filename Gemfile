@@ -57,7 +57,7 @@ gem "bootsnap", require: false
 gem "activeresource"
 
 gem "govuk-components", "~> 3.2.1"
-gem "govuk_design_system_formbuilder", "~> 3.0.2"
+gem "govuk_design_system_formbuilder", "~> 3.1.2"
 
 # validate postcodes
 gem "uk_postcode"
