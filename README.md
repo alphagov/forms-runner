@@ -63,7 +63,6 @@ Refer to the [settings file](config/settings.yml) for all the settings required 
 | --------------------- | ------------------------------------------------------------ |
 | `REDIS_URL`           | The URL for Redis (optional)                                 |
 | `SENTRY_DSN`          | The DSN provided by Sentry                                   |
-| `API_BASE`            | The base url for the API - E.g. `http://localhost:9090`      |
 | `SERVICE_UNAVAILABLE` | All pages will render 'Service unavailable' if set to `true` |
 | `API_KEY`             | The API key for authentication                               |
 

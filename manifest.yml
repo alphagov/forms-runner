@@ -10,7 +10,7 @@ applications:
     env:
       RAILS_ENV: production
       RACK_ENV: production
-      API_BASE: ((API_BASE))
+      SETTINGS__FORMS_API__BASE_URL: ((SETTINGS__FORMS_API__BASE_URL))
       API_KEY: ((API_KEY))
       SETTINGS__GOVUK_NOTIFY__API_KEY: ((SETTINGS__GOVUK_NOTIFY__API_KEY))
       PAAS_ENVIRONMENT: ((PAAS_ENVIRONMENT))
