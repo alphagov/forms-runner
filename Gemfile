@@ -28,6 +28,8 @@ gem "sentry-ruby"
 
 gem "dotenv-rails", groups: %i[development test]
 
+gem "config"
+
 gem "notifications-ruby-client"
 
 # Use Redis for session storage
