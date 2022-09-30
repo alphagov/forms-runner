@@ -64,7 +64,6 @@ Refer to the [settings file](config/settings.yml) for all the settings required 
 | `REDIS_URL`           | The URL for Redis (optional)                                 |
 | `SENTRY_DSN`          | The DSN provided by Sentry                                   |
 | `SERVICE_UNAVAILABLE` | All pages will render 'Service unavailable' if set to `true` |
-| `API_KEY`             | The API key for authentication                               |
 
 ### Running the app
 
