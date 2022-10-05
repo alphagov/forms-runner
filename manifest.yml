@@ -2,6 +2,7 @@
 applications:
   - name: forms-runner-((PAAS_ENVIRONMENT))
     memory: 256M
+    instances: ((INSTANCES))
     command: bin/rails server
     services:
       - forms-runner-((PAAS_ENVIRONMENT))-redis
