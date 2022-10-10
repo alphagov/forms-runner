@@ -13,6 +13,8 @@ class QuestionRegister
               Question::NationalInsuranceNumber
             when :phone_number
               Question::PhoneNumber
+            when :long_text
+              Question::LongText
             else
               raise ArgumentError, "Unexpected answer_type for page #{page.id}: #{page.answer_type}"
             end

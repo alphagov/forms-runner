@@ -23,6 +23,11 @@ en:
             email:
               blank: Enter an email address
               invalid_email: Enter an email address in the correct format, like name@example.com
+        question/long_text:
+          attributes:
+            text:
+              blank: Enter an answer
+              too_long: The answer must be shorter than 5000 characters
         question/national_insurance_number:
           attributes:
             national_insurance_number:
