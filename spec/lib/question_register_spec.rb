@@ -18,4 +18,13 @@ RSpec.describe QuestionRegister do
     page = nil
     expect { described_class.from_page(page) }.to raise_error(NoMethodError)
   end
+
+  it "accepts is_optional for each answer_type" do
+    [false, true].each do |is_optional|
+      %i[date single_line address email national_insurance_number phone_number].each do |type|
+        page = OpenStruct.new(answer_type: type, is_optional: is_optional)
+        expect(described_class.from_page(page).is_optional?).to eq(is_optional)
+      end
+    end
+  end
 end

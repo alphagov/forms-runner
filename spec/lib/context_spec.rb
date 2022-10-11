@@ -15,6 +15,7 @@ RSpec.describe Context do
         next_page: 2,
         question_short_name: nil,
         form: nil,
+        is_optional: nil,
       }),
       Page.new({
         id: 2,
@@ -23,6 +24,7 @@ RSpec.describe Context do
         answer_type: "single_line",
         question_short_name: nil,
         form: nil,
+        is_optional: nil,
       }),
     ]
   end

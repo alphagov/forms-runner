@@ -7,9 +7,9 @@ module Question
     attribute :county
     attribute :postcode
 
-    validates :address1, presence: true
-    validates :town_or_city, presence: true
-    validates :postcode, presence: true
+    validates :address1, presence: true, unless: :is_optional?
+    validates :town_or_city, presence: true, unless: :is_optional?
+    validates :postcode, presence: true, unless: :is_optional?
     validate :postcode, :invalid_postcode?
 
     def postcode=(str)

@@ -21,6 +21,6 @@ class QuestionRegister
               raise ArgumentError, "Unexpected answer_type for page #{page.id}: #{page.answer_type}"
             end
     hint_text = page.respond_to?(:hint_text) ? page.hint_text : nil
-    klass.new({}, { question_text: page.question_text, question_short_name: page.question_short_name, hint_text: })
+    klass.new({}, { question_text: page.question_text, question_short_name: page.question_short_name, hint_text:, is_optional: page.is_optional })
   end
 end

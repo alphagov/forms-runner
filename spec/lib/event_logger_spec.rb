@@ -9,6 +9,7 @@ RSpec.describe EventLogger do
       answer_type: "single_line",
       next_page: 2,
       question_short_name: nil,
+      is_optional: nil,
     })
   end
 
