@@ -6,7 +6,7 @@
 
     <%if @current_context.what_happens_next_text.present? %>
       <h2 class="govuk-heading-m govuk-!-margin-top-7">What happens next</h2>
-      <p class="govuk-body"><%= @current_context.what_happens_next_text %></p>
+      <%= simple_format(@current_context.what_happens_next_text, class: 'govuk-body') %>
   <% end %>
   </div>
 </div>
