@@ -12,6 +12,7 @@ module Question
       @question_text = options[:question_text]
       @question_short_name = options[:question_short_name]
       @hint_text = options[:hint_text]
+      @is_optional = options[:is_optional]
     end
 
     def attributes
@@ -20,6 +21,10 @@ module Question
 
     def show_answer
       attribute_names.map { |attribute| send(attribute) }.reject(&:blank?)&.join(", ")
+    end
+
+    def is_optional?
+      @is_optional == true
     end
   end
 end

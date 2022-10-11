@@ -28,6 +28,7 @@ RSpec.describe "Page Controller", type: :request do
         hint_text: "",
         next_page: 2,
         question_short_name: nil,
+        is_optional: nil,
       },
       {
         id: 2,
@@ -35,6 +36,7 @@ RSpec.describe "Page Controller", type: :request do
         hint_text: "Q2 hint text",
         answer_type: "single_line",
         question_short_name: nil,
+        is_optional: nil,
       },
     ].to_json
   end

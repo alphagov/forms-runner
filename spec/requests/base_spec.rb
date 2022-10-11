@@ -33,12 +33,14 @@ RSpec.describe "Base controller", type: :request do
         question_short_name: nil,
         answer_type: "date",
         next_page: 2,
+        is_optional: nil,
       },
       {
         id: 2,
         question_text: "Question two",
         question_short_name: nil,
         answer_type: "date",
+        is_optional: nil,
       },
     ].to_json
   end

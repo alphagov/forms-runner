@@ -6,7 +6,7 @@ module Question
     include ActiveModel::Validations::Callbacks
 
     attribute :national_insurance_number
-    validates :national_insurance_number, presence: true
+    validates :national_insurance_number, presence: true, unless: :is_optional?
     # validates :national_insurance_number, format: { with: NINO_REGEX, message: :invalid_national_insurance_number }, allow_blank: true
     validate :valid_format
 

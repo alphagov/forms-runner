@@ -29,6 +29,7 @@ RSpec.describe "Check Your Answers Controller", type: :request do
         answer_type: "single_line",
         hint_text: "",
         next_page: 2,
+        is_optional: nil,
       },
       {
         id: 2,
@@ -36,6 +37,7 @@ RSpec.describe "Check Your Answers Controller", type: :request do
         question_short_name: "two",
         hint_text: "Q2 hint text",
         answer_type: "single_line",
+        is_optional: nil,
       },
     ].to_json
   end

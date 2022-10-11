@@ -7,7 +7,7 @@ module Question
 
     EMAIL_REGEX = /.*@.*/
     attribute :email
-    validates :email, presence: true
+    validates :email, presence: true, unless: :is_optional?
     validates :email, format: { with: EMAIL_REGEX, message: :invalid_email }, allow_blank: true
   end
 end

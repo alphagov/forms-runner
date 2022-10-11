@@ -12,4 +12,8 @@ RSpec.shared_examples "a question model" do |_parameter|
   it "responds to valid?" do
     expect(question.valid?).to be(true).or be(false)
   end
+
+  it "response to is_optional?" do
+    expect(question.is_optional?).to be(true).or be(false)
+  end
 end

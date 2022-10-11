@@ -27,6 +27,7 @@ module Question
   private
 
     def date_valid
+      return if blank? && is_optional?
       return errors.add(:date, :blank) if blank?
       return errors.add(:date, :blank_date_fields, fields: blank_fields.to_sentence) if present? && blank_fields.any?
       return errors.add(:date, :invalid_date) if invalid?
