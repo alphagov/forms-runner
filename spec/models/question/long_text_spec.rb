@@ -22,9 +22,7 @@ RSpec.describe Question::LongText, type: :model do
 
   context "when given a string" do
     it "validates without errors" do
-      question = described_class.new
-      question.validate
-      question.text = "testing"
+      question = described_class.new(text: "testing")
       question.validate
       expect(question).to be_valid
     end
