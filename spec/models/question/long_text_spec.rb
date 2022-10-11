@@ -30,9 +30,7 @@ RSpec.describe Question::LongText, type: :model do
 
   context "when given a string which is too long" do
     it "validates without errors" do
-      question = described_class.new
-      question.validate
-      question.text = "a" * 5001
+      question = described_class.new(text: "a" * 5001)
       question.validate
       expect(question.errors[:text]).to include(I18n.t("activemodel.errors.models.question/long_text.attributes.text.too_long"))
     end
