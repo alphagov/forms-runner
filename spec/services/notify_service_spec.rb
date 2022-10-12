@@ -22,13 +22,14 @@ RSpec.describe NotifyService do
 
         travel_to submission_datetime do
           notify_service = described_class.new
-          notify_service.send_email("fake-email", "title", "text")
+          form = OpenStruct.new(submission_email:"fake-email", form_name: "title", steps: [OpenStruct.new(question_text: "text", show_answer: "Testing")])
+          notify_service.send_email(form)
           expect(fake_notify_client).to have_received(:send_email).with(
             { email_address: "fake-email",
               personalisation: {
                 submission_date: "14 September 2022",
                 submission_time: "11:00:00",
-                text_input: "text",
+                text_input: "# text\nTesting",
                 title: "title",
               },
               template_id: "427eb8bc-ce0d-40a3-bf54-d76e8c3ec916" },
@@ -47,13 +48,14 @@ RSpec.describe NotifyService do
 
         travel_to submission_datetime do
           notify_service = described_class.new
-          notify_service.send_email("fake-email", "title", "text")
+          form = OpenStruct.new(submission_email:"fake-email", form_name: "title", steps: [OpenStruct.new(question_text: "text", show_answer: "Testing")])
+          notify_service.send_email(form)
           expect(fake_notify_client).to have_received(:send_email).with(
             { email_address: "fake-email",
               personalisation: {
                 submission_date: "14 December 2022",
                 submission_time: "10:00:00",
-                text_input: "text",
+                text_input: "# text\nTesting",
                 title: "title",
               },
               template_id: "427eb8bc-ce0d-40a3-bf54-d76e8c3ec916" },
@@ -71,13 +73,14 @@ RSpec.describe NotifyService do
 
         travel_to submission_datetime do
           notify_service = NotifyService.new
-          notify_service.send_email('fake-email','title','text', preview_mode: true)
+          form = OpenStruct.new(submission_email:"fake-email", form_name: "title", steps: [OpenStruct.new(question_text: "text", show_answer: "Testing")])
+          notify_service.send_email(form,preview_mode: true)
           expect(fake_notify_client).to have_received(:send_email).with(
             {:email_address=>'fake-email',
              :personalisation=>{
                :submission_date=>"14 December 2022",
                :submission_time=>"10:00:00",
-               :text_input=>'text',
+               :text_input=>"# text\nTesting",
                :title=>'TEST FORM: title'
              },
              :template_id=>"427eb8bc-ce0d-40a3-bf54-d76e8c3ec916"}).once
@@ -94,8 +97,13 @@ RSpec.describe NotifyService do
       expect(Rails.logger).to receive(:warn).with(/NOTIFY_API_KEY/)
 
       notify_service = described_class.new
-      notify_service.send_email("fake-email", "title", "text")
+      form = OpenStruct.new(submission_email:"fake-email", form_name: "title", steps: [OpenStruct.new(question_text: "text", show_answer: "Testing")])
+      notify_service.send_email(form)
       expect(fake_notify_client).not_to have_received(:send_email)
     end
+  end
+
+  describe "#safe_markdown" do
+
   end
 end

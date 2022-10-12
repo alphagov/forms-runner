@@ -5,7 +5,10 @@ class NotifyService
     @notify_api_key = ENV["NOTIFY_API_KEY"]
   end
 
-  def send_email(email_address, title, text_input, preview_mode: false)
+  def send_email(form, preview_mode: false)
+    email_address = form.submission_email
+    title = form.form_name
+    text_input = form.steps.map { |page| "# #{safe_markdown(page.question_text)}\n#{safe_markdown(page.show_answer)}" }.join("\n\n---\n\n")
     @preview_mode = preview_mode
     unless @notify_api_key
       Rails.logger.warn "Warning: no NOTIFY_API_KEY set."
@@ -37,5 +40,9 @@ class NotifyService
 
   def submission_timestamp
     Time.use_zone(submission_timezone) { Time.zone.now }
+  end
+
+  def safe_markdown(text)
+    text
   end
 end
