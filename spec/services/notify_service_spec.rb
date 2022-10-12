@@ -104,6 +104,12 @@ RSpec.describe NotifyService do
   end
 
   describe "#safe_markdown" do
+    it "returns passed in values" do
+      expect(described_class.new.safe_markdown("Testing")).to eq "Testing"
+    end
 
+    it "escapes markdown syntax" do
+      expect(described_class.new.safe_markdown("1.5")).to eq "1\\.5"
+    end
   end
 end
