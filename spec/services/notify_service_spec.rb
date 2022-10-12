@@ -108,8 +108,12 @@ RSpec.describe NotifyService do
       expect(described_class.new.safe_markdown("Testing")).to eq "Testing"
     end
 
-    it "escapes markdown syntax" do
+    it "escapes markdown syntax for ordered lists" do
       expect(described_class.new.safe_markdown("1.5")).to eq "1\\.5"
+    end
+
+    it "escapes markdown syntax" do
+      expect(described_class.new.safe_markdown("1.5.12")).to eq "1\\.5\\.12"
     end
   end
 end

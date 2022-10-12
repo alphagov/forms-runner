@@ -43,9 +43,6 @@ class NotifyService
   end
 
   def safe_markdown(text)
-    escaped = %w{! # ( ) * [ \\ ] _ ` | ~ - .}.index_with { |c| "\\#{c}" }
-    to_escape = Regexp.union(escaped.keys)
-
-    text.gsub(to_escape, escaped)
+    text.gsub(".", '\\.')
   end
 end
