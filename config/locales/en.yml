@@ -36,8 +36,8 @@ en:
         question/number:
           attributes:
             number:
-              blank: Enter an answer
-              greater_than_or_equal_to: The answer must be at least 0
+              blank: Enter a number
+              greater_than_or_equal_to: The answer must be greater than or equal to 0
               not_a_number: The answer must be a number
         question/phone_number:
           attributes:
