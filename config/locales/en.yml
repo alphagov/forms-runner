@@ -33,6 +33,12 @@ en:
             national_insurance_number:
               blank: Enter a National Insurance number
               invalid_national_insurance_number: Enter a National Insurance number that is 2 letters, 6 numbers, then A, B, C or D, like QQ 12 34 56 C
+        question/number:
+          attributes:
+            number:
+              blank: Enter an answer
+              greater_than_or_equal_to: The answer must be at least 0
+              not_a_number: The answer must be a number
         question/phone_number:
           attributes:
             phone_number:
@@ -54,7 +60,7 @@ en:
     submitted:
       title: Your form has been submitted
   page_titles:
-    error_prefix: 'Error: '
+    error_prefix: "Error: "
   phase_banner:
     after_link: will help us improve it.
     before_link: This is a new service, your
