@@ -1,5 +1,4 @@
 require "rails_helper"
-require "shared_examples_for_question_models"
 
 RSpec.describe Question::LongText, type: :model do
   it_behaves_like "a question model"
