@@ -12,7 +12,7 @@
 
     <%= govuk_summary_list(rows: @rows) %>
 
-    <%= form_with url: form_submit_answers_path do |form| %>
+    <%= form_with url: @form_submit_path do |form| %>
       <%= form.govuk_submit 'Submit' %>
     <% end %>
   </div>
