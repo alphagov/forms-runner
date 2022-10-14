@@ -1,5 +1,4 @@
 require "rails_helper"
-require "shared_examples_for_question_models"
 
 RSpec.describe Question::Address, type: :model do
   let(:question) { described_class.new }
