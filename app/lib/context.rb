@@ -1,6 +1,6 @@
 class Context
   attr_accessor :form_slug
-  attr_reader :form_name, :form_start_page, :privacy_policy_url, :what_happens_next_text, :support_details
+  attr_reader :form_name, :form_start_page, :privacy_policy_url, :what_happens_next_text, :support_details, :declaration_text
 
   def initialize(form:, store:)
     @form_context = FormContext.new(store)
@@ -14,6 +14,7 @@ class Context
     @form_start_page = form.start_page
     @privacy_policy_url = form.privacy_policy_url
     @what_happens_next_text = form.what_happens_next_text
+    @declaration_text = form.declaration_text
     @support_details = OpenStruct.new({
       email: form.support_email,
       phone: form.support_phone,
