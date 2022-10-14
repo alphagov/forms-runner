@@ -280,10 +280,6 @@ RSpec.describe "Base controller", type: :request do
           it "Render the not found page" do
             expect(response.body).to include(I18n.t("not_found.title"))
           end
-
-          it "returns 404" do
-            expect(response.status).to eq(404)
-          end
         end
       end
 
