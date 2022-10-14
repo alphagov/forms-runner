@@ -37,6 +37,8 @@ module FormsRunner
       g.test_framework :rspec
     end
 
+    config.action_view.default_form_builder = GOVUKDesignSystemFormBuilder::FormBuilder
+
     # Use custom error pages
     config.exceptions_app = routes
     config.view_component.preview_paths = [Rails.root.join("spec/components")]
