@@ -60,7 +60,7 @@ en:
     submitted:
       title: Your form has been submitted
   page_titles:
-    error_prefix: "Error: "
+    error_prefix: 'Error: '
   phase_banner:
     after_link: will help us improve it.
     before_link: This is a new service, your
