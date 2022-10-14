@@ -12,6 +12,11 @@
 
     <%= govuk_summary_list(rows: @rows) %>
 
+    <%if @current_context.declaration_text.present? %>
+      <h2 class="govuk-heading-m govuk-!-margin-top-7">Declaration</h2>
+      <%= simple_format(@current_context.declaration_text, class: 'govuk-body') %>
+    <% end %>
+
     <%= form_with url: @form_submit_path do |form| %>
       <%= form.govuk_submit 'Submit' %>
     <% end %>
