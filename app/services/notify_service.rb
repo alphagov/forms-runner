@@ -42,10 +42,6 @@ class NotifyService
     Time.use_zone(submission_timezone) { Time.zone.now }
   end
 
-  def safe_markdown(text)
-    text.gsub(".", '\\.')
-  end
-
   def build_question_answers_section(form)
     form.steps.map { |page|
       [prep_question_title(page.question_text),
@@ -59,6 +55,6 @@ class NotifyService
 
   def prep_answer_text(answer)
     answer = "[This question was skipped]" if answer.blank?
-    safe_markdown(answer)
+    "```\n\n#{answer}\n```\n"
   end
 end

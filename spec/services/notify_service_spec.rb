@@ -29,7 +29,7 @@ RSpec.describe NotifyService do
               personalisation: {
                 submission_date: "14 September 2022",
                 submission_time: "11:00:00",
-                text_input: "# text\nTesting",
+                text_input: "# text\n```\n\nTesting\n```\n",
                 title: "title",
               },
               template_id: "427eb8bc-ce0d-40a3-bf54-d76e8c3ec916" },
@@ -55,7 +55,7 @@ RSpec.describe NotifyService do
               personalisation: {
                 submission_date: "14 December 2022",
                 submission_time: "10:00:00",
-                text_input: "# text\nTesting",
+                text_input: "# text\n```\n\nTesting\n```\n",
                 title: "title",
               },
               template_id: "427eb8bc-ce0d-40a3-bf54-d76e8c3ec916" },
@@ -81,7 +81,7 @@ RSpec.describe NotifyService do
               personalisation: {
                 submission_date: "14 December 2022",
                 submission_time: "10:00:00",
-                text_input: "# text\nTesting",
+                text_input: "# text\n```\n\nTesting\n```\n",
                 title: "TEST FORM: title",
               },
               template_id: "427eb8bc-ce0d-40a3-bf54-d76e8c3ec916" },
@@ -105,20 +105,6 @@ RSpec.describe NotifyService do
     end
   end
 
-  describe "#safe_markdown" do
-    it "returns passed in values" do
-      expect(described_class.new.safe_markdown("Testing")).to eq "Testing"
-    end
-
-    it "escapes markdown syntax for ordered lists" do
-      expect(described_class.new.safe_markdown("1.5")).to eq "1\\.5"
-    end
-
-    it "escapes markdown syntax" do
-      expect(described_class.new.safe_markdown("1.5.12")).to eq "1\\.5\\.12"
-    end
-  end
-
   describe "#build_question_answers_section" do
     let(:notify_service) { described_class.new }
 
@@ -127,7 +113,7 @@ RSpec.describe NotifyService do
     let(:step) { OpenStruct.new({question_text: "What is the meaning of life?", show_answer: "42" }) }
 
     it "returns combined title and answer" do
-      expect(notify_service.build_question_answers_section(form)).to eq "# What is the meaning of life?\n42"
+      expect(notify_service.build_question_answers_section(form)).to eq "# What is the meaning of life?\n```\n\n42\n```\n"
     end
 
     context "when there is more than one step" do
@@ -153,10 +139,10 @@ RSpec.describe NotifyService do
 
     it "returns escaped answer" do
       [
-        { input: "Hello", output: "Hello" },
-        { input: "3.4 Question", output: "3\\.4 Question" },
-        { input:"-23.4 answer", output: "-23\\.4 answer" },
-        { input: "4.5.6", output: "4\\.5\\.6" },
+        { input: "Hello", output: "```\n\nHello\n```\n" },
+        { input: "3.4 Question", output: "```\n\n3.4 Question\n```\n" },
+        { input:"-23.4 answer", output: "```\n\n-23.4 answer\n```\n" },
+        { input: "4.5.6", output: "```\n\n4.5.6\n```\n" },
       ].each do |test_case|
         expect(notify_service.prep_answer_text(test_case[:input])).to eq test_case[:output]
       end
@@ -164,7 +150,7 @@ RSpec.describe NotifyService do
 
     context "when answer is blank i.e skipped" do
       it "returns the blank answer text" do
-        expect(notify_service.prep_answer_text("")).to eq "[This question was skipped]"
+        expect(notify_service.prep_answer_text("")).to eq "```\n\n[This question was skipped]\n```\n"
       end
     end
   end
