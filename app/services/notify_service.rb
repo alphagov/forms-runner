@@ -8,7 +8,7 @@ class NotifyService
   def send_email(form, preview_mode: false)
     email_address = form.submission_email
     title = form.form_name
-    text_input = form.steps.map { |page| "# #{safe_markdown(page.question_text)}\n#{safe_markdown(page.show_answer)}" }.join("\n\n---\n\n")
+    text_input = build_question_answers_section(form)
     @preview_mode = preview_mode
     unless @notify_api_key
       Rails.logger.warn "Warning: no NOTIFY_API_KEY set."
@@ -44,5 +44,21 @@ class NotifyService
 
   def safe_markdown(text)
     text.gsub(".", '\\.')
+  end
+
+  def build_question_answers_section(form)
+    form.steps.map { |page|
+      [prep_question_title(page.question_text),
+       prep_answer_text(page.show_answer)].join
+    }.join("\n\n---\n\n")
+  end
+
+  def prep_question_title(question_text)
+    "# #{question_text}\n"
+  end
+
+  def prep_answer_text(answer)
+    answer = "[This question was skipped]" if answer.blank?
+    safe_markdown(answer)
   end
 end
