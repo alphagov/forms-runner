@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::Base
-  default_form_builder GOVUKDesignSystemFormBuilder::FormBuilder
   before_action :check_service_unavailable
   after_action :add_robots_header
 
