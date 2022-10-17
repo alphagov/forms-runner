@@ -15,5 +15,9 @@
     <%= form_with url: form_submit_answers_path do |form| %>
       <%= form.govuk_submit 'Submit' %>
     <% end %>
+
+    <% if Rails.env.development? %>
+      <%= link_to "Preview email", preview_email_path(@current_context.form, @current_context.form_slug), class: "govuk-link" %>
+    <% end %>
   </div>
 </div>

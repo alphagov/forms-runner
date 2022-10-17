@@ -11,6 +11,25 @@ module Forms
       end
     end
 
+    def preview_email
+      @back_link = check_your_answers_path(current_context.form, current_context.form_slug)
+      @email_preview = NotifyService.new.preview_email(current_context, preview_mode: preview?)
+      @rows = [
+        {
+          key: { text: 'Template'},
+          value: { text: @email_preview[:template_id] },
+        },
+        {
+          key: { text: 'To'},
+          value: { text: @email_preview[:email_address] },
+        },
+        {
+          key: { text: 'Subject'},
+          value: { text: @email_preview[:subject] },
+        },
+      ]
+    end
+
   private
 
     def page_to_row(page)

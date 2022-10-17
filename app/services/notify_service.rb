@@ -19,6 +19,29 @@ class NotifyService
     client.send_email(**email(email_address, title, text_input))
   end
 
+  def preview_email(form, preview_mode: false)
+    title = form.form_name
+    text_input = build_question_answers_section(form)
+    email_address = form.submission_email || ''
+    @preview_mode = preview_mode
+    unless @notify_api_key
+      Rails.logger.warn "Warning: no NOTIFY_API_KEY set."
+      return nil
+    end
+
+    client = Notifications::Client.new(@notify_api_key)
+    full_email = email(email_address, title, text_input)
+    response = client.generate_template_preview(full_email[:template_id], personalisation: full_email[:personalisation])
+    {
+      email_address: full_email[:email_address],
+      template_id: full_email[:template_id],
+      personalisation: full_email[:personalisation],
+      body: response.body,
+      html: response.html,
+      subject: response.subject,
+    }
+  end
+
   def email(email_address, title, text_input)
     title = "TEST FORM: #{title}" if @preview_mode
     timestamp = submission_timestamp
