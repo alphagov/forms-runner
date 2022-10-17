@@ -23,6 +23,7 @@ RSpec.describe EventLogger do
         start_page: "1",
         privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
         what_happens_next_text: "Good things come to those that wait",
+        declaration_text: "agree to the declaration",
         support_email: "help@example.gov.uk",
         support_phone: "Call 01610123456\n\nThis line is only open on Tuesdays.",
         support_url: "https://example.gov.uk/contact",
