@@ -60,7 +60,7 @@ en:
     submitted:
       title: Your form has been submitted
   page:
-    optional: " (optional)"
+    optional: "%{question_text} (optional)"
   page_titles:
     error_prefix: 'Error: '
   phase_banner:

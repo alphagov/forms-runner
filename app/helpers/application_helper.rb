@@ -14,7 +14,7 @@ module ApplicationHelper
     "#{t('page_titles.error_prefix') if error}#{title}"
   end
 
-  def optional_label(page)
-    "#{page.question_text}#{t('page.optional') if page.question.is_optional?}"
+  def question_text_with_optional_suffix(page)
+    page.question.is_optional? ? t("page.optional", question_text: page.question_text) : page.question_text
   end
 end

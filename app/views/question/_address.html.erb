@@ -1,4 +1,4 @@
-<%= form.govuk_fieldset legend: { text: optional_label(page), tag: 'h1', size: 'l' }, "aria-describedby": page.hint_text.present? ? "govuk-address-hint" : nil do %>
+<%= form.govuk_fieldset legend: { text: question_text_with_optional_suffix(page), tag: 'h1', size: 'l' }, "aria-describedby": page.hint_text.present? ? "govuk-address-hint" : nil do %>
   <% if page.hint_text.present? %>
     <p id="govuk-address-hint" class="govuk-hint"><%= page.hint_text %></p>
   <% end %>

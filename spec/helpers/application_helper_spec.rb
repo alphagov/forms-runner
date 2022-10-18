@@ -23,18 +23,18 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
   end
 
-  describe "optional_label" do
+  describe "question_text_with_optional_suffix" do
     context "with an optional question" do
       it "returns the title with the optional suffix" do
         page = OpenStruct.new(question_text: "What is your name?", question: OpenStruct.new(is_optional?: true))
-        expect(helper.optional_label(page)).to eq("What is your name? (optional)")
+        expect(helper.question_text_with_optional_suffix(page)).to eq(I18n.t("page.optional", question_text: "What is your name?"))
       end
     end
 
     context "with a required question" do
       it "returns the title with the optional suffix" do
         page = OpenStruct.new(question_text: "What is your name?", question: OpenStruct.new(is_optional?: false))
-        expect(helper.optional_label(page)).to eq("What is your name?")
+        expect(helper.question_text_with_optional_suffix(page)).to eq("What is your name?")
       end
     end
   end
