@@ -59,6 +59,8 @@ en:
   form:
     submitted:
       title: Your form has been submitted
+  page:
+    optional: " (optional)"
   page_titles:
     error_prefix: 'Error: '
   phase_banner:
