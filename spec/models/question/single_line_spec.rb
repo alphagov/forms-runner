@@ -71,6 +71,5 @@ RSpec.describe Question::SingleLine, type: :model do
         expect(question.errors[:text]).to include(I18n.t("activemodel.errors.models.question/single_line.attributes.text.too_long"))
       end
     end
-
   end
 end

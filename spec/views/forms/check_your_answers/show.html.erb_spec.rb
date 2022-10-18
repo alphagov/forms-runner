@@ -1,17 +1,17 @@
 require "rails_helper"
 
 describe "forms/check_your_answers/show.html.erb" do
-  let(:context) { OpenStruct.new(form_id: 1, form_slug: 'slug', mode: '', name: "Form 1") }
+  let(:context) { OpenStruct.new(form_id: 1, form_slug: "slug", mode: "", name: "Form 1") }
 
   before do
     assign(:current_context, context)
-    assign(:form_submit_path, '/')
+    assign(:form_submit_path, "/")
     render template: "forms/check_your_answers/show"
   end
 
   context "when the form does not have a declaration" do
     it "does not display the declaration heading" do
-      expect(rendered).to_not have_css("h2", text: "Declaration")
+      expect(rendered).not_to have_css("h2", text: "Declaration")
     end
   end
 
@@ -27,4 +27,3 @@ describe "forms/check_your_answers/show.html.erb" do
     end
   end
 end
-

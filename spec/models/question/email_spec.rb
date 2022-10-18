@@ -71,6 +71,5 @@ RSpec.describe Question::Email, type: :model do
         expect(question.errors[:email]).to include(I18n.t("activemodel.errors.models.question/email.attributes.email.invalid_email"))
       end
     end
-
   end
 end
