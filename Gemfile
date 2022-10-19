@@ -11,7 +11,7 @@ gem "sprockets-rails"
 
 # Use the Puma web server [https://github.com/puma/puma]
 gem "nokogiri", "~> 1.13.9"
-gem "puma", "~> 5.6.5"
+gem "puma", "~> 6.0.0"
 
 # Bundle and transpile JavaScript [https://github.com/rails/jsbundling-rails]
 gem "jsbundling-rails"
