@@ -75,7 +75,6 @@ RSpec.describe Question::PhoneNumber, type: :model do
     end
   end
 
-
   context "when question is optional" do
     let(:question) { described_class.new({}, { is_optional: true }) }
 
@@ -118,6 +117,5 @@ RSpec.describe Question::PhoneNumber, type: :model do
         expect(question.errors[:phone_number]).to include(I18n.t("activemodel.errors.models.question/phone_number.attributes.phone_number.phone_too_short"))
       end
     end
-
   end
 end

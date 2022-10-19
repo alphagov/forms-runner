@@ -15,7 +15,7 @@ module Forms
   private
 
     def page_to_row(page)
-      question_name = page.question_short_name.presence || page.question_text
+      question_name = helpers.question_text_with_optional_suffix(page)
       {
         key: { text: question_name },
         value: { text: page.show_answer },

@@ -13,4 +13,8 @@ module ApplicationHelper
   def title_with_error_prefix(title, error)
     "#{t('page_titles.error_prefix') if error}#{title}"
   end
+
+  def question_text_with_optional_suffix(page)
+    page.question.is_optional? ? t("page.optional", question_text: page.question_text) : page.question_text
+  end
 end

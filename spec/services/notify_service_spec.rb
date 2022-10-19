@@ -110,14 +110,14 @@ RSpec.describe NotifyService do
 
     let(:form) { OpenStruct.new(steps: [step]) }
 
-    let(:step) { OpenStruct.new({question_text: "What is the meaning of life?", show_answer: "42" }) }
+    let(:step) { OpenStruct.new({ question_text: "What is the meaning of life?", show_answer: "42" }) }
 
     it "returns combined title and answer" do
       expect(notify_service.build_question_answers_section(form)).to eq "# What is the meaning of life?\n```\n\n42\n```\n"
     end
 
     context "when there is more than one step" do
-      let(:form) { OpenStruct.new(steps: [step, step])}
+      let(:form) { OpenStruct.new(steps: [step, step]) }
 
       it "contains a horizontal rule between each step" do
         expect(notify_service.build_question_answers_section(form)).to include "\n\n---\n\n"
@@ -141,7 +141,7 @@ RSpec.describe NotifyService do
       [
         { input: "Hello", output: "```\n\nHello\n```\n" },
         { input: "3.4 Question", output: "```\n\n3.4 Question\n```\n" },
-        { input:"-23.4 answer", output: "```\n\n-23.4 answer\n```\n" },
+        { input: "-23.4 answer", output: "```\n\n-23.4 answer\n```\n" },
         { input: "4.5.6", output: "```\n\n4.5.6\n```\n" },
       ].each do |test_case|
         expect(notify_service.prep_answer_text(test_case[:input])).to eq test_case[:output]

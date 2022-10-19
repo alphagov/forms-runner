@@ -1,8 +1,9 @@
 require "rails_helper"
 
 RSpec.describe Question::Date, type: :model do
-  let(:options) { {} }
   subject(:question) { described_class.new({}, options) }
+
+  let(:options) { {} }
 
   it_behaves_like "a question model"
 
@@ -85,7 +86,7 @@ RSpec.describe Question::Date, type: :model do
 
     it "returns valid with blank date" do
       expect(question).to be_valid
-      expect(question.errors[:date]).to_not include(I18n.t("activemodel.errors.models.question/date.attributes.date.blank"))
+      expect(question.errors[:date]).not_to include(I18n.t("activemodel.errors.models.question/date.attributes.date.blank"))
     end
 
     it "returns valid with empty string" do

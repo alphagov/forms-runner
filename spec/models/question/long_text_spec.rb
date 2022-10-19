@@ -11,7 +11,6 @@ RSpec.describe Question::LongText, type: :model do
       expect(question.errors[:text]).to include(I18n.t("activemodel.errors.models.question/long_text.attributes.text.blank"))
     end
 
-
     it "returns invalid with empty string" do
       question.text = ""
       expect(question).not_to be_valid
@@ -47,7 +46,6 @@ RSpec.describe Question::LongText, type: :model do
         expect(question.errors[:text]).not_to include(I18n.t("activemodel.errors.models.question/long_text.attributes.text.blank"))
       end
 
-
       it "returns invalid with empty string" do
         question.text = ""
         expect(question).to be_valid
@@ -73,7 +71,5 @@ RSpec.describe Question::LongText, type: :model do
         expect(question.errors[:text]).to include(I18n.t("activemodel.errors.models.question/long_text.attributes.text.too_long"))
       end
     end
-
   end
-
 end

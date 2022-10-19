@@ -103,9 +103,5 @@ RSpec.describe Question::NationalInsuranceNumber, type: :model do
         expect(question).not_to be_valid
       end
     end
-
-
   end
-
-
 end
