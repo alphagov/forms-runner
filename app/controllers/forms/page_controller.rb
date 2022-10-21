@@ -58,16 +58,20 @@ module Forms
       current_context.form_start_page == step.id
     end
 
-    def log_page_save(step, request, changing_existing_answer)
-      log_event = if changing_existing_answer
-                    "change_answer_page_save"
-                  elsif is_starting_form(step)
-                    "first_page_save"
-                  else
-                    "page_save"
-                  end
+    def log_page_save(step, request, changing_answer)
+      EventLogger.log_page_event(current_context, step, request, log_event(changing_answer, step))
+    end
 
-      EventLogger.log_page_event(current_context, step, request, log_event)
+    def log_event(changing_answer, step)
+      page_optional = @step.question.is_optional? ? "optional" : "page"
+
+      if changing_answer
+        "change_answer_#{page_optional}_save"
+      elsif is_starting_form(step)
+        "first_#{page_optional}_save"
+      else
+        "#{page_optional}_save"
+      end
     end
   end
 end
