@@ -1,6 +1,7 @@
 module Forms
   class CheckYourAnswersController < BaseController
     def show
+
       return redirect_to form_page_path(current_context.form, current_context.form_slug, current_context.next_page_slug) unless current_context.can_visit?("check_your_answers")
 
       previous_step = current_context.previous_step("check_your_answers")
@@ -10,6 +11,8 @@ module Forms
       unless preview?
         EventLogger.log_form_event(current_context, request, "check_answers")
       end
+
+      answers_need_full_width
     end
 
   private
@@ -25,6 +28,10 @@ module Forms
 
     def check_your_answers_rows
       current_context.steps.map { |page| page_to_row(page) }
+    end
+
+    def answers_need_full_width
+      @full_width = current_context.steps.any?{ |step| step.question.has_long_answer? }
     end
   end
 end

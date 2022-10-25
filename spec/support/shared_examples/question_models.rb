@@ -13,7 +13,11 @@ RSpec.shared_examples "a question model" do |_parameter|
     expect(question.valid?).to be(true).or be(false)
   end
 
-  it "response to is_optional?" do
+  it "responds to is_optional?" do
     expect(question.is_optional?).to be(true).or be(false)
+  end
+
+  it "responds to has_long_answer?" do
+    expect(question.has_long_answer?).to be(true).or be(false)
   end
 end

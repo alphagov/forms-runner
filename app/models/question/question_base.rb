@@ -26,5 +26,9 @@ module Question
     def is_optional?
       @is_optional == true
     end
+
+    def has_long_answer?
+      false
+    end
   end
 end
