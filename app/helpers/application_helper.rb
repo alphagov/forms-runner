@@ -17,4 +17,8 @@ module ApplicationHelper
   def question_text_with_optional_suffix(page)
     page.question.is_optional? ? t("page.optional", question_text: page.question_text) : page.question_text
   end
+
+  def format_paragraphs(text)
+    simple_format(html_escape(text), class: "govuk-body", sanitize: true)
+  end
 end
