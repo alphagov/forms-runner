@@ -93,6 +93,7 @@ class NotifyService
   end
 
   def replace_setext_headings(text)
-    text.gsub(/^=+$/, '\1&nbsp;')
+    # replace lengths of ^===$ with --- to stop them making headings
+    text.gsub(/^(=+)$/) { "_" * Regexp.last_match(1).length }
   end
 end
