@@ -13,7 +13,7 @@ class EventLogger
     log("form_#{event}", item_to_log)
   end
 
-  def self.log_page_event(context, page, request, event, skipped_question: nil)
+  def self.log_page_event(context, page, request, event, skipped_question)
     item_to_log = {
       url: request&.url,
       method: request&.method,

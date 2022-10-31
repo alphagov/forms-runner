@@ -356,13 +356,28 @@ RSpec.describe "Page Controller", type: :request do
           ].to_json
         end
 
-        it "Logs the optional_save event" do
-          expect(EventLogger).to receive(:log).with("optional_save",
-                                                    { form: "Form 1",
-                                                      method: "POST",
-                                                      question_text: "Question two",
-                                                      url: "http://www.example.com/form/2/form-1/2" })
-          post save_form_page_path("form", 2, "form-1", 2), params: { question: { text: "answer text" } }
+        context "when an optional question is completed" do
+          it "Logs the optional_save event with skipped_question as true" do
+            expect(EventLogger).to receive(:log).with("optional_save",
+                                                      { form: "Form 1",
+                                                        method: "POST",
+                                                        question_text: "Question two",
+                                                        skipped_question: "false",
+                                                        url: "http://www.example.com/form/2/form-1/2" })
+            post save_form_page_path("form", 2, "form-1", 2), params: { question: { text: "answer text" } }
+          end
+        end
+
+        context "when an optional question is skipped" do
+          it "Logs the optional_save event with skipped_question as false" do
+            expect(EventLogger).to receive(:log).with("optional_save",
+                                                      { form: "Form 1",
+                                                        method: "POST",
+                                                        question_text: "Question two",
+                                                        skipped_question: "true",
+                                                        url: "http://www.example.com/form/2/form-1/2" })
+            post save_form_page_path("form", 2, "form-1", 2), params: { question: { text: "" } }
+          end
         end
       end
     end

@@ -75,7 +75,7 @@ RSpec.describe EventLogger do
     it "logs a page event" do
       allow(described_class).to receive(:log).at_least(:once)
 
-      described_class.log_page_event(context, OpenStruct.new(question: page), request, "page_save")
+      described_class.log_page_event(context, OpenStruct.new(question: page), request, "page_save", nil)
 
       expect(described_class).to have_received(:log).with("page_save", page_log_item)
     end
@@ -106,7 +106,7 @@ RSpec.describe EventLogger do
     it "logs a page event with a question_skipped parameter" do
       allow(described_class).to receive(:log).at_least(:once)
 
-      described_class.log_page_event(context, OpenStruct.new(question: page), request, "optional_save", skipped_question: true)
+      described_class.log_page_event(context, OpenStruct.new(question: page), request, "optional_save", true)
 
       expect(described_class).to have_received(:log).with("optional_save", page_log_item)
     end

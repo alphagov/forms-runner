@@ -13,7 +13,7 @@ module Forms
 
       if current_context.save_step(@step)
         unless preview?
-          log_page_save(@step, request, changing_existing_answer)
+          log_page_save(@step, request, changing_existing_answer, page_params)
         end
         redirect_to next_page
       else
@@ -58,8 +58,8 @@ module Forms
       current_context.form_start_page == step.id
     end
 
-    def log_page_save(step, request, changing_answer)
-      EventLogger.log_page_event(current_context, step, request, log_event(changing_answer, step))
+    def log_page_save(step, request, changing_answer, answers)
+      EventLogger.log_page_event(current_context, step, request, log_event(changing_answer, step), skipped_question?(answers))
     end
 
     def log_event(changing_answer, step)
@@ -72,6 +72,10 @@ module Forms
       else
         "#{page_optional}_save"
       end
+    end
+
+    def skipped_question?(answers)
+      @step.question.is_optional? ? answers.each_value.map.none?(&:present?) : nil
     end
   end
 end
