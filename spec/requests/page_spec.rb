@@ -332,6 +332,54 @@ RSpec.describe "Page Controller", type: :request do
           expect(response).to redirect_to(check_your_answers_path("form", 2, "form-1"))
         end
       end
+
+      context "with an subsequent optional page" do
+        let(:pages_data) do
+          [
+            {
+              id: 1,
+              question_text: "Question one",
+              answer_type: "single_line",
+              hint_text: "",
+              next_page: 2,
+              question_short_name: nil,
+              is_optional: nil,
+            },
+            {
+              id: 2,
+              question_text: "Question two",
+              hint_text: "Q2 hint text",
+              answer_type: "single_line",
+              question_short_name: nil,
+              is_optional: true,
+            },
+          ].to_json
+        end
+
+        context "when an optional question is completed" do
+          it "Logs the optional_save event with skipped_question as true" do
+            expect(EventLogger).to receive(:log).with("optional_save",
+                                                      { form: "Form 1",
+                                                        method: "POST",
+                                                        question_text: "Question two",
+                                                        skipped_question: "false",
+                                                        url: "http://www.example.com/form/2/form-1/2" })
+            post save_form_page_path("form", 2, "form-1", 2), params: { question: { text: "answer text" } }
+          end
+        end
+
+        context "when an optional question is skipped" do
+          it "Logs the optional_save event with skipped_question as false" do
+            expect(EventLogger).to receive(:log).with("optional_save",
+                                                      { form: "Form 1",
+                                                        method: "POST",
+                                                        question_text: "Question two",
+                                                        skipped_question: "true",
+                                                        url: "http://www.example.com/form/2/form-1/2" })
+            post save_form_page_path("form", 2, "form-1", 2), params: { question: { text: "" } }
+          end
+        end
+      end
     end
   end
 end

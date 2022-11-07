@@ -9,7 +9,7 @@ RSpec.describe EventLogger do
       answer_type: "single_line",
       next_page: 2,
       question_short_name: nil,
-      is_optional: nil,
+      is_optional: false,
     })
   end
 
@@ -71,11 +71,44 @@ RSpec.describe EventLogger do
     expect(described_class).to have_received(:log).with("form_visit", form_log_item)
   end
 
-  it "logs a page event" do
-    allow(described_class).to receive(:log).at_least(:once)
+  context "when completing a question" do
+    it "logs a page event" do
+      allow(described_class).to receive(:log).at_least(:once)
 
-    described_class.log_page_event(context, OpenStruct.new(question: page), request, "page_save")
+      described_class.log_page_event(context, OpenStruct.new(question: page), request, "page_save", nil)
 
-    expect(described_class).to have_received(:log).with("page_save", page_log_item)
+      expect(described_class).to have_received(:log).with("page_save", page_log_item)
+    end
+  end
+
+  context "when skipping an optional question" do
+    let(:page) do
+      Page.new({
+        id: 1,
+        question_text: "Question one",
+        answer_type: "single_line",
+        next_page: 2,
+        question_short_name: nil,
+        is_optional: true,
+      })
+    end
+
+    let(:page_log_item) do
+      {
+        url: "http://example.gov.uk",
+        method: "GET",
+        form: "Form 1",
+        question_text: "Question one",
+        skipped_question: "true",
+      }
+    end
+
+    it "logs a page event with a question_skipped parameter" do
+      allow(described_class).to receive(:log).at_least(:once)
+
+      described_class.log_page_event(context, OpenStruct.new(question: page), request, "optional_save", true)
+
+      expect(described_class).to have_received(:log).with("optional_save", page_log_item)
+    end
   end
 end

@@ -13,7 +13,7 @@ module Forms
 
       if current_context.save_step(@step)
         unless preview?
-          log_page_save(@step, request, changing_existing_answer)
+          LogEventService.new(current_context, @step, request, changing_existing_answer, page_params).log_page_save
         end
         redirect_to next_page
       else
@@ -52,22 +52,6 @@ module Forms
       else
         form_page_path(@step.form_id, @step.form_slug, @step.next_page_slug)
       end
-    end
-
-    def is_starting_form(step)
-      current_context.form_start_page == step.id
-    end
-
-    def log_page_save(step, request, changing_existing_answer)
-      log_event = if changing_existing_answer
-                    "change_answer_page_save"
-                  elsif is_starting_form(step)
-                    "first_page_save"
-                  else
-                    "page_save"
-                  end
-
-      EventLogger.log_page_event(current_context, step, request, log_event)
     end
   end
 end
