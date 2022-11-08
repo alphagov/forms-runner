@@ -143,9 +143,9 @@ RSpec.describe NotifyService do
         { input: "3.4 Question", output: "3\\.4 Question" },
         { input: "-23.4 answer", output: "\\-23\\.4 answer" },
         { input: "4.5.6", output: "4\\.5\\.6" },
-        { input: "\n\n# Test \n\n## Test 2", output:"\\# Test\n\n\\#\\# Test 2"},
-        { input: "\n\n```# Test 3\n\n## Test 4", output:"\\`\\`\\`\\# Test 3\n\n\\#\\# Test 4"}, # escapes ```
-        { input: "\n\n\n\n\n```# Test \n\n\n\n\n\n## Test 3\n\n\n\n", output:"\\`\\`\\`\\# Test\n\n\\#\\# Test 3"},
+        { input: "\n\n# Test \n\n## Test 2", output: "\\# Test\n\n\\#\\# Test 2" },
+        { input: "\n\n```# Test 3\n\n## Test 4", output: "\\`\\`\\`\\# Test 3\n\n\\#\\# Test 4" }, # escapes ```
+        { input: "\n\n\n\n\n```# Test \n\n\n\n\n\n## Test 3\n\n\n\n", output: "\\`\\`\\`\\# Test\n\n\\#\\# Test 3" },
         { input: "test https://example.org # more text 19.5\n\nA new paragraph.", output: "test https://example.org \\# more text 19\\.5\n\nA new paragraph\\." },
         { input: "test https://example.org # more text 19.5\n\nA new paragraph.\n\n# another link http://gov.uk", output: "test https://example.org \\# more text 19\\.5\n\nA new paragraph\\.\n\n\\# another link http://gov.uk" },
         { input: "not a title\n====", output: "not a title\n\\_\\_\\_\\_" },

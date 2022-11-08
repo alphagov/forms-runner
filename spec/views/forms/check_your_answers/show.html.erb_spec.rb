@@ -29,14 +29,14 @@ describe "forms/check_your_answers/show.html.erb" do
     end
   end
 
-  it 'displays two-thirds ' do
+  it "displays two-thirds" do
     expect(rendered).to have_css(".govuk-grid-column-two-thirds-from-desktop")
   end
 
   context "when full_width not set" do
     let(:full_width) { true }
 
-    it 'displays full width when set' do
+    it "displays full width when set" do
       expect(rendered).to have_css(".govuk-grid-column-full")
     end
   end
