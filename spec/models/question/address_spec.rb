@@ -56,12 +56,12 @@ RSpec.describe Question::Address, type: :model do
     let(:question) { described_class.new({}, { is_optional: true }) }
 
     context "when an address is blank" do
-      it "returns invalid with blank address fields" do
+      it "returns valid with blank address fields" do
         expect(question).to be_valid
         expect(question.errors[:address1]).not_to include(I18n.t("activemodel.errors.models.question/address.attributes.address1.blank"))
       end
 
-      it "returns invalid with empty string address fields" do
+      it "returns valid with empty string address fields" do
         question.address1 = ""
         question.address2 = ""
         question.town_or_city = ""
@@ -69,6 +69,18 @@ RSpec.describe Question::Address, type: :model do
         question.postcode = ""
         expect(question).to be_valid
         expect(question.errors[:address1]).not_to include(I18n.t("activemodel.errors.models.question/address.attributes.address1.blank"))
+      end
+
+      it "validates required fields when any fields are filled in" do
+        question.address1 = ""
+        question.address2 = ""
+        question.town_or_city = ""
+        question.county = "Lancashire"
+        question.postcode = ""
+        expect(question).not_to be_valid
+        expect(question.errors[:address1]).to include(I18n.t("activemodel.errors.models.question/address.attributes.address1.blank"))
+        expect(question.errors[:town_or_city]).to include(I18n.t("activemodel.errors.models.question/address.attributes.town_or_city.blank"))
+        expect(question.errors[:postcode]).to include(I18n.t("activemodel.errors.models.question/address.attributes.postcode.blank"))
       end
 
       it "returns \"\" for show_answer" do
