@@ -7,9 +7,9 @@ module Question
     attribute :county
     attribute :postcode
 
-    validates :address1, presence: true, unless: :is_optional?
-    validates :town_or_city, presence: true, unless: :is_optional?
-    validates :postcode, presence: true, unless: :is_optional?
+    validates :address1, presence: true, unless: :skipping_question?
+    validates :town_or_city, presence: true, unless: :skipping_question?
+    validates :postcode, presence: true, unless: :skipping_question?
     validate :postcode, :invalid_postcode?
 
     def postcode=(str)
@@ -25,6 +25,11 @@ module Question
           errors.add(:postcode, :invalid_postcode)
         end
       end
+    end
+
+    def skipping_question?
+      fields = [address1, address2, town_or_city, county, postcode]
+      is_optional? && fields.none?(&:present?)
     end
   end
 end
