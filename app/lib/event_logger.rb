@@ -19,6 +19,7 @@ class EventLogger
       method: request&.method,
       form: context.form_name,
       question_text: page.question.question_text,
+      question_number: page.page_number,
     }
 
     item_to_log.merge!({ skipped_question: skipped_question.to_s }) unless skipped_question.nil?

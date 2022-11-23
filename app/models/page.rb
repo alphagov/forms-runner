@@ -13,4 +13,9 @@ class Page < ActiveResource::Base
   def has_next_page?
     @attributes.include?("next_page") && !@attributes["next_page"].nil?
   end
+
+  def number(form)
+    index = form.pages.index(self)
+    index + 1
+  end
 end

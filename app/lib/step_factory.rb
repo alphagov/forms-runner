@@ -33,7 +33,7 @@ class StepFactory
     next_page_slug = page.has_next_page? ? page.next_page.to_s : CHECK_YOUR_ANSWERS_PAGE
     question = QuestionRegister.from_page(page)
 
-    Step.new(question:, page_id: page.id, form_id: @form_id, form_slug: @form_slug, next_page_slug:, page_slug:)
+    Step.new(question:, page_id: page.id, form_id: @form_id, form_slug: @form_slug, next_page_slug:, page_slug:, page_number: page.number(@form))
   end
 
   def start_step
