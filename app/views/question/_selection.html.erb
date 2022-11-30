@@ -1,0 +1,17 @@
+<% if page.answer_settings.allow_multiple_answers == "true" %>
+  <%= form.govuk_collection_check_boxes(
+        :selection,
+        page.answer_settings.selection_options,
+        ->(option) { option.name },
+        ->(option) { option.name },
+        legend: { tag: 'h1', size: 'l', text: question_text_with_optional_suffix(page) }, hint: { text: page.hint_text }
+  )  %>
+<% else %>
+  <%= form.govuk_collection_radio_buttons(
+        :selection,
+        page.answer_settings.selection_options,
+        :name,
+        :name,
+        legend: { tag: 'h1', size: 'l', text: question_text_with_optional_suffix(page) }, hint: { text: page.hint_text }
+  )  %>
+<% end %>

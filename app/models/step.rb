@@ -41,7 +41,7 @@ class Step
   end
 
   def params
-    @question.attribute_names
+    @question.attribute_names.concat([selection: []])
   end
 
   def valid?
@@ -66,6 +66,10 @@ class Step
 
   def question_short_name
     @question.question_short_name
+  end
+
+  def answer_settings
+    @question.answer_settings
   end
 
   def end_page?
