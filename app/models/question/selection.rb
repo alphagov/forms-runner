@@ -1,6 +1,8 @@
 module Question
   class Selection < QuestionBase
     attribute :selection
+    validates :selection, presence: true
+    validate :selection, :validate_checkbox, if: :allow_multiple_answers
 
     def allow_multiple_answers
       answer_settings.allow_multiple_answers == "true"
@@ -8,10 +10,21 @@ module Question
 
     def show_answer
       if allow_multiple_answers
-        attribute_names.map { |attribute| send(attribute) }.first.reject(&:blank?)&.join(", ")
+        selection_without_blanks&.join(", ")
       else
-        attribute_names.map { |attribute| send(attribute) }.reject(&:blank?)&.join(", ")
+        selection
       end
+    end
+
+  private
+
+    def selection_without_blanks
+      selection.reject(&:blank?)
+    end
+
+    def validate_checkbox
+      return errors.add(:selection, :blank) if selection_without_blanks.empty?
+      return errors.add(:selection, :none_and_value) if selection_without_blanks.count > 1 && "None of the above".in?(selection_without_blanks)
     end
   end
 end
