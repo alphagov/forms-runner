@@ -1,17 +1,22 @@
 <% if page.answer_settings.allow_multiple_answers == "true" %>
-  <%= form.govuk_collection_check_boxes(
-        :selection,
-        page.answer_settings.selection_options,
-        ->(option) { option.name },
-        ->(option) { option.name },
-        legend: { tag: 'h1', size: 'l', text: question_text_with_optional_suffix(page) }, hint: { text: page.hint_text }
-  )  %>
+  <%= form.govuk_check_boxes_fieldset(:selection, legend: { tag: 'h1', size: 'l', text: page.question_text }, hint: { text: page.hint_text }) do %>
+    <% page.answer_settings.selection_options.each_with_index do |option, index| %>
+      <%= form.govuk_check_box :selection, option.name, label: { text: option.name }, link_errors: index == 0  %>
+    <% end %>
+    <% if page.question.is_optional? %>
+      <%= form.govuk_check_box_divider %>
+      <%= form.govuk_check_box :selection, 'None of the above', exclusive: true, label: { text: 'None of the above' } %>
+    <% end %>
+  <% end %>
 <% else %>
-  <%= form.govuk_collection_radio_buttons(
-        :selection,
-        page.answer_settings.selection_options,
-        :name,
-        :name,
-        legend: { tag: 'h1', size: 'l', text: question_text_with_optional_suffix(page) }, hint: { text: page.hint_text }
-  )  %>
+  <%= form.govuk_radio_buttons_fieldset(:selection, legend: { tag: 'h1', size: 'l', text: page.question_text }, hint: { text: page.hint_text }) do %>
+    <%= form.hidden_field :selection %>
+    <% page.answer_settings.selection_options.each_with_index do |option, index| %>
+      <%= form.govuk_radio_button :selection, option.name, label: { text: option.name }, link_errors: index == 0  %>
+    <% end %>
+    <% if page.question.is_optional? %>
+      <%= form.govuk_radio_divider %>
+      <%= form.govuk_radio_button :selection, 'None of the above', label: { text: 'None of the above' } %>
+    <% end %>
+  <% end %>
 <% end %>
