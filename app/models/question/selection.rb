@@ -24,7 +24,7 @@ module Question
 
     def validate_checkbox
       return errors.add(:selection, :blank) if selection_without_blanks.empty?
-      return errors.add(:selection, :none_and_value) if selection_without_blanks.count > 1 && "None of the above".in?(selection_without_blanks)
+      return errors.add(:selection, :both_none_and_value_selected) if selection_without_blanks.count > 1 && "None of the above".in?(selection_without_blanks)
     end
   end
 end

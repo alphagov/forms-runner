@@ -46,6 +46,11 @@ en:
               invalid_phone_number: Enter a phone number using only numbers, spaces,’ext’, ‘-’ or ‘+’
               phone_too_long: The phone number should have 15 digits or less
               phone_too_short: The phone number should have 8 digits or more
+        question/selection:
+          attributes:
+            selection:
+              blank: Select an answer
+              both_none_and_value_selected: Select one or more options, or select ‘None of the above’
         question/single_line:
           attributes:
             text:
