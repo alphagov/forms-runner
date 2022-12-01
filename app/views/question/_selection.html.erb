@@ -1,11 +1,11 @@
-<% if page.answer_settings.allow_multiple_answers == "true" %>
+<% if page.question.allow_multiple_answers? %>
   <%= form.govuk_check_boxes_fieldset(:selection, legend: { tag: 'h1', size: 'l', text: page.question_text }, hint: { text: page.hint_text }) do %>
     <% page.answer_settings.selection_options.each_with_index do |option, index| %>
       <%= form.govuk_check_box :selection, option.name, label: { text: option.name }, link_errors: index == 0  %>
     <% end %>
     <% if page.question.is_optional? %>
       <%= form.govuk_check_box_divider %>
-      <%= form.govuk_check_box :selection, 'None of the above', exclusive: true, label: { text: 'None of the above' } %>
+      <%= form.govuk_check_box :selection, 'None of the above', exclusive: true, label: { text: t('page.none_of_the_above') } %>
     <% end %>
   <% end %>
 <% else %>
@@ -16,7 +16,7 @@
     <% end %>
     <% if page.question.is_optional? %>
       <%= form.govuk_radio_divider %>
-      <%= form.govuk_radio_button :selection, 'None of the above', label: { text: 'None of the above' } %>
+      <%= form.govuk_radio_button :selection, 'None of the above', label: { text: t('page.none_of_the_above') } %>
     <% end %>
   <% end %>
 <% end %>

@@ -65,6 +65,7 @@ en:
     submitted:
       title: Your form has been submitted
   page:
+    none_of_the_above: None of the above
     optional: "%{question_text} (optional)"
   page_titles:
     error_prefix: 'Error: '

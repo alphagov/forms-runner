@@ -2,14 +2,14 @@ module Question
   class Selection < QuestionBase
     attribute :selection
     validates :selection, presence: true
-    validate :selection, :validate_checkbox, if: :allow_multiple_answers
+    validate :selection, :validate_checkbox, if: :allow_multiple_answers?
 
-    def allow_multiple_answers
+    def allow_multiple_answers?
       answer_settings.allow_multiple_answers == "true"
     end
 
     def show_answer
-      if allow_multiple_answers
+      if allow_multiple_answers?
         selection_without_blanks&.join(", ")
       else
         selection

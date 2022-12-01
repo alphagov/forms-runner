@@ -35,7 +35,7 @@ RSpec.describe Question::Selection, type: :model do
     end
 
     it "calculates allow_multiple_answers correctly" do
-      expect(question.allow_multiple_answers).to be true
+      expect(question.allow_multiple_answers?).to be true
     end
 
     context "when question is optional" do
@@ -79,7 +79,7 @@ RSpec.describe Question::Selection, type: :model do
     end
 
     it "calculates allow_multiple_answers correctly" do
-      expect(question.allow_multiple_answers).to be false
+      expect(question.allow_multiple_answers?).to be false
     end
 
     context "when question is optional" do
