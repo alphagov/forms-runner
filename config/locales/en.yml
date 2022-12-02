@@ -11,7 +11,7 @@ en:
               blank: Enter the postcode
               invalid_postcode: Enter a real postcode
             town_or_city:
-              blank: Enter the town or city of the address
+              blank: Enter the town or city
         question/date:
           attributes:
             date:
@@ -43,7 +43,7 @@ en:
           attributes:
             phone_number:
               blank: Enter a phone number
-              invalid_phone_number: Enter a phone number using only numbers, spaces,’ext’, ‘-’ or ‘+’
+              invalid_phone_number: Enter a phone number using only numbers, spaces, ’ext’, ‘-’ or ‘+’
               phone_too_long: The phone number should have 15 digits or less
               phone_too_short: The phone number should have 8 digits or more
         question/single_line:
