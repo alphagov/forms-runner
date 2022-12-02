@@ -126,6 +126,12 @@ RSpec.describe "Page Controller", type: :request do
 
     context "with preview mode off" do
       [
+        "/form/2/1/check_your_answers_trailing",
+        "/form/2/1/leading_check_your_answers",
+        "/form/2/1/1/check_your_answers",
+        "/form/2/1/1/ChEck_YouR_aNswers",
+        "/form/2/1/1/0",
+        "/form/2/1/1/%20123",
         "/form/2/1/__",
         "/form/2/1/debug.cgi",
         "/form/2/1/hsqldb%0A",

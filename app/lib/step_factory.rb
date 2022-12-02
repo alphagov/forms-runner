@@ -1,6 +1,7 @@
 class StepFactory
   START_PAGE = "_start".freeze
   CHECK_YOUR_ANSWERS_PAGE = "check_your_answers".freeze
+  PAGE_SLUG_REGEX = /\d+|check_your_answers/
 
   class PageNotFoundError < StandardError
     def initialize(msg = "Page not found.")
