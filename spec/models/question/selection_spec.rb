@@ -18,7 +18,7 @@ RSpec.describe Question::Selection, type: :model do
     it "returns invalid with blank selection" do
       question.selection = [""]
       expect(question).not_to be_valid
-      expect(question.errors[:selection]).to include(I18n.t("activemodel.errors.models.question/selection.attributes.selection.blank"))
+      expect(question.errors[:selection]).to include(I18n.t("activemodel.errors.models.question/selection.attributes.selection.checkbox_blank"))
     end
 
     it "returns invalid when selection is not one of the options" do

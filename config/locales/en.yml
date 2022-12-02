@@ -49,8 +49,9 @@ en:
         question/selection:
           attributes:
             selection:
-              blank: Select an answer
+              blank: Select one option
               both_none_and_value_selected: Select one or more options, or select ‘None of the above’
+              checkbox_blank: Select one or more options
               inclusion: Select an answer from the list
         question/single_line:
           attributes:
