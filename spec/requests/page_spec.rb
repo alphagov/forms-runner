@@ -125,6 +125,31 @@ RSpec.describe "Page Controller", type: :request do
     end
 
     context "with preview mode off" do
+      [
+        "/form/2/1/__",
+        "/form/2/1/debug.cgi",
+        "/form/2/1/hsqldb%0A",
+        "/form/2/1/index_sso.php",
+        "/form/2/1/setup.php",
+        "/form/2/1/test.cgi",
+        "/form/2/1/x"
+      ].each do |path|
+        context "with an invalid URL: #{path}" do
+          before do
+            allow(Sentry).to receive(:capture_exception)
+            get path
+          end
+
+          it "returns a 404" do
+            expect(response.status).to eq(404)
+          end
+
+          it "does not send an expception to sentry" do
+            expect(Sentry).not_to have_received(:capture_exception)
+          end
+        end
+      end
+
       it "Returns a 200" do
         get form_page_path("form", 2, "form-1", 1)
         expect(response.status).to eq(200)
