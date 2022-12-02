@@ -51,6 +51,7 @@ en:
             selection:
               blank: Select an answer
               both_none_and_value_selected: Select one or more options, or select ‘None of the above’
+              inclusion: Select an answer from the list
         question/single_line:
           attributes:
             text:

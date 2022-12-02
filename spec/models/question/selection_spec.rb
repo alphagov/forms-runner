@@ -19,7 +19,12 @@ RSpec.describe Question::Selection, type: :model do
       question.selection = [""]
       expect(question).not_to be_valid
       expect(question.errors[:selection]).to include(I18n.t("activemodel.errors.models.question/selection.attributes.selection.blank"))
-      expect(question.show_answer).to eq ""
+    end
+
+    it "returns invalid when selection is not one of the options" do
+      question.selection = ["option 1000"]
+      expect(question).not_to be_valid
+      expect(question.errors[:selection]).to include(I18n.t("activemodel.errors.models.question/selection.attributes.selection.inclusion"))
     end
 
     it "returns valid with one item selected" do
@@ -69,7 +74,12 @@ RSpec.describe Question::Selection, type: :model do
       question.selection = ""
       expect(question).not_to be_valid
       expect(question.errors[:selection]).to include(I18n.t("activemodel.errors.models.question/selection.attributes.selection.blank"))
-      expect(question.show_answer).to eq ""
+    end
+
+    it "returns invalid when selection is not one of the options" do
+      question.selection = "option 1000"
+      expect(question).not_to be_valid
+      expect(question.errors[:selection]).to include(I18n.t("activemodel.errors.models.question/selection.attributes.selection.inclusion"))
     end
 
     it "returns valid with one item selected" do
