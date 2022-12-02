@@ -1,6 +1,4 @@
 RSpec.shared_examples "a question model" do |_parameter|
-  let(:question) { described_class.new }
-
   it "responds with text to .show_answer" do
     expect(question.show_answer).to be_kind_of(String)
   end

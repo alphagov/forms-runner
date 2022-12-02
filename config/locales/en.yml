@@ -46,6 +46,13 @@ en:
               invalid_phone_number: Enter a phone number using only numbers, spaces, ’ext’, ‘-’ or ‘+’
               phone_too_long: The phone number should have 15 digits or less
               phone_too_short: The phone number should have 8 digits or more
+        question/selection:
+          attributes:
+            selection:
+              blank: Select one option
+              both_none_and_value_selected: Select one or more options, or select ‘None of the above’
+              checkbox_blank: Select one or more options
+              inclusion: Select an answer from the list
         question/single_line:
           attributes:
             text:
@@ -60,6 +67,7 @@ en:
     submitted:
       title: Your form has been submitted
   page:
+    none_of_the_above: None of the above
     optional: "%{question_text} (optional)"
   page_titles:
     error_prefix: 'Error: '

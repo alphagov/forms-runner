@@ -18,4 +18,8 @@ class Page < ActiveResource::Base
     index = form.pages.index(self)
     index + 1
   end
+
+  def answer_settings
+    @attributes["answer_settings"] || {}
+  end
 end
