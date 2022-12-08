@@ -138,7 +138,7 @@ RSpec.describe "Page Controller", type: :request do
         "/form/2/1/index_sso.php",
         "/form/2/1/setup.php",
         "/form/2/1/test.cgi",
-        "/form/2/1/x"
+        "/form/2/1/x",
       ].each do |path|
         context "with an invalid URL: #{path}" do
           before do

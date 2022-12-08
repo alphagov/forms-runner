@@ -9,7 +9,7 @@ describe "question/_selection.html.erb" do
       hint_text: nil,
       answer_type: "selection",
       is_optional:,
-      answer_settings: OpenStruct.new({ allow_multiple_answers:, selection_options: [OpenStruct.new({ name: "Bristol" }), OpenStruct.new({ name: "London" }), OpenStruct.new({ name: "Manchester" })] }),
+      answer_settings: OpenStruct.new({ only_one_option:, selection_options: [OpenStruct.new({ name: "Bristol" }), OpenStruct.new({ name: "London" }), OpenStruct.new({ name: "Manchester" })] }),
     })
   end
 
@@ -29,7 +29,7 @@ describe "question/_selection.html.erb" do
   end
 
   context "when the question allows multiple answers" do
-    let(:allow_multiple_answers) { "true" }
+    let(:only_one_option) { "false" }
 
     context "when the question is not optional" do
       let(:is_optional) { false }
@@ -69,7 +69,7 @@ describe "question/_selection.html.erb" do
   end
 
   context "when the question does not allow multiple answers" do
-    let(:allow_multiple_answers) { "false" }
+    let(:only_one_option) { "true" }
 
     context "when the question is not optional" do
       let(:is_optional) { false }
