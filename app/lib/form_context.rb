@@ -14,6 +14,10 @@ class FormContext
     @store.dig(ROOT_KEY, form_key(step), page_key(step))
   end
 
+  def clear_stored_answer(step)
+    @store.dig(ROOT_KEY, form_key(step))&.delete(page_key(step))
+  end
+
   def clear(form_id)
     @store[ROOT_KEY][form_id.to_s] = nil
   end

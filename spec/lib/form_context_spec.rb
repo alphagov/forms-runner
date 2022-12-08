@@ -14,6 +14,21 @@ RSpec.describe FormContext do
     expect(result).to eq("test answer")
   end
 
+  it "clears a single answer for a step" do
+    fc = described_class.new(store)
+    fc.save_step(step, "test answer")
+    expect(fc.get_stored_answer(step)).to eq("test answer")
+    fc.clear_stored_answer(step)
+    expect(fc.get_stored_answer(step)).to be_nil
+  end
+
+  it "does not error if removing a step which doesn't exist in the store" do
+    fc = described_class.new(store)
+    fc.save_step(step, "test answer")
+    fc.clear_stored_answer(step2)
+    expect(fc.get_stored_answer(step)).to eq("test answer")
+  end
+
   it "clears the session for a form" do
     fc = described_class.new(store)
     fc.save_step(step, "test answer")
