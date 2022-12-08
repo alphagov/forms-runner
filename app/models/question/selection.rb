@@ -6,7 +6,7 @@ module Question
     validate :selection, :validate_radio, unless: :allow_multiple_answers?
 
     def allow_multiple_answers?
-      answer_settings.allow_multiple_answers == "true"
+      answer_settings.only_one_option != "true"
     end
 
     def show_answer

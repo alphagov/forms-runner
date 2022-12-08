@@ -3,10 +3,10 @@ require "rails_helper"
 RSpec.describe Question::Selection, type: :model do
   subject(:question) { described_class.new({}, options) }
 
-  let(:options) { { is_optional:, answer_settings: OpenStruct.new({ allow_multiple_answers:, selection_options: [OpenStruct.new({ name: "option 1" }), OpenStruct.new({ name: "option 2" })] }) } }
+  let(:options) { { is_optional:, answer_settings: OpenStruct.new({ only_one_option:, selection_options: [OpenStruct.new({ name: "option 1" }), OpenStruct.new({ name: "option 2" })] }) } }
 
   context "when the selection question is a checkbox" do
-    let(:allow_multiple_answers) { "true" }
+    let(:only_one_option) { "false" }
     let(:is_optional) { false }
 
     before do
@@ -61,7 +61,7 @@ RSpec.describe Question::Selection, type: :model do
   end
 
   context "when the selection question is a radio button" do
-    let(:allow_multiple_answers) { "false" }
+    let(:only_one_option) { "true" }
     let(:is_optional) { false }
 
     before do
