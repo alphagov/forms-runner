@@ -45,8 +45,7 @@ RSpec.describe Context do
       support_url_text: "Contact us",
       pages:,
     })
-    f.pages[0].form = f
-    f.pages[1].form = f
+    f.pages.each {|p| p.form = f }
     f
   end
 
@@ -99,7 +98,38 @@ RSpec.describe Context do
     end
   end
 
-  # context 'with a form with no pages' do
-  #   form.pages = []
-  # end
+  context 'with a page which changes question type mid-journey' do
+    let(:pages) do
+      [
+        Page.new({
+          id: 1,
+          question_text: "A single line of text question",
+          answer_type: "single_line",
+          hint_text: nil,
+          next_page: nil,
+          question_short_name: nil,
+          form: nil,
+          is_optional: nil
+        })]
+    end
+
+    it 'should not throw an error if the question type changes when an answer has already been submitted' do
+      store = {}
+
+      # submit an answer to our page
+      context1 = described_class.new(form:, store:)
+      current_step = context1.find_or_create('1')
+      current_step.update!({ text: "This is a text answer" })
+      context1.save_step(current_step)
+
+      # change the page's answer_type to another value
+      form.pages[0].answer_type = "number"
+
+      # build another context with the previous answers
+      context2 = nil
+      expect{context2 = described_class.new(form:, store:)}.to_not raise_error(ActiveModel::UnknownAttributeError )
+      expect(context2.find_or_create('1').show_answer).to eq('')
+    end
+  end
+
 end
