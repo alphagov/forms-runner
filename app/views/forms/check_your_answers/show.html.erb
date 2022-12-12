@@ -25,6 +25,7 @@
     <% end %>
 
     <%= form_with url: @form_submit_path do |form| %>
+      <%= form.hidden_field :notify_reference, id: 'notification-id', value: @notify_reference %>
       <%= form.govuk_submit 'Submit' %>
     <% end %>
   </div>
