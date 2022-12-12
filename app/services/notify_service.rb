@@ -5,7 +5,7 @@ class NotifyService
     @notify_api_key = ENV["NOTIFY_API_KEY"]
   end
 
-  def send_email(form, preview_mode: false)
+  def send_email(form, reference, preview_mode: false)
     email_address = form.submission_email
     title = form.form_name
     text_input = build_question_answers_section(form)
@@ -16,10 +16,11 @@ class NotifyService
     end
 
     client = Notifications::Client.new(@notify_api_key)
-    client.send_email(**email(email_address, title, text_input))
+
+    client.send_email(**email(email_address, title, text_input, reference))
   end
 
-  def email(email_address, title, text_input)
+  def email(email_address, title, text_input, reference)
     title = "TEST FORM: #{title}" if @preview_mode
     timestamp = submission_timestamp
     {
@@ -31,6 +32,7 @@ class NotifyService
         submission_time: timestamp.strftime("%H:%M:%S"),
         submission_date: timestamp.strftime("%-d %B %Y"),
       },
+      reference:,
     }
   end
 

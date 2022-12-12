@@ -7,6 +7,7 @@ module Forms
       @back_link = form_page_path(current_context.form, current_context.form_slug, previous_step)
       @rows = check_your_answers_rows
       @form_submit_path = form_submit_answers_path
+      @notify_reference ||= SecureRandom.uuid
       unless preview?
         EventLogger.log_form_event(current_context, request, "check_answers")
       end

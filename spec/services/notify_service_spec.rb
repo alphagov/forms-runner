@@ -2,6 +2,7 @@ require "rails_helper"
 
 RSpec.describe NotifyService do
   let(:notify_api_key) { nil }
+  let(:notify_reference) { SecureRandom.uuid }
 
   around do |example|
     ClimateControl.modify NOTIFY_API_KEY: notify_api_key do
@@ -23,7 +24,7 @@ RSpec.describe NotifyService do
         travel_to submission_datetime do
           notify_service = described_class.new
           form = OpenStruct.new(submission_email: "fake-email", form_name: "title", steps: [OpenStruct.new(question_text: "text", show_answer: "Testing")])
-          notify_service.send_email(form)
+          notify_service.send_email(form, notify_reference)
           expect(fake_notify_client).to have_received(:send_email).with(
             { email_address: "fake-email",
               personalisation: {
@@ -32,6 +33,7 @@ RSpec.describe NotifyService do
                 text_input: "# text\nTesting\n",
                 title: "title",
               },
+              reference: notify_reference,
               template_id: "427eb8bc-ce0d-40a3-bf54-d76e8c3ec916" },
           ).once
         end
@@ -49,7 +51,7 @@ RSpec.describe NotifyService do
         travel_to submission_datetime do
           notify_service = described_class.new
           form = OpenStruct.new(submission_email: "fake-email", form_name: "title", steps: [OpenStruct.new(question_text: "text", show_answer: "Testing")])
-          notify_service.send_email(form)
+          notify_service.send_email(form, notify_reference)
           expect(fake_notify_client).to have_received(:send_email).with(
             { email_address: "fake-email",
               personalisation: {
@@ -58,6 +60,7 @@ RSpec.describe NotifyService do
                 text_input: "# text\nTesting\n",
                 title: "title",
               },
+              reference: notify_reference,
               template_id: "427eb8bc-ce0d-40a3-bf54-d76e8c3ec916" },
           ).once
         end
@@ -75,7 +78,7 @@ RSpec.describe NotifyService do
         travel_to submission_datetime do
           notify_service = described_class.new
           form = OpenStruct.new(submission_email: "fake-email", form_name: "title", steps: [OpenStruct.new(question_text: "text", show_answer: "Testing")])
-          notify_service.send_email(form, preview_mode: true)
+          notify_service.send_email(form, notify_reference, preview_mode: true)
           expect(fake_notify_client).to have_received(:send_email).with(
             { email_address: "fake-email",
               personalisation: {
@@ -84,6 +87,7 @@ RSpec.describe NotifyService do
                 text_input: "# text\nTesting\n",
                 title: "TEST FORM: title",
               },
+              reference: notify_reference,
               template_id: "427eb8bc-ce0d-40a3-bf54-d76e8c3ec916" },
           ).once
         end
@@ -100,7 +104,7 @@ RSpec.describe NotifyService do
 
       notify_service = described_class.new
       form = OpenStruct.new(submission_email: "fake-email", form_name: "title", steps: [OpenStruct.new(question_text: "text", show_answer: "Testing")])
-      notify_service.send_email(form)
+      notify_service.send_email(form, notify_reference)
       expect(fake_notify_client).not_to have_received(:send_email)
     end
   end
