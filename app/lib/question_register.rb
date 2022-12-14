@@ -19,6 +19,8 @@ class QuestionRegister
               Question::Number
             when :selection
               Question::Selection
+            when :organisation_name
+              Question::OrganisationName
             else
               raise ArgumentError, "Unexpected answer_type for page #{page.id}: #{page.answer_type}"
             end

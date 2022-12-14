@@ -42,6 +42,6 @@ describe "forms/check_your_answers/show.html.erb" do
   end
 
   it "contains a hidden notify reference" do
-    expect(rendered).to have_css("input", id:"notification-id", visible: false)
+    expect(rendered).to have_css("input", id: "notification-id", visible: :hidden)
   end
 end
