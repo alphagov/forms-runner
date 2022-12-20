@@ -85,8 +85,6 @@ TODO: Add these details once we've got our deployment running.
 bin/rake
 # To run the Javascript test suite, run
 yarn test
-# To run the end-to-end tests, run
-yarn cypress
 ```
 
 ## Support

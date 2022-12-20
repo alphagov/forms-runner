@@ -41,7 +41,3 @@
 .env.production.local
 
 coverage/
-
-# Ignore Cypress output
-/cypress/screenshots
-/cypress/videos
