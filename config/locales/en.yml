@@ -63,6 +63,12 @@ en:
             text:
               blank: Enter an answer
               too_long: The answer must be shorter than 500 characters
+        question/text:
+          attributes:
+            text:
+              blank: Enter an answer
+              long_text_too_long: The answer must be shorter than 5000 characters
+              single_line_too_long: The answer must be shorter than 500 characters
   footer:
     accessibility_statement: Accessibility statement
     cookies: Cookies
