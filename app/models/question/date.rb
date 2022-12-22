@@ -25,7 +25,7 @@ module Question
     end
 
     def date_of_birth?
-      answer_settings.input_type == "date_of_birth"
+      answer_settings&.input_type == "date_of_birth"
     end
 
   private
@@ -34,6 +34,7 @@ module Question
       return if blank? && is_optional?
       return errors.add(:date, :blank) if blank?
       return errors.add(:date, :blank_date_fields, fields: blank_fields.to_sentence) if present? && blank_fields.any?
+      return errors.add(:date, :future_date) if date_of_birth? && future_date?
       return errors.add(:date, :invalid_date) if invalid?
     end
 
@@ -55,6 +56,10 @@ module Question
 
       date_fields = %i[day month year]
       date.to_h.slice(*date_fields).all? { |_, v| v.blank? }
+    end
+
+    def future_date?
+      date.future?
     end
 
     def blank_fields
