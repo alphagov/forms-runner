@@ -76,7 +76,9 @@ Redis sessions can be enabled by providing the redis connection URL in the envir
 
 ## Configuration and deployment
 
-TODO: Add these details once we've got our deployment running.
+The forms-runner app is containerised (see [Dockerfile](https://github.com/alphagov/forms-runner/blob/main/Dockerfile)) and can be deployed however you would normally deploy a containerised app.
+
+If you are planning to deploy to GOV.UK PaaS without using the container, you can see how this runs in our [Deployment CI action](https://github.com/alphagov/forms-runner/blob/main/.github/workflows/deploy.yml).
 
 ## Explain how to test the project
 
