@@ -17,7 +17,7 @@ en:
             date:
               blank: Enter a date
               blank_date_fields: Enter a day, month and year
-              future_date: Enter a date that is not in the future
+              future_date: Enter a date that is in the past
               invalid_date: Enter a real date
         question/email:
           attributes:
