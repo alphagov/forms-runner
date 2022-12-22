@@ -153,6 +153,34 @@ RSpec.describe Question::Date, type: :model do
     end
   end
 
+  describe "#date_of_birth?" do
+    let(:options) { { answer_settings: OpenStruct.new({ input_type: }) } }
+
+    context "when the input type is a date of birth" do
+      let(:input_type) { "date_of_birth" }
+
+      it "returns true" do
+        expect(question.date_of_birth?).to be true
+      end
+    end
+
+    context "when the input type is set to other_date" do
+      let(:input_type) { "other_date" }
+
+      it "returns false" do
+        expect(question.date_of_birth?).to be false
+      end
+    end
+
+    context "when the input type is not set" do
+      let(:input_type) { nil }
+
+      it "returns false" do
+        expect(question.date_of_birth?).to be false
+      end
+    end
+  end
+
 private
 
   def set_date(day, month, year)

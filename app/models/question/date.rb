@@ -24,6 +24,10 @@ module Question
       end
     end
 
+    def date_of_birth?
+      answer_settings.input_type == "date_of_birth"
+    end
+
   private
 
     def date_valid
