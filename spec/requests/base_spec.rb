@@ -334,7 +334,7 @@ RSpec.describe "Base controller", type: :request do
       end
 
       it "Logs the form_submission event" do
-        expect(EventLogger).to have_received(:log).with("form_submission", { form: "Form name", method: "POST", url: "http://www.example.com/form/2/form-name/submit_answers.1" })
+        expect(EventLogger).to have_received(:log).with("form_submission", { form: "Form name", method: "POST", url: "http://www.example.com/form/2/form-name/submit-answers.1" })
       end
     end
   end
