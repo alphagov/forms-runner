@@ -2,6 +2,7 @@
 
 class ApplicationController < ActionController::Base
   before_action :check_service_unavailable
+  before_action :set_request_id
   after_action :add_robots_header
 
   def accessibility_statement; end
@@ -25,5 +26,13 @@ private
 
   def add_robots_header
     response.headers["X-Robots-Tag"] = "noindex, nofollow"
+  end
+
+  def set_request_id
+    if Rails.env.production?
+      [Form, Page].each do |active_resource_model|
+        active_resource_model.headers["X-Request-ID"] = request.request_id
+      end
+    end
   end
 end
