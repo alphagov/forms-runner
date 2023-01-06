@@ -151,6 +151,60 @@ RSpec.describe Question::Date, type: :model do
         end
       end
     end
+
+    context "when the input type is a date of birth" do
+      let(:options) { { answer_settings: OpenStruct.new({ input_type: "date_of_birth" }) } }
+
+      before do
+        set_date(*date_input)
+      end
+
+      context "when the date is in the past" do
+        let(:date_input) { ["01", "01", (Time.zone.today.year - 1).to_s] }
+
+        it "is valid" do
+          expect(question).to be_valid
+          expect(question.errors[:date]).to eq []
+        end
+      end
+
+      context "when the date is in the future" do
+        let(:date_input) { ["01", "01", (Time.zone.today.year + 1).to_s] }
+
+        it "isn't valid" do
+          expect(question).not_to be_valid
+          expect(question.errors[:date]).to include(I18n.t("activemodel.errors.models.question/date.attributes.date.future_date"))
+        end
+      end
+    end
+  end
+
+  describe "#date_of_birth?" do
+    let(:options) { { answer_settings: OpenStruct.new({ input_type: }) } }
+
+    context "when the input type is a date of birth" do
+      let(:input_type) { "date_of_birth" }
+
+      it "returns true" do
+        expect(question.date_of_birth?).to be true
+      end
+    end
+
+    context "when the input type is set to other_date" do
+      let(:input_type) { "other_date" }
+
+      it "returns false" do
+        expect(question.date_of_birth?).to be false
+      end
+    end
+
+    context "when the input type is not set" do
+      let(:input_type) { nil }
+
+      it "returns false" do
+        expect(question.date_of_birth?).to be false
+      end
+    end
   end
 
 private
