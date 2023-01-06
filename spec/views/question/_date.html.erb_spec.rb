@@ -9,9 +9,11 @@ describe "question/date.html.erb" do
       hint_text: nil,
       answer_type: "date",
       is_optional: false,
-      answer_settings: OpenStruct.new({ input_type: }),
+      answer_settings:,
     })
   end
+
+  let(:answer_settings) { OpenStruct.new({ input_type: }) }
 
   let(:input_type) { nil }
 
@@ -60,6 +62,20 @@ describe "question/date.html.erb" do
 
   context "when the question is nil" do
     let(:input_type) { nil }
+
+    it "contains the question" do
+      expect(rendered).to have_css("h1", text: page.question_text)
+    end
+
+    it "does not contain autocomplete attributes" do
+      expect(rendered).to have_css("input[type='text']:not([autocomplete='bday-day'])")
+      expect(rendered).to have_css("input[type='text']:not([autocomplete='bday-month'])")
+      expect(rendered).to have_css("input[type='text']:not([autocomplete='bday-year'])")
+    end
+  end
+
+  context "when the date has no answer_settings" do
+    let(:answer_settings) { nil }
 
     it "contains the question" do
       expect(rendered).to have_css("h1", text: page.question_text)
