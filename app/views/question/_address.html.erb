@@ -1,10 +1,19 @@
+
 <%= form.govuk_fieldset legend: { text: question_text_with_optional_suffix(page), tag: 'h1', size: 'l' }, "aria-describedby": page.hint_text.present? ? "govuk-address-hint" : nil do %>
-  <% if page.hint_text.present? %>
-    <p id="govuk-address-hint" class="govuk-hint"><%= page.hint_text %></p>
+  <% if page.question.is_international_address? %>
+    <% if page.hint_text.present? %>
+      <p id="govuk-address-hint" class="govuk-hint"><%= page.hint_text %></p>
+    <% end %>
+    <%= form.govuk_text_area :street_address, label: { text: "Street address" }, rows: 5, autocomplete: "street-address" %>
+    <%= form.govuk_text_field :country, label: { text: "Country" }, width: 20, autocomplete: "country-name" %>
+  <% else %>
+    <% if page.hint_text.present? %>
+      <p id="govuk-address-hint" class="govuk-hint"><%= page.hint_text %></p>
+    <% end %>
+    <%= form.govuk_text_field :address1, label: { text: "Address line 1" }, autocomplete: "address-line1" %>
+    <%= form.govuk_text_field :address2, label: {  text: "Address line 2 (optional)"  }, autocomplete: "address-line2" %>
+    <%= form.govuk_text_field :town_or_city, label: {  text: "Town or City" }, width: 'two-thirds', autocomplete: "address-level2" %>
+    <%= form.govuk_text_field :county, label: {  text: "County (optional)" }, width: 'two-thirds' %>
+    <%= form.govuk_text_field :postcode, label: {  text: "Postcode" }, width: 10, autocomplete: "postal-code" %>
   <% end %>
-  <%= form.govuk_text_field :address1, label: { text: "Address line 1" }, autocomplete: "address-line1" %>
-  <%= form.govuk_text_field :address2, label: {  text: "Address line 2 (optional)"  }, autocomplete: "address-line2" %>
-  <%= form.govuk_text_field :town_or_city, label: {  text: "Town or City" }, width: 'two-thirds', autocomplete: "address-level2" %>
-  <%= form.govuk_text_field :county, label: {  text: "County (optional)" }, width: 'two-thirds' %>
-  <%= form.govuk_text_field :postcode, label: {  text: "Postcode" }, width: 10, autocomplete: "postal-code" %>
 <% end %>
