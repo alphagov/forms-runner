@@ -7,9 +7,13 @@ en:
           attributes:
             address1:
               blank: Enter the first line of the address
+            country:
+              blank: Enter the country
             postcode:
               blank: Enter the postcode
               invalid_postcode: Enter a real postcode
+            street_address:
+              blank: Enter the address
             town_or_city:
               blank: Enter the town or city
         question/date:
