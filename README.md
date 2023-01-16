@@ -32,13 +32,6 @@ bin/setup
 
 `bin/setup` is idempotent, so you can also run it whenever you pull new changes.
 
-#### Add Notify API Keys (Optional)
-
-If you want to test the notify function, you will need to get a test API key
-from the [notify service](https://www.notifications.service.gov.uk/) Add it as
-an environment vairable under `NOTIFY_API_KEY=` in `.env.development.local` and
-use the 'api intergration' tab on notify dashboard to check emails sent.
-
 ## Secrets vs Settings
 
 Refer to the [the config gem](https://github.com/railsconfig/config#accessing-the-settings-object) to understand the `file based settings` loading order.
@@ -94,6 +87,19 @@ yarn dev
 ```
 
 For now, to test the API integration, you will also need to run the [API service](https://github.com/alphagov/forms-api).
+
+## Explain how to use GOV.UK Notify
+
+If you want to test the notify function, you will need to get a test API key
+from the [notify service](https://www.notifications.service.gov.uk/) Add it as
+an environment variable under `SETTINGS__GOVUK_NOTIFY__API_KEY=` or create/edit
+a `config/settings/development.local.yml` and add the following to it.
+
+```
+# Settings for GOV.UK Notify api & email templates
+govuk_notify:
+  api_key: KEY_FROM_NOTIFY_SERVICE
+```
 
 #### Using Redis based sessions (optional)
 

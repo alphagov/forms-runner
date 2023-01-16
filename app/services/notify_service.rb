@@ -2,7 +2,7 @@ require "notifications/client"
 
 class NotifyService
   def initialize
-    @notify_api_key = ENV["NOTIFY_API_KEY"]
+    @notify_api_key = Settings.govuk_notify.api_key
   end
 
   def send_email(form, reference, preview_mode: false)
