@@ -20,6 +20,7 @@ RSpec.describe NotifyService do
         fake_notify_client = instance_double(Notifications::Client)
         allow(fake_notify_client).to receive(:send_email)
         allow(Notifications::Client).to receive(:new).and_return(fake_notify_client)
+        Settings.govuk_notify.form_submission_email_template_id = "testing-123"
 
         travel_to submission_datetime do
           notify_service = described_class.new
@@ -34,7 +35,7 @@ RSpec.describe NotifyService do
                 title: "title",
               },
               reference: notify_reference,
-              template_id: "427eb8bc-ce0d-40a3-bf54-d76e8c3ec916" },
+              template_id: "testing-123" },
           ).once
         end
       end
@@ -47,6 +48,7 @@ RSpec.describe NotifyService do
         fake_notify_client = instance_double(Notifications::Client)
         allow(fake_notify_client).to receive(:send_email)
         allow(Notifications::Client).to receive(:new).and_return(fake_notify_client)
+        Settings.govuk_notify.form_submission_email_template_id = "testing-123"
 
         travel_to submission_datetime do
           notify_service = described_class.new
@@ -61,7 +63,7 @@ RSpec.describe NotifyService do
                 title: "title",
               },
               reference: notify_reference,
-              template_id: "427eb8bc-ce0d-40a3-bf54-d76e8c3ec916" },
+              template_id: "testing-123" },
           ).once
         end
       end
@@ -74,6 +76,7 @@ RSpec.describe NotifyService do
         fake_notify_client = instance_double(Notifications::Client)
         allow(fake_notify_client).to receive(:send_email)
         allow(Notifications::Client).to receive(:new).and_return(fake_notify_client)
+        Settings.govuk_notify.form_submission_email_template_id = "testing-123"
 
         travel_to submission_datetime do
           notify_service = described_class.new
@@ -88,7 +91,7 @@ RSpec.describe NotifyService do
                 title: "TEST FORM: title",
               },
               reference: notify_reference,
-              template_id: "427eb8bc-ce0d-40a3-bf54-d76e8c3ec916" },
+              template_id: "testing-123" },
           ).once
         end
       end

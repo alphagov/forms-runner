@@ -25,7 +25,7 @@ class NotifyService
     timestamp = submission_timestamp
     {
       email_address:,
-      template_id: "427eb8bc-ce0d-40a3-bf54-d76e8c3ec916",
+      template_id: Settings.govuk_notify.form_submission_email_template_id,
       personalisation: {
         title:,
         text_input:,
