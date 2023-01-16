@@ -1,0 +1,3 @@
+# Settings for GOV.UK Notify api & email templates
+govuk_notify:
+  form_submission_email_template_id: "427eb8bc-ce0d-40a3-bf54-d76e8c3ec916"

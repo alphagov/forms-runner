@@ -18,10 +18,9 @@ describe "Settings" do
     end
   end
 
-  describe ".forms_api" do
-    forms_api = settings[:forms_api]
+  describe ".govuk_notify" do
+    govuk_notify = settings[:govuk_notify]
 
-    include_examples expected_value_test, :base_url, forms_api, "http://localhost:9292"
-    include_examples expected_value_test, :auth_key, forms_api, "123456"
+    include_examples expected_value_test, :form_submission_email_template_id, govuk_notify, "427eb8bc-ce0d-40a3-bf54-d76e8c3ec916"
   end
 end
