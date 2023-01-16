@@ -1,14 +1,7 @@
 require "rails_helper"
 
 RSpec.describe NotifyService do
-  let(:notify_api_key) { nil }
   let(:notify_reference) { SecureRandom.uuid }
-
-  around do |example|
-    ClimateControl.modify NOTIFY_API_KEY: notify_api_key do
-      example.run
-    end
-  end
 
   context "with api key set" do
     let(:notify_api_key) { "test-key" }
@@ -20,6 +13,7 @@ RSpec.describe NotifyService do
         fake_notify_client = instance_double(Notifications::Client)
         allow(fake_notify_client).to receive(:send_email)
         allow(Notifications::Client).to receive(:new).and_return(fake_notify_client)
+        Settings.govuk_notify.api_key = notify_api_key
         Settings.govuk_notify.form_submission_email_template_id = "testing-123"
 
         travel_to submission_datetime do
@@ -100,6 +94,7 @@ RSpec.describe NotifyService do
 
   context "with no api key set" do
     it "does not send an email through notify" do
+      Settings.govuk_notify.api_key = nil
       fake_notify_client = instance_double(Notifications::Client)
       allow(fake_notify_client).to receive(:send_email)
       allow(Notifications::Client).to receive(:new).and_return(fake_notify_client)
