@@ -5,7 +5,10 @@ module Forms
         EventLogger.log_form_event(current_context, request, "submission")
       end
 
-      NotifyService.new.send_email(current_context, params[:notify_reference], preview_mode: preview?)
+      FormSubmissionService.call(form: current_context,
+                                 reference: params[:notify_reference],
+                                 preview_mode: preview?).submit_form_to_processing_team
+
       current_context.clear
       redirect_to :form_submitted
     rescue StandardError => e
