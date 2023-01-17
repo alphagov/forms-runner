@@ -22,6 +22,7 @@ describe "Settings" do
     govuk_notify = settings[:govuk_notify]
 
     include_examples expected_value_test, :api_key, govuk_notify, "changeme"
+    include_examples expected_value_test, :form_submission_email_reply_to_id, govuk_notify, "fab9373b-fb7c-483f-ae25-5a9852bfcc04"
     include_examples expected_value_test, :form_submission_email_template_id, govuk_notify, "427eb8bc-ce0d-40a3-bf54-d76e8c3ec916"
   end
 end
