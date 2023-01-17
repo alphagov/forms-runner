@@ -33,8 +33,6 @@ gem "config"
 # Use GOV.UK Nofity api to send emails
 gem "govuk_notify_rails"
 
-gem "notifications-ruby-client"
-
 # Use Redis for session storage
 gem "redis"
 gem "redis-session-store"

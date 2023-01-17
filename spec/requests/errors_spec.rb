@@ -54,7 +54,7 @@ RSpec.describe "Errors", type: :request do
       }.to_json
     end
 
-    let(:notify_service) { instance_double(NotifyService) }
+    let(:form_submission_service) { instance_double(FormSubmissionService) }
 
     let(:req_headers) do
       {
@@ -68,8 +68,8 @@ RSpec.describe "Errors", type: :request do
         mock.get "/api/v1/forms/2", req_headers, form_response_data, 200
       end
 
-      allow(notify_service).to receive(:send_email).and_throw("Oh no!").with(any_args)
-      allow(NotifyService).to receive(:new).and_return(notify_service)
+      allow(form_submission_service).to receive(:submit_form_to_processing_team).and_throw("Oh no!").with(any_args)
+      allow(FormSubmissionService).to receive(:new).and_return(form_submission_service)
     end
 
     it "returns http code 500" do

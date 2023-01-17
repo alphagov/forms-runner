@@ -421,7 +421,6 @@ DEPENDENCIES
   jsbundling-rails
   lograge
   nokogiri (~> 1.14.0)
-  notifications-ruby-client
   pry
   pry-byebug
   puma (~> 6.0.2)
