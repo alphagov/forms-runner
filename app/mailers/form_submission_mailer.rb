@@ -11,6 +11,8 @@ class FormSubmissionMailer < GovukNotifyRails::Mailer
 
     set_reference(reference)
 
+    set_email_reply_to(Settings.govuk_notify.form_submission_email_reply_to_id)
+
     mail(to: submission_email)
   end
 end

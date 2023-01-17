@@ -1,4 +1,5 @@
 # Settings for GOV.UK Notify api & email templates
 govuk_notify:
   api_key: changeme
-  form_submission_email_template_id: "427eb8bc-ce0d-40a3-bf54-d76e8c3ec916"
+  form_submission_email_reply_to_id: fab9373b-fb7c-483f-ae25-5a9852bfcc04
+  form_submission_email_template_id: 427eb8bc-ce0d-40a3-bf54-d76e8c3ec916

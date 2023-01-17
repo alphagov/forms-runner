@@ -29,6 +29,11 @@ describe FormSubmissionMailer, type: :mailer do
       expect(mail.govuk_notify_reference).to eq("for-my-ref")
     end
 
+    it "does include an email-reply-to" do
+      Settings.govuk_notify.form_submission_email_reply_to_id = "send-this-to-me@gov.uk"
+      expect(mail.govuk_notify_email_reply_to).to eq ("send-this-to-me@gov.uk")
+    end
+
     describe "submission date/time" do
       context "with a time in BST" do
         let(:timestamp) { Time.utc(2022, 9, 14, 10, 0o0, 0o0) }
