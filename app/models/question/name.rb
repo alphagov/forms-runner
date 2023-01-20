@@ -14,14 +14,17 @@ module Question
     end
 
     def needs_title?
+      # TODO: double check whether the API returns boolean true or string "true"
       answer_settings.present? && answer_settings&.title_needed
     end
 
     def is_full_name?
+      # TODO: double check whether this string is correct
       answer_settings.present? && answer_settings&.input_type == "full_name"
     end
 
     def include_middle_name?
+      # TODO: double check whether this string is correct
       answer_settings.present? && answer_settings&.input_type == "first_middle_and_last_name"
     end
 
