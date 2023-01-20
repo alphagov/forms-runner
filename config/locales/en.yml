@@ -33,6 +33,14 @@ en:
             text:
               blank: Enter an answer
               too_long: The answer must be shorter than 5000 characters
+        question/name:
+          attributes:
+            first_name:
+              blank: Enter a first name
+            full_name:
+              blank: Enter a name
+            last_name:
+              blank: Enter a last name
         question/national_insurance_number:
           attributes:
             national_insurance_number:
