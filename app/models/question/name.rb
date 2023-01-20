@@ -14,8 +14,7 @@ module Question
     end
 
     def needs_title?
-      # TODO: double check whether the API returns boolean true or string "true"
-      answer_settings.present? && answer_settings&.title_needed
+      answer_settings.present? && answer_settings&.title_needed == "true"
     end
 
     def is_full_name?
