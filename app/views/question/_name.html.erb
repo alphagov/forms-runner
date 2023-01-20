@@ -4,7 +4,7 @@
     <p id="govuk-name-hint" class="govuk-hint"><%= page.hint_text %></p>
   <% end %>
   <% if page.question.needs_title? %>
-    <%= form.govuk_text_field :title, label: { text: "Title" }, width: "one-quarter", autocomplete: "honorific-prefix" %>
+    <%= form.govuk_text_field :title, label: { text: "Title (optional)" }, width: "one-quarter", autocomplete: "honorific-prefix" %>
   <% end %>
   <% if page.question.is_full_name? %>
     <%= form.govuk_text_field :full_name, label: { text: "Full name" }, autocomplete: "name" %>

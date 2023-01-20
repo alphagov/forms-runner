@@ -19,12 +19,10 @@ module Question
     end
 
     def is_full_name?
-      # TODO: double check whether this string is correct
       answer_settings.present? && answer_settings&.input_type == "full_name"
     end
 
     def include_middle_name?
-      # TODO: double check whether this string is correct
       answer_settings.present? && answer_settings&.input_type == "first_middle_and_last_name"
     end
 
@@ -36,7 +34,6 @@ module Question
     def full_name_valid?
       return if skipping_question?
 
-      errors.add(:title, :blank) if needs_title? && title.blank?
       errors.add(:full_name, :blank) if full_name.blank?
       errors
     end
@@ -44,13 +41,14 @@ module Question
     def first_and_last_name_valid?
       return if skipping_question?
 
-      errors.add(:title, :blank) if needs_title? && title.blank?
       errors.add(:first_name, :blank) if first_name.blank?
       errors.add(:last_name, :blank) if last_name.blank?
       errors
     end
 
     def show_answer
+      attribute_names.map { |attribute| send(attribute) }.reject(&:blank?)&.join(" ")
+
       # TODO: Make sure the names display sensibly on the CYA page / the notify email
     end
   end
