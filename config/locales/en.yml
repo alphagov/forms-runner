@@ -94,7 +94,7 @@ en:
     none_of_the_above: None of the above
     optional: "%{question_text} (optional)"
   page_titles:
-    error_prefix: 'Error: '
+    error_prefix: "Error: "
   phase_banner:
     after_link: will help us improve it.
     before_link: This is a new service, your
@@ -102,10 +102,10 @@ en:
   question/name:
     label:
       first_name: First name
-      full_name: Fully
+      full_name: Full name
       last_name: Last name
-      middle_names: Middle names (optional)
-      title: Title (optional)
+      middle_names: Middle names
+      title: Title
   support_details:
     call_charges: Find out about call charges
     email: Email
