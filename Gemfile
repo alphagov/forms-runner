@@ -95,6 +95,7 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "climate_control"
+  gem "faker"
   gem "selenium-webdriver"
   gem "simplecov"
   gem "webdrivers"
