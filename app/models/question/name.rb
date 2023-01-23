@@ -3,7 +3,7 @@ module Question
     attribute :title
     attribute :full_name
     attribute :first_name
-    attribute :middle_name
+    attribute :middle_names
     attribute :last_name
 
     validate :full_name_valid?, if: :is_full_name?
@@ -26,7 +26,7 @@ module Question
     end
 
     def skipping_question?
-      fields = [title, full_name, first_name, middle_name, last_name]
+      fields = [title, full_name, first_name, middle_names, last_name]
       is_optional? && fields.none?(&:present?)
     end
 
