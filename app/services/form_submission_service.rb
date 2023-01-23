@@ -26,7 +26,7 @@ class FormSubmissionService
     def build_question_answers_section(form)
       form.steps.map { |page|
         [prep_question_title(page.question_text),
-         prep_answer_text(page.show_answer)].join
+         prep_answer_text(page.show_answer_in_email)].join
       }.join("\n\n---\n\n").concat("\n")
     end
 

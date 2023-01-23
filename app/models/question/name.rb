@@ -47,8 +47,22 @@ module Question
 
     def show_answer
       attribute_names.map { |attribute| send(attribute) }.reject(&:blank?)&.join(" ")
+    end
 
-      # TODO: Make sure the names display sensibly on the CYA page / the notify email
+    def show_answer_in_email
+      attribute_names.reject { |attribute| has_blank_values?(attribute) }.map { |attribute| generate_string_for_processing_email(attribute) }&.join("\n\n")
+    end
+
+    def has_blank_values?(attribute)
+      send(attribute).blank?
+    end
+
+    def generate_string_for_processing_email(attribute)
+      "#{friendly_name_for_attribute(attribute)}: #{send(attribute)}"
+    end
+
+    def friendly_name_for_attribute(attribute)
+      I18n.t("question/name.label.#{attribute}")
     end
   end
 end
