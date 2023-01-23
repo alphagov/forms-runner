@@ -94,7 +94,7 @@ en:
     none_of_the_above: None of the above
     optional: "%{question_text} (optional)"
   page_titles:
-    error_prefix: "Error: "
+    error_prefix: 'Error: '
   phase_banner:
     after_link: will help us improve it.
     before_link: This is a new service, your
