@@ -11,7 +11,6 @@ RSpec.describe Question::Name, type: :model do
 
   it_behaves_like "a question model"
 
-  # TODO: add tests for validations and model methods
   context "when the name question is in full name format" do
     context "when the answer is empty" do
       it "returns invalid with blank full_name field" do
