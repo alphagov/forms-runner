@@ -31,7 +31,7 @@ describe FormSubmissionMailer, type: :mailer do
 
     it "does include an email-reply-to" do
       Settings.govuk_notify.form_submission_email_reply_to_id = "send-this-to-me@gov.uk"
-      expect(mail.govuk_notify_email_reply_to).to eq ("send-this-to-me@gov.uk")
+      expect(mail.govuk_notify_email_reply_to).to eq("send-this-to-me@gov.uk")
     end
 
     describe "submission date/time" do
@@ -70,6 +70,7 @@ describe FormSubmissionMailer, type: :mailer do
   end
 
 private
+
   def submission_timezone
     Rails.configuration.x.submission.time_zone || "UTC"
   end

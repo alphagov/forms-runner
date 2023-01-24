@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe FormSubmissionService do
   let(:service) { described_class.call(form:, reference: "for-my-ref", preview_mode:) }
   let(:form) { OpenStruct.new(form_name: "Form 1", submission_email: "testing@gov.uk", steps: [step]) }
-  let(:step) { OpenStruct.new({ question_text: "What is the meaning of life?", show_answer: "42" }) }
+  let(:step) { OpenStruct.new({ question_text: "What is the meaning of life?", show_answer_in_email: "42" }) }
   let(:preview_mode) { false }
 
   describe "#submit_form_to_processing_team" do
@@ -40,7 +40,7 @@ RSpec.describe FormSubmissionService do
               reference: "for-my-ref",
               timestamp: Time.zone.now,
               submission_email: "testing@gov.uk" },
-            ).once
+          ).once
         end
       end
     end
@@ -52,7 +52,7 @@ RSpec.describe FormSubmissionService do
     describe "#build_question_answers_section" do
       let(:form) { OpenStruct.new(steps: [step]) }
 
-      let(:step) { OpenStruct.new({ question_text: "What is the meaning of life?", show_answer: "42" }) }
+      let(:step) { OpenStruct.new({ question_text: "What is the meaning of life?", show_answer_in_email: "42" }) }
 
       it "returns combined title and answer" do
         expect(notify_template_body_filter.build_question_answers_section(form)).to eq "# What is the meaning of life?\n42\n"

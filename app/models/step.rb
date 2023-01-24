@@ -56,6 +56,10 @@ class Step
     @question.show_answer
   end
 
+  def show_answer_in_email
+    @question.show_answer_in_email
+  end
+
   def question_text
     @question.question_text
   end
