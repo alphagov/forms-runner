@@ -1,19 +1,23 @@
-<%= form.govuk_fieldset legend: { text: question_text_with_optional_suffix(page), tag: 'h1', size: 'l' }, "aria-describedby": page.hint_text.present? ? "govuk-name-hint" : nil do %>
-  <% if page.hint_text.present? %>
-    <p id="govuk-name-hint" class="govuk-hint"><%= page.hint_text %></p>
-  <% end %>
-  <% if page.question.needs_title? %>
-    <%= form.govuk_text_field :title, label: { text: t("question/name.label.title") }, width: "one-quarter", autocomplete: "honorific-prefix" %>
-  <% end %>
-  <% if page.question.is_full_name? %>
-    <%= form.govuk_text_field :full_name, label: { text: t("question/name.label.full_name") }, autocomplete: "name" %>
-  <% else %>
-    <%= form.govuk_text_field :first_name, label: { text: t("question/name.label.first_name") }, width: "one-half", autocomplete: "given-name" %>
-
-    <% if page.question.include_middle_name? %>
-      <%= form.govuk_text_field :middle_names, label: { text: t("question/name.label.middle_names") }, width: "two-thirds", autocomplete: "additional-name" %>
+<% if page.question.is_full_name? && !page.question.needs_title? %>
+  <%= form.govuk_text_field :full_name, label: { tag: 'h1', size: 'l', text: question_text_with_optional_suffix(page) }, hint: { text: page.hint_text }, autocomplete: "name" %>
+<% else %>
+  <%= form.govuk_fieldset legend: { text: question_text_with_optional_suffix(page), tag: 'h1', size: 'l' }, "aria-describedby": page.hint_text.present? ? "govuk-name-hint" : nil do %>
+    <% if page.hint_text.present? %>
+      <p id="govuk-name-hint" class="govuk-hint"><%= page.hint_text %></p>
     <% end %>
+    <% if page.question.needs_title? %>
+      <%= form.govuk_text_field :title, label: { text: t("question/name.label.title") }, width: "one-quarter", autocomplete: "honorific-prefix" %>
+    <% end %>
+    <% if page.question.is_full_name? %>
+      <%= form.govuk_text_field :full_name, label: { text: t("question/name.label.full_name") }, autocomplete: "name" %>
+    <% else %>
+      <%= form.govuk_text_field :first_name, label: { text: t("question/name.label.first_name") }, width: "one-half", autocomplete: "given-name" %>
 
-    <%= form.govuk_text_field :last_name, label: { text: t("question/name.label.last_name") }, width: "one-half", autocomplete: "family-name" %>
+      <% if page.question.include_middle_name? %>
+        <%= form.govuk_text_field :middle_names, label: { text: t("question/name.label.middle_names") }, width: "two-thirds", autocomplete: "additional-name" %>
+      <% end %>
+
+      <%= form.govuk_text_field :last_name, label: { text: t("question/name.label.last_name") }, width: "one-half", autocomplete: "family-name" %>
+    <% end %>
   <% end %>
 <% end %>
