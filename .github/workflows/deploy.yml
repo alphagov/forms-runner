@@ -40,6 +40,6 @@ jobs:
             --var PAAS_ENVIRONMENT=dev \
             --var SETTINGS__FORMS_API__BASE_URL=${{ secrets.API_BASE }} \
             --var SETTINGS__FORMS_API__AUTH_KEY=${{ secrets.API_KEY }} \
+            --var SETTINGS__GOVUK_NOTIFY__API_KEY=${{ secrets.NOTIFY_API_KEY }} \
             --var SENTRY_DSN=${{ secrets.SENTRY_DSN }} \
-            --var INSTANCES=2 \
-            --var SETTINGS__GOVUK_NOTIFY__API_KEY=${{ secrets.NOTIFY_API_KEY }}
+            --var INSTANCES=2
