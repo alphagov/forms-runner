@@ -18,6 +18,15 @@ module Question
       replace_none_of_the_above(answer)
     end
 
+    def show_answer_in_email
+      answer = if allow_multiple_answers?
+                 selection_without_blanks.join("\n\n")
+               else
+                 selection
+               end
+      replace_none_of_the_above(answer)
+    end
+
   private
 
     def replace_none_of_the_above(answer)
