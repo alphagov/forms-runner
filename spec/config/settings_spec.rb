@@ -18,6 +18,14 @@ describe "Settings" do
     end
   end
 
+
+  describe ".forms_api" do
+    forms_api = settings[:forms_api]
+
+    include_examples expected_value_test, :base_url, forms_api, "http://localhost:9292"
+    include_examples expected_value_test, :auth_key, forms_api, "123456"
+  end
+
   describe ".govuk_notify" do
     govuk_notify = settings[:govuk_notify]
 
