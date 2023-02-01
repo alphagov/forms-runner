@@ -34,8 +34,8 @@ module Question
       return if blank? && is_optional?
       return errors.add(:date, :blank) if blank?
       return errors.add(:date, :blank_date_fields, fields: blank_fields.to_sentence) if present? && blank_fields.any?
-      return errors.add(:date, :future_date) if date_of_birth? && future_date?
       return errors.add(:date, :invalid_date) if invalid?
+      return errors.add(:date, :future_date) if date_of_birth? && future_date?
     end
 
     def date_field_to_attribute(key)
