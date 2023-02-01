@@ -54,7 +54,7 @@ RSpec.describe Question::Date, type: :model do
     end
   end
 
-  context "when a date has a valid day, month or year but it's not a real date" do
+  context "when a date has a day, month or year but it's not a real date" do
     before do
       set_date("45", "02", "2021")
     end
@@ -77,6 +77,26 @@ RSpec.describe Question::Date, type: :model do
         set_date(*v)
         expect(question).not_to be_valid
         expect(question.errors[:date]).to include(I18n.t("activemodel.errors.models.question/date.attributes.date.invalid_date"))
+      end
+    end
+
+    context "when question is date of birth" do
+      let(:options) { OpenStruct.new(answer_settings: OpenStruct.new( input_type: "date_of_birth")) }
+
+      it "isn't valid" do
+        day_month_years = [
+          [1, "e", 2022],
+          ["pi", 1, 2022],
+          [1, 1, "zero"],
+        ]
+        question.answer_settings = { input_type: "date_of_birth" }
+
+        day_month_years.each do |v|
+          set_date(*v)
+          question.valid?
+          expect(question).not_to be_valid
+          expect(question.errors[:date]).to include(I18n.t("activemodel.errors.models.question/date.attributes.date.invalid_date"))
+        end
       end
     end
   end
