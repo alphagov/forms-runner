@@ -93,7 +93,6 @@ RSpec.describe Question::Date, type: :model do
 
         day_month_years.each do |v|
           set_date(*v)
-          question.valid?
           expect(question).not_to be_valid
           expect(question.errors[:date]).to include(I18n.t("activemodel.errors.models.question/date.attributes.date.invalid_date"))
         end
