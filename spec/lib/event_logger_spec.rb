@@ -8,7 +8,6 @@ RSpec.describe EventLogger do
       question_text: "Question one",
       answer_type: "single_line",
       next_page: 2,
-      question_short_name: nil,
       is_optional: false,
     })
   end
@@ -89,7 +88,6 @@ RSpec.describe EventLogger do
         question_text: "Question one",
         answer_type: "single_line",
         next_page: 2,
-        question_short_name: nil,
         is_optional: true,
       })
     end

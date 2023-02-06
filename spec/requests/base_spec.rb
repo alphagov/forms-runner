@@ -31,7 +31,6 @@ RSpec.describe "Base controller", type: :request do
       {
         id: 1,
         question_text: "Question one",
-        question_short_name: nil,
         answer_type: "date",
         next_page: 2,
         is_optional: nil,
@@ -39,7 +38,6 @@ RSpec.describe "Base controller", type: :request do
       {
         id: 2,
         question_text: "Question two",
-        question_short_name: nil,
         answer_type: "date",
         is_optional: nil,
       },
