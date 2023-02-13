@@ -45,6 +45,7 @@ RSpec.describe ApplicationHelper, type: :helper do
         expect(helper.main_classes(nil)).to eq ""
       end
     end
+
     context "with a form that is live" do
       it "returns empty string" do
         form = instance_double(Form)
@@ -60,6 +61,5 @@ RSpec.describe ApplicationHelper, type: :helper do
         expect(helper.main_classes(form)).to eq "main--draft"
       end
     end
-
   end
 end

@@ -1,8 +1,6 @@
 class QuestionRegister
   def self.from_page(page)
     klass = case page.answer_type.to_sym
-            when :single_line
-              Question::SingleLine
             when :date
               Question::Date
             when :address
@@ -13,8 +11,6 @@ class QuestionRegister
               Question::NationalInsuranceNumber
             when :phone_number
               Question::PhoneNumber
-            when :long_text
-              Question::LongText
             when :number
               Question::Number
             when :selection
