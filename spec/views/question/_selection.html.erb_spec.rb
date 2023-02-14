@@ -5,7 +5,6 @@ describe "question/_selection.html.erb" do
     Page.new({
       id: 1,
       question_text: "Which city do you live in?",
-      question_short_name: nil,
       hint_text: nil,
       answer_type: "selection",
       is_optional:,

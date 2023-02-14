@@ -68,10 +68,6 @@ class Step
     @question.hint_text
   end
 
-  def question_short_name
-    @question.question_short_name
-  end
-
   def answer_settings
     @question.answer_settings
   end

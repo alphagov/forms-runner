@@ -5,7 +5,6 @@ describe "question/address.html.erb" do
     Page.new({
       id: 1,
       question_text: "What is your address?",
-      question_short_name: nil,
       hint_text: nil,
       answer_type: "address",
       is_optional: false,
