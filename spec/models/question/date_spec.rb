@@ -81,7 +81,7 @@ RSpec.describe Question::Date, type: :model do
     end
 
     context "when question is date of birth" do
-      let(:options) { OpenStruct.new(answer_settings: OpenStruct.new( input_type: "date_of_birth")) }
+      let(:options) { OpenStruct.new(answer_settings: OpenStruct.new(input_type: "date_of_birth")) }
 
       it "isn't valid" do
         day_month_years = [

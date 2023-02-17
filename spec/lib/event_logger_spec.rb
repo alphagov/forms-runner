@@ -6,7 +6,8 @@ RSpec.describe EventLogger do
     Page.new({
       id: 1,
       question_text: "Question one",
-      answer_type: "single_line",
+      answer_type: "text",
+      answer_settings: { input_type: "single_line" },
       next_page: 2,
       is_optional: false,
     })
@@ -86,7 +87,8 @@ RSpec.describe EventLogger do
       Page.new({
         id: 1,
         question_text: "Question one",
-        answer_type: "single_line",
+        answer_type: "text",
+        answer_settings: { input_type: "single_line" },
         next_page: 2,
         is_optional: true,
       })

@@ -18,7 +18,6 @@ describe "Settings" do
     end
   end
 
-
   describe ".forms_api" do
     forms_api = settings[:forms_api]
 

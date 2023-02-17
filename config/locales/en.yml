@@ -28,11 +28,6 @@ en:
             email:
               blank: Enter an email address
               invalid_email: Enter an email address in the correct format, like name@example.com
-        question/long_text:
-          attributes:
-            text:
-              blank: Enter an answer
-              too_long: The answer must be shorter than 5000 characters
         question/name:
           attributes:
             first_name:
@@ -71,11 +66,6 @@ en:
               both_none_and_value_selected: Select one or more options, or select ‘None of the above’
               checkbox_blank: Select one or more options
               inclusion: Select an answer from the list
-        question/single_line:
-          attributes:
-            text:
-              blank: Enter an answer
-              too_long: The answer must be shorter than 500 characters
         question/text:
           attributes:
             text:
