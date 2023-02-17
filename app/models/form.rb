@@ -6,6 +6,10 @@ class Form < ActiveResource::Base
 
   has_many :pages
 
+  def self.find_live(id)
+    find(:one, from: "#{prefix}forms/#{id}/live")
+  end
+
   def last_page
     pages.find { |p| !p.has_next_page? }
   end

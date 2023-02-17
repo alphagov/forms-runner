@@ -17,6 +17,7 @@ RSpec.describe "Base controller", type: :request do
       support_phone: "Call 01610123456\n\nThis line is only open on Tuesdays.",
       support_url: "https://example.gov.uk/contact",
       support_url_text: "Contact us",
+      pages: pages_data,
     }.to_json
   end
 
@@ -41,7 +42,7 @@ RSpec.describe "Base controller", type: :request do
         answer_type: "date",
         is_optional: nil,
       },
-    ].to_json
+    ]
   end
 
   let(:session) do
@@ -63,9 +64,8 @@ RSpec.describe "Base controller", type: :request do
   before do
     ActiveResource::HttpMock.respond_to do |mock|
       allow(EventLogger).to receive(:log).at_least(:once)
-      mock.get "/api/v1/forms/2", req_headers, form_response_data, 200
-      mock.get "/api/v1/forms/2/pages", req_headers, pages_data, 200
-      mock.get "/api/v1/forms/9999", req_headers, no_data_found_response, 404
+      mock.get "/api/v1/forms/2/live", req_headers, form_response_data, 200
+      mock.get "/api/v1/forms/9999/live", req_headers, no_data_found_response, 404
     end
   end
 
