@@ -14,7 +14,7 @@ module Forms
   private
 
     def current_form
-      @current_form ||= Form.find(params.require(:form_id))
+      @current_form ||= Form.find_live(params.require(:form_id))
     end
 
     def current_context

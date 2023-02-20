@@ -65,7 +65,7 @@ RSpec.describe "Errors", type: :request do
 
     before do
       ActiveResource::HttpMock.respond_to do |mock|
-        mock.get "/api/v1/forms/2", req_headers, form_response_data, 200
+        mock.get "/api/v1/forms/2/live", req_headers, form_response_data, 200
       end
 
       allow(form_submission_service).to receive(:submit_form_to_processing_team).and_throw("Oh no!").with(any_args)

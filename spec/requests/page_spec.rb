@@ -17,6 +17,7 @@ RSpec.describe "Page Controller", type: :request do
       support_phone: "Call 01610123456\n\nThis line is only open on Tuesdays.",
       support_url: "https://example.gov.uk/contact",
       support_url_text: "Contact us",
+      pages: pages_data,
     }.to_json
   end
 
@@ -40,7 +41,7 @@ RSpec.describe "Page Controller", type: :request do
         question_short_name: nil,
         is_optional: nil,
       },
-    ].to_json
+    ]
   end
 
   let(:req_headers) do
@@ -52,8 +53,7 @@ RSpec.describe "Page Controller", type: :request do
 
   before do
     ActiveResource::HttpMock.respond_to do |mock|
-      mock.get "/api/v1/forms/2", req_headers, form_data, 200
-      mock.get "/api/v1/forms/2/pages", req_headers, pages_data, 200
+      mock.get "/api/v1/forms/2/live", req_headers, form_data, 200
     end
   end
 
@@ -303,6 +303,7 @@ RSpec.describe "Page Controller", type: :request do
           support_phone: "Call 01610123456\n\nThis line is only open on Tuesdays.",
           support_url: "https://example.gov.uk/contact",
           support_url_text: "Contact us",
+          pages: pages_data,
         }.to_json
       end
 
@@ -389,7 +390,7 @@ RSpec.describe "Page Controller", type: :request do
               question_short_name: nil,
               is_optional: true,
             },
-          ].to_json
+          ]
         end
 
         context "when an optional question is completed" do
