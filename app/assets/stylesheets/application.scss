@@ -6,7 +6,7 @@ $govuk-global-styles: true;
 @import "govuk/all";
 
 .main--draft {
-  background-image: url("/assets/draft-watermark.png");
+  background-image: url("draft-watermark.png");
   background-repeat: repeat-y;
   background-position: 50% 0;
   background-size: contain;
