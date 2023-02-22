@@ -21,7 +21,7 @@ en:
             date:
               blank: Enter a date
               blank_date_fields: Enter a day, month and year
-              future_date: Enter a date that is in the past
+              future_date: Enter a date that’s in the past
               invalid_date: Enter a real date
         question/email:
           attributes:
@@ -56,7 +56,7 @@ en:
           attributes:
             phone_number:
               blank: Enter a phone number
-              invalid_phone_number: Enter a phone number using only numbers, spaces, ’ext’, ‘-’ or ‘+’
+              invalid_phone_number: The phone number can only include numbers, spaces, ‘ext’, ‘-’, ‘+’, ‘(’ and ‘)’
               phone_too_long: The phone number should have 15 digits or less
               phone_too_short: The phone number should have 8 digits or more
         question/selection:
