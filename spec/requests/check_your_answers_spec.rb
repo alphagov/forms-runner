@@ -52,14 +52,18 @@ RSpec.describe "Check Your Answers Controller", type: :request do
     }
   end
 
+  let(:api_url_suffix) { "/live" }
+
   before do
     ActiveResource::HttpMock.respond_to do |mock|
-      mock.get "/api/v1/forms/2/live", req_headers, form_data, 200
+      mock.get "/api/v1/forms/2#{api_url_suffix}", req_headers, form_data, 200
     end
   end
 
   describe "#show" do
     context "with preview mode on" do
+      let(:api_url_suffix) { "" }
+
       context "without any questions answered" do
         it "redirects to first incomplete page of form" do
           get check_your_answers_path(mode: "preview-form", form_id: 2, form_slug: "form-1")

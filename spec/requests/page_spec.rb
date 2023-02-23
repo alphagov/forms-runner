@@ -51,14 +51,18 @@ RSpec.describe "Page Controller", type: :request do
     }
   end
 
+  let(:api_url_suffix) { "/live" }
+
   before do
     ActiveResource::HttpMock.respond_to do |mock|
-      mock.get "/api/v1/forms/2/live", req_headers, form_data, 200
+      mock.get "/api/v1/forms/2#{api_url_suffix}", req_headers, form_data, 200
     end
   end
 
   describe "#show" do
     context "with preview mode on" do
+      let(:api_url_suffix) { "" }
+
       it "Returns a 200" do
         get form_page_path("preview-form", 2, "form-1", 1)
         expect(response.status).to eq(200)
@@ -248,7 +252,9 @@ RSpec.describe "Page Controller", type: :request do
 
   describe "#save" do
     context "with preview mode on" do
+      let(:api_url_suffix) { "" }
       it "Redirects to the next page" do
+
         post save_form_page_path("preview-form", 2, "form-1", 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
         expect(response).to redirect_to(form_page_path("preview-form", 2, "form-1", 2))
       end
@@ -285,33 +291,33 @@ RSpec.describe "Page Controller", type: :request do
           expect(response).to redirect_to(check_your_answers_path("preview-form", 2, "form-1"))
         end
       end
-    end
 
-    context "and a form has a live_at value in the future" do
-      let(:form_data) do
-        {
-          id: 2,
-          name: "Form name",
-          form_slug: "form-name",
-          submission_email: "submission@email.com",
-          live_at: "2023-01-01 09:00:00 +0100",
-          start_page: "1",
-          privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
-          what_happens_next_text: "Good things come to those that wait",
-          declaration_text: "agree to the declaration",
-          support_email: "help@example.gov.uk",
-          support_phone: "Call 01610123456\n\nThis line is only open on Tuesdays.",
-          support_url: "https://example.gov.uk/contact",
-          support_url_text: "Contact us",
-          pages: pages_data,
-        }.to_json
-      end
-
-      it "does not return 404" do
-        travel_to timestamp_of_request do
-          post save_form_page_path("preview-form", 2, "form-1", 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
+      context "and a form has a live_at value in the future" do
+        let(:form_data) do
+          {
+            id: 2,
+            name: "Form name",
+            form_slug: "form-name",
+            submission_email: "submission@email.com",
+            live_at: "2023-01-01 09:00:00 +0100",
+            start_page: "1",
+            privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
+            what_happens_next_text: "Good things come to those that wait",
+            declaration_text: "agree to the declaration",
+            support_email: "help@example.gov.uk",
+            support_phone: "Call 01610123456\n\nThis line is only open on Tuesdays.",
+            support_url: "https://example.gov.uk/contact",
+            support_url_text: "Contact us",
+            pages: pages_data,
+          }.to_json
         end
-        expect(response.status).not_to eq(404)
+
+        it "does not return 404" do
+          travel_to timestamp_of_request do
+            post save_form_page_path("preview-form", 2, "form-1", 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
+          end
+          expect(response.status).not_to eq(404)
+        end
       end
     end
 

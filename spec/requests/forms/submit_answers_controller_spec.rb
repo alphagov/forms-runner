@@ -62,7 +62,7 @@ RSpec.describe Forms::SubmitAnswersController, type: :request do
   describe "#submit_answers" do
     context "with preview mode on" do
       before do
-        post form_submit_answers_path("preview-form", 2, "form-name", 1)
+        post form_submit_answers_path("preview-live", 2, "form-name", 1)
       end
 
       it "does not log the form_submission event" do

@@ -19,7 +19,11 @@ module Forms
   private
 
     def current_form
-      @current_form ||= Form.find_live(params.require(:form_id))
+      @current_form ||= if preview?
+                          Form.find(params.require(:form_id))
+                        else
+                          Form.find_live(params.require(:form_id))
+                        end
     end
 
     def current_context

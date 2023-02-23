@@ -52,11 +52,13 @@ RSpec.describe Forms::BaseController, type: :request do
     }
   end
 
+  let(:api_url_suffix) { "/live" }
+
   before do
     ActiveResource::HttpMock.respond_to do |mock|
       allow(EventLogger).to receive(:log).at_least(:once)
-      mock.get "/api/v1/forms/2/live", req_headers, form_response_data, 200
-      mock.get "/api/v1/forms/9999/live", req_headers, no_data_found_response, 404
+      mock.get "/api/v1/forms/2#{api_url_suffix}", req_headers, form_response_data, 200
+      mock.get "/api/v1/forms/9999#{api_url_suffix}", req_headers, no_data_found_response, 404
     end
   end
 
@@ -115,6 +117,8 @@ RSpec.describe Forms::BaseController, type: :request do
 
   describe "#show" do
     context "with preview mode on" do
+      let(:api_url_suffix) { "" }
+
       context "when a form exists" do
         before do
           travel_to timestamp_of_request do
@@ -156,12 +160,12 @@ RSpec.describe Forms::BaseController, type: :request do
 
         describe "Privacy page" do
           it "returns http code 200" do
-            get form_privacy_path(mode: "form", form_id: 2, form_slug: "form-name")
+            get form_privacy_path(mode: "preview-form", form_id: 2, form_slug: "form-name")
             expect(response).to have_http_status(:ok)
           end
 
           it "contains link to data controller's privacy policy" do
-            get form_privacy_path(mode: "form", form_id: 2, form_slug: "form-name")
+            get form_privacy_path(mode: "preview-form", form_id: 2, form_slug: "form-name")
             expect(response.body).to include("http://www.example.gov.uk/privacy_policy")
           end
         end
