@@ -66,7 +66,7 @@ RSpec.describe "Check Your Answers Controller", type: :request do
 
       context "without any questions answered" do
         it "redirects to first incomplete page of form" do
-          get check_your_answers_path(mode: "preview-form", form_id: 2, form_slug: "form-1")
+          get check_your_answers_path(mode: "preview-draft", form_id: 2, form_slug: "form-1")
           expect(response.status).to eq(302)
           expect(response.location).to eq(form_page_url(2, "form-1", 1))
         end
@@ -74,10 +74,10 @@ RSpec.describe "Check Your Answers Controller", type: :request do
 
       context "with all questions answered and valid" do
         before do
-          post save_form_page_path("preview-form", 2, "form-1", 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
-          post save_form_page_path("preview-form", 2, "form-1", 2), params: { question: { text: "answer text" }, changing_existing_answer: false }
+          post save_form_page_path("preview-draft", 2, "form-1", 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
+          post save_form_page_path("preview-draft", 2, "form-1", 2), params: { question: { text: "answer text" }, changing_existing_answer: false }
           allow(EventLogger).to receive(:log).at_least(:once)
-          get check_your_answers_path(mode: "preview-form", form_id: 2, form_slug: "form-1")
+          get check_your_answers_path(mode: "preview-draft", form_id: 2, form_slug: "form-1")
         end
 
         it "returns 200" do
@@ -85,7 +85,7 @@ RSpec.describe "Check Your Answers Controller", type: :request do
         end
 
         it "Displays a back link to the last page of the form" do
-          expect(response.body).to include(form_page_path("preview-form", 2, "form-1", 2))
+          expect(response.body).to include(form_page_path("preview-draft", 2, "form-1", 2))
         end
 
         it "Returns the correct X-Robots-Tag header" do
@@ -124,7 +124,7 @@ RSpec.describe "Check Your Answers Controller", type: :request do
 
         it "does not return 404" do
           travel_to timestamp_of_request do
-            get check_your_answers_path(mode: "preview-form", form_id: 2, form_slug: "form-1")
+            get check_your_answers_path(mode: "preview-draft", form_id: 2, form_slug: "form-1")
           end
 
           expect(response.status).not_to eq(404)

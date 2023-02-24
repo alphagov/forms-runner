@@ -9,7 +9,7 @@ Rails.application.routes.draw do
   get "/help/accessibility-statement" => "application#accessibility_statement", as: :accessibility_statement
   get "/help/cookies" => "application#cookies", as: :cookies
 
-  scope "/:mode", mode: /preview-form|form/ do
+  scope "/:mode", mode: /preview-draft|preview-live|form/ do
     get "/:form_id" => "forms/base#redirect_to_friendly_url_start", as: :form_id
     scope "/:form_id/:form_slug" do
       get "/" => "forms/base#redirect_to_friendly_url_start", as: :form

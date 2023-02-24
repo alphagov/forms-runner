@@ -122,13 +122,13 @@ RSpec.describe Forms::BaseController, type: :request do
       context "when a form exists" do
         before do
           travel_to timestamp_of_request do
-            get form_path(mode: "preview-form", form_id: 2, form_slug: "form-name")
+            get form_path(mode: "preview-draft", form_id: 2, form_slug: "form-name")
           end
         end
 
         context "when the form has a start page" do
           it "Redirects to the first page" do
-            expect(response).to redirect_to(form_page_path("preview-form", 2, "form-name", 1))
+            expect(response).to redirect_to(form_page_path("preview-draft", 2, "form-name", 1))
           end
 
           it "does not log the form_visit event" do
@@ -160,12 +160,12 @@ RSpec.describe Forms::BaseController, type: :request do
 
         describe "Privacy page" do
           it "returns http code 200" do
-            get form_privacy_path(mode: "preview-form", form_id: 2, form_slug: "form-name")
+            get form_privacy_path(mode: "preview-draft", form_id: 2, form_slug: "form-name")
             expect(response).to have_http_status(:ok)
           end
 
           it "contains link to data controller's privacy policy" do
-            get form_privacy_path(mode: "preview-form", form_id: 2, form_slug: "form-name")
+            get form_privacy_path(mode: "preview-draft", form_id: 2, form_slug: "form-name")
             expect(response.body).to include("http://www.example.gov.uk/privacy_policy")
           end
         end
@@ -191,7 +191,7 @@ RSpec.describe Forms::BaseController, type: :request do
 
       context "when a form doesn't exists" do
         before do
-          get form_path(mode: "preview-form", form_id: 9999, form_slug: "form-name-1")
+          get form_path(mode: "preview-draft", form_id: 9999, form_slug: "form-name-1")
         end
 
         it "Render the not found page" do
@@ -222,7 +222,7 @@ RSpec.describe Forms::BaseController, type: :request do
         end
 
         before do
-          get form_path(mode: "preview-form", form_id: 9999, form_slug: "form-name")
+          get form_path(mode: "preview-draft", form_id: 9999, form_slug: "form-name")
         end
 
         it "Render the not found page" do
