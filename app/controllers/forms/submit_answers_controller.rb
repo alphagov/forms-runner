@@ -4,14 +4,10 @@ module Forms
       unless preview?
         EventLogger.log_form_event(current_context, request, "submission")
       end
-      if form.email.nil?
-        Sentry.capture_message("preview submitted, caught")
-        render "errors/submission_error", status: :internal_server_error
-      else
+      if not form.email.nil?
         FormSubmissionService.call(form: current_context,
                                  reference: params[:notify_reference],
                                  preview_mode: preview?).submit_form_to_processing_team
-
       end
 
       current_context.clear
