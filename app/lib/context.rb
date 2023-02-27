@@ -68,4 +68,19 @@ class Context
   def submission_email
     @step_factory.submission_email
   end
+
+  def submit_users_answers(notify_reference, preview_mode, request)
+    unless preview_mode
+      EventLogger.log_form_event(self, request, "submission")
+    end
+
+    FormSubmissionService.call(form: self,
+                               reference: notify_reference,
+                               preview_mode:).submit_form_to_processing_team
+
+    # EventLogger.log_form_event(current_context, request, "no email submission")
+
+
+    self.clear
+  end
 end

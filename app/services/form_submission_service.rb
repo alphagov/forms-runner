@@ -22,6 +22,10 @@ class FormSubmissionService
                               submission_email: @form.submission_email).deliver_now
     end
 
+    if !@preview_mode && @form.submission_email.blank?
+      return false
+    end
+    return true
   end
 
   class NotifyTemplateBodyFilter
