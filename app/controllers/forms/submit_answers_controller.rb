@@ -4,10 +4,11 @@ module Forms
       unless preview?
         EventLogger.log_form_event(current_context, request, "submission")
       end
-      if not form.email.nil?
+      unless current_context.submission_email.nil?
         FormSubmissionService.call(form: current_context,
                                  reference: params[:notify_reference],
                                  preview_mode: preview?).submit_form_to_processing_team
+        EventLogger.log_form_event(current_context, request, "no email submission")
       end
 
       current_context.clear
