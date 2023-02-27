@@ -2,7 +2,8 @@ require "rails_helper"
 
 RSpec.describe FormSubmissionService do
   let(:service) { described_class.call(form:, reference: "for-my-ref", preview_mode:) }
-  let(:form) { OpenStruct.new(form_name: "Form 1", submission_email: "testing@gov.uk", steps: [step]) }
+  let(:submission_email) { "testing@gov.uk" }
+  let(:form) { OpenStruct.new(form_name: "Form 1", submission_email: , steps: [step]) }
   let(:step) { OpenStruct.new({ question_text: "What is the meaning of life?", show_answer_in_email: "42" }) }
   let(:preview_mode) { false }
 
@@ -21,6 +22,19 @@ RSpec.describe FormSubmissionService do
             timestamp: Time.zone.now,
             submission_email: "testing@gov.uk" },
         ).once
+      end
+    end
+
+    context "when form does not have a submission email" do
+      let(:submission_email) { "" }
+
+      it "does not attempt to send an email" do
+        freeze_time do
+          allow(FormSubmissionMailer).to receive(:email_completed_form)
+
+          service.submit_form_to_processing_team
+          expect(FormSubmissionMailer).not_to have_received(:email_completed_form)
+        end
       end
     end
 

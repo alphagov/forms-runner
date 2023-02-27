@@ -13,13 +13,15 @@ class FormSubmissionService
 
   def submit_form_to_processing_team
     timestamp = submission_timestamp
+    if @form.submission_email.present?
+      FormSubmissionMailer
+        .email_completed_form(title: form_title,
+                              text_input: email_body,
+                              reference: @reference,
+                              timestamp:,
+                              submission_email: @form.submission_email).deliver_now
+    end
 
-    FormSubmissionMailer
-      .email_completed_form(title: form_title,
-                            text_input: email_body,
-                            reference: @reference,
-                            timestamp:,
-                            submission_email: @form.submission_email).deliver_now
   end
 
   class NotifyTemplateBodyFilter
