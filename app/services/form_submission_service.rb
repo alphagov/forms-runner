@@ -5,10 +5,11 @@ class FormSubmissionService
     end
   end
 
-  def initialize(form:, reference:, preview_mode:)
+  def initialize(form:, reference:, preview_mode:, request:)
     @form = form
     @reference = reference
     @preview_mode = preview_mode
+    @request = request
   end
 
   def submit_form_to_processing_team
@@ -20,6 +21,8 @@ class FormSubmissionService
                               reference: @reference,
                               timestamp:,
                               submission_email: @form.submission_email).deliver_now
+    else
+      EventLogger.log_form_event(@form, request, "no email submission")
     end
 
     if !@preview_mode && @form.submission_email.blank?

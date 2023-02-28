@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe FormSubmissionService do
-  let(:service) { described_class.call(form:, reference: "for-my-ref", preview_mode:) }
+  let(:service) { described_class.call(form:, reference: "for-my-ref", preview_mode: request: {}) }
   let(:submission_email) { "testing@gov.uk" }
   let(:form) { OpenStruct.new(form_name: "Form 1", submission_email: , steps: [step]) }
   let(:step) { OpenStruct.new({ question_text: "What is the meaning of life?", show_answer_in_email: "42" }) }

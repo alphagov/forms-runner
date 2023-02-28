@@ -76,7 +76,8 @@ class Context
 
     FormSubmissionService.call(form: self,
                                reference: notify_reference,
-                               preview_mode:).submit_form_to_processing_team
+                               preview_mode:,
+                               request:).submit_form_to_processing_team
 
     # EventLogger.log_form_event(current_context, request, "no email submission")
 
