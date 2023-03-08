@@ -1,0 +1,11 @@
+<% set_page_title(t("session_expired.title")) %>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <h1 class="govuk-heading-l"><%= t('session_expired.title') %></h1>
+    <%= simple_format(t('session_expired.body'), class: 'govuk-body') %>
+    <p class="govuk-body">
+      <%= t('session_expired.body_2') %> <%= govuk_link_to(t('session_expired.link_text'), form_page_path(current_form.id, current_form.form_slug, current_form.start_page)) %></a>.
+    </p>
+  </div>
+</div>

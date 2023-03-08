@@ -11,6 +11,11 @@ module Forms
       render template: "errors/not_found", status: :not_found
     end
 
+    def session_expired
+      current_context
+      render "errors/session_expired", locals: { current_form: }
+    end
+
   private
 
     def current_form

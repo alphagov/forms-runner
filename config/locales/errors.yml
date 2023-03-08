@@ -11,6 +11,11 @@ en:
   service_unavailable:
     body: Contact the GOV.UK Forms team if you need to make changes to your forms or speak to someone about the service.
     title: Sorry, the service is unavailable
+  session_expired:
+    body: We deleted your answers because it's been more than 20 hours since you started.
+    body_2: You need to
+    link_text: go back to the start
+    title: For your security, we deleted your answers
   submission_error:
     body: |
       There was a problem with the service and we have been unable to submit your answers.
