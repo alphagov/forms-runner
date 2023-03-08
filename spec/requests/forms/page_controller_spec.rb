@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Page Controller", type: :request do
+RSpec.describe Forms::PageController, type: :request do
   let(:timestamp_of_request) { Time.utc(2022, 12, 14, 10, 0o0, 0o0) }
   let(:form_data) do
     {
@@ -418,6 +418,32 @@ RSpec.describe "Page Controller", type: :request do
             post save_form_page_path("form", 2, "form-1", 2), params: { question: { text: "" } }
           end
         end
+      end
+    end
+
+    context "when session has expired" do
+      before do
+        travel_to Time.zone.now - 3.days do
+          post save_form_page_path("preview-form", 2, "form-1", 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
+        end
+      end
+
+      it "redirects to session expired error page" do
+        post save_form_page_path("preview-form", 2, "form-1", 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
+        expect(response.status).to eq(302)
+        expect(response.location).to eq(error_session_expired_url(2))
+      end
+    end
+
+    context "when session is valid" do
+      before do
+        get form_page_path("preview-form", 2, "form-1", 1)
+      end
+
+      it "does not redirect to session expired error page" do
+        post save_form_page_path("preview-form", 2, "form-1", 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
+        expect(response.status).to eq(302)
+        expect(response.location).to eq(form_page_url("preview-form", 2, "form-1", 2))
       end
     end
   end
