@@ -1,5 +1,6 @@
 module Forms
   class CheckYourAnswersController < BaseController
+    before_action :check_session_expiry
     def show
       return redirect_to form_page_path(current_context.form, current_context.form_slug, current_context.next_page_slug) unless current_context.can_visit?(CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG)
 

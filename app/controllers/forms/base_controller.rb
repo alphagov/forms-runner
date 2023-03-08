@@ -18,6 +18,18 @@ module Forms
 
   private
 
+    def set_session_cookie
+      session[:datetime_started] = Time.zone.now.utc.iso8601 if session[:datetime_started].blank?
+    end
+
+    def check_session_expiry
+      set_session_cookie if session[:datetime_started].blank?
+
+      if Time.zone.now.to_i - Time.zone.parse(session[:datetime_started]).to_i >= 20.hours
+        redirect_to error_session_expired_path(current_form.id)
+      end
+    end
+
     def current_form
       @current_form ||= Form.find_live(params.require(:form_id))
     end

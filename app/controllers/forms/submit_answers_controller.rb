@@ -1,5 +1,7 @@
 module Forms
   class SubmitAnswersController < BaseController
+    before_action :check_session_expiry
+
     def submit_answers
       unless preview?
         EventLogger.log_form_event(current_context, request, "submission")
