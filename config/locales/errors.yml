@@ -8,6 +8,11 @@ en:
       If you typed the web address, check it is correct.
       If you pasted the web address, check you copied the entire address.
     title: Page not found
+  repeat_submission:
+    body: We deleted your answers because they‘ve been submitted successfully already.
+    body_2: If you want to submit the form again, you need to
+    link_text: go back to the start
+    title: For your security, we deleted your answers
   service_unavailable:
     body: Contact the GOV.UK Forms team if you need to make changes to your forms or speak to someone about the service.
     title: Sorry, the service is unavailable

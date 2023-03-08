@@ -11,6 +11,11 @@ module Forms
       render template: "errors/not_found", status: :not_found
     end
 
+    def error_repeat_submission
+      @current_context = Context.new(form: current_form, store: session)
+      render template: "errors/repeat_submission", locals: { current_form: }
+    end
+
   private
 
     def current_form
