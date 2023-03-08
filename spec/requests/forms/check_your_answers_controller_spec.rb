@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Check Your Answers Controller", type: :request do
+RSpec.describe Forms::CheckYourAnswersController, type: :request do
   let(:timestamp_of_request) { Time.utc(2022, 12, 14, 10, 0o0, 0o0) }
 
   let(:form_data) do
