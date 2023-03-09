@@ -12,6 +12,8 @@ class FormSubmissionService
   end
 
   def submit_form_to_processing_team
+    raise StandardError, "Form id(#{@form.id}) has no steps i.e questions/answers to include in submission email" if @form.steps.blank?
+
     if !@preview_mode && @form.submission_email.blank?
       raise StandardError, "Form id(#{@form.id}) is missing a submission email address"
     end

@@ -32,6 +32,15 @@ RSpec.describe FormSubmissionService do
           expect { service.submit_form_to_processing_team }.to raise_error("Form id(1) is missing a submission email address")
         end
       end
+
+      context "when from has no steps (i.e questions/answers)" do
+        let(:form) { OpenStruct.new(id: 1, form_name: "Form 1", submission_email: "example@example.gov.uk", steps: []) }
+        let(:result) { service.submit_form_to_processing_team }
+
+        it "raises an error" do
+          expect { result }.to raise_error("Form id(1) has no steps i.e questions/answers to include in submission email")
+        end
+      end
     end
 
     context "when form being submitted is from previewed form" do
@@ -62,12 +71,21 @@ RSpec.describe FormSubmissionService do
             expect { service.submit_form_to_processing_team }.not_to raise_error
           end
 
-          it "does not called the FormSubmissionMailer" do
+          it "does not call the FormSubmissionMailer" do
             allow(FormSubmissionMailer).to receive(:email_completed_form).at_least(:once)
 
             service.submit_form_to_processing_team
 
             expect(FormSubmissionMailer).not_to have_received(:email_completed_form)
+          end
+        end
+
+        context "when from has no steps (i.e questions/answers)" do
+          let(:form) { OpenStruct.new(id: 1, form_name: "Form 1", submission_email: "example@example.gov.uk", steps: []) }
+          let(:result) { service.submit_form_to_processing_team }
+
+          it "raises an error" do
+            expect { result }.to raise_error("Form id(1) has no steps i.e questions/answers to include in submission email")
           end
         end
       end
