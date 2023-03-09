@@ -24,6 +24,16 @@ RSpec.describe FormSubmissionService do
       end
     end
 
+    describe "validations" do
+      context "when form has no submission email" do
+        let(:form) { OpenStruct.new(id: 1, form_name: "Form 1", submission_email: nil, steps: [step]) }
+
+        it "raises an error" do
+          expect { service.submit_form_to_processing_team }.to raise_error("Form id(1) is missing a submission email address")
+        end
+      end
+    end
+
     context "when form being submitted is from previewed form" do
       let(:preview_mode) { true }
 
@@ -41,6 +51,24 @@ RSpec.describe FormSubmissionService do
               timestamp: Time.zone.now,
               submission_email: "testing@gov.uk" },
           ).once
+        end
+      end
+
+      describe "validations" do
+        context "when form has no submission email" do
+          let(:form) { OpenStruct.new(id: 1, form_name: "Form 1", submission_email: nil, steps: [step]) }
+
+          it "does not raise an error" do
+            expect { service.submit_form_to_processing_team }.not_to raise_error
+          end
+
+          it "does not called the FormSubmissionMailer" do
+            allow(FormSubmissionMailer).to receive(:email_completed_form).at_least(:once)
+
+            service.submit_form_to_processing_team
+
+            expect(FormSubmissionMailer).not_to have_received(:email_completed_form)
+          end
         end
       end
     end
