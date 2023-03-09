@@ -45,15 +45,6 @@ RSpec.describe Forms::BaseController, type: :request do
     ]
   end
 
-  let(:session) do
-    {
-      answers: {
-        "1": { date_day: 1, date_month: 2, date_year: 2022 },
-        "2": { date_day: 1, date_month: 2, date_year: 2022 },
-      },
-    }
-  end
-
   let(:req_headers) do
     {
       "X-API-Token" => Settings.forms_api.auth_key,
@@ -327,28 +318,6 @@ RSpec.describe Forms::BaseController, type: :request do
         it "returns 404" do
           expect(response.status).to eq(404)
         end
-      end
-    end
-  end
-
-  describe "#submit_answers" do
-    context "with preview mode on" do
-      before do
-        post form_submit_answers_path("preview-form", 2, "form-name", 1)
-      end
-
-      it "does not log the form_submission event" do
-        expect(EventLogger).not_to have_received(:log)
-      end
-    end
-
-    context "with preview mode off" do
-      before do
-        post form_submit_answers_path("form", 2, "form-name", 1)
-      end
-
-      it "Logs the form_submission event" do
-        expect(EventLogger).to have_received(:log).with("form_submission", { form: "Form name", method: "POST", url: "http://www.example.com/form/2/form-name/submit-answers.1" })
       end
     end
   end
