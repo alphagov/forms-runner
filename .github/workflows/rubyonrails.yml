@@ -25,7 +25,7 @@ jobs:
       - name: Install frontend dependencies
         run: yarn
       - name: Run Frontend build
-        run: yarn build & yarn build:css
+        run: bin/vite build
       # Add or replace test runners here
       - name: Run tests
         run: bin/rake

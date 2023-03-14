@@ -1,0 +1,20 @@
+{
+  "all": {
+    "sourceCodeDir": "app/frontend",
+    "entrypointsDir": "entrypoints",
+    "watchAdditionalPaths": [
+      "app/components/**/*.scss",
+      "app/components/**/*.js"
+    ],
+    "additionalEntrypoints": ["node_modules/govuk-frontend/govuk/assets/**/*"],
+    "publicOutputDir": "frontend",
+    "autoBuild": false
+  },
+  "development": {
+    "port": 3038
+  },
+  "test": {
+    "port": 3039,
+    "autoBuild": true
+  }
+}
