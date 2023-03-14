@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Base controller", type: :request do
+RSpec.describe Forms::BaseController, type: :request do
   let(:timestamp_of_request) { Time.utc(2022, 12, 14, 10, 0o0, 0o0) }
   let(:form_response_data) do
     {
@@ -43,15 +43,6 @@ RSpec.describe "Base controller", type: :request do
         is_optional: nil,
       },
     ]
-  end
-
-  let(:session) do
-    {
-      answers: {
-        "1": { date_day: 1, date_month: 2, date_year: 2022 },
-        "2": { date_day: 1, date_month: 2, date_year: 2022 },
-      },
-    }
   end
 
   let(:req_headers) do
@@ -104,6 +95,21 @@ RSpec.describe "Base controller", type: :request do
       it "Redirects to the form page that includes the form slug" do
         expect(response.status).to eq(404)
       end
+    end
+  end
+
+  describe "#error_repeat_submission" do
+    before do
+      ActiveResource::HttpMock.respond_to do |mock|
+        allow(EventLogger).to receive(:log).at_least(:once)
+        mock.get "/api/v1/forms/2/live", req_headers, form_response_data, 200
+      end
+
+      get error_repeat_submission_path(mode: "form", form_id: 2, form_slug: "form-name")
+    end
+
+    it "renders the page with a link back to the form start page" do
+      expect(response.body).to include(form_page_path("form", 2, "form-name", 1))
     end
   end
 
@@ -312,28 +318,6 @@ RSpec.describe "Base controller", type: :request do
         it "returns 404" do
           expect(response.status).to eq(404)
         end
-      end
-    end
-  end
-
-  describe "#submit_answers" do
-    context "with preview mode on" do
-      before do
-        post form_submit_answers_path("preview-form", 2, "form-name", 1)
-      end
-
-      it "does not log the form_submission event" do
-        expect(EventLogger).not_to have_received(:log)
-      end
-    end
-
-    context "with preview mode off" do
-      before do
-        post form_submit_answers_path("form", 2, "form-name", 1)
-      end
-
-      it "Logs the form_submission event" do
-        expect(EventLogger).to have_received(:log).with("form_submission", { form: "Form name", method: "POST", url: "http://www.example.com/form/2/form-name/submit-answers.1" })
       end
     end
   end

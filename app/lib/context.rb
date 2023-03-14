@@ -61,6 +61,10 @@ class Context
     @form_context.clear(@form_id)
   end
 
+  def form_submitted?
+    @form_context.form_submitted?(@form_id)
+  end
+
   def form
     @form_id
   end
