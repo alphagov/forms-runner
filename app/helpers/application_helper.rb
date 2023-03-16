@@ -25,4 +25,8 @@ module ApplicationHelper
   def main_classes(form)
     form.nil? || form.live? ? "" : "main--draft"
   end
+
+  def govuk_assets_path
+    "/node_modules/govuk-frontend/govuk/assets"
+  end
 end
