@@ -23,7 +23,7 @@ jobs:
         with:
           bundler-cache: true
       - name: Install frontend dependencies
-        run: yarn
+        run: npm ci
       - name: Run Frontend build
         run: bin/vite build
       # Add or replace test runners here
@@ -40,7 +40,7 @@ jobs:
         with:
           bundler-cache: true
       - name: Install frontend dependencies
-        run: yarn
+        run: npm ci
       # Add or replace any other lints here
       - name: Security audit dependencies
         run: bundler exec bundle audit check
@@ -49,4 +49,4 @@ jobs:
       - name: Lint Ruby files
         run: bundler exec rubocop app --parallel
       - name: Lint Javascript and Sass files
-        run: yarn lint
+        run: npm run lint
