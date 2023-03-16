@@ -2,7 +2,8 @@ name: Deploy to GOV.UK PaaS
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -12,6 +13,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.ref_to_deploy }}
 
       - name: Install Ruby and gems
         uses: ruby/setup-ruby@9669f3ee51dc3f4eda8447ab696b3ab19a90d14b # ruby 3.1.1
