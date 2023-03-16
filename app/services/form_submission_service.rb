@@ -12,14 +12,22 @@ class FormSubmissionService
   end
 
   def submit_form_to_processing_team
+    raise StandardError, "Form id(#{@form.id}) has no steps i.e questions/answers to include in submission email" if @form.steps.blank?
+
+    if !@preview_mode && @form.submission_email.blank?
+      raise StandardError, "Form id(#{@form.id}) is missing a submission email address"
+    end
+
     timestamp = submission_timestamp
 
-    FormSubmissionMailer
-      .email_completed_form(title: form_title,
-                            text_input: email_body,
-                            reference: @reference,
-                            timestamp:,
-                            submission_email: @form.submission_email).deliver_now
+    unless @form.submission_email.blank? && @preview_mode
+      FormSubmissionMailer
+        .email_completed_form(title: form_title,
+                              text_input: email_body,
+                              reference: @reference,
+                              timestamp:,
+                              submission_email: @form.submission_email).deliver_now
+    end
   end
 
   class NotifyTemplateBodyFilter
