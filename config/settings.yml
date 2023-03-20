@@ -5,8 +5,9 @@ forms_admin:
 forms_api:
   # URL to form-api endpoints
   base_url: http://localhost:9292
+  enabled_auth: true
   # Authentication key to authenticate forms-runner to forms-api
-  auth_key: "123456"
+  auth_key:
 
 # Settings for GOV.UK Notify api & email templates
 govuk_notify:
