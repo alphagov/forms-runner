@@ -46,7 +46,7 @@ module Forms
       form_id = params.require(:form_id)
 
       if preview_draft?
-        Form.find(form_id)
+        Form.find_draft(form_id)
       elsif preview_live?
         Form.find_live(form_id)
       elsif live

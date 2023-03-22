@@ -61,7 +61,7 @@ RSpec.describe "Page Controller", type: :request do
 
   describe "#show" do
     context "with preview mode on" do
-      let(:api_url_suffix) { "" }
+      let(:api_url_suffix) { "/draft" }
 
       it "Returns a 200" do
         get form_page_path("preview-draft", 2, "form-1", 1)
@@ -252,7 +252,7 @@ RSpec.describe "Page Controller", type: :request do
 
   describe "#save" do
     context "with preview mode on" do
-      let(:api_url_suffix) { "" }
+      let(:api_url_suffix) { "/draft" }
       it "Redirects to the next page" do
 
         post save_form_page_path("preview-draft", 2, "form-1", 1), params: { question: { text: "answer text" }, changing_existing_answer: false }

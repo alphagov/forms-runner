@@ -62,7 +62,7 @@ RSpec.describe "Check Your Answers Controller", type: :request do
 
   describe "#show" do
     context "with preview mode on" do
-      let(:api_url_suffix) { "" }
+      let(:api_url_suffix) { "/draft" }
 
       context "without any questions answered" do
         it "redirects to first incomplete page of form" do

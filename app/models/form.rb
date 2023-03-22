@@ -10,6 +10,10 @@ class Form < ActiveResource::Base
     find(:one, from: "#{prefix}forms/#{id}/live")
   end
 
+  def self.find_draft(id)
+    find(:one, from: "#{prefix}forms/#{id}/draft")
+  end
+
   def last_page
     pages.find { |p| !p.has_next_page? }
   end
