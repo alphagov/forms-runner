@@ -19,15 +19,39 @@ module Forms
   private
 
     def current_form
-      @current_form ||= Form.find_live(params.require(:form_id))
+      @current_form ||= fetch_form
     end
 
     def current_context
       @current_context ||= Context.new(form: current_form, store: session)
     end
 
+    def live
+      @live ||= !preview?
+    end
+
     def preview?
-      params[:mode] == "preview-form"
+      preview_draft? || preview_live?
+    end
+
+    def preview_draft?
+      mode == "preview-draft"
+    end
+
+    def preview_live?
+      mode == "preview-live"
+    end
+
+    def fetch_form
+      form_id = params.require(:form_id)
+
+      if preview_draft?
+        Form.find_draft(form_id)
+      elsif preview_live?
+        Form.find_live(form_id)
+      elsif live
+        Form.find_live(form_id)
+      end
     end
 
     def mode

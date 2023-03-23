@@ -52,11 +52,13 @@ RSpec.describe Forms::BaseController, type: :request do
     }
   end
 
+  let(:api_url_suffix) { "/live" }
+
   before do
     ActiveResource::HttpMock.respond_to do |mock|
       allow(EventLogger).to receive(:log).at_least(:once)
-      mock.get "/api/v1/forms/2/live", req_headers, form_response_data, 200
-      mock.get "/api/v1/forms/9999/live", req_headers, no_data_found_response, 404
+      mock.get "/api/v1/forms/2#{api_url_suffix}", req_headers, form_response_data, 200
+      mock.get "/api/v1/forms/9999#{api_url_suffix}", req_headers, no_data_found_response, 404
     end
   end
 
@@ -115,20 +117,72 @@ RSpec.describe Forms::BaseController, type: :request do
 
   describe "#show" do
     context "with preview mode on" do
-      context "when a form exists" do
-        before do
-          travel_to timestamp_of_request do
-            get form_path(mode: "preview-form", form_id: 2, form_slug: "form-name")
+      context "with a draft form" do
+        let(:api_url_suffix) { "/draft" }
+
+        context "when a form exists" do
+          before do
+            travel_to timestamp_of_request do
+              get form_path(mode: "preview-draft", form_id: 2, form_slug: "form-name")
+            end
+          end
+
+          context "when the form has a start page" do
+            it "Redirects to the first page" do
+              expect(response).to redirect_to(form_page_path("preview-draft", 2, "form-name", 1))
+            end
+
+            it "does not log the form_visit event" do
+              expect(EventLogger).not_to have_received(:log)
+            end
+          end
+
+          context "when the form has no start page" do
+            let(:form_response_data) do
+              {
+                id: 2,
+                name: "Form name",
+                form_slug: "form-name",
+                submission_email: "submission@email.com",
+                start_page: nil,
+                live_at: nil,
+                privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
+              }.to_json
+            end
+
+            it "returns 404" do
+              expect(response.status).to eq(404)
+            end
+          end
+
+          it "Returns the correct X-Robots-Tag header" do
+            expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
+          end
+
+          describe "Privacy page" do
+            it "returns http code 200" do
+              get form_privacy_path(mode: "preview-draft", form_id: 2, form_slug: "form-name")
+              expect(response).to have_http_status(:ok)
+            end
+
+            it "contains link to data controller's privacy policy" do
+              get form_privacy_path(mode: "preview-draft", form_id: 2, form_slug: "form-name")
+              expect(response.body).to include("http://www.example.gov.uk/privacy_policy")
+            end
           end
         end
 
-        context "when the form has a start page" do
-          it "Redirects to the first page" do
-            expect(response).to redirect_to(form_page_path("preview-form", 2, "form-name", 1))
+        context "when a form doesn't exists" do
+          before do
+            get form_path(mode: "preview-draft", form_id: 9999, form_slug: "form-name-1")
           end
 
-          it "does not log the form_visit event" do
-            expect(EventLogger).not_to have_received(:log)
+          it "Render the not found page" do
+            expect(response.body).to include(I18n.t("not_found.title"))
+          end
+
+          it "returns 404" do
+            expect(response.status).to eq(404)
           end
         end
 
@@ -140,9 +194,92 @@ RSpec.describe Forms::BaseController, type: :request do
               form_slug: "form-name",
               submission_email: "submission@email.com",
               start_page: nil,
-              live_at: nil,
               privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
+              what_happens_next_text: "Good things come to those that wait",
+              declaration_text: "agree to the declaration",
+              support_email: "help@example.gov.uk",
+              support_phone: "Call 01610123456\n\nThis line is only open on Tuesdays.",
+              support_url: "https://example.gov.uk/contact",
+              support_url_text: "Contact us",
             }.to_json
+          end
+
+          before do
+            get form_path(mode: "preview-draft", form_id: 9999, form_slug: "form-name")
+          end
+
+          it "Render the not found page" do
+            expect(response.body).to include(I18n.t("not_found.title"))
+          end
+
+          it "returns 404" do
+            expect(response.status).to eq(404)
+          end
+        end
+      end
+
+      context "with a live form" do
+        let(:api_url_suffix) { "/live" }
+
+        context "when a form exists" do
+          before do
+            travel_to timestamp_of_request do
+              get form_path(mode: "preview-live", form_id: 2, form_slug: "form-name")
+            end
+          end
+
+          context "when the form has a start page" do
+            it "Redirects to the first page" do
+              expect(response).to redirect_to(form_page_path("preview-live", 2, "form-name", 1))
+            end
+
+            it "does not log the form_visit event" do
+              expect(EventLogger).not_to have_received(:log)
+            end
+          end
+
+          context "when the form has no start page" do
+            let(:form_response_data) do
+              {
+                id: 2,
+                name: "Form name",
+                form_slug: "form-name",
+                submission_email: "submission@email.com",
+                start_page: nil,
+                live_at: nil,
+                privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
+              }.to_json
+            end
+
+            it "returns 404" do
+              expect(response.status).to eq(404)
+            end
+          end
+
+          it "Returns the correct X-Robots-Tag header" do
+            expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
+          end
+
+          describe "Privacy page" do
+            it "returns http code 200" do
+              get form_privacy_path(mode: "preview-live", form_id: 2, form_slug: "form-name")
+              expect(response).to have_http_status(:ok)
+            end
+
+            it "contains link to data controller's privacy policy" do
+              get form_privacy_path(mode: "preview-live", form_id: 2, form_slug: "form-name")
+              expect(response.body).to include("http://www.example.gov.uk/privacy_policy")
+            end
+          end
+        end
+
+        context "when a form doesn't exists" do
+          before do
+            get form_path(mode: "preview-live", form_id: 9999, form_slug: "form-name-1")
+          end
+
+          it "Render the not found page" do
+            expect(response.body).to include(I18n.t("not_found.title"))
           end
 
           it "returns 404" do
@@ -150,83 +287,35 @@ RSpec.describe Forms::BaseController, type: :request do
           end
         end
 
-        it "Returns the correct X-Robots-Tag header" do
-          expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
-        end
-
-        describe "Privacy page" do
-          it "returns http code 200" do
-            get form_privacy_path(mode: "form", form_id: 2, form_slug: "form-name")
-            expect(response).to have_http_status(:ok)
-          end
-
-          it "contains link to data controller's privacy policy" do
-            get form_privacy_path(mode: "form", form_id: 2, form_slug: "form-name")
-            expect(response.body).to include("http://www.example.gov.uk/privacy_policy")
-          end
-        end
-
-        context "and a form has a live_at value in the future" do
+        context "when the form has no start page" do
           let(:form_response_data) do
             {
               id: 2,
               name: "Form name",
               form_slug: "form-name",
               submission_email: "submission@email.com",
-              live_at: "2023-01-01 09:00:00 +0100",
-              start_page: "1",
+              start_page: nil,
               privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
+              what_happens_next_text: "Good things come to those that wait",
+              declaration_text: "agree to the declaration",
+              support_email: "help@example.gov.uk",
+              support_phone: "Call 01610123456\n\nThis line is only open on Tuesdays.",
+              support_url: "https://example.gov.uk/contact",
+              support_url_text: "Contact us",
             }.to_json
           end
 
-          it "does not return 404" do
-            expect(response.status).not_to eq(404)
+          before do
+            get form_path(mode: "preview-live", form_id: 9999, form_slug: "form-name")
           end
-        end
-      end
 
-      context "when a form doesn't exists" do
-        before do
-          get form_path(mode: "preview-form", form_id: 9999, form_slug: "form-name-1")
-        end
+          it "Render the not found page" do
+            expect(response.body).to include(I18n.t("not_found.title"))
+          end
 
-        it "Render the not found page" do
-          expect(response.body).to include(I18n.t("not_found.title"))
-        end
-
-        it "returns 404" do
-          expect(response.status).to eq(404)
-        end
-      end
-
-      context "when the form has no start page" do
-        let(:form_response_data) do
-          {
-            id: 2,
-            name: "Form name",
-            form_slug: "form-name",
-            submission_email: "submission@email.com",
-            start_page: nil,
-            privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
-            what_happens_next_text: "Good things come to those that wait",
-            declaration_text: "agree to the declaration",
-            support_email: "help@example.gov.uk",
-            support_phone: "Call 01610123456\n\nThis line is only open on Tuesdays.",
-            support_url: "https://example.gov.uk/contact",
-            support_url_text: "Contact us",
-          }.to_json
-        end
-
-        before do
-          get form_path(mode: "preview-form", form_id: 9999, form_slug: "form-name")
-        end
-
-        it "Render the not found page" do
-          expect(response.body).to include(I18n.t("not_found.title"))
-        end
-
-        it "returns 404" do
-          expect(response.status).to eq(404)
+          it "returns 404" do
+            expect(response.status).to eq(404)
+          end
         end
       end
     end
@@ -277,7 +366,7 @@ RSpec.describe Forms::BaseController, type: :request do
           end
         end
 
-        context "when a form doesn't exist" do
+        context "when a live form doesn't exist" do
           before do
             get form_path(mode: "form", form_id: 9999, form_slug: "form-name")
           end
@@ -289,34 +378,6 @@ RSpec.describe Forms::BaseController, type: :request do
           it "Render the not found page" do
             expect(response.body).to include(I18n.t("not_found.title"))
           end
-        end
-      end
-
-      context "and a form has a live_at value in the future" do
-        let(:form_response_data) do
-          {
-            id: 2,
-            name: "Form name",
-            form_slug: "form-name",
-            submission_email: "submission@email.com",
-            live_at: "2023-08-18 09:16:50 +0100",
-            start_page: nil,
-            privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
-            support_email: "help@example.gov.uk",
-            support_phone: "Call 01610123456\n\nThis line is only open on Tuesdays.",
-            support_url: "https://example.gov.uk/contact",
-            support_url_text: "Contact us",
-          }.to_json
-        end
-
-        before do
-          travel_to timestamp_of_request do
-            get form_path(mode: "form", form_id: 2, form_slug: "form-name")
-          end
-        end
-
-        it "returns 404" do
-          expect(response.status).to eq(404)
         end
       end
     end
