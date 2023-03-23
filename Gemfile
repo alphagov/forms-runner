@@ -6,18 +6,9 @@ ruby "3.1.2"
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.0.4"
 
-# The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
-gem "sprockets-rails"
-
 # Use the Puma web server [https://github.com/puma/puma]
 gem "nokogiri", "~> 1.14.2"
 gem "puma", "~> 6.1.1"
-
-# Bundle and transpile JavaScript [https://github.com/rails/jsbundling-rails]
-gem "jsbundling-rails"
-
-# Bundle and process CSS [https://github.com/rails/cssbundling-rails]
-gem "cssbundling-rails"
 
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
@@ -104,3 +95,5 @@ end
 gem "bundler-audit", "~> 0.9.0"
 
 gem "brakeman", "~> 5.4"
+
+gem "vite_rails"

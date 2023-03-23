@@ -9,7 +9,6 @@ To run the project you will need to install:
 - [Ruby](https://www.ruby-lang.org/en/) - we use version 3 of Ruby. Before running the project, double check the [.ruby-version] file to see the exact version.
 - [Node.js](https://nodejs.org/en/) - the frontend build requires Node.js. We use Node 16 LTS versions.
 - a running [PostgreSQL](https://www.postgresql.org/) database
-- [Yarn](https://yarnpkg.com/) - we use Yarn rather than `npm` to install and run the frontend.
 
 We recommend using a version manager to install and manage these, such as:
 
@@ -81,7 +80,7 @@ or run the rails server:
 bin/rails server
 
 # When running the server, you can use any of the frontend tasks, e.g.:
-yarn dev
+npm run dev
 ```
 
 For now, to test the API integration, you will also need to run the [API service](https://github.com/alphagov/forms-api).
@@ -115,7 +114,7 @@ If you are planning to deploy to GOV.UK PaaS without using the container, you ca
 # Run the Ruby test suite
 bin/rake
 # To run the Javascript test suite, run
-yarn test
+npm run test
 ```
 
 ## Support
