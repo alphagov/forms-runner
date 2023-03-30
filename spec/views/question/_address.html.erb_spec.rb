@@ -29,6 +29,7 @@ describe "question/address.html.erb" do
   end
 
   before do
+    assign(:mode, Mode.new("live"))
     render partial: "question/address", locals: { page: step, form: }
   end
 

@@ -1,7 +1,7 @@
 <% if page.question.is_full_name? && !page.question.needs_title? %>
-  <%= form.govuk_text_field :full_name, label: { tag: 'h1', size: 'l', text: question_text_with_optional_suffix(page) }, hint: { text: page.hint_text }, autocomplete: "name" %>
+  <%= form.govuk_text_field :full_name, label: { tag: 'h1', size: 'l', text: question_text_with_optional_suffix(page, @mode.preview?).html_safe }, hint: { text: page.hint_text }, autocomplete: "name" %>
 <% else %>
-  <%= form.govuk_fieldset legend: { text: question_text_with_optional_suffix(page), tag: 'h1', size: 'l' }, "aria-describedby": page.hint_text.present? ? "govuk-name-hint" : nil do %>
+  <%= form.govuk_fieldset legend: { text: question_text_with_optional_suffix(page, @mode.preview?).html_safe, tag: 'h1', size: 'l' }, "aria-describedby": page.hint_text.present? ? "govuk-name-hint" : nil do %>
     <% if page.hint_text.present? %>
       <p id="govuk-name-hint" class="govuk-hint"><%= page.hint_text %></p>
     <% end %>
