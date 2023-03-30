@@ -27,6 +27,10 @@ module Question
       replace_none_of_the_above(answer)
     end
 
+    def show_optional_suffix
+      false
+    end
+
   private
 
     def replace_none_of_the_above(answer)

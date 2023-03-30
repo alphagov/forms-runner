@@ -80,15 +80,17 @@ en:
   form:
     submitted:
       title: Your form has been submitted
+  mode:
+    phase_banner_tag_preview-draft: Draft preview
+    phase_banner_tag_preview-live: Live preview
+    phase_banner_text_preview-draft: You're previewing the draft version of this form
+    phase_banner_text_preview-live: You're previewing the live version of this form
   page:
     none_of_the_above: None of the above
     optional: "%{question_text} (optional)"
+    preview_mode: Preview
   page_titles:
     error_prefix: 'Error: '
-  phase_banner:
-    after_link: will help us improve it.
-    before_link: This is a new service, your
-    link: feedback
   question/name:
     label:
       first_name: First name

@@ -32,22 +32,22 @@
 
     <a href="#main-content" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
 
+    <% header_class = if @mode&.preview? then "--#{@mode}" else "" end %>
     <% if @current_context.present? %>
-      <%= govuk_header(service_name: @current_context.form_name, homepage_url: "https://www.gov.uk/", service_url: form_path(form_id: @current_context.form, form_slug: @current_context.form_slug)) %>
+      <%= govuk_header(service_name: @current_context.form_name, homepage_url: "https://www.gov.uk/", service_url: form_path(form_id: @current_context.form, form_slug: @current_context.form_slug), classes: 'govuk-header' + "--#{@mode}") %>
     <% else %>
       <%= govuk_header(homepage_url: "https://www.gov.uk/") %>
     <% end %>
 
-
     <div class="govuk-width-container ">
-      <%= govuk_phase_banner(tag: { text: "Beta" }) do %>
-        <%= t("phase_banner.before_link") %>
-        <%= govuk_link_to(t("phase_banner.link"), "mailto:govuk-forms@digital.cabinet-office.gov.uk") %>
-        <%= t("phase_banner.after_link") %>
+      <% if @mode&.preview? %>
+        <% phase_banner_colour = if @mode.preview_draft? then 'purple' else 'blue' end %>
+        <%= govuk_phase_banner(tag: { text: t("mode.phase_banner_tag_#{@mode}"), colour: phase_banner_colour}, text: t("mode.phase_banner_text_#{@mode}"), classes: @mode.to_s) %>
       <% end %>
+
       <%= yield(:before_content) %>
 
-      <main class="govuk-main-wrapper <%=@live ? "" : "main--draft"%>" id="main-content" role="main">
+      <main class="govuk-main-wrapper <%= "main--#{@mode || 'static'}" %>" id="main-content" role="main">
         <%= yield %>
       </main>
     </div>

@@ -8,7 +8,7 @@ module Forms
       @rows = check_your_answers_rows
       @form_submit_path = form_submit_answers_path
       @notify_reference ||= SecureRandom.uuid
-      unless preview?
+      unless mode.preview?
         EventLogger.log_form_event(current_context, request, "check_answers")
       end
 
@@ -18,7 +18,7 @@ module Forms
   private
 
     def page_to_row(page)
-      question_name = helpers.question_text_with_optional_suffix(page)
+      question_name = helpers.question_text_with_optional_suffix(page, @mode.preview?)
       {
         key: { text: question_name },
         value: { text: page.show_answer },

@@ -118,7 +118,8 @@ search:
 
 ## Consider these keys used:
 ignore_unused:
-- 'activemodel.errors.*'
+  - 'activemodel.errors.*'
+  - 'mode.*'
 
 ## Exclude these keys from the `i18n-tasks eq-base' report:
 # ignore_eq_base:

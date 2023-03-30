@@ -22,6 +22,10 @@ class ApplicationController < ActionController::Base
     payload[:form_id] = params[:form_id] if params[:form_id].present?
   end
 
+  def mode
+    @mode ||= Mode.new(:static)
+  end
+
 private
 
   def add_robots_header

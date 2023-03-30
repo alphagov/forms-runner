@@ -4,7 +4,7 @@ module Forms
 
     def redirect_to_friendly_url_start
       redirect_to form_page_path(params.require(:form_id), current_form.form_slug, current_form.start_page)
-      EventLogger.log_form_event(Context.new(form: current_form, store: session), request, "visit") unless preview?
+      EventLogger.log_form_event(Context.new(form: current_form, store: session), request, "visit") unless mode.preview?
     end
 
     rescue_from ActiveResource::ResourceNotFound do
@@ -26,36 +26,20 @@ module Forms
       @current_context ||= Context.new(form: current_form, store: session)
     end
 
-    def live
-      @live ||= !preview?
-    end
-
-    def preview?
-      preview_draft? || preview_live?
-    end
-
-    def preview_draft?
-      mode == "preview-draft"
-    end
-
-    def preview_live?
-      mode == "preview-live"
-    end
-
     def fetch_form
       form_id = params.require(:form_id)
 
-      if preview_draft?
+      if mode.preview_draft?
         Form.find_draft(form_id)
-      elsif preview_live?
+      elsif mode.preview_live?
         Form.find_live(form_id)
-      elsif live
+      elsif mode.live
         Form.find_live(form_id)
       end
     end
 
     def mode
-      params[:mode]
+      @mode ||= Mode.new(params[:mode])
     end
 
     def default_url_options
@@ -63,7 +47,7 @@ module Forms
     end
 
     def check_available
-      return if current_form.start_page && (preview? || current_form.live?)
+      return if current_form.start_page && (mode.preview? || current_form.live?)
 
       raise ActiveResource::ResourceNotFound, "Not Found"
     end
