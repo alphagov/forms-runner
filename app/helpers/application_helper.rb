@@ -10,8 +10,15 @@ module ApplicationHelper
     content_for(:title) { title }
   end
 
-  def title_with_error_prefix(title, error)
-    "#{t('page_titles.error_prefix') if error}#{title}"
+  def form_title(page_name:, mode:, error: false)
+    mode_string = if mode&.preview_draft?
+                    " - #{t('mode.title_text_preview-draft')}"
+                  elsif mode&.preview_live?
+                    " - #{t('mode.title_text_preview-live')}"
+                  else
+                    ""
+                  end
+    "#{t('page_titles.error_prefix') if error}#{page_name}#{mode_string}"
   end
 
   def question_text_with_optional_suffix(page, preview)

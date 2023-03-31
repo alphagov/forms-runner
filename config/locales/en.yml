@@ -78,6 +78,8 @@ en:
     helpful_links: Helpful links
     privacy_policy: Privacy
   form:
+    check_your_answers:
+      title: Check your answers before submitting your form
     submitted:
       title: Your form has been submitted
   mode:
@@ -85,6 +87,8 @@ en:
     phase_banner_tag_preview-live: Live preview
     phase_banner_text_preview-draft: You're previewing the draft version of this form
     phase_banner_text_preview-live: You're previewing the live version of this form
+    title_text_preview-draft: Draft preview
+    title_text_preview-live: Live preview
   page:
     none_of_the_above: None of the above
     optional: "%{question_text} (optional)"
