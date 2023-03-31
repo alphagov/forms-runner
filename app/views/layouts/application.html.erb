@@ -32,12 +32,7 @@
 
     <a href="#main-content" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
 
-    <% header_class = if @mode&.preview? then "--#{@mode}" else "" end %>
-    <% if @current_context.present? %>
-      <%= govuk_header(service_name: @current_context.form_name, homepage_url: "https://www.gov.uk/", service_url: form_path(form_id: @current_context.form, form_slug: @current_context.form_slug), classes: 'govuk-header' + "--#{@mode}") %>
-    <% else %>
-      <%= govuk_header(homepage_url: "https://www.gov.uk/") %>
-    <% end %>
+    <%= render(FormHeaderComponent::View.new(current_context: @current_context, mode: @mode)) %>
 
     <div class="govuk-width-container ">
       <% if @mode&.preview? %>

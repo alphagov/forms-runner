@@ -5,6 +5,8 @@ $govuk-global-styles: true;
 
 @import "govuk/all";
 
+@import "../../components/form_header_component/";
+
 .main--preview-draft {
   background-image: url("@images/draft-watermark.png");
   background-repeat: repeat;
@@ -19,10 +21,3 @@ $govuk-global-styles: true;
   background-size: 190px;
 }
 
-.govuk-header--preview-draft .govuk-header__container {
-  border-bottom-color: govuk-colour("purple");
-}
-
-.govuk-header--preview-live .govuk-header__container {
-  border-bottom-color: govuk-colour("blue");
-}
