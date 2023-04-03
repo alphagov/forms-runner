@@ -90,9 +90,10 @@ en:
     title_text_preview-draft: Draft preview
     title_text_preview-live: Live preview
   page:
+    draft_preview: draft preview
+    live_preview: live preview
     none_of_the_above: None of the above
     optional: "%{question_text} (optional)"
-    preview_mode: Preview
   page_titles:
     error_prefix: 'Error: '
   question/name:

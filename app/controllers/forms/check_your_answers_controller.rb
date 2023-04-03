@@ -18,7 +18,7 @@ module Forms
   private
 
     def page_to_row(page)
-      question_name = helpers.question_text_with_optional_suffix(page, @mode.preview?)
+      question_name = helpers.question_text_with_optional_suffix(page, @mode)
       {
         key: { text: question_name },
         value: { text: page.show_answer },

@@ -2,27 +2,28 @@ module PreviewComponent
   class View < ViewComponent::Base
     def initialize(mode:)
       @mode = mode || Mode.new
+      super
     end
 
     def call
       govuk_phase_banner(tag: {
         text: t("mode.phase_banner_tag_#{@mode}"),
-        colour: phase_banner_colour
+        colour: phase_banner_colour,
       },
-      text: t("mode.phase_banner_text_#{@mode}"))
+                         text: t("mode.phase_banner_text_#{@mode}"))
     end
 
     def render?
       @mode.preview?
     end
 
-    private
+  private
 
     def phase_banner_colour
       if @mode.preview_draft?
-        'purple'
+        "purple"
       else
-        'blue'
+        "blue"
       end
     end
   end

@@ -21,10 +21,14 @@ module ApplicationHelper
     "#{t('page_titles.error_prefix') if error}#{page_name}#{mode_string}"
   end
 
-  def question_text_with_optional_suffix(page, preview)
-    mode = "<span class='govuk-visually-hidden'>#{t('page.preview_mode')}</span>" if preview
+  def question_text_with_optional_suffix(page, mode)
+    if mode.preview_draft?
+      mode_string = "<span class='govuk-visually-hidden'>#{t('page.draft_preview')}</span>"
+    elsif mode.preview_live?
+      mode_string = "<span class='govuk-visually-hidden'>#{t('page.live_preview')}</span>"
+    end
     question = page.question.show_optional_suffix ? t("page.optional", question_text: page.question_text) : page.question_text
-    [mode, question].compact.join(" ").html_safe
+    [mode_string, question].compact.join(" ").html_safe
   end
 
   def format_paragraphs(text)

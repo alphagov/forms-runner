@@ -13,21 +13,32 @@ RSpec.describe ApplicationHelper, type: :helper do
     context "with an optional question" do
       it "returns the title with the optional suffix" do
         page = OpenStruct.new(question_text: "What is your name?", question: OpenStruct.new(show_optional_suffix: true))
-        expect(helper.question_text_with_optional_suffix(page, false)).to eq(I18n.t("page.optional", question_text: "What is your name?"))
+        mode = OpenStruct.new(preview?: false)
+        expect(helper.question_text_with_optional_suffix(page, mode)).to eq(I18n.t("page.optional", question_text: "What is your name?"))
       end
     end
 
     context "with a required question" do
       it "returns the title with the optional suffix" do
         page = OpenStruct.new(question_text: "What is your name?", question: OpenStruct.new(show_optional_suffix: false))
-        expect(helper.question_text_with_optional_suffix(page, false)).to eq("What is your name?")
+        mode = OpenStruct.new(preview?: false)
+        expect(helper.question_text_with_optional_suffix(page, mode)).to eq("What is your name?")
       end
     end
 
-    context "with preview mode" do
+    context "with preview draft mode" do
       it "returns the title with the optional suffix with visually hidden text" do
         page = OpenStruct.new(question_text: "What is your name?", question: OpenStruct.new(show_optional_suffix: false))
-        expect(helper.question_text_with_optional_suffix(page, true)).to eq("<span class='govuk-visually-hidden'>Preview</span> What is your name?")
+        mode = OpenStruct.new(preview?: true, preview_draft?: true)
+        expect(helper.question_text_with_optional_suffix(page, mode)).to eq("<span class='govuk-visually-hidden'>draft preview</span> What is your name?")
+      end
+    end
+
+    context "with live preview live mode" do
+      it "returns the title with the optional suffix with visually hidden text" do
+        page = OpenStruct.new(question_text: "What is your name?", question: OpenStruct.new(show_optional_suffix: false))
+        mode = OpenStruct.new(preview?: true, preview_live?: true)
+        expect(helper.question_text_with_optional_suffix(page, mode)).to eq("<span class='govuk-visually-hidden'>live preview</span> What is your name?")
       end
     end
   end

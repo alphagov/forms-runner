@@ -2,4 +2,4 @@
   form.govuk_number_field uses the 'number' HTML input type, which the Design System reccomends against:
   https://design-system.service.gov.uk/components/text-input/#avoid-using-inputs-with-a-type-of-number
 %>
-<%= form.govuk_text_field :number, label: { tag: 'h1', size: 'l', text: question_text_with_optional_suffix(page, @mode.preview?) }, hint: { text: page.hint_text }, spellcheck: false %>
+<%= form.govuk_text_field :number, label: { tag: 'h1', size: 'l', text: question_text_with_optional_suffix(page, @mode) }, hint: { text: page.hint_text }, spellcheck: false %>
