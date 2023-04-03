@@ -1,5 +1,5 @@
 class Mode
-  def initialize(mode_string)
+  def initialize(mode_string = "live")
     @mode_string = mode_string
   end
 

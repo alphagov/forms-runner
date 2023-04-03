@@ -35,10 +35,7 @@
     <%= render(FormHeaderComponent::View.new(current_context: @current_context, mode: @mode)) %>
 
     <div class="govuk-width-container ">
-      <% if @mode&.preview? %>
-        <% phase_banner_colour = if @mode.preview_draft? then 'purple' else 'blue' end %>
-        <%= govuk_phase_banner(tag: { text: t("mode.phase_banner_tag_#{@mode}"), colour: phase_banner_colour}, text: t("mode.phase_banner_text_#{@mode}"), classes: @mode.to_s) %>
-      <% end %>
+      <%= render(PreviewComponent::View.new(mode: @mode)) %>
 
       <%= yield(:before_content) %>
 
