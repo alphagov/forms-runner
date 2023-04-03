@@ -4,7 +4,6 @@ $govuk-new-link-styles: true;
 $govuk-global-styles: true;
 
 @import "govuk/all";
-
 @import "../../components/form_header_component/";
 
 .main--preview-draft {
@@ -20,4 +19,3 @@ $govuk-global-styles: true;
   background-position: 50% 0;
   background-size: 190px;
 }
-
