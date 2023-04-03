@@ -30,7 +30,7 @@ RSpec.describe ApplicationHelper, type: :helper do
       it "returns the title with the optional suffix with visually hidden text" do
         page = OpenStruct.new(question_text: "What is your name?", question: OpenStruct.new(show_optional_suffix: false))
         mode = OpenStruct.new(preview?: true, preview_draft?: true)
-        expect(helper.question_text_with_optional_suffix(page, mode)).to eq("<span class='govuk-visually-hidden'>draft preview</span> What is your name?")
+        expect(helper.question_text_with_optional_suffix(page, mode)).to eq("<span class='govuk-visually-hidden'>draft preview&nbsp;</span> What is your name?")
       end
     end
 
@@ -38,7 +38,7 @@ RSpec.describe ApplicationHelper, type: :helper do
       it "returns the title with the optional suffix with visually hidden text" do
         page = OpenStruct.new(question_text: "What is your name?", question: OpenStruct.new(show_optional_suffix: false))
         mode = OpenStruct.new(preview?: true, preview_live?: true)
-        expect(helper.question_text_with_optional_suffix(page, mode)).to eq("<span class='govuk-visually-hidden'>live preview</span> What is your name?")
+        expect(helper.question_text_with_optional_suffix(page, mode)).to eq("<span class='govuk-visually-hidden'>live preview&nbsp;</span> What is your name?")
       end
     end
   end
