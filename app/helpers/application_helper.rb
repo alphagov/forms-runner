@@ -23,12 +23,12 @@ module ApplicationHelper
 
   def question_text_with_optional_suffix(page, mode)
     if mode.preview_draft?
-      mode_string = "<span class='govuk-visually-hidden'>#{t('page.draft_preview')}&nbsp;</span>"
+      mode_string = "<span class='govuk-visually-hidden'>&nbsp;#{t('page.draft_preview')}</span>"
     elsif mode.preview_live?
-      mode_string = "<span class='govuk-visually-hidden'>#{t('page.live_preview')}&nbsp;</span>"
+      mode_string = "<span class='govuk-visually-hidden'>&nbsp;#{t('page.live_preview')}</span>"
     end
     question = page.question.show_optional_suffix ? t("page.optional", question_text: page.question_text) : page.question_text
-    [mode_string, question].compact.join(" ").html_safe
+    [question, mode_string].compact.join(" ").html_safe
   end
 
   def format_paragraphs(text)
