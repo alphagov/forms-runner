@@ -11,9 +11,9 @@ module ApplicationHelper
   end
 
   def form_title(page_name:, form_name:, mode:, error: false)
-    mode_string = if mode&.preview_draft?
+    mode_string = if mode.preview_draft?
                     " - #{t('mode.title_text_preview-draft')}"
-                  elsif mode&.preview_live?
+                  elsif mode.preview_live?
                     " - #{t('mode.title_text_preview-live')}"
                   else
                     ""
