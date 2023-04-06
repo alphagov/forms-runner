@@ -2,6 +2,7 @@ require "rails_helper"
 
 describe "forms/submitted/submitted.html.erb" do
   before do
+    assign(:mode, OpenStruct.new(preview_draft?: false, preview_live?: false))
     assign(:current_context, OpenStruct.new(id: 1, name: "Form 1"))
     render template: "forms/submitted/submitted"
   end

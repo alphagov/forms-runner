@@ -34,5 +34,9 @@ module Question
     def has_long_answer?
       false
     end
+
+    def show_optional_suffix
+      is_optional?
+    end
   end
 end

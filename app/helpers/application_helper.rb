@@ -10,20 +10,29 @@ module ApplicationHelper
     content_for(:title) { title }
   end
 
-  def title_with_error_prefix(title, error)
-    "#{t('page_titles.error_prefix') if error}#{title}"
+  def form_title(page_name:, form_name:, mode:, error: false)
+    mode_string = if mode.preview_draft?
+                    " - #{t('mode.title_text_preview-draft')}"
+                  elsif mode.preview_live?
+                    " - #{t('mode.title_text_preview-live')}"
+                  else
+                    ""
+                  end
+    "#{t('page_titles.error_prefix') if error}#{page_name}#{mode_string} - #{form_name}"
   end
 
-  def question_text_with_optional_suffix(page)
-    page.question.is_optional? ? t("page.optional", question_text: page.question_text) : page.question_text
+  def question_text_with_optional_suffix(page, mode)
+    if mode.preview_draft?
+      mode_string = "<span class='govuk-visually-hidden'>&nbsp;#{t('page.draft_preview')}</span>"
+    elsif mode.preview_live?
+      mode_string = "<span class='govuk-visually-hidden'>&nbsp;#{t('page.live_preview')}</span>"
+    end
+    question = page.question.show_optional_suffix ? t("page.optional", question_text: page.question_text) : page.question_text
+    [question, mode_string].compact.join(" ").html_safe
   end
 
   def format_paragraphs(text)
     simple_format(html_escape(text), class: "govuk-body", sanitize: true)
-  end
-
-  def main_classes(form)
-    form.nil? || form.live? ? "" : "main--draft"
   end
 
   def govuk_assets_path

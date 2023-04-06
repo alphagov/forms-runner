@@ -24,6 +24,7 @@ describe "question/_selection.html.erb" do
   end
 
   before do
+    assign(:mode, Mode.new("live"))
     render partial: "question/selection", locals: { page: step, form: }
   end
 

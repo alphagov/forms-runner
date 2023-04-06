@@ -1,1 +1,1 @@
-<%= form.govuk_date_field :date, date_of_birth: page.question.date_of_birth?, legend: { tag: 'h1', size: 'l', text: question_text_with_optional_suffix(page) }, hint: { text: page.hint_text } %>
+<%= form.govuk_date_field :date, date_of_birth: page.question.date_of_birth?, legend: { tag: 'h1', size: 'l', text: question_text_with_optional_suffix(page, @mode).html_safe }, hint: { text: page.hint_text } %>

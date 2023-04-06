@@ -1,0 +1,7 @@
+.govuk-header--preview-draft .govuk-header__container {
+  border-bottom-color: govuk-colour("purple");
+}
+
+.govuk-header--preview-live .govuk-header__container {
+  border-bottom-color: govuk-colour("blue");
+}

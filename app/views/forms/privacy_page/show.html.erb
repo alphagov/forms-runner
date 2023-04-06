@@ -1,4 +1,5 @@
-<% set_page_title("Privacy") %>
+<% set_page_title(form_title(form_name: @current_context.form_name, page_name: 'Privacy', mode: @mode)) %>
+
 <% content_for :before_content do %>
   <% if @back_link.present? %>
     <%= link_to "Back", @back_link, class: "govuk-back-link" %>

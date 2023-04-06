@@ -4,10 +4,18 @@ $govuk-new-link-styles: true;
 $govuk-global-styles: true;
 
 @import "govuk/all";
+@import "../../components/form_header_component/";
 
-.main--draft {
+.main--preview-draft {
   background-image: url("@images/draft-watermark.png");
-  background-repeat: repeat-y;
+  background-repeat: repeat;
   background-position: 50% 0;
-  background-size: contain;
+  background-size: 190px;
+}
+
+.main--preview-live {
+  background-image: url("@images/preview-watermark.png");
+  background-repeat: repeat;
+  background-position: 50% 0;
+  background-size: 190px;
 }
