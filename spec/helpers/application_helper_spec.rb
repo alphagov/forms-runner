@@ -47,39 +47,39 @@ RSpec.describe ApplicationHelper, type: :helper do
     context "when there is no error" do
       it "returns the only the page title when in live mode" do
         mode = OpenStruct.new("live?": true, "preview_draft?": false, "preview_live?": false)
-        expect(helper.form_title(page_name: 'page title', mode: mode)).to eq("page title")
-      end
+        expect(helper.form_title(form_name: 'form-name', page_name: 'page title', mode: mode)).to eq("page title - form-name")
+       end
 
       it "returns the page title and mode when in preview draft mode" do
         mode = OpenStruct.new("live?": false, "preview_draft?": true, "preview_live?": false)
-        expect(helper.form_title(page_name: 'page title', mode: mode)).to eq("page title - Draft preview")
+        expect(helper.form_title(form_name: "form-name", page_name: 'page title', mode: mode)).to eq("page title - Draft preview - form-name")
       end
 
       it "returns the page title and mode when in preview live mode" do
         mode = OpenStruct.new("live?": false, "preview_draft?": false, "preview_live?": true)
-        expect(helper.form_title(page_name: 'page title', mode: mode)).to eq("page title - Live preview")
+        expect(helper.form_title(form_name: "form-name", page_name: 'page title', mode: mode)).to eq("page title - Live preview - form-name")
       end
 
       it "returns the only the page title when in live mode" do
         mode = OpenStruct.new("live?": true, "preview_draft?": false, "preview_live?": false)
-        expect(helper.form_title(page_name: 'page title', mode: mode)).to eq("page title")
+        expect(helper.form_title(form_name: "form-name", page_name: 'page title', mode: mode)).to eq("page title - form-name")
       end
     end
 
     context "when an error is present" do
       it "returns page error and page title when in live mode" do
         mode = OpenStruct.new("live?": true, "preview_draft?": false, "preview_live?": false)
-        expect(helper.form_title(page_name: 'page title', mode: mode, error: true)).to eq("Error: page title")
+        expect(helper.form_title(form_name: "form-name", page_name: 'page title', mode: mode, error: true)).to eq("Error: page title - form-name")
       end
 
       it "returns the error, page title and mode when in preview draft mode" do
         mode = OpenStruct.new("live?": false, "preview_draft?": true, "preview_live?": false)
-        expect(helper.form_title(page_name: 'page title', mode: mode, error: true)).to eq("Error: page title - Draft preview")
+        expect(helper.form_title(form_name: "form-name", page_name: 'page title', mode: mode, error: true)).to eq("Error: page title - Draft preview - form-name")
       end
 
       it "returns the error, page title and mode when in preview live mode" do
         mode = OpenStruct.new("live?": false, "preview_draft?": false, "preview_live?": true)
-        expect(helper.form_title(page_name: 'page title', mode: mode, error: true)).to eq("Error: page title - Live preview")
+        expect(helper.form_title(form_name: "form-name", page_name: 'page title', mode: mode, error: true)).to eq("Error: page title - Live preview - form-name")
       end
     end
   end

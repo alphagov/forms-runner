@@ -1,4 +1,4 @@
-<% set_page_title(form_title(page_name: t('form.check_your_answers.title'), mode: @mode)) %>
+<% set_page_title(form_title(form_name: @current_context.form_name, page_name: t('form.check_your_answers.title'), mode: @mode)) %>
 
 <% content_for :before_content do %>
   <% if @back_link %>

@@ -10,7 +10,7 @@ module ApplicationHelper
     content_for(:title) { title }
   end
 
-  def form_title(page_name:, mode:, error: false)
+  def form_title(page_name:, form_name:, mode:, error: false)
     mode_string = if mode&.preview_draft?
                     " - #{t('mode.title_text_preview-draft')}"
                   elsif mode&.preview_live?
@@ -18,7 +18,7 @@ module ApplicationHelper
                   else
                     ""
                   end
-    "#{t('page_titles.error_prefix') if error}#{page_name}#{mode_string}"
+    "#{t('page_titles.error_prefix') if error}#{page_name}#{mode_string} - #{form_name}"
   end
 
   def question_text_with_optional_suffix(page, mode)
