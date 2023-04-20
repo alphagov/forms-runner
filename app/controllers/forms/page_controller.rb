@@ -5,6 +5,7 @@ module Forms
     def show
       redirect_to form_page_path(@step.form_id, @step.form_slug, current_context.next_page_slug) unless current_context.can_visit?(@step.page_slug)
       back_link(@step.page_slug)
+      @is_question = true
     end
 
     def save
@@ -17,6 +18,7 @@ module Forms
         end
         redirect_to next_page
       else
+        @is_question = true
         render :show
       end
     end

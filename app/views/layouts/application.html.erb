@@ -39,9 +39,10 @@
 
       <%= yield(:before_content) %>
 
-      <main class="govuk-main-wrapper <%= "main--#{@mode || 'static'}" %>" id="main-content" role="main">
+      <%= render(MainComponent::View.new(mode: @mode, is_question: @is_question)) do %>
         <%= yield %>
-      </main>
+      <% end %>
+
     </div>
 
     <% meta_links = {t("footer.accessibility_statement") => accessibility_statement_path, t("footer.cookies") => cookies_path} %>
