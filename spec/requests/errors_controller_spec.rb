@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Errors", type: :request do
+RSpec.describe ErrorsController, type: :request do
   describe "Page not found" do
     it "returns http code 404" do
       get "/404"

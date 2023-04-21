@@ -1,6 +1,7 @@
 require "rails_helper"
 
-RSpec.describe "Page Controller", type: :request do
+# rubocop:disable RSpec/AnyInstance
+RSpec.describe Forms::PageController, type: :request do
   let(:timestamp_of_request) { Time.utc(2022, 12, 14, 10, 0o0, 0o0) }
   let(:form_data) do
     {
@@ -428,3 +429,4 @@ RSpec.describe "Page Controller", type: :request do
     end
   end
 end
+# rubocop:enable RSpec/AnyInstance

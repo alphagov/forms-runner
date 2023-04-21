@@ -1,5 +1,6 @@
 require "rails_helper"
 
+# rubocop:disable RSpec/InstanceVariable
 RSpec.describe Context do
   before do
     ActiveResource::HttpMock.disable_net_connection!
@@ -134,3 +135,4 @@ RSpec.describe Context do
     end
   end
 end
+# rubocop:enable RSpec/InstanceVariable
