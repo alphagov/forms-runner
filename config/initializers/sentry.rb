@@ -1,9 +1,11 @@
-Sentry.init do |config|
-  config.dsn = ENV["SENTRY_DSN"]
-  config.breadcrumbs_logger = %i[active_support_logger http_logger]
-  config.debug = true
-  config.enable_tracing = false
-  config.environment = ENV["PAAS_ENVIRONMENT"] || ENV["SENTRY_ENVIRONMENT"] || "local"
+if Settings.sentry.dsn.present?
+  Sentry.init do |config|
+    config.dsn = Settings.sentry.dsn
+    config.breadcrumbs_logger = %i[active_support_logger http_logger]
+    config.debug = true
+    config.enable_tracing = false
+    config.environment = Settings.sentry.environment
+  end
 end
 
 # Uncomment out the below to test Sentry - this

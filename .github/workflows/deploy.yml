@@ -42,7 +42,8 @@ jobs:
           cf push --strategy rolling \
             --var PAAS_ENVIRONMENT=dev \
             --var INSTANCES=2 \
-            --var SENTRY_DSN=${{ secrets.SENTRY_DSN }} \
+            --var SETTINGS__SENTRY__DSN=${{ secrets.SENTRY_DSN }} \
+            --var SETTINGS__SENTRY__ENVIRONMENT=dev \
             --var SETTINGS__FORMS_API__BASE_URL=${{ secrets.API_BASE }} \
             --var SETTINGS__FORMS_API__AUTH_KEY=${{ secrets.API_KEY }} \
             --var SETTINGS__GOVUK_NOTIFY__API_KEY=${{ secrets.NOTIFY_API_KEY }}
