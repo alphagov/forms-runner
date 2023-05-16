@@ -1,16 +1,12 @@
 module PreviewComponent
-  class View < ViewComponent::Base
-    def initialize(mode:)
-      @mode = mode || Mode.new
-      super
-    end
+  class MissingQuestionEditLink < StandardError; end
 
-    def call
-      govuk_phase_banner(tag: {
-                           text: t("mode.phase_banner_tag_#{@mode}"),
-                           colour: phase_banner_colour,
-                         },
-                         text: t("mode.phase_banner_text_#{@mode}"))
+  class View < ViewComponent::Base
+    def initialize(mode:, question_edit_link: nil)
+      @mode = mode || Mode.new
+      @question_edit_link = question_edit_link
+
+      super
     end
 
     def render?
@@ -24,6 +20,14 @@ module PreviewComponent
         "purple"
       else
         "blue"
+      end
+    end
+
+    def phase_banner_text
+      if @mode.preview_draft? && @question_edit_link.present?
+        "#{t("mode.phase_banner_text_#{@mode}")}. #{govuk_link_to(t('mode.phase_banner_text_preview-draft_edit_link'), @question_edit_link)}".html_safe
+      else
+        t("mode.phase_banner_text_#{@mode}")
       end
     end
   end

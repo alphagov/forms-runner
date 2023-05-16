@@ -1,0 +1,3 @@
+forms_admin:
+  # URL to form-admin
+  base_url: http://localhost

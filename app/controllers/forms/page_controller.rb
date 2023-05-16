@@ -6,6 +6,7 @@ module Forms
       redirect_to form_page_path(@step.form_id, @step.form_slug, current_context.next_page_slug) unless current_context.can_visit?(@step.page_slug)
       back_link(@step.page_slug)
       @is_question = true
+      @question_edit_link = "#{Settings.forms_admin.base_url}/forms/#{@step.form_id}/pages/#{@step.page_slug}/edit"
     end
 
     def save
@@ -19,6 +20,7 @@ module Forms
         redirect_to next_page
       else
         @is_question = true
+        @question_edit_link = "#{Settings.forms_admin.base_url}/forms/#{@step.form_id}/pages/#{@step.page_slug}/edit"
         render :show
       end
     end

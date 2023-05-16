@@ -3,10 +3,11 @@ require "rails_helper"
 RSpec.describe PreviewComponent::View, type: :component do
   it "shows in preview_draft" do
     mode = Mode.new("preview-draft")
-    render_inline(described_class.new(mode:))
+    render_inline(described_class.new(mode:, question_edit_link: "https://gov.uk"))
     expect(page).to have_selector(".govuk-phase-banner")
     expect(page).to have_content(I18n.t("mode.phase_banner_tag_preview-draft"))
     expect(page).to have_content(I18n.t("mode.phase_banner_text_preview-draft"))
+    expect(page).to have_link(I18n.t("mode.phase_banner_text_preview-draft_edit_link", href: "https://gov.uk"))
   end
 
   it "shows in preview_live" do

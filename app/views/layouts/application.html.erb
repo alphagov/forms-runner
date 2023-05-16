@@ -35,7 +35,7 @@
     <%= render(FormHeaderComponent::View.new(current_context: @current_context, mode: @mode)) %>
 
     <div class="govuk-width-container ">
-      <%= render(PreviewComponent::View.new(mode: @mode)) %>
+      <%= render(PreviewComponent::View.new(mode: @mode, question_edit_link: @question_edit_link)) %>
 
       <%= yield(:before_content) %>
 
