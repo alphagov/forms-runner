@@ -1,8 +1,8 @@
 class Step
   attr_accessor :page_id, :form_id, :form_slug, :question
-  attr_reader :next_page_slug, :page_slug, :page_number
+  attr_reader :next_page_slug, :page_slug, :page_number, :routing_conditions, :goto_page_slug
 
-  def initialize(question:, page_id:, form_id:, form_slug:, next_page_slug:, page_slug:, page_number:)
+  def initialize(question:, page_id:, form_id:, form_slug:, next_page_slug:, page_slug:, page_number:, routing_conditions:, goto_page_slug:)
     @question = question
     @page_id = page_id
     @page_slug = page_slug
@@ -10,6 +10,8 @@ class Step
     @form_slug = form_slug
     @next_page_slug = next_page_slug
     @page_number = page_number
+    @routing_conditions = routing_conditions
+    @goto_page_slug = goto_page_slug
   end
 
   alias_attribute :id, :page_id

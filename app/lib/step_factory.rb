@@ -24,9 +24,10 @@ class StepFactory
     raise PageNotFoundError, "Can't find page #{page_slug}" if page.nil?
 
     next_page_slug = page.has_next_page? ? page.next_page.to_s : CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG
+    goto_page_slug = page.routing_conditions.empty? ? nil : page.routing_conditions.first.goto_page_id.to_s
     question = QuestionRegister.from_page(page)
 
-    Step.new(question:, page_id: page.id, form_id: @form.id, form_slug: @form.form_slug, next_page_slug:, page_slug:, page_number: page.number(@form))
+    Step.new(question:, page_id: page.id, form_id: @form.id, form_slug: @form.form_slug, next_page_slug:, page_slug:, page_number: page.number(@form), routing_conditions: page.routing_conditions, goto_page_slug:)
   end
 
   def start_step

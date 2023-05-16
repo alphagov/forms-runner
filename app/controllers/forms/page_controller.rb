@@ -56,6 +56,16 @@ module Forms
     def next_page
       if @changing_existing_answer
         check_your_answers_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug)
+      elsif @step.routing_conditions.any?
+        calculate_page_routing
+      else
+        form_page_path(@step.form_id, @step.form_slug, @step.next_page_slug)
+      end
+    end
+
+    def calculate_page_routing
+      if @step.question.show_answer == @step.routing_conditions.first.answer_value
+        form_page_path(@step.form_id, @step.form_slug, @step.goto_page_slug)
       else
         form_page_path(@step.form_id, @step.form_slug, @step.next_page_slug)
       end
