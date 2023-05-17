@@ -116,6 +116,14 @@ bin/rake
 npm run test
 ```
 
+### Running tasks before pushing
+
+Before pushing code changes, it's a good idea to run the tests, use rubocop to format your code, and normalize the locales. We have a rake task for running all of these commands in parallel:
+
+```bash
+bin/rake run_code_quality_checks
+```
+
 ## Updating versions
 
 Use the [update_app_versions.sh script in forms-deploy](https://github.com/alphagov/forms-deploy/blob/main/support/update_app_versions.sh)
