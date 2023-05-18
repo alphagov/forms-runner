@@ -1,14 +1,14 @@
 class Context
-  attr_accessor :form_slug
+  attr_accessor :form_slug, :form
   attr_reader :form_name, :form_start_page, :privacy_policy_url, :what_happens_next_text, :support_details, :declaration_text
 
   def initialize(form:, store:)
+    @form = form
     @form_context = FormContext.new(store)
     @step_factory = StepFactory.new(form:)
     @journey = Journey.new(form_context: @form_context, step_factory: @step_factory)
 
     @completed_steps = @journey.completed_steps
-    @form_id = form.id
     @form_slug = form.form_slug
     @form_name = form.name
     @form_start_page = form.start_page
@@ -58,15 +58,11 @@ class Context
   end
 
   def clear
-    @form_context.clear(@form_id)
+    @form_context.clear(form.id)
   end
 
   def form_submitted?
-    @form_context.form_submitted?(@form_id)
-  end
-
-  def form
-    @form_id
+    @form_context.form_submitted?(form.id)
   end
 
   def submission_email
