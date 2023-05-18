@@ -75,4 +75,12 @@ class Step
   def end_page?
     next_page_slug.nil?
   end
+
+  def next_page_slug_after_routing
+    if routing_conditions.any? && routing_conditions.first.answer_value == @question.selection
+      goto_page_slug
+    else
+      next_page_slug
+    end
+  end
 end
