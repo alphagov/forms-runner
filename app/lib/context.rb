@@ -1,5 +1,5 @@
 class Context
-  attr_accessor :form_slug, :form
+  attr_accessor :form
   attr_reader :form_name, :form_start_page, :privacy_policy_url, :what_happens_next_text, :support_details, :declaration_text
 
   def initialize(form:, store:)
@@ -9,7 +9,6 @@ class Context
     @journey = Journey.new(form_context: @form_context, step_factory: @step_factory)
 
     @completed_steps = @journey.completed_steps
-    @form_slug = form.form_slug
     @form_name = form.name
     @form_start_page = form.start_page
     @privacy_policy_url = form.privacy_policy_url
