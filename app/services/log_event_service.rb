@@ -30,6 +30,6 @@ private
   end
 
   def is_starting_form
-    @current_context.form_start_page == @step.id
+    @current_context.form.start_page == @step.id
   end
 end
