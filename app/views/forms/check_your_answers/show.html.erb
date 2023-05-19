@@ -19,9 +19,9 @@
       %>
     <% end %>
 
-    <%if @current_context.declaration_text.present? %>
+    <%if @current_context.form.declaration_text.present? %>
       <h2 class="govuk-heading-m govuk-!-margin-top-7">Declaration</h2>
-      <%= simple_format(@current_context.declaration_text, class: 'govuk-body') %>
+      <%= simple_format(@current_context.form.declaration_text, class: 'govuk-body') %>
     <% end %>
 
     <%= form_with url: @form_submit_path do |form| %>
