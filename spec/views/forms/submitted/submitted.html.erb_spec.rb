@@ -1,9 +1,12 @@
 require "rails_helper"
 
 describe "forms/submitted/submitted.html.erb" do
+  let(:form) { OpenStruct.new(id: 1, name: "Form 1", what_happens_next_text: "See what the day brings") }
+
   before do
     assign(:mode, OpenStruct.new(preview_draft?: false, preview_live?: false))
-    assign(:current_context, OpenStruct.new(id: 1, name: "Form 1"))
+
+    assign(:current_context, OpenStruct.new(form:))
     render template: "forms/submitted/submitted"
   end
 
@@ -13,7 +16,7 @@ describe "forms/submitted/submitted.html.erb" do
 
   context "when the form has extra information about what happens next" do
     before do
-      assign(:current_context, OpenStruct.new(id: 1, name: "Form 1", what_happens_next_text: "See what the day brings"))
+      assign(:current_context, OpenStruct.new(form:))
       render template: "forms/submitted/submitted"
     end
 

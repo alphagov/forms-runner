@@ -4,9 +4,9 @@
   <div class="govuk-grid-column-two-thirds">
     <%= govuk_panel(title_text: t('form.submitted.title')) %>
 
-    <%if @current_context.what_happens_next_text.present? %>
+    <%if @current_context.form.what_happens_next_text.present? %>
       <h2 class="govuk-heading-m govuk-!-margin-top-7">What happens next</h2>
-      <%= simple_format(@current_context.what_happens_next_text, class: 'govuk-body') %>
+      <%= simple_format(@current_context.form.what_happens_next_text, class: 'govuk-body') %>
   <% end %>
   </div>
 </div>

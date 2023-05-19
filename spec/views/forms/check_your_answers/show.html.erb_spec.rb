@@ -1,7 +1,8 @@
 require "rails_helper"
 
 describe "forms/check_your_answers/show.html.erb" do
-  let(:context) { OpenStruct.new(form_id: 1, form_slug: "slug", mode: "", name: "Form 1") }
+  let(:form) { OpenStruct.new(id: 1, name: "Form 1") }
+  let(:context) { OpenStruct.new(form:, form_id: 1, form_slug: "slug", mode: "", name: "Form 1") }
   let(:full_width) { false }
 
   before do
@@ -13,13 +14,15 @@ describe "forms/check_your_answers/show.html.erb" do
   end
 
   context "when the form does not have a declaration" do
+    let(:form) { OpenStruct.new(id: 1, name: "Form 1", declaration_text: nil) }
+
     it "does not display the declaration heading" do
       expect(rendered).not_to have_css("h2", text: "Declaration")
     end
   end
 
   context "when the form has a declaration" do
-    let(:context) { OpenStruct.new(id: 1, name: "Form 1", declaration_text: "You should agree to all terms before submitting") }
+    let(:form) { OpenStruct.new(id: 1, name: "Form 1", declaration_text: "You should agree to all terms before submitting") }
 
     it "displays the declaration heading" do
       expect(rendered).to have_css("h2", text: "Declaration")
