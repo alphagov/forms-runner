@@ -22,7 +22,7 @@ module FormHeaderComponent
 
     def service_url
       if @service_url_overide == :not_set
-        form_path(form_id: @current_context.form.id, form_slug: @current_context.form_slug)
+        form_path(form_id: @current_context.form.id, form_slug: @current_context.form.form_slug)
       else
         @service_url_overide
       end

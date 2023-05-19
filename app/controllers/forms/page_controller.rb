@@ -55,7 +55,7 @@ module Forms
 
     def next_page
       if @changing_existing_answer
-        check_your_answers_path(form_id: current_context.form.id, form_slug: current_context.form_slug)
+        check_your_answers_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug)
       else
         form_page_path(@step.form_id, @step.form_slug, @step.next_page_slug)
       end
