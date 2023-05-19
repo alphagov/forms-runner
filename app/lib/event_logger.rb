@@ -7,7 +7,7 @@ class EventLogger
     item_to_log = {
       url: request&.url,
       method: request&.method,
-      form: context.form_name,
+      form: context.form.name,
     }
 
     log("form_#{event}", item_to_log)
@@ -17,7 +17,7 @@ class EventLogger
     item_to_log = {
       url: request&.url,
       method: request&.method,
-      form: context.form_name,
+      form: context.form.name,
       question_text: page.question.question_text,
       question_number: page.page_number,
     }

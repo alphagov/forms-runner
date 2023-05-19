@@ -54,7 +54,7 @@ RSpec.describe Forms::SubmitAnswersController, type: :request do
     allow(EventLogger).to receive(:log).at_least(:once)
     current_context = instance_double(Context)
     allow(current_context).to receive(:form_submitted?).and_return(repeat_form_submission)
-    allow(current_context).to receive(:form_name).and_return("Form name")
+    allow(current_context).to receive(:form).and_return(JSON.parse(form_response_data, object_class: OpenStruct))
     allow(Context).to receive(:new).and_return(current_context)
     allow(FormSubmissionService).to receive(:call).and_return(OpenStruct.new(submit_form_to_processing_team: true))
   end

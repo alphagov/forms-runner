@@ -9,7 +9,7 @@ module FormHeaderComponent
 
     def call
       if @current_context.present?
-        govuk_header(service_name: @current_context.form_name,
+        govuk_header(service_name: @current_context.form.name,
                      homepage_url: "https://www.gov.uk/",
                      service_url:,
                      classes: "govuk-header--#{@mode}")
