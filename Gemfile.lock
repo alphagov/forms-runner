@@ -153,6 +153,11 @@ GEM
       dry-schema (>= 1.12, < 2)
       zeitwerk (~> 2.6)
     erubi (1.12.0)
+    factory_bot (6.2.1)
+      activesupport (>= 5.0.0)
+    factory_bot_rails (6.2.0)
+      factory_bot (~> 6.2.0)
+      railties (>= 5.0.0)
     faker (3.1.0)
       i18n (>= 1.8.11, < 2)
     globalid (1.1.0)
@@ -408,6 +413,7 @@ DEPENDENCIES
   config
   debug
   dotenv-rails
+  factory_bot_rails
   faker
   govuk-components (~> 4.0.0)
   govuk_design_system_formbuilder (~> 4.0.0)
