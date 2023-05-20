@@ -1,8 +1,9 @@
 require "rails_helper"
 
 RSpec.describe FormSubmissionService do
-  let(:service) { described_class.call(form:, reference: "for-my-ref", preview_mode:) }
-  let(:form) { OpenStruct.new(form_name: "Form 1", submission_email: "testing@gov.uk", steps: [step]) }
+  let(:service) { described_class.call(current_context:, reference: "for-my-ref", preview_mode:) }
+  let(:form) { OpenStruct.new(id: 1, name: "Form 1", submission_email: "testing@gov.uk") }
+  let(:current_context) { OpenStruct.new(form:, steps: [step]) }
   let(:step) { OpenStruct.new({ question_text: "What is the meaning of life?", show_answer_in_email: "42" }) }
   let(:preview_mode) { false }
 
@@ -33,8 +34,8 @@ RSpec.describe FormSubmissionService do
         end
       end
 
-      context "when from has no steps (i.e questions/answers)" do
-        let(:form) { OpenStruct.new(id: 1, form_name: "Form 1", submission_email: "example@example.gov.uk", steps: []) }
+      context "when current context has no completed steps (i.e questions/answers)" do
+        let(:current_context) { OpenStruct.new(form:, steps: []) }
         let(:result) { service.submit_form_to_processing_team }
 
         it "raises an error" do
@@ -81,7 +82,7 @@ RSpec.describe FormSubmissionService do
         end
 
         context "when from has no steps (i.e questions/answers)" do
-          let(:form) { OpenStruct.new(id: 1, form_name: "Form 1", submission_email: "example@example.gov.uk", steps: []) }
+          let(:current_context) { OpenStruct.new(form:, steps: []) }
           let(:result) { service.submit_form_to_processing_team }
 
           it "raises an error" do
