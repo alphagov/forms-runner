@@ -8,13 +8,12 @@ class StepFactory
     end
   end
 
-  attr_accessor :submission_email, :form_id
+  attr_accessor :form_id
 
   def initialize(form:)
     @form = form
     @pages = form.pages
 
-    @submission_email = form.submission_email
     @form_id = form.id
     @form_slug = form.form_slug
   end
