@@ -57,8 +57,4 @@ class Context
   def form_submitted?
     @form_context.form_submitted?(form.id)
   end
-
-  def submission_email
-    @step_factory.submission_email
-  end
 end
