@@ -13,7 +13,7 @@ class FormSubmissionService
   end
 
   def submit_form_to_processing_team
-    raise StandardError, "Form id(#{@form.id}) has no steps i.e questions/answers to include in submission email" if @current_context.steps.blank?
+    raise StandardError, "Form id(#{@form.id}) has no completed steps i.e questions/answers to include in submission email" if @current_context.completed_steps.blank?
 
     if !@preview_mode && @form.submission_email.blank?
       raise StandardError, "Form id(#{@form.id}) is missing a submission email address"
@@ -33,7 +33,7 @@ class FormSubmissionService
 
   class NotifyTemplateBodyFilter
     def build_question_answers_section(current_context)
-      current_context.steps.map { |page|
+      current_context.completed_steps.map { |page|
         [prep_question_title(page.question_text),
          prep_answer_text(page.show_answer_in_email)].join
       }.join("\n\n---\n\n").concat("\n")

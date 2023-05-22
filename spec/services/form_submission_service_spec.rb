@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe FormSubmissionService do
   let(:service) { described_class.call(current_context:, reference: "for-my-ref", preview_mode:) }
   let(:form) { OpenStruct.new(id: 1, name: "Form 1", submission_email: "testing@gov.uk") }
-  let(:current_context) { OpenStruct.new(form:, steps: [step]) }
+  let(:current_context) { OpenStruct.new(form:, completed_steps: [step]) }
   let(:step) { OpenStruct.new({ question_text: "What is the meaning of life?", show_answer_in_email: "42" }) }
   let(:preview_mode) { false }
 
@@ -39,7 +39,7 @@ RSpec.describe FormSubmissionService do
         let(:result) { service.submit_form_to_processing_team }
 
         it "raises an error" do
-          expect { result }.to raise_error("Form id(1) has no steps i.e questions/answers to include in submission email")
+          expect { result }.to raise_error("Form id(1) has no completed steps i.e questions/answers to include in submission email")
         end
       end
     end
@@ -86,7 +86,7 @@ RSpec.describe FormSubmissionService do
           let(:result) { service.submit_form_to_processing_team }
 
           it "raises an error" do
-            expect { result }.to raise_error("Form id(1) has no steps i.e questions/answers to include in submission email")
+            expect { result }.to raise_error("Form id(1) has no completed steps i.e questions/answers to include in submission email")
           end
         end
       end
@@ -97,7 +97,7 @@ RSpec.describe FormSubmissionService do
     let(:notify_template_body_filter) { FormSubmissionService::NotifyTemplateBodyFilter.new }
 
     describe "#build_question_answers_section" do
-      let(:form) { OpenStruct.new(steps: [step]) }
+      let(:form) { OpenStruct.new(completed_steps: [step]) }
 
       let(:step) { OpenStruct.new({ question_text: "What is the meaning of life?", show_answer_in_email: "42" }) }
 
@@ -106,7 +106,7 @@ RSpec.describe FormSubmissionService do
       end
 
       context "when there is more than one step" do
-        let(:form) { OpenStruct.new(steps: [step, step]) }
+        let(:form) { OpenStruct.new(completed_steps: [step, step]) }
 
         it "contains a horizontal rule between each step" do
           expect(notify_template_body_filter.build_question_answers_section(form)).to include "\n\n---\n\n"
