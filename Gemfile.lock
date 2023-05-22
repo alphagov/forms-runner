@@ -227,13 +227,13 @@ GEM
     net-smtp (0.3.3)
       net-protocol
     nio4r (2.5.9)
-    nokogiri (1.15.0-aarch64-linux)
+    nokogiri (1.15.1-aarch64-linux)
       racc (~> 1.4)
-    nokogiri (1.15.0-arm64-darwin)
+    nokogiri (1.15.1-arm64-darwin)
       racc (~> 1.4)
-    nokogiri (1.15.0-x86_64-darwin)
+    nokogiri (1.15.1-x86_64-darwin)
       racc (~> 1.4)
-    nokogiri (1.15.0-x86_64-linux)
+    nokogiri (1.15.1-x86_64-linux)
       racc (~> 1.4)
     notifications-ruby-client (5.4.0)
       jwt (>= 1.5, < 3)
@@ -421,7 +421,7 @@ DEPENDENCIES
   i18n-tasks (~> 1.0.12)
   jbuilder
   lograge
-  nokogiri (~> 1.15.0)
+  nokogiri (~> 1.15.1)
   puma (~> 6.2.2)
   rails (~> 7.0.4)
   redis
