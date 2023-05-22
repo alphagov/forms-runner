@@ -5,14 +5,15 @@ class FormSubmissionService
     end
   end
 
-  def initialize(form:, reference:, preview_mode:)
-    @form = form
+  def initialize(current_context:, reference:, preview_mode:)
+    @current_context = current_context
+    @form = current_context.form
     @reference = reference
     @preview_mode = preview_mode
   end
 
   def submit_form_to_processing_team
-    raise StandardError, "Form id(#{@form.id}) has no steps i.e questions/answers to include in submission email" if @form.steps.blank?
+    raise StandardError, "Form id(#{@form.id}) has no steps i.e questions/answers to include in submission email" if @current_context.steps.blank?
 
     if !@preview_mode && @form.submission_email.blank?
       raise StandardError, "Form id(#{@form.id}) is missing a submission email address"
@@ -31,8 +32,8 @@ class FormSubmissionService
   end
 
   class NotifyTemplateBodyFilter
-    def build_question_answers_section(form)
-      form.steps.map { |page|
+    def build_question_answers_section(current_context)
+      current_context.steps.map { |page|
         [prep_question_title(page.question_text),
          prep_answer_text(page.show_answer_in_email)].join
       }.join("\n\n---\n\n").concat("\n")
@@ -90,13 +91,13 @@ class FormSubmissionService
 private
 
   def form_title
-    return "TEST FORM: #{@form.form_name}" if @preview_mode
+    return "TEST FORM: #{@form.name}" if @preview_mode
 
-    @form.form_name
+    @form.name
   end
 
   def email_body
-    FormSubmissionService::NotifyTemplateBodyFilter.new.build_question_answers_section(@form)
+    FormSubmissionService::NotifyTemplateBodyFilter.new.build_question_answers_section(@current_context)
   end
 
   def submission_timezone

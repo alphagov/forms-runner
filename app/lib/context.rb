@@ -1,6 +1,5 @@
 class Context
-  attr_accessor :form
-  attr_reader :form_name, :form_start_page, :support_details
+  attr_reader :form, :support_details
 
   def initialize(form:, store:)
     @form = form
@@ -9,8 +8,6 @@ class Context
     @journey = Journey.new(form_context: @form_context, step_factory: @step_factory)
 
     @completed_steps = @journey.completed_steps
-    @form_name = form.name
-    @form_start_page = form.start_page
     @support_details = OpenStruct.new({
       email: form.support_email,
       phone: form.support_phone,

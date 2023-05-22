@@ -1,4 +1,4 @@
-<% set_page_title(form_title(form_name: @current_context.form_name, page_name: @step.question_text, mode: @mode, error: @step.question&.errors&.any?)) %>
+<% set_page_title(form_title(form_name: @current_context.form.name, page_name: @step.question_text, mode: @mode, error: @step.question&.errors&.any?)) %>
 
 <% content_for :before_content do %>
   <% if @back_link.present? %>

@@ -8,7 +8,7 @@ module Forms
           EventLogger.log_form_event(current_context, request, "submission")
         end
 
-        FormSubmissionService.call(form: current_context,
+        FormSubmissionService.call(current_context:,
                                    reference: params[:notify_reference],
                                    preview_mode: mode.preview?).submit_form_to_processing_team
         redirect_to :form_submitted
