@@ -27,11 +27,11 @@ module Forms
     end
 
     def check_your_answers_rows
-      current_context.steps.map { |page| page_to_row(page) }
+      current_context.completed_steps.map { |page| page_to_row(page) }
     end
 
     def answers_need_full_width
-      @full_width = current_context.steps.any? { |step| step.question.has_long_answer? }
+      @full_width = current_context.completed_steps.any? { |step| step.question.has_long_answer? }
     end
   end
 end

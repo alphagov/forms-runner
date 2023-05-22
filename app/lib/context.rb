@@ -7,7 +7,6 @@ class Context
     @step_factory = StepFactory.new(form:)
     @journey = Journey.new(form_context: @form_context, step_factory: @step_factory)
 
-    @completed_steps = @journey.completed_steps
     @support_details = OpenStruct.new({
       email: form.support_email,
       phone: form.support_phone,
@@ -17,7 +16,7 @@ class Context
   end
 
   def find_or_create(page_slug)
-    step = @completed_steps.find { |s| s.page_slug == page_slug }
+    step = completed_steps.find { |s| s.page_slug == page_slug }
     step || @step_factory.create_step(page_slug)
   end
 
@@ -28,26 +27,26 @@ class Context
   end
 
   def previous_step(page_slug)
-    index = @completed_steps.find_index { |step| step.page_slug == page_slug }
-    return nil if @completed_steps.empty? || index&.zero?
+    index = completed_steps.find_index { |step| step.page_slug == page_slug }
+    return nil if completed_steps.empty? || index&.zero?
 
-    return @completed_steps.last.page_id if index.nil?
+    return completed_steps.last.page_id if index.nil?
 
-    @completed_steps[index - 1].page_id
+    completed_steps[index - 1].page_id
   end
 
   def next_page_slug
-    return nil if @completed_steps.last&.end_page?
+    return nil if completed_steps.last&.end_page?
 
-    @completed_steps.last&.next_page_slug || @step_factory.start_step.page_slug
+    completed_steps.last&.next_page_slug || @step_factory.start_step.page_slug
   end
 
   def can_visit?(page_slug)
-    (@completed_steps.map(&:page_slug).include? page_slug) || page_slug == next_page_slug
+    (completed_steps.map(&:page_slug).include? page_slug) || page_slug == next_page_slug
   end
 
-  def steps
-    @completed_steps
+  def completed_steps
+    @journey.completed_steps
   end
 
   def clear
