@@ -1,9 +1,10 @@
 require "rails_helper"
 
 describe "forms/check_your_answers/show.html.erb" do
-  let(:form) { OpenStruct.new(id: 1, name: "Form 1") }
-  let(:context) { OpenStruct.new(form:, form_id: 1, form_slug: "slug", mode: "", name: "Form 1") }
+  let(:form) { build :form, id: 1, declaration_text: }
+  let(:context) { OpenStruct.new(form:) }
   let(:full_width) { false }
+  let(:declaration_text) { nil }
 
   before do
     assign(:current_context, context)
@@ -14,7 +15,7 @@ describe "forms/check_your_answers/show.html.erb" do
   end
 
   context "when the form does not have a declaration" do
-    let(:form) { OpenStruct.new(id: 1, name: "Form 1", declaration_text: nil) }
+    let(:declaration_text) { nil }
 
     it "does not display the declaration heading" do
       expect(rendered).not_to have_css("h2", text: "Declaration")
@@ -22,14 +23,14 @@ describe "forms/check_your_answers/show.html.erb" do
   end
 
   context "when the form has a declaration" do
-    let(:form) { OpenStruct.new(id: 1, name: "Form 1", declaration_text: "You should agree to all terms before submitting") }
+    let(:declaration_text) { "You should agree to all terms before submitting" }
 
     it "displays the declaration heading" do
       expect(rendered).to have_css("h2", text: "Declaration")
     end
 
     it "displays declaration text" do
-      expect(rendered).to have_css("p.govuk-body", text: "You should agree to all terms before submitting")
+      expect(rendered).to have_css("p.govuk-body", text: form.declaration_text)
     end
   end
 
@@ -48,4 +49,6 @@ describe "forms/check_your_answers/show.html.erb" do
   it "contains a hidden notify reference" do
     expect(rendered).to have_css("input", id: "notification-id", visible: :hidden)
   end
+
+  # TODO: add view tests for playing back questions and Answers
 end

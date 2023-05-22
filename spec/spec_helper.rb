@@ -1,4 +1,4 @@
-require "pry"
+require_relative "support/factorybot"
 require "simplecov"
 require "climate_control"
 
