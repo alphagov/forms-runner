@@ -8,8 +8,6 @@ class StepFactory
     end
   end
 
-  attr_accessor :form_id
-
   def initialize(form:)
     @form = form
     @pages = form.pages
