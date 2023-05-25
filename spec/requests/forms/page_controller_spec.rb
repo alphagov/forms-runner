@@ -16,23 +16,26 @@ RSpec.describe Forms::PageController, type: :request do
   end
   let(:live_at) { "2022-08-18 09:16:50 +0100" }
 
-  let(:pages_data) do
-    [
-      (build :page,
-             id: 1,
-             next_page: 2,
-             answer_type: "text",
-             answer_settings: { input_type: "single_line" },
-             is_optional: false
-      ),
-      (build :page,
-             id: 2,
-             answer_type: "text",
-             answer_settings: { input_type: "single_line" },
-             is_optional:
-      ),
-    ]
+  let(:page_1) do
+    build :page, :with_text_settings,
+          id: 1,
+          next_page: 2,
+          is_optional: false
   end
+
+  let(:page_2) do
+    build :page, :with_text_settings,
+          id: 2,
+          is_optional:
+  end
+
+  let(:page_3) do
+    build :page, :with_text_settings,
+          id: 3,
+          is_optional:
+  end
+
+  let(:pages_data) { [page_1, page_2] }
 
   let(:is_optional) { false }
 
