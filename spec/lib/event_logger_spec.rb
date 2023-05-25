@@ -3,33 +3,13 @@ require_relative "../../app/lib/event_logger"
 
 RSpec.describe EventLogger do
   let(:page) do
-    Page.new({
-      id: 1,
-      question_text: "Question one",
-      answer_type: "text",
-      answer_settings: { input_type: "single_line" },
-      next_page: 2,
-      is_optional: false,
-    })
+    build :page, :with_text_settings, id: 1, form_id: 2, routing_conditions: []
   end
 
+  let(:form) { build :form, :with_support, id: 1, pages: [page], start_page: page.id }
   let(:context) do
     Context.new(
-      form: Form.new({
-        id: 1,
-        name: "Form 1",
-        form_slug: "form-1",
-        submission_email: "jimbo@example.gov.uk",
-        start_page: "1",
-        privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
-        what_happens_next_text: "Good things come to those that wait",
-        declaration_text: "agree to the declaration",
-        support_email: "help@example.gov.uk",
-        support_phone: "Call 01610123456\n\nThis line is only open on Tuesdays.",
-        support_url: "https://example.gov.uk/contact",
-        support_url_text: "Contact us",
-        pages: [page],
-      }),
+      form:,
       store: {},
     )
   end
@@ -42,7 +22,7 @@ RSpec.describe EventLogger do
     {
       url: "http://example.gov.uk",
       method: "GET",
-      form: "Form 1",
+      form: form.name,
     }
   end
 
@@ -50,9 +30,9 @@ RSpec.describe EventLogger do
     {
       url: "http://example.gov.uk",
       method: "GET",
-      form: "Form 1",
-      question_number: 1,
-      question_text: "Question one",
+      form: form.name,
+      question_number: page.id,
+      question_text: page.question_text,
     }
   end
 
@@ -83,24 +63,13 @@ RSpec.describe EventLogger do
   end
 
   context "when skipping an optional question" do
-    let(:page) do
-      Page.new({
-        id: 1,
-        question_text: "Question one",
-        answer_type: "text",
-        answer_settings: { input_type: "single_line" },
-        next_page: 2,
-        is_optional: true,
-      })
-    end
-
     let(:page_log_item) do
       {
         url: "http://example.gov.uk",
         method: "GET",
-        form: "Form 1",
-        question_number: 1,
-        question_text: "Question one",
+        form: form.name,
+        question_number: page.id,
+        question_text: page.question_text,
         skipped_question: "true",
       }
     end

@@ -7,7 +7,7 @@ module Forms
       EventLogger.log_form_event(Context.new(form: current_form, store: session), request, "visit") unless mode.preview?
     end
 
-    rescue_from ActiveResource::ResourceNotFound do
+    rescue_from ActiveResource::ResourceNotFound, StepFactory::PageNotFoundError do
       render template: "errors/not_found", status: :not_found
     end
 

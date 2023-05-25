@@ -2,14 +2,10 @@ require "rails_helper"
 
 describe "question/address.html.erb" do
   let(:page) do
-    Page.new({
-      id: 1,
-      question_text: "What is your address?",
-      hint_text: nil,
-      answer_type: "address",
-      is_optional: false,
-      answer_settings:,
-    })
+    build(:page,
+          answer_type: "address",
+          routing_conditions:,
+          answer_settings:)
   end
 
   let(:answer_settings) { OpenStruct.new({ input_type: }) }
@@ -17,11 +13,15 @@ describe "question/address.html.erb" do
   let(:international_address) { "false" }
   let(:uk_address) { "true" }
 
+  let(:routing_conditions) { [] }
+
+  let(:goto_page_slug) { nil }
+
   let(:question) do
     QuestionRegister.from_page(page)
   end
 
-  let(:step) { Step.new(question:, page_id: page.id, form_id: 1, form_slug: "", next_page_slug: 2, page_slug: 1, page_number: 1) }
+  let(:step) { Step.new(question:, page_id: page.id, form_id: 1, form_slug: "", next_page_slug: 2, page_slug: 1, page_number: 1, routing_conditions:, goto_page_slug:) }
 
   let(:form) do
     GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,

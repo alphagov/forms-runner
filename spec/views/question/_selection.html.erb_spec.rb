@@ -2,21 +2,26 @@ require "rails_helper"
 
 describe "question/_selection.html.erb" do
   let(:page) do
-    Page.new({
-      id: 1,
-      question_text: "Which city do you live in?",
-      hint_text: nil,
-      answer_type: "selection",
-      is_optional:,
-      answer_settings: OpenStruct.new({ only_one_option:, selection_options: [OpenStruct.new({ name: "Bristol" }), OpenStruct.new({ name: "London" }), OpenStruct.new({ name: "Manchester" })] }),
-    })
+    build(:page,
+          id: 1,
+          answer_type: "selection",
+          is_optional:,
+          routing_conditions:,
+          answer_settings: OpenStruct.new({ only_one_option:,
+                                            selection_options: [OpenStruct.new({ name: "Bristol" }),
+                                                                OpenStruct.new({ name: "London" }),
+                                                                OpenStruct.new({ name: "Manchester" })] }))
   end
+
+  let(:routing_conditions) { [] }
+
+  let(:goto_page_slug) { nil }
 
   let(:question) do
     QuestionRegister.from_page(page)
   end
 
-  let(:step) { Step.new(question:, page_id: page.id, form_id: 1, form_slug: "", next_page_slug: 2, page_slug: 1, page_number: 1) }
+  let(:step) { Step.new(question:, page_id: page.id, form_id: 1, form_slug: "", next_page_slug: 2, page_slug: 1, page_number: 1, routing_conditions: page.routing_conditions, goto_page_slug:) }
 
   let(:form) do
     GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
@@ -35,7 +40,7 @@ describe "question/_selection.html.erb" do
       let(:is_optional) { false }
 
       it "contains the question" do
-        expect(rendered).to have_css("h1", text: "Which city do you live in?")
+        expect(rendered).to have_css("h1", text: page.question_text)
       end
 
       it "contains the options" do
@@ -53,7 +58,7 @@ describe "question/_selection.html.erb" do
       let(:is_optional) { true }
 
       it "contains the question" do
-        expect(rendered).to have_css("h1", text: "Which city do you live in?")
+        expect(rendered).to have_css("h1", text: page.question_text)
       end
 
       it "contains the options" do
@@ -75,7 +80,7 @@ describe "question/_selection.html.erb" do
       let(:is_optional) { false }
 
       it "contains the question" do
-        expect(rendered).to have_css("h1", text: "Which city do you live in?")
+        expect(rendered).to have_css("h1", text: page.question_text)
       end
 
       it "contains the options" do
@@ -93,7 +98,7 @@ describe "question/_selection.html.erb" do
       let(:is_optional) { true }
 
       it "contains the question" do
-        expect(rendered).to have_css("h1", text: "Which city do you live in?")
+        expect(rendered).to have_css("h1", text: page.question_text)
       end
 
       it "contains the options" do
