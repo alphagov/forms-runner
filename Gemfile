@@ -95,6 +95,6 @@ end
 
 gem "bundler-audit", "~> 0.9.0"
 
-gem "brakeman", "~> 5.4"
+gem "brakeman", "~> 6.0"
 
 gem "vite_rails"
