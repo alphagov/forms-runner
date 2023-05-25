@@ -12,9 +12,7 @@ class Step
     @page_number = page_number
   end
 
-  def id
-    @page_id
-  end
+  alias_attribute :id, :page_id
 
   def ==(other)
     other.class == self.class && other.state == state
