@@ -13,13 +13,11 @@ describe "question/_name.html.erb" do
   let(:title_needed) { "false" }
   let(:routing_conditions) { [] }
 
-  let(:goto_page_slug) { nil }
-
   let(:question) do
     QuestionRegister.from_page(page)
   end
 
-  let(:step) { Step.new(question:, page_id: page.id, form_id: 1, form_slug: "", next_page_slug: 2, page_slug: 1, page_number: 1, routing_conditions:, goto_page_slug:) }
+  let(:step) { Step.new(question:, page_id: page.id, form_id: 1, form_slug: "", next_page_slug: 2, page_slug: 1, page_number: 1, routing_conditions:) }
 
   let(:form) do
     GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
