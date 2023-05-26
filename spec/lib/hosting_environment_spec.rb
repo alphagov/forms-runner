@@ -28,17 +28,15 @@ RSpec.describe HostingEnvironment do
     end
 
     context "when in local development" do
-      before { Rails.env.stub(production?: false) }
-
       it "returns true" do
+        allow(Rails).to receive(:env).and_return(OpenStruct.new(production?: false))
         expect(described_class.test_environment?).to be(true)
       end
     end
 
     context "when in production" do
-      before { Rails.env.stub(production?: true) }
-
       it "returns false" do
+        allow(Rails).to receive(:env).and_return(OpenStruct.new(production?: true))
         expect(described_class.test_environment?).to be(false)
       end
     end
