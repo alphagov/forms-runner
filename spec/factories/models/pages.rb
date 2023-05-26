@@ -30,7 +30,7 @@ FactoryBot.define do
     trait :with_selections_settings do
       transient do
         only_one_option { "true" }
-        selection_options { [Forms::SelectionOption.new({ name: "Option 1" }), Forms::SelectionOption.new({ name: "Option 2" })] }
+        selection_options { [{ "name": "Option 1" }.as_json, { "name": "Option 2" }.as_json] }
       end
 
       answer_type { "selection" }

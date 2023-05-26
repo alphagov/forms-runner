@@ -29,12 +29,6 @@ RSpec.describe Forms::PageController, type: :request do
           is_optional:
   end
 
-  let(:page_3) do
-    build :page, :with_text_settings,
-          id: 3,
-          is_optional:
-  end
-
   let(:pages_data) { [page_1, page_2] }
 
   let(:is_optional) { false }
@@ -372,6 +366,47 @@ RSpec.describe Forms::PageController, type: :request do
           end
         end
       end
+    end
+
+    context "when page has routing conditions" do
+      let(:page_1) do
+        build :page, :with_selections_settings,
+              id: 1,
+              next_page: 2,
+              routing_conditions: [DataStruct.new(routing_page_id: 1, check_page_id: 1, goto_page_id: 3, answer_value: "Option 1")],
+              is_optional: false
+      end
+
+      let(:page_2) do
+        build :page, :with_text_settings,
+              id: 2,
+              next_page: 3,
+              is_optional:
+      end
+
+      let(:page_3) do
+        build :page, :with_text_settings,
+              id: 3,
+              is_optional:
+      end
+
+      let(:pages_data) { [page_1, page_2, page_3] }
+
+      let(:api_url_suffix) { "/draft" }
+
+      it "redirects to the goto page if answer value matches condition" do
+        post save_form_page_path("preview-draft", 2, form_data.form_slug, 1), params: { question: { selection: "Option 1" }, changing_existing_answer: false }
+        expect(response).to redirect_to(form_page_path("preview-draft", 2, form_data.form_slug, 3))
+      end
+
+      context "when the answer_value does not match the condition" do
+        it "redirects to the next page in the journey" do
+          post save_form_page_path("preview-draft", 2, form_data.form_slug, 1), params: { question: { selection: "Option 2" }, changing_existing_answer: false }
+          expect(response).to redirect_to(form_page_path("preview-draft", 2, form_data.form_slug, 2))
+        end
+      end
+
+      # TODO: Need to add test to check how changing an existing routing answer value would work. Better off as a feature spec which we dont have.
     end
   end
 end
