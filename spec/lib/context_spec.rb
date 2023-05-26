@@ -129,8 +129,7 @@ RSpec.describe Context do
       form.pages[0].answer_type = "number"
 
       # build another context with the previous answers
-      context2 = nil
-      expect { context2 = described_class.new(form:, store:) }.not_to raise_error(ActiveModel::UnknownAttributeError)
+      context2 = described_class.new(form:, store:)
       expect(context2.find_or_create("1").show_answer).to eq("")
     end
   end
