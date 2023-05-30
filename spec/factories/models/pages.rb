@@ -30,7 +30,7 @@ FactoryBot.define do
     trait :with_selections_settings do
       transient do
         only_one_option { "true" }
-        selection_options { [Forms::SelectionOption.new({ name: "Option 1" }), Forms::SelectionOption.new({ name: "Option 2" })] }
+        selection_options { [{ "name": "Option 1" }.as_json, { "name": "Option 2" }.as_json] }
       end
 
       answer_type { "selection" }
@@ -39,7 +39,7 @@ FactoryBot.define do
 
     trait :with_text_settings do
       transient do
-        input_type { Forms::TextSettingsForm::INPUT_TYPES.sample }
+        input_type { %w[single_line long_text].sample }
       end
 
       answer_type { "text" }
@@ -48,7 +48,7 @@ FactoryBot.define do
 
     trait :with_date_settings do
       transient do
-        input_type { Forms::DateSettingsForm::INPUT_TYPES.sample }
+        input_type { %w[date_of_birth other_date].sample }
       end
 
       answer_type { "date" }

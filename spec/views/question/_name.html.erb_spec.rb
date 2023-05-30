@@ -2,25 +2,22 @@ require "rails_helper"
 
 describe "question/_name.html.erb" do
   let(:page) do
-    Page.new({
-      id: 1,
-      question_text: "What is your name?",
-      hint_text: nil,
-      answer_type: "name",
-      is_optional: false,
-      answer_settings:,
-    })
+    build(:page,
+          answer_type: "name",
+          routing_conditions:,
+          answer_settings:)
   end
 
   let(:answer_settings) { OpenStruct.new({ input_type:, title_needed: }) }
   let(:input_type) { "full_name" }
   let(:title_needed) { "false" }
+  let(:routing_conditions) { [] }
 
   let(:question) do
     QuestionRegister.from_page(page)
   end
 
-  let(:step) { Step.new(question:, page_id: page.id, form_id: 1, form_slug: "", next_page_slug: 2, page_slug: 1, page_number: 1) }
+  let(:step) { Step.new(question:, page_id: page.id, form_id: 1, form_slug: "", next_page_slug: 2, page_slug: 1, page_number: 1, routing_conditions:) }
 
   let(:form) do
     GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
@@ -35,7 +32,7 @@ describe "question/_name.html.erb" do
   context "when the question needs a title" do
     let(:title_needed) { "true" }
 
-    it "contains the correct autocomplete atrtibute for a title" do
+    it "contains the correct autocomplete attribute for a title" do
       expect(rendered).to have_css("input[type='text'][autocomplete='honorific-prefix']")
     end
   end

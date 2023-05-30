@@ -8,47 +8,24 @@ RSpec.describe Context do
 
   let(:pages) do
     [
-      Page.new({
-        id: 1,
-        question_text: "Question one",
-        answer_type: "text",
-        answer_settings: { input_type: "single_line" },
-        hint_text: "q1 hint",
-        next_page: 2,
-        form: nil,
-        is_optional: nil,
-      }),
-      Page.new({
-        id: 2,
-        question_text: "Question two",
-        hint_text: "Q2 hint text",
-        answer_type: "text",
-        answer_settings: { input_type: "single_line" },
-        question_short_name: nil,
-        form: nil,
-        is_optional: nil,
-      }),
+      (build :page, :with_text_settings,
+             id: 1,
+             next_page: 2
+      ),
+      (build :page, :with_text_settings,
+             id: 2
+      ),
     ]
   end
 
   let(:form) do
-    f = Form.new({
-      id: 1,
-      name: "Form",
-      form_slug: "form",
-      submission_email: "jimbo@example.gov.uk",
-      start_page: "1",
-      privacy_policy_url: "http://www.example.gov.uk",
-      what_happens_next_text: "Good things come to those that wait",
-      declaration_text: "agree to the declaration",
-      support_email: "help@example.gov.uk",
-      support_phone: "Call 01610123456\n\nThis line is only open on Tuesdays.",
-      support_url: "https://example.gov.uk/contact",
-      support_url_text: "Contact us",
-      pages:,
-    })
-    f.pages.each { |p| p.form = f }
-    f
+    build(:form, :with_support,
+          id: 2,
+          start_page: 1,
+          privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
+          what_happens_next_text: "Good things come to those that wait",
+          declaration_text: "agree to the declaration",
+          pages:)
   end
 
   [
@@ -101,21 +78,6 @@ RSpec.describe Context do
   end
 
   context "with a page which changes question type mid-journey" do
-    let(:pages) do
-      [
-        Page.new({
-          id: 1,
-          question_text: "A single line of text question",
-          answer_type: "text",
-          answer_settings: { input_type: "single_line" },
-          hint_text: nil,
-          next_page: nil,
-          form: nil,
-          is_optional: nil,
-        }),
-      ]
-    end
-
     it "does not throw an error if the question type changes when an answer has already been submitted" do
       store = {}
 

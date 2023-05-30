@@ -2,25 +2,17 @@ require "rails_helper"
 
 describe "question/date.html.erb" do
   let(:page) do
-    Page.new({
-      id: 1,
-      question_text: "What is the date?",
-      hint_text: nil,
-      answer_type: "date",
-      is_optional: false,
-      answer_settings:,
-    })
+    build(:page, :with_date_settings, input_type:, routing_conditions:)
   end
 
-  let(:answer_settings) { OpenStruct.new({ input_type: }) }
-
   let(:input_type) { nil }
+  let(:routing_conditions) { [] }
 
   let(:question) do
     QuestionRegister.from_page(page)
   end
 
-  let(:step) { Step.new(question:, page_id: page.id, form_id: 1, form_slug: "", next_page_slug: 2, page_slug: 1, page_number: 1) }
+  let(:step) { Step.new(question:, page_id: page.id, form_id: 1, form_slug: "", next_page_slug: 2, page_slug: 1, page_number: 1, routing_conditions:) }
 
   let(:form) do
     GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,

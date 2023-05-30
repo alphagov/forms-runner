@@ -1,8 +1,8 @@
 class Step
   attr_accessor :page_id, :form_id, :form_slug, :question
-  attr_reader :next_page_slug, :page_slug, :page_number
+  attr_reader :next_page_slug, :page_slug, :page_number, :routing_conditions
 
-  def initialize(question:, page_id:, form_id:, form_slug:, next_page_slug:, page_slug:, page_number:)
+  def initialize(question:, page_id:, form_id:, form_slug:, next_page_slug:, page_slug:, page_number:, routing_conditions:)
     @question = question
     @page_id = page_id
     @page_slug = page_slug
@@ -10,6 +10,7 @@ class Step
     @form_slug = form_slug
     @next_page_slug = next_page_slug
     @page_number = page_number
+    @routing_conditions = routing_conditions
   end
 
   alias_attribute :id, :page_id
@@ -72,5 +73,20 @@ class Step
 
   def end_page?
     next_page_slug.nil?
+  end
+
+  def next_page_slug_after_routing
+    if routing_conditions.any? && routing_conditions.first.answer_value == @question.selection
+      goto_page_slug
+    else
+      next_page_slug
+    end
+  end
+
+  def goto_page_slug
+    return nil if routing_conditions.empty?
+
+    condition = routing_conditions.first
+    condition.goto_page_id.nil? && condition.skip_to_end ? CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG : condition.goto_page_id.to_s
   end
 end

@@ -38,7 +38,7 @@ class Context
   def next_page_slug
     return nil if completed_steps.last&.end_page?
 
-    completed_steps.last&.next_page_slug || @step_factory.start_step.page_slug
+    completed_steps.last&.next_page_slug_after_routing || @step_factory.start_step.page_slug
   end
 
   def can_visit?(page_slug)

@@ -25,7 +25,7 @@ private
 
     while current_step
       @completed_steps << current_step
-      next_page_slug = current_step.next_page_slug
+      next_page_slug = current_step.next_page_slug_after_routing
 
       break if next_page_slug.nil?
 
