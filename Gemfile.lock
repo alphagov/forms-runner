@@ -242,7 +242,7 @@ GEM
     parser (3.2.2.1)
       ast (~> 2.4.1)
     public_suffix (4.0.7)
-    puma (6.2.2)
+    puma (6.3.0)
       nio4r (~> 2.0)
     racc (1.6.2)
     rack (2.2.7)
@@ -423,7 +423,7 @@ DEPENDENCIES
   jbuilder
   lograge
   nokogiri (~> 1.15.2)
-  puma (~> 6.2.2)
+  puma (~> 6.3.0)
   rails (~> 7.0.5)
   redis
   redis-session-store
