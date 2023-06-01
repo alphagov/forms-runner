@@ -10,7 +10,7 @@ class Step
     @form_slug = form_slug
     @next_page_slug = next_page_slug
     @page_number = page.position
-    @routing_conditions = page.routing_conditions
+    @routing_conditions = page.respond_to?(:routing_conditions) ? page.routing_conditions : []
   end
 
   alias_attribute :id, :page_id
