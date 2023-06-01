@@ -12,7 +12,7 @@ describe "question/date.html.erb" do
     QuestionRegister.from_page(page)
   end
 
-  let(:step) { Step.new(question:, page_id: page.id, form_id: 1, form_slug: "", next_page_slug: 2, page_slug: 1, page_number: 1, routing_conditions:) }
+  let(:step) { Step.new(question:, page:, form_id: 1, form_slug: "", next_page_slug: 2, page_slug: 1) }
 
   let(:form) do
     GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
