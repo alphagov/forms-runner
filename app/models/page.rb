@@ -14,12 +14,6 @@ class Page < ActiveResource::Base
     @attributes.include?("next_page") && !@attributes["next_page"].nil?
   end
 
-  # TODO: - Remove this method and use the page.position instead
-  def number(form)
-    index = form.pages.index(self)
-    index + 1
-  end
-
   def answer_settings
     @attributes["answer_settings"] || {}
   end

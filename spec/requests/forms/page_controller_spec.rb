@@ -227,6 +227,22 @@ RSpec.describe Forms::PageController, type: :request do
         end
       end
     end
+
+    context "when viewing a live form with no routing_conditions" do
+      let(:page_1) do
+        page_without_routing_condition = build(:page, :with_text_settings,
+                                               id: 1,
+                                               next_page: 2,
+                                               is_optional: false)
+
+        Page.new(page_without_routing_condition.attributes.except(:routing_conditions))
+      end
+
+      it "Returns a 200" do
+        get form_page_path("preview-live", 2, form_data.form_slug, 1)
+        expect(response.status).to eq(200)
+      end
+    end
   end
 
   describe "#save" do
@@ -299,7 +315,7 @@ RSpec.describe Forms::PageController, type: :request do
           expect(EventLogger).to receive(:log).with("change_answer_page_save",
                                                     { form: form_data.name,
                                                       method: "POST",
-                                                      question_number: 1,
+                                                      question_number: form_data.pages.first.position,
                                                       question_text: form_data.pages.first.question_text,
                                                       url: "http://www.example.com/form/2/#{form_data.form_slug}/1?changing_existing_answer=true&question%5Btext%5D=answer+text" })
           post save_form_page_path("form", 2, form_data.form_slug, 1, params: { question: { text: "answer text" }, changing_existing_answer: true })
@@ -311,7 +327,7 @@ RSpec.describe Forms::PageController, type: :request do
           expect(EventLogger).to receive(:log).with("first_page_save",
                                                     { form: form_data.name,
                                                       method: "POST",
-                                                      question_number: 1,
+                                                      question_number: form_data.pages.first.position,
                                                       question_text: form_data.pages.first.question_text,
                                                       url: "http://www.example.com/form/2/#{form_data.form_slug}/1" })
           post save_form_page_path("form", 2, form_data.form_slug, 1), params: { question: { text: "answer text" } }
@@ -323,7 +339,7 @@ RSpec.describe Forms::PageController, type: :request do
           expect(EventLogger).to receive(:log).with("page_save",
                                                     { form: form_data.name,
                                                       method: "POST",
-                                                      question_number: 2,
+                                                      question_number: form_data.pages.second.position,
                                                       question_text: form_data.pages.second.question_text,
                                                       url: "http://www.example.com/form/2/#{form_data.form_slug}/2" })
           post save_form_page_path("form", 2, form_data.form_slug, 2), params: { question: { text: "answer text" } }
@@ -345,7 +361,7 @@ RSpec.describe Forms::PageController, type: :request do
             expect(EventLogger).to receive(:log).with("optional_save",
                                                       { form: form_data.name,
                                                         method: "POST",
-                                                        question_number: 2,
+                                                        question_number: form_data.pages.second.position,
                                                         question_text: form_data.pages.second.question_text,
                                                         skipped_question: "false",
                                                         url: "http://www.example.com/form/2/#{form_data.form_slug}/2" })
@@ -358,7 +374,7 @@ RSpec.describe Forms::PageController, type: :request do
             expect(EventLogger).to receive(:log).with("optional_save",
                                                       { form: form_data.name,
                                                         method: "POST",
-                                                        question_number: 2,
+                                                        question_number: form_data.pages.second.position,
                                                         question_text: form_data.pages.second.question_text,
                                                         skipped_question: "true",
                                                         url: "http://www.example.com/form/2/#{form_data.form_slug}/2" })
