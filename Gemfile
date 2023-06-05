@@ -88,6 +88,7 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "climate_control"
+  gem "rails-controller-testing"
   gem "selenium-webdriver"
   gem "simplecov"
   gem "webdrivers"
