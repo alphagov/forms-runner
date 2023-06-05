@@ -14,4 +14,19 @@ RSpec.describe ApplicationController, type: :request do
       expect(response).to have_http_status(:ok)
     end
   end
+
+  context "when the service is unavailable" do
+    before do
+      allow(Settings).to receive(:service_unavailable).and_return(true)
+      get root_path
+    end
+
+    it "returns http code 503" do
+      expect(response).to have_http_status(:service_unavailable)
+    end
+
+    it "renders the service unavailable page" do
+      expect(response).to render_template("errors/service_unavailable")
+    end
+  end
 end

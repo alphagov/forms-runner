@@ -58,10 +58,9 @@ Refer to the [settings file](config/settings.yml) for all the settings required 
 
 ### Environment variables
 
-| Name                  | Purpose                                                      |
-| --------------------- | ------------------------------------------------------------ |
-| `REDIS_URL`           | The URL for Redis (optional)                                 |
-| `SERVICE_UNAVAILABLE` | All pages will render 'Service unavailable' if set to `true` |
+| Name        | Purpose                      |
+| ----------- | ---------------------------- |
+| `REDIS_URL` | The URL for Redis (optional) |
 
 ### Running the app
 

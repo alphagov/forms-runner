@@ -34,14 +34,6 @@ RSpec.describe ErrorsController, type: :request do
     end
   end
 
-  describe "Service unavailable page" do
-    it "returns http code 503" do
-      stub_const "ENV", ENV.to_h.merge("SERVICE_UNAVAILABLE" => "true")
-      get root_path
-      expect(response).to have_http_status(:service_unavailable)
-    end
-  end
-
   describe "Submission error" do
     let(:form_response_data) do
       {

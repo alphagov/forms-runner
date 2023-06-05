@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
   def cookies; end
 
   def check_service_unavailable
-    if ENV["SERVICE_UNAVAILABLE"].present?
+    if Settings.service_unavailable
       render "errors/service_unavailable", status: :service_unavailable, formats: :html
     end
   end
