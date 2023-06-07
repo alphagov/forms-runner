@@ -29,6 +29,14 @@ RSpec.describe Forms::PageController, type: :request do
           is_optional:
   end
 
+  let(:page_with_routing) do
+    build :page, :with_selections_settings,
+          id: 1,
+          next_page: 2,
+          routing_conditions: [DataStruct.new(id: 1, routing_page_id: 1, check_page_id: 1, goto_page_id: 3, answer_value: "Option 1", validation_errors:)],
+          is_optional: false
+  end
+
   let(:pages_data) { [page_1, page_2] }
 
   let(:is_optional) { false }
@@ -243,6 +251,48 @@ RSpec.describe Forms::PageController, type: :request do
         expect(response.status).to eq(200)
       end
     end
+
+    context "when page has routing conditions" do
+      let(:page_1) do
+        page_with_routing
+      end
+
+      let(:validation_errors) { [] }
+
+      let(:page_2) do
+        build :page, :with_text_settings,
+              id: 2,
+              next_page: 3,
+              is_optional:
+      end
+
+      let(:page_3) do
+        build :page, :with_text_settings,
+              id: 3,
+              is_optional:
+      end
+
+      let(:pages_data) { [page_3, page_1, page_2] }
+
+      let(:api_url_suffix) { "/draft" }
+
+      context "when the routing has a cannot_have_goto_page_before_routing_page error" do
+        let(:pages_data) { [page_1, page_2, page_3] }
+        let(:validation_errors) { [{ name: "cannot_have_goto_page_before_routing_page" }] }
+
+        it "returns a 422 response" do
+          get form_page_path("preview-draft", 2, form_data.form_slug, 1)
+          expect(response.status).to eq(422)
+        end
+
+        it "shows the error page" do
+          get form_page_path("preview-draft", 2, form_data.form_slug, 1)
+          link_url = "#{Settings.forms_admin.base_url}/forms/2/pages/1/conditions/1"
+          question_number = page_1.position
+          expect(response.body).to include(I18n.t("goto_page_before_routing_page.body_html", link_url:, question_number:))
+        end
+      end
+    end
   end
 
   describe "#save" do
@@ -386,12 +436,10 @@ RSpec.describe Forms::PageController, type: :request do
 
     context "when page has routing conditions" do
       let(:page_1) do
-        build :page, :with_selections_settings,
-              id: 1,
-              next_page: 2,
-              routing_conditions: [DataStruct.new(routing_page_id: 1, check_page_id: 1, goto_page_id: 3, answer_value: "Option 1")],
-              is_optional: false
+        page_with_routing
       end
+
+      let(:validation_errors) { [] }
 
       let(:page_2) do
         build :page, :with_text_settings,
@@ -419,6 +467,23 @@ RSpec.describe Forms::PageController, type: :request do
         it "redirects to the next page in the journey" do
           post save_form_page_path("preview-draft", 2, form_data.form_slug, 1), params: { question: { selection: "Option 2" }, changing_existing_answer: false }
           expect(response).to redirect_to(form_page_path("preview-draft", 2, form_data.form_slug, 2))
+        end
+      end
+
+      context "when the routing has a cannot_have_goto_page_before_routing_page error" do
+        let(:pages_data) { [page_1, page_2, page_3] }
+        let(:validation_errors) { [{ name: "cannot_have_goto_page_before_routing_page" }] }
+
+        it "returns a 422 response" do
+          post save_form_page_path("preview-draft", 2, form_data.form_slug, 1), params: { question: { selection: "Option 2" }, changing_existing_answer: false }
+          expect(response.status).to eq(422)
+        end
+
+        it "shows the error page" do
+          post save_form_page_path("preview-draft", 2, form_data.form_slug, 1), params: { question: { selection: "Option 2" }, changing_existing_answer: false }
+          link_url = "#{Settings.forms_admin.base_url}/forms/2/pages/1/conditions/1"
+          question_number = page_1.position
+          expect(response.body).to include(I18n.t("goto_page_before_routing_page.body_html", link_url:, question_number:))
         end
       end
 

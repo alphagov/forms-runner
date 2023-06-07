@@ -1,6 +1,6 @@
 module Forms
   class PageController < BaseController
-    before_action :prepare_step, :changing_existing_answer
+    before_action :prepare_step, :changing_existing_answer, :check_goto_page_before_routing_page
 
     def show
       redirect_to form_page_path(@step.form_id, @step.form_slug, current_context.next_page_slug) unless current_context.can_visit?(@step.page_slug)
@@ -69,6 +69,13 @@ module Forms
       else
         form_page_path(@step.form_id, @step.form_slug, @step.next_page_slug)
       end
+    end
+
+    def check_goto_page_before_routing_page
+      return unless @step.routing_conditions.filter { |condition| condition.validation_errors.filter { |error| error.name == "cannot_have_goto_page_before_routing_page" }.any? }.any?
+
+      EventLogger.log_page_event(current_context, @step, request, "goto_page_before_routing_page_error", nil)
+      render template: "errors/goto_page_before_routing_page", locals: { link_url: "#{Settings.forms_admin.base_url}/forms/#{@step.form_id}/pages/#{@step.page_slug}/conditions/#{@step.routing_conditions.first.id}", question_number: @step.page_number }, status: :unprocessable_entity
     end
   end
 end
