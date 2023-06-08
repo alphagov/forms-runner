@@ -24,8 +24,12 @@ private
     current_step = find_existing_step(:_start)
 
     while current_step
-      @completed_steps << current_step
       next_page_slug = current_step.next_page_slug_after_routing
+
+      # Prevent infinite loop if a route goes back on itself
+      break if @completed_steps.map(&:page_slug).include?(next_page_slug)
+
+      @completed_steps << current_step
 
       break if next_page_slug.nil?
 
