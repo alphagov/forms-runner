@@ -1,9 +1,10 @@
 require "rails_helper"
 
 describe FormSubmissionMailer, type: :mailer do
-  let(:mail) { described_class.email_completed_form(title:, text_input:, reference: "for-my-ref", timestamp: submission_timestamp, submission_email:) }
+  let(:mail) { described_class.email_completed_form(title:, text_input:, reference: "for-my-ref", preview_mode:, timestamp: submission_timestamp, submission_email:) }
   let(:title) { "Form 1" }
   let(:text_input) { "My question: My answer" }
+  let(:preview_mode) { false }
   let(:submission_email) { "testing@gov.uk" }
   let(:submission_timestamp) { Time.zone.now }
 
@@ -27,6 +28,11 @@ describe FormSubmissionMailer, type: :mailer do
 
     it "includes the an email reference (mostly used to retrieve specific email in notify for e2e tests)" do
       expect(mail.govuk_notify_reference).to eq("for-my-ref")
+    end
+
+    it "does not use the preview personalisation" do
+      expect(mail.govuk_notify_personalisation[:test]).to eq("no")
+      expect(mail.govuk_notify_personalisation[:not_test]).to eq("yes")
     end
 
     it "does include an email-reply-to" do
@@ -64,6 +70,15 @@ describe FormSubmissionMailer, type: :mailer do
           travel_to timestamp do
             expect(mail.govuk_notify_personalisation[:submission_date]).to eq("14 December 2022")
           end
+        end
+      end
+
+      context "when the submission is from preview mode" do
+        let(:preview_mode) { true }
+
+        it "uses the preview personalisation" do
+          expect(mail.govuk_notify_personalisation[:test]).to eq("yes")
+          expect(mail.govuk_notify_personalisation[:not_test]).to eq("no")
         end
       end
     end

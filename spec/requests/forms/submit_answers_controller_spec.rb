@@ -108,10 +108,12 @@ RSpec.describe Forms::SubmitAnswersController, type: :request do
         expect(mail.to).to eq [form_response_data[:submission_email]]
 
         expected_personalisation = {
-          title: "TEST FORM: Form name",
+          title: "Form name",
           text_input: ".*",
           submission_time: "09:47:57",
           submission_date: "13 March 2023",
+          test: "yes",
+          not_test: "no",
         }
 
         expect(mail.body.raw_source).to match(expected_personalisation.to_s)
@@ -145,6 +147,8 @@ RSpec.describe Forms::SubmitAnswersController, type: :request do
           text_input: ".*",
           submission_time: "09:47:57",
           submission_date: "13 March 2023",
+          test: "no",
+          not_test: "yes",
         }
 
         expect(mail.body.raw_source).to match(expected_personalisation.to_s)

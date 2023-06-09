@@ -25,6 +25,7 @@ class FormSubmissionService
       FormSubmissionMailer
         .email_completed_form(title: form_title,
                               text_input: email_body,
+                              preview_mode: @preview_mode,
                               reference: @reference,
                               timestamp:,
                               submission_email: @form.submission_email).deliver_now
@@ -91,8 +92,6 @@ class FormSubmissionService
 private
 
   def form_title
-    return "TEST FORM: #{@form.name}" if @preview_mode
-
     @form.name
   end
 
