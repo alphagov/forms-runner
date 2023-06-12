@@ -10,8 +10,8 @@ class FormSubmissionMailer < GovukNotifyRails::Mailer
       # GOV.UK Notify's templates have conditionals, but only positive
       # conditionals, so to simulate negative conditionals we add two boolean
       # flags; but they must always have opposite values!
-      test: preview_mode ? "yes" : "no",
-      not_test: preview_mode ? "no" : "yes",
+      test: make_notify_boolean(preview_mode),
+      not_test: make_notify_boolean(!preview_mode),
     )
 
     set_reference(reference)
@@ -19,5 +19,11 @@ class FormSubmissionMailer < GovukNotifyRails::Mailer
     set_email_reply_to(Settings.govuk_notify.form_submission_email_reply_to_id)
 
     mail(to: submission_email)
+  end
+
+private
+
+  def make_notify_boolean(bool)
+    bool ? "yes" : "no"
   end
 end
