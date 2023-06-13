@@ -20,7 +20,8 @@ RSpec.describe FormSubmissionService do
             text_input: "# What is the meaning of life?\n42\n",
             reference: "for-my-ref",
             timestamp: Time.zone.now,
-            submission_email: "testing@gov.uk" },
+            submission_email: "testing@gov.uk",
+            preview_mode: false },
         ).once
       end
     end
@@ -55,11 +56,12 @@ RSpec.describe FormSubmissionService do
 
           service.submit_form_to_processing_team
           expect(FormSubmissionMailer).to have_received(:email_completed_form).with(
-            { title: "TEST FORM: Form 1",
+            { title: "Form 1",
               text_input: "# What is the meaning of life?\n42\n",
               reference: "for-my-ref",
               timestamp: Time.zone.now,
-              submission_email: "testing@gov.uk" },
+              submission_email: "testing@gov.uk",
+              preview_mode: true },
           ).once
         end
       end
