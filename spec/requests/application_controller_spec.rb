@@ -17,7 +17,7 @@ RSpec.describe ApplicationController, type: :request do
 
   context "when the service is unavailable" do
     before do
-      allow(Settings).to receive(:service_unavailable).and_return(true)
+      allow(Settings.maintenance_mode).to receive(:enabled).and_return(true)
       get root_path
     end
 
