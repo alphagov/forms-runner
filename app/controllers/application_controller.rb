@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::Base
-  before_action :check_service_unavailable
+  before_action :check_maintenance_mode_is_enabled
   before_action :set_request_id
   after_action :add_robots_header
 
@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
 
   def cookies; end
 
-  def check_service_unavailable
+  def check_maintenance_mode_is_enabled
     if Settings.maintenance_mode.enabled
       render "errors/service_unavailable", status: :service_unavailable, formats: :html
     end
