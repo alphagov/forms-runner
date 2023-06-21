@@ -8,6 +8,9 @@ en:
   internal_server_error:
     body: Please try again later.
     title: Sorry, there is a problem with the service
+  maintenance:
+    body: Contact the GOV.UK Forms team if you need to make changes to your forms or speak to someone about the service.
+    title: Sorry, the service is unavailable
   not_found:
     body: |
       If you typed the web address, check it is correct.
@@ -18,9 +21,6 @@ en:
     body_2: If you want to submit the form again, you need to
     link_text: go back to the start
     title: For your security, we deleted your answers
-  service_unavailable:
-    body: Contact the GOV.UK Forms team if you need to make changes to your forms or speak to someone about the service.
-    title: Sorry, the service is unavailable
   submission_error:
     body: |
       There was a problem with the service and we have been unable to submit your answers.
