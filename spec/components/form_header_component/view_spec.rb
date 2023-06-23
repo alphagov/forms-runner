@@ -19,7 +19,7 @@ RSpec.describe FormHeaderComponent::View, type: :component do
       render_inline(described_class.new(current_context:, mode:, service_url_overide: "/form/1/test"))
 
       expect(page).to have_selector(".govuk-header__service-name")
-      expect(page).to have_selector(".govuk-header--preview-draft")
+      expect(page).to have_selector(".app-header--preview-draft")
       expect(page).to have_content("test_form_name")
     end
   end
@@ -31,7 +31,7 @@ RSpec.describe FormHeaderComponent::View, type: :component do
       render_inline(described_class.new(current_context:, mode:, service_url_overide: "/form/1/test"))
 
       expect(page).to have_selector(".govuk-header__service-name")
-      expect(page).to have_selector(".govuk-header--preview-live")
+      expect(page).to have_selector(".app-header--preview-live")
       expect(page).to have_content("test_form_name")
     end
   end

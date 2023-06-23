@@ -12,7 +12,7 @@ module FormHeaderComponent
         govuk_header(service_name: @current_context.form.name,
                      homepage_url: "https://www.gov.uk/",
                      service_url:,
-                     classes: "govuk-header--#{@mode}")
+                     classes: "app-header--#{@mode}")
       else
         govuk_header(homepage_url: "https://www.gov.uk/")
       end
