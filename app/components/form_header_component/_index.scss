@@ -5,3 +5,10 @@
 .app-header--preview-live .govuk-header__container {
   border-bottom-color: govuk-colour("blue");
 }
+
+.app-header .govuk-header__link--homepage {
+  display: inline-flex;
+  align-items: center;
+  gap: .25em;
+  flex-wrap: wrap;
+}
