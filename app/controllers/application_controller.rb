@@ -1,17 +1,17 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::Base
-  before_action :check_service_unavailable
   before_action :set_request_id
+  before_action :check_maintenance_mode_is_enabled
   after_action :add_robots_header
 
   def accessibility_statement; end
 
   def cookies; end
 
-  def check_service_unavailable
-    if Settings.service_unavailable
-      render "errors/service_unavailable", status: :service_unavailable, formats: :html
+  def check_maintenance_mode_is_enabled
+    if Settings.maintenance_mode.enabled
+      redirect_to maintenance_page_path
     end
   end
 

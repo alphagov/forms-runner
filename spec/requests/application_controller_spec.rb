@@ -15,18 +15,19 @@ RSpec.describe ApplicationController, type: :request do
     end
   end
 
-  context "when the service is unavailable" do
+  context "when the service is in maintenance mode" do
     before do
-      allow(Settings).to receive(:service_unavailable).and_return(true)
-      get root_path
+      allow(Settings.maintenance_mode).to receive(:enabled).and_return(true)
+      get cookies_path
+      follow_redirect!
     end
 
-    it "returns http code 503" do
-      expect(response).to have_http_status(:service_unavailable)
+    it "returns http code 200" do
+      expect(response).to have_http_status(:ok)
     end
 
-    it "renders the service unavailable page" do
-      expect(response).to render_template("errors/service_unavailable")
+    it "renders the maintenance page" do
+      expect(response).to render_template("errors/maintenance")
     end
   end
 end

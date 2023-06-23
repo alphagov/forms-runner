@@ -40,4 +40,10 @@ describe "Settings" do
 
     include_examples expected_value_test, :environment, sentry, "local"
   end
+
+  describe "maintenance_mode" do
+    maintenance_mode = settings[:maintenance_mode]
+
+    include_examples expected_value_test, :enabled, maintenance_mode, false
+  end
 end

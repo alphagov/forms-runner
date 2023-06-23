@@ -69,4 +69,16 @@ RSpec.describe ErrorsController, type: :request do
       expect(response).to have_http_status(:internal_server_error)
     end
   end
+
+  describe "Maintenance" do
+    before { get maintenance_page_path }
+
+    it "returns http code 200" do
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "renders the maintenance page" do
+      expect(response).to have_rendered("errors/maintenance")
+    end
+  end
 end

@@ -20,4 +20,6 @@ sentry:
   dsn:
   environment: local
 
-service_unavailable: false
+maintenance_mode:
+  # When set to true, All pages will render 'Maintenance mode' message
+  enabled: false
