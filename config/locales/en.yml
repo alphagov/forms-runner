@@ -73,12 +73,11 @@ en:
               long_text_too_long: The answer must be shorter than 5000 characters
               single_line_too_long: The answer must be shorter than 500 characters
   environment_names:
-    aws-dev: development
-    aws-production: production
-    aws-staging: staging
-    aws-user-research: user research
     dev: development
     local: local
+    paas_dev: development
+    paas_production: production
+    paas_staging: staging
     production: production
     staging: staging
     user-research: user research

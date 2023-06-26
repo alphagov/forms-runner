@@ -25,3 +25,5 @@ maintenance_mode:
   enabled: false
   # List of IP addresses which will bypass the maintenance mode message as a comma seperated string, optionally using CIDR notation eq. "127.0.0.1, 192.192.192.192/32, 0.0.0.0/24"
   bypass_ips:
+
+forms_env: local

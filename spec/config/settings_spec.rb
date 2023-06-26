@@ -47,4 +47,12 @@ describe "Settings" do
     include_examples expected_value_test, :enabled, maintenance_mode, false
     include_examples expected_value_test, :bypass_ips, maintenance_mode, nil
   end
+
+  describe "forms_env" do
+    it "has a default value" do
+      forms_env = settings[:forms_env]
+
+      expect(forms_env).to eq("local")
+    end
+  end
 end
