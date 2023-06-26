@@ -44,9 +44,10 @@ jobs:
           cf push --strategy rolling \
             --var PAAS_ENVIRONMENT=dev \
             --var INSTANCES=2 \
+            --var SETTINGS__MAINTENANCE_MODE__ENABLED=false \
+            --var SETTINGS__MAINTENANCE_MODE__BYPASS_IPS=" " \
             --var SETTINGS__SENTRY__DSN=${{ secrets.SENTRY_DSN }} \
             --var SETTINGS__SENTRY__ENVIRONMENT=dev \
-            --var SETTINGS__MAINTENANCE_MODE__ENABLED=false \
             --var SETTINGS__FORMS_ADMIN__BASE_URL=${{ env.FORMS_ADMIN_URL }} \
             --var SETTINGS__FORMS_API__BASE_URL=${{ secrets.API_BASE }} \
             --var SETTINGS__FORMS_API__AUTH_KEY=${{ secrets.API_KEY }} \

@@ -45,5 +45,6 @@ describe "Settings" do
     maintenance_mode = settings[:maintenance_mode]
 
     include_examples expected_value_test, :enabled, maintenance_mode, false
+    include_examples expected_value_test, :bypass_ips, maintenance_mode, nil
   end
 end

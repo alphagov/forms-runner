@@ -9,8 +9,16 @@ class ApplicationController < ActionController::Base
 
   def cookies; end
 
+  # Because determining the clients real IP is hard, simply return the first
+  # value of the x-forwarded_for, checking it's an IP. This will probably be
+  # enough for our basic monitoring in PaaS
+  def user_ip(forwarded_for = "")
+    first_ip_string = forwarded_for.split(",").first
+    Regexp.union([Resolv::IPv4::Regex, Resolv::IPv6::Regex]).match(first_ip_string) && first_ip_string
+  end
+
   def check_maintenance_mode_is_enabled
-    if Settings.maintenance_mode.enabled
+    if Settings.maintenance_mode.enabled && non_maintenance_bypass_ip_address?
       redirect_to maintenance_page_path
     end
   end
@@ -34,5 +42,14 @@ private
         active_resource_model.headers["X-Request-ID"] = request.request_id
       end
     end
+  end
+
+  def non_maintenance_bypass_ip_address?
+    bypass_ips = Settings.maintenance_mode.bypass_ips
+
+    return true if bypass_ips.blank?
+
+    bypass_ip_list = bypass_ips.split(",").map { |ip| IPAddr.new ip.strip }
+    bypass_ip_list.none? { |ip| ip.include?(user_ip(request.env.fetch("HTTP_X_FORWARDED_FOR", ""))) }
   end
 end

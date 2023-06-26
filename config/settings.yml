@@ -23,3 +23,5 @@ sentry:
 maintenance_mode:
   # When set to true, All pages will render 'Maintenance mode' message
   enabled: false
+  # List of IP addresses which will bypass the maintenance mode message as a comma seperated string, optionally using CIDR notation eq. "127.0.0.1, 192.192.192.192/32, 0.0.0.0/24"
+  bypass_ips:
