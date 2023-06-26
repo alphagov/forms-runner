@@ -9,7 +9,9 @@ en:
     body: Please try again later.
     title: Sorry, there is a problem with the service
   maintenance:
-    body: Contact the GOV.UK Forms team if you need to make changes to your forms or speak to someone about the service.
+    body_html: |
+      <p>You’ll be able to use the service on Wednesday 5 July 2023.</p>
+      <p>We have not saved your answers. When the service is available, you’ll have to start again.</p>
     title: Sorry, the service is unavailable
   not_found:
     body: |
