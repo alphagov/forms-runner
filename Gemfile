@@ -7,7 +7,7 @@ ruby "3.2.2"
 gem "rails", "~> 7.0.6"
 
 # Use the Puma web server [https://github.com/puma/puma]
-gem "nokogiri", "~> 1.15.2"
+gem "nokogiri", "~> 1.15.3"
 gem "puma", "~> 6.3.0"
 
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
