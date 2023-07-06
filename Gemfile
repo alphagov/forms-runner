@@ -37,17 +37,15 @@ gem "tzinfo-data"
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
 
-# Use Sass to process CSS
-# gem "sassc-rails"
-
-# Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
-# gem "image_processing", "~> 1.2"
-
 # For forms-api
 gem "activeresource"
 
+# For GOV.UK branding
 gem "govuk-components", "~> 4.0.0"
 gem "govuk_design_system_formbuilder", "~> 4.0.0"
+
+# For compiling our frontend assets
+gem "vite_rails"
 
 # validate postcodes
 gem "uk_postcode"
@@ -90,8 +88,8 @@ group :test do
   gem "webdrivers"
 end
 
+# For security auditing gem vulnerabilities. RUN IN CI
 gem "bundler-audit", "~> 0.9.0"
 
+# For detecting security vulnerabilities in Ruby on Rails applications via static analysis.
 gem "brakeman", "~> 6.0"
-
-gem "vite_rails"
