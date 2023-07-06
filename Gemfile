@@ -50,9 +50,6 @@ gem "vite_rails"
 # validate postcodes
 gem "uk_postcode"
 
-# Support for locale tasks
-gem "i18n-tasks", "~> 1.0.12"
-
 # For structured logging
 gem "lograge"
 
@@ -62,6 +59,9 @@ group :development, :test do
 
   gem "factory_bot_rails"
   gem "faker"
+
+  # Support for locale tasks tests
+  gem "i18n-tasks", "~> 1.0.12"
 
   gem "rspec-rails"
   gem "rubocop-govuk", require: false
