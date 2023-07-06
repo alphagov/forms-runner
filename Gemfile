@@ -7,7 +7,6 @@ ruby "3.2.2"
 gem "rails", "~> 7.0.6"
 
 # Use the Puma web server [https://github.com/puma/puma]
-gem "nokogiri", "~> 1.15.3"
 gem "puma", "~> 6.3.0"
 
 # Use Sentry (https://sentry.io/for/ruby/?platform=sentry.ruby.rails#)
