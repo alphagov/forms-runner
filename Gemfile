@@ -10,9 +10,6 @@ gem "rails", "~> 7.0.6"
 gem "nokogiri", "~> 1.15.3"
 gem "puma", "~> 6.3.0"
 
-# Build JSON APIs with ease [https://github.com/rails/jbuilder]
-gem "jbuilder"
-
 # Use Sentry (https://sentry.io/for/ruby/?platform=sentry.ruby.rails#)
 gem "sentry-rails"
 gem "sentry-ruby"
