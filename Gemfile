@@ -7,11 +7,7 @@ ruby "3.2.2"
 gem "rails", "~> 7.0.6"
 
 # Use the Puma web server [https://github.com/puma/puma]
-gem "nokogiri", "~> 1.15.3"
 gem "puma", "~> 6.3.0"
-
-# Build JSON APIs with ease [https://github.com/rails/jbuilder]
-gem "jbuilder"
 
 # Use Sentry (https://sentry.io/for/ruby/?platform=sentry.ruby.rails#)
 gem "sentry-rails"
@@ -41,23 +37,18 @@ gem "tzinfo-data"
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
 
-# Use Sass to process CSS
-# gem "sassc-rails"
-
-# Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
-# gem "image_processing", "~> 1.2"
-
 # For forms-api
 gem "activeresource"
 
+# For GOV.UK branding
 gem "govuk-components", "~> 4.0.0"
 gem "govuk_design_system_formbuilder", "~> 4.0.0"
 
+# For compiling our frontend assets
+gem "vite_rails"
+
 # validate postcodes
 gem "uk_postcode"
-
-# Support for locale tasks
-gem "i18n-tasks", "~> 1.0.12"
 
 # For structured logging
 gem "lograge"
@@ -68,6 +59,9 @@ group :development, :test do
 
   gem "factory_bot_rails"
   gem "faker"
+
+  # Support for locale tasks tests
+  gem "i18n-tasks", "~> 1.0.12"
 
   gem "rspec-rails"
   gem "rubocop-govuk", require: false
@@ -87,15 +81,14 @@ end
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
-  gem "climate_control"
   gem "rails-controller-testing"
   gem "selenium-webdriver"
   gem "simplecov"
   gem "webdrivers"
 end
 
+# For security auditing gem vulnerabilities. RUN IN CI
 gem "bundler-audit", "~> 0.9.0"
 
+# For detecting security vulnerabilities in Ruby on Rails applications via static analysis.
 gem "brakeman", "~> 6.0"
-
-gem "vite_rails"
