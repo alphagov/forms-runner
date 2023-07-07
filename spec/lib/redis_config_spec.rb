@@ -6,10 +6,9 @@ RSpec.describe RedisConfig do
   let(:vcap_env) { nil }
   let(:redis_url_env) { nil }
 
-  around do |example|
-    ClimateControl.modify VCAP_SERVICES: vcap_env, REDIS_URL: redis_url_env do
-      example.run
-    end
+  before do
+    allow(ENV).to receive(:fetch).with("VCAP_SERVICES", nil).and_return(vcap_env)
+    allow(ENV).to receive(:fetch).with("REDIS_URL", nil).and_return(redis_url_env)
   end
 
   context "when VCAP_SERVICES is set" do
