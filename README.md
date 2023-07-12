@@ -127,6 +127,14 @@ bin/rake run_code_quality_checks
 
 Use the [update_app_versions.sh script in forms-deploy](https://github.com/alphagov/forms-deploy/blob/main/support/update_app_versions.sh)
 
+## Logging
+
+- HTTP access logs are managed using [Lograge](https://github.com/roidrage/lograge) and configured within [the application config](./config/application.rb)
+- Custom app logging should be made via the [LogEventService](./app/services/log_event_service.rb) and [EventLogger](./app/lib/event_logger.rb). This is
+independent to any Lograge configuration.
+- The output format is JSON using the [JsonLogFormatter](./app/lib/json_log_formatter.rb) to enable simpler searching and visbility especially in Splunk.
+- **DO NOT** use [log_tags](https://guides.rubyonrails.org/configuring.html#config-log-tags) since it breaks the JSON formatting produced by Lograge.
+
 ## Support
 
 Raise a Github issue if you need support.
