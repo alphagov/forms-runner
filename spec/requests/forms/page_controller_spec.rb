@@ -362,36 +362,21 @@ RSpec.describe Forms::PageController, type: :request do
         end
 
         it "Logs the change_answer_page_save event" do
-          expect(EventLogger).to receive(:log).with("change_answer_page_save",
-                                                    { form: form_data.name,
-                                                      method: "POST",
-                                                      question_number: form_data.pages.first.position,
-                                                      question_text: form_data.pages.first.question_text,
-                                                      url: "http://www.example.com/form/2/#{form_data.form_slug}/1?changing_existing_answer=true&question%5Btext%5D=answer+text" })
+          expect(EventLogger).to receive(:log_page_event).with(instance_of(Context), instance_of(Step), instance_of(ActionDispatch::Request), "change_answer_page_save", nil)
           post save_form_page_path("form", 2, form_data.form_slug, 1, params: { question: { text: "answer text" }, changing_existing_answer: true })
         end
       end
 
       context "with the first page" do
         it "Logs the first_page_save event" do
-          expect(EventLogger).to receive(:log).with("first_page_save",
-                                                    { form: form_data.name,
-                                                      method: "POST",
-                                                      question_number: form_data.pages.first.position,
-                                                      question_text: form_data.pages.first.question_text,
-                                                      url: "http://www.example.com/form/2/#{form_data.form_slug}/1" })
+          expect(EventLogger).to receive(:log_page_event).with(instance_of(Context), instance_of(Step), instance_of(ActionDispatch::Request), "first_page_save", nil)
           post save_form_page_path("form", 2, form_data.form_slug, 1), params: { question: { text: "answer text" } }
         end
       end
 
       context "with a subsequent page" do
         it "Logs the page_save event" do
-          expect(EventLogger).to receive(:log).with("page_save",
-                                                    { form: form_data.name,
-                                                      method: "POST",
-                                                      question_number: form_data.pages.second.position,
-                                                      question_text: form_data.pages.second.question_text,
-                                                      url: "http://www.example.com/form/2/#{form_data.form_slug}/2" })
+          expect(EventLogger).to receive(:log_page_event).with(instance_of(Context), instance_of(Step), instance_of(ActionDispatch::Request), "page_save", nil)
           post save_form_page_path("form", 2, form_data.form_slug, 2), params: { question: { text: "answer text" } }
         end
       end
@@ -408,27 +393,15 @@ RSpec.describe Forms::PageController, type: :request do
 
         context "when an optional question is completed" do
           it "Logs the optional_save event with skipped_question as true" do
-            expect(EventLogger).to receive(:log).with("optional_save",
-                                                      { form: form_data.name,
-                                                        method: "POST",
-                                                        question_number: form_data.pages.second.position,
-                                                        question_text: form_data.pages.second.question_text,
-                                                        skipped_question: "false",
-                                                        url: "http://www.example.com/form/2/#{form_data.form_slug}/2" })
-            post save_form_page_path("form", 2, form_data.form_slug, 2), params: { question: { text: "answer text" } }
+            expect(EventLogger).to receive(:log_page_event).with(instance_of(Context), instance_of(Step), instance_of(ActionDispatch::Request), "optional_save", true)
+            post save_form_page_path("form", 2, form_data.form_slug, 2), params: { question: { text: "" } }
           end
         end
 
         context "when an optional question is skipped" do
           it "Logs the optional_save event with skipped_question as false" do
-            expect(EventLogger).to receive(:log).with("optional_save",
-                                                      { form: form_data.name,
-                                                        method: "POST",
-                                                        question_number: form_data.pages.second.position,
-                                                        question_text: form_data.pages.second.question_text,
-                                                        skipped_question: "true",
-                                                        url: "http://www.example.com/form/2/#{form_data.form_slug}/2" })
-            post save_form_page_path("form", 2, form_data.form_slug, 2), params: { question: { text: "" } }
+            expect(EventLogger).to receive(:log_page_event).with(instance_of(Context), instance_of(Step), instance_of(ActionDispatch::Request), "optional_save", false)
+            post save_form_page_path("form", 2, form_data.form_slug, 2), params: { question: { text: "answer text" } }
           end
         end
       end

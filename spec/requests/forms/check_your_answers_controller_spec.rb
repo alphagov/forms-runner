@@ -115,7 +115,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         before do
           post save_form_page_path("form", 2, "form-1", 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
           post save_form_page_path("form", 2, "form-1", 2), params: { question: { text: "answer text" }, changing_existing_answer: false }
-          allow(EventLogger).to receive(:log).at_least(:once)
+          allow(EventLogger).to receive(:log_form_event).at_least(:once)
           get check_your_answers_path(mode: "form", form_id: 2, form_slug: form_data.form_slug)
         end
 
@@ -137,7 +137,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         end
 
         it "Logs the form_check_answers event" do
-          expect(EventLogger).to have_received(:log).with("form_check_answers", { form: form_data.name, method: "GET", url: "http://www.example.com/form/2/#{form_data.form_slug}/#{CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG}" })
+          expect(EventLogger).to have_received(:log_form_event).with(instance_of(Context), instance_of(ActionDispatch::Request), "check_answers")
         end
       end
 
