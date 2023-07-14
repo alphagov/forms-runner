@@ -1,0 +1,17 @@
+<% if question.answer_settings.input_type == "single_line" %>
+  <%= form_builder.govuk_text_field :text,
+                                    label: { tag: 'h1',
+                                             size: 'l',
+                                             text: question_text_with_extra_suffix
+                                    },
+                                    hint: { text: question.hint_text },
+                                    width: 'one-half' %>
+<% else %>
+  <%= form_builder.govuk_text_area :text,
+                                   label: { tag: 'h1',
+                                            size: 'l',
+                                            text:  question_text_with_extra_suffix
+                                   },
+                                   hint: { text: question.hint_text },
+                                   rows: 5 %>
+<% end %>
