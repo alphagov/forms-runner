@@ -10,9 +10,7 @@ module Question
     end
 
     def question_text_with_extra_suffix
-      return question.question_text if extra_question_text_suffix.blank?
-
-      [question.question_text, extra_question_text_suffix.html_safe].compact.join(" ").html_safe
+      [CGI.escapeHTML(question.question_text), extra_question_text_suffix].compact_blank.join(" ").html_safe
     end
   end
 end

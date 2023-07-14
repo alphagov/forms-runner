@@ -25,11 +25,7 @@ module ApplicationHelper
     mode_string = hidden_text_mode(mode)
     question = page.question.show_optional_suffix ? t("page.optional", question_text: page.question_text) : page.question_text
 
-    if mode_string.blank?
-      question
-    else
-      "#{CGI.escapeHTML(question)} #{mode_string}".html_safe
-    end
+    [CGI.escapeHTML(question), mode_string].compact_blank.join(" ").html_safe
   end
 
   def hidden_text_mode(mode)
