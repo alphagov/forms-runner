@@ -18,6 +18,15 @@ RSpec.describe ApplicationHelper, type: :helper do
       end
     end
 
+    context "with unsafe question text" do
+      it "returns the escaped title with the optional suffix" do
+        page = OpenStruct.new(question_text: "What is your name? <script>alert(\"Hi\")</script>", question: OpenStruct.new(show_optional_suffix: false))
+        mode = OpenStruct.new(preview?: true, preview_draft?: true)
+        expected_output = "What is your name? &lt;script&gt;alert(&quot;Hi&quot;)&lt;/script&gt; <span class='govuk-visually-hidden'>&nbsp;draft preview</span>"
+        expect(helper.question_text_with_optional_suffix(page, mode)).to eq(expected_output)
+      end
+    end
+
     context "with a required question" do
       it "returns the title with the optional suffix" do
         page = OpenStruct.new(question_text: "What is your name?", question: OpenStruct.new(show_optional_suffix: false))

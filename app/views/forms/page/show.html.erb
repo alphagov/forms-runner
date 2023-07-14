@@ -12,7 +12,7 @@
       <% if @step.question&.errors&.any? %>
         <%= form.govuk_error_summary %>
       <% end %>
-        <%= render :partial => ActiveSupport::Inflector.underscore(@step.question.model_name.name), :locals => { :page => @step, :form => form } %>
+        <%== render :partial => ActiveSupport::Inflector.underscore(@step.question.model_name.name), :locals => { :page => @step, :form => form } %>
       <%= form.govuk_submit %>
     <% end %>
 

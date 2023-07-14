@@ -28,7 +28,7 @@ module ApplicationHelper
     if mode_string.blank?
       question
     else
-      [question, mode_string].join(" ")
+      "#{CGI.escapeHTML(question)} #{mode_string}".html_safe
     end
   end
 
