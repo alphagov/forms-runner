@@ -43,6 +43,30 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
   end
 
+  describe "#hidden_text_mode" do
+    let(:mode) { OpenStruct.new(preview?: false) }
+
+    it "returns empty string by default if not in some preview mode" do
+      expect(helper.hidden_text_mode(mode)).to eq ""
+    end
+
+    context "when previewing in draft mode" do
+      let(:mode) { OpenStruct.new(preview?: true, preview_draft?: true, preview_live?: false) }
+
+      it "returns a visually hidden span with the mode name" do
+        expect(helper.hidden_text_mode(mode)).to eq "<span class='govuk-visually-hidden'>&nbsp;draft preview</span>"
+      end
+    end
+
+    context "when previewing in live mode " do
+      let(:mode) { OpenStruct.new(preview?: true, preview_draft?: false, preview_live?: true) }
+
+      it "returns a visually hidden span with the mode name" do
+        expect(helper.hidden_text_mode(mode)).to eq "<span class='govuk-visually-hidden'>&nbsp;live preview</span>"
+      end
+    end
+  end
+
   describe "#form_title" do
     context "when there is no error" do
       context "when in live mode" do
