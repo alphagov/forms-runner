@@ -73,6 +73,7 @@ module FormsRunner
         h[:host] = event.payload[:host]
         h[:request_id] = event.payload[:request_id]
         h[:form_id] = event.payload[:form_id] if event.payload[:form_id]
+        h[:exception] = event.payload[:exception] if event.payload[:exception]
       end
     end
   end
