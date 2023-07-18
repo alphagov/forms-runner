@@ -27,3 +27,6 @@ maintenance_mode:
   bypass_ips:
 
 forms_env: local
+
+# When set to true, any capybara tests will run chrome normally rather than in headless mode.
+show_browser_during_tests: false
