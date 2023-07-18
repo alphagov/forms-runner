@@ -23,8 +23,8 @@ RSpec.describe Question::PhoneNumberComponent::View, type: :component do
       expect(page).to have_css("input[type='tel'][name='form[phone_number]']")
     end
 
-    it "renders at one half the width of the parent container" do
-      expect(page.native.to_html).to include('class="govuk-input govuk-!-width-one-half"')
+    it "renders at 20-character width (https://design-system.service.gov.uk/components/text-input/#fixed-width-inputs)" do
+      expect(page).to have_css(".govuk-input.govuk-input--width-20")
     end
 
     it "renders the text input field with autocomplete attribute" do
