@@ -2,14 +2,15 @@
 
 module MainComponent
   class View < ViewComponent::Base
-    def initialize(mode:, is_question: false)
+    def initialize(mode:, is_question: false, is_component_preview: false)
       super
       @mode = mode
       @is_question = is_question
+      @is_component_preview = is_component_preview
     end
 
     def call
-      tag.main(class: "govuk-main-wrapper #{mode_class} #{is_question_class}", id: "main-content", role: "main") do
+      tag.main(class: "govuk-main-wrapper #{mode_class} #{is_question_class}", id: @is_component_preview ? nil : "main-content", role: "main") do
         content
       end
     end

@@ -2,6 +2,9 @@
 require "spec_helper"
 require "view_component/test_helpers"
 require "capybara/rspec"
+require "selenium/webdriver"
+require "axe-rspec"
+
 ENV["RAILS_ENV"] ||= "test"
 require_relative "../config/environment"
 # Prevent database truncation if the environment is production
@@ -11,6 +14,8 @@ Dir[Rails.root.join("spec/support/**/*.rb")].sort.each { |f| require f }
 
 require "rspec/rails"
 # Add additional requires below this line. Rails is not loaded until this point!
+
+require_relative "support/capybara_headless_chrome"
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are

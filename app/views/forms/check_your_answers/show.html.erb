@@ -1,6 +1,6 @@
 <% set_page_title(form_title(form_name: @current_context.form.name, page_name: t('form.check_your_answers.title'), mode: @mode)) %>
 
-<% content_for :before_content do %>
+<% content_for :back_link do %>
   <% if @back_link %>
     <%= link_to "Back", @back_link, class: "govuk-back-link" %>
   <% end %>
