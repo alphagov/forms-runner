@@ -14,6 +14,7 @@ class Question::NumberComponent::NumberComponentPreview < ViewComponent::Preview
     question = OpenStruct.new(number: "7",
                               answer_type: "number",
                               question_text: "Number of days in a week",
+                              hint_text: "Number after 6",
                               answer_settings: nil)
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
