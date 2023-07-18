@@ -59,4 +59,7 @@ Rails.application.configure do
   # Allow storing session in cookies. This should only be allowed in local
   # development and testing. In production redis should be used
   config.unsafe_session_storage = true
+
+  # Allow previews so we can run feature tests against components
+  config.view_component.show_previews = true
 end
