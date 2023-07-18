@@ -1,49 +1,18 @@
-<!DOCTYPE html>
-<html lang="en" class="govuk-template ">
-  <head>
-    <meta charset="utf-8">
-    <title><%= page_title %></title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="theme-color" content="#0b0c0c">
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
 
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<% content_for :skip_link do %>
+  <a href="#main-content" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
+<% end %>
 
-    <link rel="shortcut icon" type="image/x-icon" href="<%= vite_asset_path "#{govuk_assets_path}/images/favicon.ico"%>" sizes="16x16 32x32 48x48" />
-    <link rel="mask-icon" href="<%= vite_asset_path "#{govuk_assets_path}/images/govuk-mask-icon.svg"%>" color="#0b0c0c" />
-    <link rel="apple-touch-icon" href="<%= vite_asset_path "#{govuk_assets_path}/images/govuk-apple-touch-icon-180x180.png"%>" sizes="180x180" />
-    <link rel="apple-touch-icon" href="<%= vite_asset_path "#{govuk_assets_path}/images/govuk-apple-touch-icon-167x167.png"%>" sizes="167x167" />
-    <link rel="apple-touch-icon" href="<%= vite_asset_path "#{govuk_assets_path}/images/govuk-apple-touch-icon-152x152.png"%>" sizes="152x152" />
-    <link rel="apple-touch-icon" href="<%= vite_asset_path "#{govuk_assets_path}/images/govuk-apple-touch-icon.png"%>" />
-    <meta property="og:image" content="<%= vite_asset_path "#{govuk_assets_path}/images/govuk-opengraph-image.png" %>">
+<% content_for :header do %>
+  <%= render(FormHeaderComponent::View.new(current_context: @current_context, mode: @mode)) %>
+<% end %>
 
-    <%= vite_stylesheet_tag 'application.scss' %>
+<% content_for :before_content do %>
+  <%= render(PreviewComponent::View.new(mode: @mode, question_edit_link: @question_edit_link)) %>
+  <%= yield :back_link %>
+<% end %>
 
-  </head>
-
-  <body class="govuk-template__body ">
-    <script>
-      if ('noModule' in HTMLScriptElement.prototype) {
-        document.body.classList
-          .add('js-enabled')
-      }
-    </script>
-
-    <a href="#main-content" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
-
-    <%= render(FormHeaderComponent::View.new(current_context: @current_context, mode: @mode)) %>
-
-    <div class="govuk-width-container ">
-      <%= render(PreviewComponent::View.new(mode: @mode, question_edit_link: @question_edit_link)) %>
-
-      <%= yield(:before_content) %>
-
-      <%= render(MainComponent::View.new(mode: @mode, is_question: @is_question)) do %>
-        <%= yield %>
-      <% end %>
-
-    </div>
+<% content_for :footer do %>
 
     <% meta_links = {t("footer.accessibility_statement") => accessibility_statement_path, t("footer.cookies") => cookies_path} %>
     <% if @current_context.present? %>
@@ -51,8 +20,6 @@
     <% end -%>
 
     <%= govuk_footer meta_items_title: t("footer.helpful_links"), meta_items: meta_links %>
+<% end %>
 
-    <%= vite_client_tag %>
-    <%= vite_javascript_tag 'application' %>
-  </body>
-</html>
+<%= render template: "layouts/base" %>
