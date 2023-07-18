@@ -1,7 +1,6 @@
-<%= form_builder.govuk_text_field :email,
+<%= form_builder.govuk_email_field :email,
                                   label: { tag: 'h1', size: 'l', text: question_text_with_extra_suffix },
                                   hint: { text: question.hint_text },
                                   autocomplete: 'email',
-                                  type: 'email',
                                   spellcheck: false
 %>
