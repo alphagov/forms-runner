@@ -19,8 +19,8 @@ RSpec.describe Question::PhoneNumberComponent::View, type: :component do
       expect(page.find("h1")).to have_text(question.question_text)
     end
 
-    it "renders a text input field" do
-      expect(page).to have_css("input[type='text'][name='form[phone_number]']")
+    it "renders a telephone input field" do
+      expect(page).to have_css("input[type='tel'][name='form[phone_number]']")
     end
 
     it "renders at one half the width of the parent container" do
@@ -28,14 +28,14 @@ RSpec.describe Question::PhoneNumberComponent::View, type: :component do
     end
 
     it "renders the text input field with autocomplete attribute" do
-      expect(page).to have_css("input[type='text'][name='form[phone_number]'][autocomplete='tel']")
+      expect(page).to have_css("input[type='tel'][name='form[phone_number]'][autocomplete='tel']")
     end
 
     context "when the user has provided an answer" do
       let(:answer_text) { 8 }
 
       it "sets the field value" do
-        expect(page.find("input[type='text'][name='form[phone_number]']").value).to eq answer_text.to_s
+        expect(page.find("input[type='tel'][name='form[phone_number]']").value).to eq answer_text.to_s
       end
     end
 
