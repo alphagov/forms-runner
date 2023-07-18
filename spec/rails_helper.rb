@@ -2,6 +2,8 @@
 require "spec_helper"
 require "view_component/test_helpers"
 require "capybara/rspec"
+require "axe-rspec"
+
 ENV["RAILS_ENV"] ||= "test"
 require_relative "../config/environment"
 # Prevent database truncation if the environment is production
