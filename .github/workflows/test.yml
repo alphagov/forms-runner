@@ -21,19 +21,20 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      # Add or replace dependency steps here
-      # The ruby version is taken from the .ruby-version file, no need to specify here.
-      - name: Install Ruby and gems
-        uses: ruby/setup-ruby@250fcd6a742febb1123a77a841497ccaa8b9e939
-        with:
-          bundler-cache: true
-      - name: Install frontend dependencies
-        run: npm ci
-      - name: Run Frontend build
-        run: bin/vite build
+      - name: Setup Rails
+        uses: ./.github/workflows/setup_rails
       # Add or replace test runners here
       - name: Run tests
         run: bundle exec rspec
+  lint:
+    runs-on: ubuntu-latest
+    env:
+      RAILS_ENV: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Setup Rails
+        uses: ./.github/workflows/setup_rails
       # Add or replace any other lints here
       - name: Security audit dependencies
         run: bundler exec bundle audit check

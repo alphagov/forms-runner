@@ -1,0 +1,16 @@
+name: "Ruby on Rails setup"
+description: "Installs Ruby, installs frontend and backend dependencies, then runs the frontend build"
+runs:
+  using: "composite"
+  steps:
+    # The ruby version is taken from the .ruby-version file, no need to specify here.
+    - name: Install Ruby and gems
+      uses: ruby/setup-ruby@250fcd6a742febb1123a77a841497ccaa8b9e939
+      with:
+        bundler-cache: true
+    - name: Install frontend dependencies
+      run: npm ci
+      shell: bash
+    - name: Run Frontend build
+      run: bin/vite build
+      shell: bash
