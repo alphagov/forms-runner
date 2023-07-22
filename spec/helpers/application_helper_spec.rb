@@ -14,7 +14,7 @@ RSpec.describe ApplicationHelper, type: :helper do
       it "returns the title with the optional suffix" do
         page = OpenStruct.new(question_text: "What is your name?", question: OpenStruct.new(show_optional_suffix: true))
         mode = OpenStruct.new(preview?: false)
-        expect(helper.question_text_with_optional_suffix_inc_mode(page, mode)).to eq(I18n.t("page.optional", question_text: "What is your name?"))
+        expect(helper.question_text_with_optional_suffix_inc_mode(page, mode)).to eq("What is your name? #{I18n.t("page.optional")}")
       end
     end
 
