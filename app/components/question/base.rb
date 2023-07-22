@@ -10,7 +10,7 @@ module Question
     end
 
     def question_text_with_extra_suffix
-      [CGI.escapeHTML(question.question_text), extra_question_text_suffix].compact_blank.join(" ").html_safe
+      [CGI.escapeHTML(question.question_text_with_optional_suffix), extra_question_text_suffix].compact_blank.join(" ").html_safe
     end
   end
 end
