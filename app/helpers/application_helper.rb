@@ -21,7 +21,7 @@ module ApplicationHelper
     "#{t('page_titles.error_prefix') if error}#{page_name}#{mode_string} - #{form_name}"
   end
 
-  def question_text_with_optional_suffix(page, mode)
+  def question_text_with_optional_suffix_inc_mode(page, mode)
     mode_string = hidden_text_mode(mode)
     question = page.question.show_optional_suffix ? t("page.optional", question_text: page.question_text) : page.question_text
 
