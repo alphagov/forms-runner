@@ -22,4 +22,26 @@ RSpec.shared_examples "a question model" do |_parameter|
   it "responds to has_long_answer?" do
     expect(question.has_long_answer?).to be(true).or be(false)
   end
+
+  describe "#question_text_with_optional_suffix" do
+    let(:is_optional?) { false }
+
+    before do
+      question.question_text = "What is the meaning of life?"
+      allow(question).to receive(:is_optional?).and_return(is_optional?)
+    end
+
+    it "responds to question_text_with_optional_suffix" do
+      expect(question.question_text_with_optional_suffix).to eq(question.question_text)
+    end
+
+    context "when question is optional" do
+      let(:is_optional?) { true }
+
+      it "responds to question_text_with_optional_suffix and includes optional suffix" do
+        expect(question.question_text_with_optional_suffix).to eq("#{question.question_text} #{I18n.t('page.optional')}")
+      end
+    end
+  end
+
 end
