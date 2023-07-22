@@ -23,9 +23,8 @@ module ApplicationHelper
 
   def question_text_with_optional_suffix_inc_mode(page, mode)
     mode_string = hidden_text_mode(mode)
-    question = page.question.show_optional_suffix ? "#{page.question_text} #{t('page.optional')}" : page.question_text
 
-    [CGI.escapeHTML(question), mode_string].compact_blank.join(" ").html_safe
+    [CGI.escapeHTML(page.question.question_text_with_optional_suffix), mode_string].compact_blank.join(" ").html_safe
   end
 
   def hidden_text_mode(mode)
