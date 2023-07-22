@@ -57,6 +57,10 @@ RSpec.describe Question::Selection, type: :model do
         expect(question).not_to be_valid
         expect(question.errors[:selection]).to include(I18n.t("activemodel.errors.models.question/selection.attributes.selection.both_none_and_value_selected"))
       end
+
+      it "does not include '(optional)' in the question text" do
+        expect(question.question_text_with_optional_suffix).to eq(question.question_text)
+      end
     end
   end
 
