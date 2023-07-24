@@ -9,45 +9,19 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
   end
 
-  describe "#question_text_with_optional_suffix" do
-    context "with an optional question" do
-      it "returns the title with the optional suffix" do
-        page = OpenStruct.new(question_text: "What is your name?", question: OpenStruct.new(show_optional_suffix: true))
-        mode = OpenStruct.new(preview?: false)
-        expect(helper.question_text_with_optional_suffix(page, mode)).to eq(I18n.t("page.optional", question_text: "What is your name?"))
-      end
+  describe "#question_text_with_optional_suffix_inc_mode" do
+    it "renders the question text followed by the mode the page is viewed in" do
+      page = OpenStruct.new(question: OpenStruct.new(question_text_with_optional_suffix: "What is your name?"))
+      allow(helper).to receive(:hidden_text_mode).and_return("<span>PREVIEWING MODE</span>")
+      expect(helper.question_text_with_optional_suffix_inc_mode(page, "mode")).to eq("What is your name? <span>PREVIEWING MODE</span>")
     end
 
     context "with unsafe question text" do
-      it "returns the escaped title with the optional suffix" do
-        page = OpenStruct.new(question_text: "What is your name? <script>alert(\"Hi\")</script>", question: OpenStruct.new(show_optional_suffix: false))
-        mode = OpenStruct.new(preview?: true, preview_draft?: true)
-        expected_output = "What is your name? &lt;script&gt;alert(&quot;Hi&quot;)&lt;/script&gt; <span class='govuk-visually-hidden'>&nbsp;draft preview</span>"
-        expect(helper.question_text_with_optional_suffix(page, mode)).to eq(expected_output)
-      end
-    end
-
-    context "with a required question" do
-      it "returns the title with the optional suffix" do
-        page = OpenStruct.new(question_text: "What is your name?", question: OpenStruct.new(show_optional_suffix: false))
-        mode = OpenStruct.new(preview?: false)
-        expect(helper.question_text_with_optional_suffix(page, mode)).to eq("What is your name?")
-      end
-    end
-
-    context "with preview draft mode" do
-      it "returns the title with the optional suffix with visually hidden text" do
-        page = OpenStruct.new(question_text: "What is your name?", question: OpenStruct.new(show_optional_suffix: false))
-        mode = OpenStruct.new(preview?: true, preview_draft?: true)
-        expect(helper.question_text_with_optional_suffix(page, mode)).to eq("What is your name? <span class='govuk-visually-hidden'>&nbsp;draft preview</span>")
-      end
-    end
-
-    context "with live preview live mode" do
-      it "returns the title with the optional suffix with visually hidden text" do
-        page = OpenStruct.new(question_text: "What is your name?", question: OpenStruct.new(show_optional_suffix: false))
-        mode = OpenStruct.new(preview?: true, preview_live?: true)
-        expect(helper.question_text_with_optional_suffix(page, mode)).to eq("What is your name? <span class='govuk-visually-hidden'>&nbsp;live preview</span>")
+      it "returns the escaped title but doesn't escape the trusted suffix" do
+        page = OpenStruct.new(question: OpenStruct.new(question_text_with_optional_suffix: "What is your name? <script>alert(\"Hi\")</script>"))
+        allow(helper).to receive(:hidden_text_mode).and_return("<span>not escaped</span>")
+        expected_output = "What is your name? &lt;script&gt;alert(&quot;Hi&quot;)&lt;/script&gt; <span>not escaped</span>"
+        expect(helper.question_text_with_optional_suffix_inc_mode(page, "")).to eq(expected_output)
       end
     end
   end

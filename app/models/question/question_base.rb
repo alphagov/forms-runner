@@ -38,5 +38,11 @@ module Question
     def show_optional_suffix
       is_optional?
     end
+
+    def question_text_with_optional_suffix
+      return question_text unless show_optional_suffix
+
+      "#{question_text} #{I18n.t('page.optional')}"
+    end
   end
 end

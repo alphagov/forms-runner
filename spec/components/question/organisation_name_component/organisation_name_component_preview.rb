@@ -2,7 +2,7 @@ class Question::OrganisationNameComponent::OrganisationNameComponentPreview < Vi
   def organisation_name_field
     question = OpenStruct.new(text: "Organisations R Us",
                               answer_type: "organisation_name",
-                              question_text: "What is your company name?",
+                              question_text_with_optional_suffix: "What is your company name?",
                               answer_settings: nil)
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
@@ -13,7 +13,7 @@ class Question::OrganisationNameComponent::OrganisationNameComponentPreview < Vi
   def organisation_name_field_with_hint
     question = OpenStruct.new(text: "Organisations R Us",
                               answer_type: "organisation_name",
-                              question_text: "What is your company name?",
+                              question_text_with_optional_suffix: "What is your company name?",
                               hint_text: "As registered with Companies House",
                               answer_settings: nil)
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,

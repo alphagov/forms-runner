@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe Question::EmailComponent::View, type: :component do
   let(:question_page) { build :page, answer_type: "email" }
   let(:answer_text) { nil }
-  let(:question) { DataStruct.new(email: answer_text, question_text: question_page.question_text, hint_text: question_page.hint_text, answer_settings: nil) }
+  let(:question) { DataStruct.new(email: answer_text, question_text_with_optional_suffix: question_page.question_text, hint_text: question_page.hint_text, answer_settings: nil) }
   let(:extra_question_text_suffix) { nil }
   let(:form_builder) do
     GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,

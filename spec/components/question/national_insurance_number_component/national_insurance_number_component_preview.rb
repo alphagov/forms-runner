@@ -2,7 +2,7 @@ class Question::NationalInsuranceNumberComponent::NationalInsuranceNumberCompone
   def national_insurance_number_field
     question = OpenStruct.new(national_insurance_number: "AB 123456 C",
                               answer_type: "national_insurance_number",
-                              question_text: "What is your NI number?",
+                              question_text_with_optional_suffix: "What is your NI number?",
                               answer_settings: nil)
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
@@ -13,7 +13,7 @@ class Question::NationalInsuranceNumberComponent::NationalInsuranceNumberCompone
   def national_insurance_number_field_with_hint
     question = OpenStruct.new(national_insurance_number: "AB 123456 C",
                               answer_type: "national_insurance_number",
-                              question_text: "What is your NI number?",
+                              question_text_with_optional_suffix: "What is your NI number?",
                               hint_text: "eg. AB 12 34 56 C",
                               answer_settings: nil)
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,

@@ -1,5 +1,5 @@
 <% if page.question.allow_multiple_answers? %>
-  <%= form.govuk_check_boxes_fieldset(:selection, legend: { tag: 'h1', size: 'l', text: question_text_with_optional_suffix(page, @mode) }, hint: { text: page.hint_text }) do %>
+  <%= form.govuk_check_boxes_fieldset(:selection, legend: { tag: 'h1', size: 'l', text: question_text_with_optional_suffix_inc_mode(page, @mode) }, hint: { text: page.hint_text }) do %>
     <% page.answer_settings.selection_options.each_with_index do |option, index| %>
       <%= form.govuk_check_box :selection, option.name, label: { text: option.name }, link_errors: index == 0  %>
     <% end %>
@@ -9,7 +9,7 @@
     <% end %>
   <% end %>
 <% else %>
-  <%= form.govuk_radio_buttons_fieldset(:selection, legend: { tag: 'h1', size: 'l', text: question_text_with_optional_suffix(page, @mode) }, hint: { text: page.hint_text }) do %>
+  <%= form.govuk_radio_buttons_fieldset(:selection, legend: { tag: 'h1', size: 'l', text: question_text_with_optional_suffix_inc_mode(page, @mode) }, hint: { text: page.hint_text }) do %>
     <%= form.hidden_field :selection %>
     <% page.answer_settings.selection_options.each_with_index do |option, index| %>
       <%= form.govuk_radio_button :selection, option.name, label: { text: option.name }, link_errors: index == 0  %>

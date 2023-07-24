@@ -103,7 +103,7 @@ en:
     draft_preview: draft preview
     live_preview: live preview
     none_of_the_above: None of the above
-    optional: "%{question_text} (optional)"
+    optional: "(optional)"
   page_titles:
     error_prefix: 'Error: '
   question/name:
