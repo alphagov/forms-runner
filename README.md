@@ -26,10 +26,8 @@ git clone git@github.com:alphagov/forms-runner.git
 cd forms-runner
 
 # 2. Run the setup script
-bin/setup
+./bin/setup
 ```
-
-`bin/setup` is idempotent, so you can also run it whenever you pull new changes.
 
 ## Secrets vs Settings
 
@@ -68,14 +66,14 @@ You can either run the development task:
 
 ```bash
 # Run the foreman dev server. This will also start the frontend dev task
-bin/dev
+./bin/dev
 ```
 
 or run the rails server:
 
 ```bash
 # Run a local Rails server
-bin/rails server
+bundle exec rails server
 
 # When running the server, you can use any of the frontend tasks, e.g.:
 npm run dev
@@ -110,17 +108,7 @@ If you are planning to deploy to GOV.UK PaaS without using the container, you ca
 
 ```bash
 # Run the Ruby test suite
-bin/rake
-# To run the Javascript test suite, run
-npm run test
-```
-
-### Running tasks before pushing
-
-Before pushing code changes, it's a good idea to run the tests, use rubocop to format your code, and normalize the locales. We have a rake task for running all of these commands in parallel:
-
-```bash
-bin/rake run_code_quality_checks
+bundle exec rake
 ```
 
 ## Updating versions
