@@ -180,7 +180,7 @@ GEM
       html-attributes-utils (~> 1.0.0, >= 1.0.0)
       pagy (~> 6.0)
       view_component (~> 3.3.0)
-    govuk_design_system_formbuilder (4.1.0)
+    govuk_design_system_formbuilder (4.1.1)
       actionview (>= 6.1)
       activemodel (>= 6.1)
       activesupport (>= 6.1)
@@ -189,7 +189,7 @@ GEM
       notifications-ruby-client (~> 5.1)
       rails (>= 4.1.0)
     highline (2.0.3)
-    html-attributes-utils (1.0.0)
+    html-attributes-utils (1.0.2)
       activesupport (>= 6.1.4.4)
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
@@ -227,7 +227,7 @@ GEM
     matrix (0.4.2)
     method_source (1.0.0)
     mini_mime (1.1.2)
-    minitest (5.18.1)
+    minitest (5.19.0)
     msgpack (1.6.0)
     net-imap (0.3.6)
       date
@@ -434,7 +434,7 @@ DEPENDENCIES
   factory_bot_rails
   faker
   govuk-components (~> 4.1.0)
-  govuk_design_system_formbuilder (~> 4.1.0)
+  govuk_design_system_formbuilder (~> 4.1.1)
   govuk_notify_rails
   i18n-tasks (~> 1.0.12)
   lograge
