@@ -14,12 +14,12 @@ COPY --chown=ruby:ruby Gemfile* ./
 RUN gem install bundler -v 2.4.10
 
 RUN bundle config set --local without development:test \
-  && bundle config set --local jobs "$(nproc)"
+    && bundle config set --local jobs "$(nproc)"
 
 RUN bundle install
 
-COPY --chown=ruby:ruby package.json ./
-RUN npm install --ignore-scripts
+COPY --chown=ruby:ruby package.json package-lock.json ./
+RUN npm ci --ignore-scripts
 
 ENV RAILS_ENV="${RAILS_ENV:-production}" \
     NODE_ENV="${NODE_ENV:-production}" \
@@ -32,6 +32,9 @@ COPY --chown=ruby:ruby . .
 # you can't run rails commands like assets:precompile without a secret key set
 # even though the command doesn't use the value itself
 RUN SECRET_KEY_BASE=dummyvalue rails assets:precompile
+
+# Remove devDependencies once assets have been built
+RUN npm ci --ignore-scripts --only=production
 
 CMD ["bash"]
 
