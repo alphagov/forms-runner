@@ -56,11 +56,11 @@ RSpec.describe Question::PhoneNumberComponent::View, type: :component do
     end
 
     context "with unsafe question text" do
-      let(:question_page) { build :page, answer_type: "number", question_text: "What is your name? <script>alert(\"Hi\")</script>" }
+      let(:question_page) { build :page, answer_type: "phone_number", question_text: "What is your phone number? <script>alert(\"Hi\")</script>" }
       let(:extra_question_text_suffix) { "<span>Some trusted html</span>" }
 
       it "returns the escaped title with the optional suffix" do
-        expected_output = "What is your name? &lt;script&gt;alert(\"Hi\")&lt;/script&gt; <span>Some trusted html</span>"
+        expected_output = "What is your phone number? &lt;script&gt;alert(\"Hi\")&lt;/script&gt; <span>Some trusted html</span>"
         expect(page.find("h1 .govuk-label").native.inner_html).to eq(expected_output)
       end
     end
