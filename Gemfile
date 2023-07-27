@@ -84,7 +84,6 @@ group :test do
   gem "rails-controller-testing"
   gem "selenium-webdriver"
   gem "simplecov"
-  gem "webdrivers"
 
   # axe-core for running automated accessibility checks
   gem "axe-core-rspec"
