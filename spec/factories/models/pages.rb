@@ -30,7 +30,7 @@ FactoryBot.define do
     trait :with_selections_settings do
       transient do
         only_one_option { "true" }
-        selection_options { [{ "name": "Option 1" }.as_json, { "name": "Option 2" }.as_json] }
+        selection_options { [DataStruct.new(name: "Option 1"), DataStruct.new(name: "Option 2")] }
       end
 
       answer_type { "selection" }
