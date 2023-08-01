@@ -1,4 +1,4 @@
-# GOV.UK Forms Runner [![Ruby on Rails CI](https://github.com/alphagov/forms-runner/actions/workflows/rubyonrails.yml/badge.svg)](https://github.com/alphagov/forms-runner/actions/workflows/rubyonrails.yml)
+# GOV.UK Forms Runner [![Tests](https://github.com/alphagov/forms-runner/actions/workflows/test.yml/badge.svg)](https://github.com/alphagov/forms-runner/actions/workflows/test.yml)
 
 GOV.UK Forms is a service for creating forms. GOV.UK Forms Runner is a an application which displays those forms to end users so that they can be filled in. It's a Ruby on Rails application without a database. It uses redis for state.
 
