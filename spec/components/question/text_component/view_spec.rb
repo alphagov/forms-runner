@@ -17,7 +17,7 @@ RSpec.describe Question::TextComponent::View, type: :component do
 
   describe "when component is short answer text field" do
     it "renders the question text as a heading" do
-      expect(page.find("h1")).to have_text(question.question_text)
+      expect(page.find("h1")).to have_text(question.question_text_with_optional_suffix)
     end
 
     it "renders a text input field" do
@@ -57,7 +57,7 @@ RSpec.describe Question::TextComponent::View, type: :component do
     let(:input_type) { "long_text" }
 
     it "renders the question text as a heading" do
-      expect(page.find("h1")).to have_text(question.question_text)
+      expect(page.find("h1")).to have_text(question.question_text_with_optional_suffix)
     end
 
     it "renders a textarea field" do

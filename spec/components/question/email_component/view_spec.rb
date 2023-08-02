@@ -16,7 +16,7 @@ RSpec.describe Question::EmailComponent::View, type: :component do
 
   describe "when component is email field" do
     it "renders the question text as a heading" do
-      expect(page.find("h1")).to have_text(question.question_text)
+      expect(page.find("h1")).to have_text(question.question_text_with_optional_suffix)
     end
 
     it "renders an email input field" do

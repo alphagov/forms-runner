@@ -18,7 +18,7 @@ RSpec.describe Question::DateComponent::View, type: :component do
 
   describe "when component is other date field" do
     it "renders the question text as a heading" do
-      expect(page.find("h1")).to have_text(question.question_text)
+      expect(page.find("h1")).to have_text(question.question_text_with_optional_suffix)
     end
 
     it "renders 3 text fields (day, month, year)" do
@@ -74,7 +74,7 @@ RSpec.describe Question::DateComponent::View, type: :component do
     let(:input_type) { "date_of_birth" }
 
     it "renders the question text as a heading" do
-      expect(page.find("h1")).to have_text(question.question_text)
+      expect(page.find("h1")).to have_text(question.question_text_with_optional_suffix)
     end
 
     it "renders 3 text fields (day, month, year)" do
@@ -130,7 +130,7 @@ RSpec.describe Question::DateComponent::View, type: :component do
     let(:answer_settings) { nil }
 
     it "renders the question text as a heading" do
-      expect(page.find("h1")).to have_text(question.question_text)
+      expect(page.find("h1")).to have_text(question.question_text_with_optional_suffix)
     end
 
     it "renders 3 text fields (day, month, year)" do
