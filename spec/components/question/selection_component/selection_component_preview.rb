@@ -4,12 +4,12 @@ class Question::SelectionComponent::SelectionComponentPreview < ViewComponent::P
                               answer_type: "selection",
                               is_optional?: false,
                               question_text_with_optional_suffix: "Which countries are part of United Kingdom?",
-                              answer_settings: DataStruct.new(only_one_option: "true",
+                              answer_settings: OpenStruct.new(only_one_option: "true",
                                                               selection_options: [
-                                                                DataStruct.new(name: "England"),
-                                                                DataStruct.new(name: "Scotland"),
-                                                                DataStruct.new(name: "Wales"),
-                                                                DataStruct.new(name: "Northern Ireland"),
+                                                                OpenStruct.new(name: "England"),
+                                                                OpenStruct.new(name: "Scotland"),
+                                                                OpenStruct.new(name: "Wales"),
+                                                                OpenStruct.new(name: "Northern Ireland"),
                                                               ]))
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
@@ -23,12 +23,12 @@ class Question::SelectionComponent::SelectionComponentPreview < ViewComponent::P
                               is_optional?: false,
                               question_text_with_optional_suffix: "Which countries are part of United Kingdom?",
                               hint_text: "Select one or more options",
-                              answer_settings: DataStruct.new(only_one_option: "true",
+                              answer_settings: OpenStruct.new(only_one_option: "true",
                                                               selection_options: [
-                                                                DataStruct.new(name: "England"),
-                                                                DataStruct.new(name: "Scotland"),
-                                                                DataStruct.new(name: "Wales"),
-                                                                DataStruct.new(name: "Northern Ireland"),
+                                                                OpenStruct.new(name: "England"),
+                                                                OpenStruct.new(name: "Scotland"),
+                                                                OpenStruct.new(name: "Wales"),
+                                                                OpenStruct.new(name: "Northern Ireland"),
                                                               ]))
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
@@ -41,12 +41,12 @@ class Question::SelectionComponent::SelectionComponentPreview < ViewComponent::P
                               answer_type: "selection",
                               is_optional?: true,
                               question_text_with_optional_suffix: "Which countries are part of United Kingdom?",
-                              answer_settings: DataStruct.new(only_one_option: "true",
+                              answer_settings: OpenStruct.new(only_one_option: "true",
                                                               selection_options: [
-                                                                DataStruct.new(name: "England"),
-                                                                DataStruct.new(name: "Scotland"),
-                                                                DataStruct.new(name: "Wales"),
-                                                                DataStruct.new(name: "Northern Ireland"),
+                                                                OpenStruct.new(name: "England"),
+                                                                OpenStruct.new(name: "Scotland"),
+                                                                OpenStruct.new(name: "Wales"),
+                                                                OpenStruct.new(name: "Northern Ireland"),
                                                               ]))
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
@@ -60,12 +60,12 @@ class Question::SelectionComponent::SelectionComponentPreview < ViewComponent::P
                               is_optional?: true,
                               question_text_with_optional_suffix: "Which countries are part of United Kingdom?",
                               hint_text: "This is a trick question...",
-                              answer_settings: DataStruct.new(only_one_option: "true",
+                              answer_settings: OpenStruct.new(only_one_option: "true",
                                                               selection_options: [
-                                                                DataStruct.new(name: "England"),
-                                                                DataStruct.new(name: "Scotland"),
-                                                                DataStruct.new(name: "Wales"),
-                                                                DataStruct.new(name: "Northern Ireland"),
+                                                                OpenStruct.new(name: "England"),
+                                                                OpenStruct.new(name: "Scotland"),
+                                                                OpenStruct.new(name: "Wales"),
+                                                                OpenStruct.new(name: "Northern Ireland"),
                                                               ]))
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
@@ -78,10 +78,10 @@ class Question::SelectionComponent::SelectionComponentPreview < ViewComponent::P
                               answer_type: "selection",
                               is_optional?: false,
                               question_text_with_optional_suffix: "Are you sure?",
-                              answer_settings: DataStruct.new(only_one_option: false,
+                              answer_settings: OpenStruct.new(only_one_option: false,
                                                               selection_options: [
-                                                                DataStruct.new(name: "Yes"),
-                                                                DataStruct.new(name: "No"),
+                                                                OpenStruct.new(name: "Yes"),
+                                                                OpenStruct.new(name: "No"),
                                                               ]))
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
@@ -95,10 +95,10 @@ class Question::SelectionComponent::SelectionComponentPreview < ViewComponent::P
                               is_optional?: false,
                               question_text_with_optional_suffix: "Have you recently been involved in a car accident?",
                               hint_text: "Anytime within the last 12 months",
-                              answer_settings: DataStruct.new(only_one_option: false,
+                              answer_settings: OpenStruct.new(only_one_option: false,
                                                               selection_options: [
-                                                                DataStruct.new(name: "Yes"),
-                                                                DataStruct.new(name: "No"),
+                                                                OpenStruct.new(name: "Yes"),
+                                                                OpenStruct.new(name: "No"),
                                                               ]))
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
@@ -111,12 +111,12 @@ class Question::SelectionComponent::SelectionComponentPreview < ViewComponent::P
                               answer_type: "selection",
                               is_optional?: true,
                               question_text_with_optional_suffix: "Which country is part of United Kingdom?",
-                              answer_settings: DataStruct.new(only_one_option: false,
+                              answer_settings: OpenStruct.new(only_one_option: false,
                                                               selection_options: [
-                                                                DataStruct.new(name: "England"),
-                                                                DataStruct.new(name: "France"),
-                                                                DataStruct.new(name: "Spain"),
-                                                                DataStruct.new(name: "Ireland"),
+                                                                OpenStruct.new(name: "England"),
+                                                                OpenStruct.new(name: "France"),
+                                                                OpenStruct.new(name: "Spain"),
+                                                                OpenStruct.new(name: "Ireland"),
                                                               ]))
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
@@ -130,12 +130,12 @@ class Question::SelectionComponent::SelectionComponentPreview < ViewComponent::P
                               is_optional?: true,
                               question_text_with_optional_suffix: "Which country is part of United Kingdom?",
                               hint_text: "This is a trick question...",
-                              answer_settings: DataStruct.new(only_one_option: false,
+                              answer_settings: OpenStruct.new(only_one_option: false,
                                                               selection_options: [
-                                                                DataStruct.new(name: "England"),
-                                                                DataStruct.new(name: "France"),
-                                                                DataStruct.new(name: "Spain"),
-                                                                DataStruct.new(name: "Ireland"),
+                                                                OpenStruct.new(name: "England"),
+                                                                OpenStruct.new(name: "France"),
+                                                                OpenStruct.new(name: "Spain"),
+                                                                OpenStruct.new(name: "Ireland"),
                                                               ]))
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
