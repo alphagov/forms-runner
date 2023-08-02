@@ -4,7 +4,7 @@ RSpec.describe Question::DateComponent::View, type: :component do
   let(:question_page) { build :page, :with_date_settings, input_type: }
   let(:input_type) { "other_date" }
   let(:answer_text) { nil }
-  let(:question) { DataStruct.new(date: answer_text, question_text_with_optional_suffix: question_page.question_text, hint_text: question_page.hint_text, answer_settings:) }
+  let(:question) { OpenStruct.new(date: answer_text, question_text_with_optional_suffix: question_page.question_text, hint_text: question_page.hint_text, answer_settings:) }
   let(:answer_settings) { question_page.answer_settings }
   let(:extra_question_text_suffix) { nil }
   let(:form_builder) do
