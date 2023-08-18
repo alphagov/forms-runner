@@ -254,7 +254,7 @@ GEM
     parser (3.2.2.1)
       ast (~> 2.4.1)
     public_suffix (5.0.3)
-    puma (6.3.0)
+    puma (6.3.1)
       nio4r (~> 2.0)
     racc (1.7.1)
     rack (2.2.8)
@@ -438,7 +438,7 @@ DEPENDENCIES
   govuk_notify_rails
   i18n-tasks (~> 1.0.12)
   lograge
-  puma (~> 6.3.0)
+  puma (~> 6.3.1)
   rails (~> 7.0.7)
   rails-controller-testing
   redis
