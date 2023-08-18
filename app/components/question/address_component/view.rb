@@ -4,7 +4,6 @@ module Question
       attr_accessor :address_html
 
       def before_render
-        @hint_id = question.hint_text.present? ? "govuk-address-hint" : ""
         @address_html = build_fields
       end
 
@@ -15,7 +14,7 @@ module Question
       end
 
       def build_fields
-        form_builder.govuk_fieldset legend: { text: question_text_with_extra_suffix, tag: "h1", size: "l" }, described_by: @hint_id do
+        form_builder.govuk_fieldset legend: { text: question_text_with_extra_suffix, tag: "h1", size: "l" }, described_by: hint_id do
           form_fields = is_international_address? ? fields_for_international_address : fields_for_uk_address
           safe_join([hint_text, form_fields].compact_blank)
         end
@@ -36,14 +35,6 @@ module Question
           form_builder.govuk_text_field(:county, label: { text: "County (optional)" }, width: "two-thirds"),
           form_builder.govuk_text_field(:postcode, label: { text: "Postcode" }, width: 10, autocomplete: "postal-code"),
         ])
-      end
-
-      def hint_text
-        return nil if question.hint_text.blank?
-
-        tag.div(id: @hint_id, class: "govuk-hint") do
-          question.hint_text
-        end
       end
     end
   end
