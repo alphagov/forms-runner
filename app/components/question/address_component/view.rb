@@ -14,7 +14,7 @@ module Question
       end
 
       def build_fields
-        form_builder.govuk_fieldset legend: { text: question_text_with_extra_suffix, tag: "h1", size: "l" }, described_by: hint_id do
+        form_builder.govuk_fieldset legend: { text: question_text_with_extra_suffix, **question_text_size_and_tag }, described_by: hint_id do
           form_fields = is_international_address? ? fields_for_international_address : fields_for_uk_address
           safe_join([hint_text, form_fields].compact_blank)
         end

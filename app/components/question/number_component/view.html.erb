@@ -3,8 +3,6 @@
   https://design-system.service.gov.uk/components/text-input/#avoid-using-inputs-with-a-type-of-number
 %>
 <%= form_builder.govuk_text_field :number,
-                                  label: { tag: 'h1',
-                                           size: 'l',
-                                           text: question_text_with_extra_suffix },
+                                  label: { text: question_text_with_extra_suffix, **question_text_size_and_tag },
                                   hint: { text: question.hint_text },
                                   spellcheck: false %>

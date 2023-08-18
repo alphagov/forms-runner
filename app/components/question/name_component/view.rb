@@ -33,13 +33,13 @@ module Question
 
       def fields_for_full_name_and_no_title
         form_builder.govuk_text_field :full_name,
-                                      label: { tag: "h1", size: "l", text: question_text_with_extra_suffix },
+                                      label: { text: question_text_with_extra_suffix, **question_text_size_and_tag },
                                       hint: { text: question.hint_text },
                                       autocomplete: "name"
       end
 
       def fields_for_name_with_or_without_title
-        form_builder.govuk_fieldset legend: { text: question_text_with_extra_suffix, tag: "h1", size: "l" }, described_by: hint_id do
+        form_builder.govuk_fieldset legend: { text: question_text_with_extra_suffix, **question_text_size_and_tag }, described_by: hint_id do
           form_fields = if is_full_name?
                           [
                             (form_builder.govuk_text_field :full_name, label: { text: t("question/name.label.full_name") }, autocomplete: "name"),

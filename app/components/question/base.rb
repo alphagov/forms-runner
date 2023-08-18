@@ -21,5 +21,9 @@ module Question
         question.hint_text
       end
     end
+
+    def question_text_size_and_tag
+      { tag: "h1", size: "l" }
+    end
   end
 end
