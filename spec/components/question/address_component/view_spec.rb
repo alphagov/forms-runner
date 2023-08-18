@@ -1,8 +1,6 @@
 require "rails_helper"
 
 RSpec.describe Question::AddressComponent::View, type: :component do
-  let(:only_one_option) { "false" }
-  let(:answer_text) { nil }
   let(:extra_question_text_suffix) { nil }
   let(:form_builder) do
     GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,

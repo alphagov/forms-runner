@@ -17,17 +17,19 @@ FactoryBot.define do
     end
 
     factory :uk_address_question do
-      transient do
-        selection_options { [DataStruct.new(name: "Option 1"), DataStruct.new(name: "Option 2")] }
-      end
+      address1 { Faker::Address.street_address }
+      address2 { nil }
+      town_or_city { Faker::Address.city }
+      county { "London" }
+      postcode { "SW1H 9AJ" }
+
       answer_settings { DataStruct.new(input_type: DataStruct.new(uk_address: "true")) }
     end
 
     factory :international_address_question do
-      transient do
-        street_address { "237 Bogisich Way,\nNorth Desmond\nNH 16786" }
-        country { "USA" }
-      end
+      street_address { "237 Bogisich Way,\nNorth Desmond\nNH 16786" }
+      country { "USA" }
+
       answer_settings { DataStruct.new(input_type: DataStruct.new(international_address: "true")) }
     end
   end
