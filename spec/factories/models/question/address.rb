@@ -3,6 +3,9 @@ FactoryBot.define do
     question_text { Faker::Lorem.question }
     hint_text { nil }
     is_optional { false }
+    page_heading { nil }
+    guidance_markdown { nil }
+
     address1 { nil }
     address2 { nil }
     town_or_city { nil }
@@ -14,6 +17,11 @@ FactoryBot.define do
 
     trait :with_hints do
       hint_text { Faker::Quote.yoda }
+    end
+
+    trait :with_guidance do
+      page_heading { Faker::Quote.yoda }
+      guidance_markdown { "## List of items \n\n\n #{Faker::Markdown.ordered_list}" }
     end
 
     factory :uk_address_question do

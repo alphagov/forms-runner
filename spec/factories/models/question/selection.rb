@@ -8,6 +8,11 @@ FactoryBot.define do
       hint_text { Faker::Quote.yoda }
     end
 
+    trait :with_guidance do
+      page_heading { Faker::Quote.yoda }
+      guidance_markdown { "## List of items \n\n\n #{Faker::Markdown.ordered_list}" }
+    end
+
     factory :single_selection_question do
       transient do
         selection_options { [DataStruct.new(name: "Option 1"),  DataStruct.new(name: "Option 2")] }

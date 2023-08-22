@@ -4,7 +4,14 @@ RSpec.describe Question::DateComponent::View, type: :component do
   let(:question_page) { build :page, :with_date_settings, input_type: }
   let(:input_type) { "other_date" }
   let(:answer_text) { nil }
-  let(:question) { OpenStruct.new(date: answer_text, question_text_with_optional_suffix: question_page.question_text, hint_text: question_page.hint_text, answer_settings:) }
+  let(:question) do
+    OpenStruct.new(date: answer_text,
+                   question_text_with_optional_suffix: question_page.question_text,
+                   hint_text: question_page.hint_text,
+                   answer_settings:,
+                   page_heading: question_page.page_heading,
+                   guidance_markdown: question_page.additional_guidance_markdown)
+  end
   let(:answer_settings) { question_page.answer_settings }
   let(:extra_question_text_suffix) { nil }
   let(:form_builder) do
@@ -18,7 +25,7 @@ RSpec.describe Question::DateComponent::View, type: :component do
 
   describe "when component is other date field" do
     it "renders the question text as a heading" do
-      expect(page.find("h1")).to have_text(question.question_text_with_optional_suffix)
+      expect(page.find("legend h1")).to have_text(question.question_text_with_optional_suffix)
     end
 
     it "renders 3 text fields (day, month, year)" do
@@ -55,7 +62,7 @@ RSpec.describe Question::DateComponent::View, type: :component do
       let(:extra_question_text_suffix) { "Some extra text to add to the question text" }
 
       it "renders the question text and extra suffix as a heading" do
-        expect(page.find("h1")).to have_text("#{question.question_text} #{extra_question_text_suffix}")
+        expect(page.find("legend h1")).to have_text("#{question.question_text} #{extra_question_text_suffix}")
       end
     end
 
@@ -68,13 +75,21 @@ RSpec.describe Question::DateComponent::View, type: :component do
         expect(page.find("h1").native.inner_html).to eq(expected_output)
       end
     end
+
+    context "when question has guidance" do
+      let(:question_page) { build :page, :with_guidance, :with_date_settings }
+
+      it "renders the question text as a legend" do
+        expect(page.find("legend.govuk-fieldset__legend--m")).to have_text(question_page.question_text)
+      end
+    end
   end
 
   describe "when component is date of birth field" do
     let(:input_type) { "date_of_birth" }
 
     it "renders the question text as a heading" do
-      expect(page.find("h1")).to have_text(question.question_text_with_optional_suffix)
+      expect(page.find("legend h1")).to have_text(question.question_text_with_optional_suffix)
     end
 
     it "renders 3 text fields (day, month, year)" do
@@ -121,7 +136,15 @@ RSpec.describe Question::DateComponent::View, type: :component do
 
       it "returns the escaped title with the optional suffix" do
         expected_output = "What is your name? &lt;script&gt;alert(\"Hi\")&lt;/script&gt; <span>Some trusted html</span>"
-        expect(page.find("h1").native.inner_html).to eq(expected_output)
+        expect(page.find("legend h1").native.inner_html).to eq(expected_output)
+      end
+    end
+
+    context "when question has guidance" do
+      let(:question_page) { build :page, :with_guidance, :with_date_settings }
+
+      it "renders the question text as a legend" do
+        expect(page.find("legend.govuk-fieldset__legend--m")).to have_text(question_page.question_text)
       end
     end
   end
@@ -130,7 +153,7 @@ RSpec.describe Question::DateComponent::View, type: :component do
     let(:answer_settings) { nil }
 
     it "renders the question text as a heading" do
-      expect(page.find("h1")).to have_text(question.question_text_with_optional_suffix)
+      expect(page.find("legend h1")).to have_text(question.question_text_with_optional_suffix)
     end
 
     it "renders 3 text fields (day, month, year)" do
@@ -143,6 +166,14 @@ RSpec.describe Question::DateComponent::View, type: :component do
       expect(page).not_to have_css("input[type='text'][autocomplete='bday-day']")
       expect(page).not_to have_css("input[type='text'][autocomplete='bday-month']")
       expect(page).not_to have_css("input[type='text'][autocomplete='bday-year']")
+    end
+
+    context "when question has guidance" do
+      let(:question_page) { build :page, :with_guidance, answer_type: "date", answer_settings: }
+
+      it "renders the question text as a legend" do
+        expect(page.find("legend.govuk-fieldset__legend--m")).to have_text(question_page.question_text)
+      end
     end
   end
 end

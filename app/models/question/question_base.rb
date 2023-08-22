@@ -5,7 +5,7 @@ module Question
     include ActiveModel::Serialization
     include ActiveModel::Attributes
 
-    attr_accessor :question_text, :hint_text, :answer_settings, :is_optional
+    attr_accessor :question_text, :hint_text, :answer_settings, :is_optional, :page_heading, :guidance_markdown
 
     def initialize(attributes = {}, options = {})
       super(attributes)
@@ -13,6 +13,8 @@ module Question
       @hint_text = options[:hint_text]
       @is_optional = options[:is_optional]
       @answer_settings = options[:answer_settings]
+      @page_heading = options[:page_heading]
+      @guidance_markdown = options[:guidance_markdown]
     end
 
     def attributes

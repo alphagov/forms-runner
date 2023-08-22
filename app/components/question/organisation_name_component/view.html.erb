@@ -1,4 +1,4 @@
 <%= form_builder.govuk_text_field :text,
-                                  label: { tag: 'h1', size: 'l', text: question_text_with_extra_suffix },
+                                  label: { text: question_text_with_extra_suffix, **question_text_size_and_tag },
                                   hint: { text: question.hint_text },
                                   autocomplete: "organization" %>
