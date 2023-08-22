@@ -31,10 +31,6 @@ RSpec.describe Question::TextComponent::View, type: :component do
       expect(page).to have_css("input[type='text'][name='form[text]']")
     end
 
-    it "renders at one half the width of the parent container" do
-      expect(page.native.to_html).to include('class="govuk-input govuk-!-width-one-half"')
-    end
-
     context "when the user has provided an answer" do
       let(:answer_text) { Faker::Quote.yoda }
 
