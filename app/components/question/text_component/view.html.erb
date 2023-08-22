@@ -1,8 +1,7 @@
 <% if question.answer_settings.input_type == "single_line" %>
   <%= form_builder.govuk_text_field :text,
                                     label: { text: question_text_with_extra_suffix, **question_text_size_and_tag },
-                                    hint: { text: question.hint_text },
-                                    width: 'one-half' %>
+                                    hint: { text: question.hint_text } %>
 <% else %>
   <%= form_builder.govuk_text_area :text,
                                    label: { text:  question_text_with_extra_suffix, **question_text_size_and_tag },
