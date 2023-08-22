@@ -1,10 +1,10 @@
 # GOV.UK Forms Runner [![Tests](https://github.com/alphagov/forms-runner/actions/workflows/test.yml/badge.svg)](https://github.com/alphagov/forms-runner/actions/workflows/test.yml)
 
-GOV.UK Forms is a service for creating forms. GOV.UK Forms Runner is a an application which displays those forms to end users so that they can be filled in. It's a Ruby on Rails application without a database. It uses redis for state.
+GOV.UK Forms is a service for creating forms. GOV.UK Forms Runner is a an application which displays those forms to end users so that they can be filled in. It's a Ruby on Rails application without a database. It uses Redis for state.
 
 ## Before you start
 
-To run the project you will need to install:
+To run the project, you will need to install:
 
 - [Ruby](https://www.ruby-lang.org/en/) - we use version 3 of Ruby. Before running the project, double check the [.ruby-version](.ruby-version) file to see the exact version.
 - [Node.js](https://nodejs.org/en/) - the frontend build requires Node.js. We use Node 18 LTS versions.
@@ -103,7 +103,7 @@ bundle exec rake
 
 Refer to the [the config gem](https://github.com/railsconfig/config#accessing-the-settings-object) to understand the `file based settings` loading order.
 
-To override file based via `Machine based env variables settings`
+To override `file based settings` through `Machine based env variables settings`, you can run:
 
 ```bash
 cat config/settings.yml
@@ -181,10 +181,10 @@ We host our apps using Amazon Web Services (AWS). You can [read about how deploy
 
 ### Logging
 
-- You should should configure HTTP access logs in [the application config](./config/application.rb), using [Lograge](https://github.com/roidrage/lograge).
-- You should use the [LogEventService](./app/services/log_event_service.rb) and [EventLogger](./app/lib/event_logger.rb) to create any custom log messages. This is independent to any Lograge configuration.
+- You should configure HTTP access logs in [the application config](./config/application.rb), using [Lograge](https://github.com/roidrage/lograge).
+- You should use the [LogEventService](./app/services/log_event_service.rb) and [EventLogger](./app/lib/event_logger.rb) to create any custom log messages. This is independent of any Lograge configuration.
 - The output format is JSON, using the [JsonLogFormatter](./app/lib/json_log_formatter.rb) to enable simpler searching and visbility, especially in Splunk.
-- Do not use [log_tags](https://guides.rubyonrails.org/configuring.html#config-log-tags) since it breaks the JSON formatting produced by Lograge.
+- Do not use [log_tags](https://guides.rubyonrails.org/configuring.html#config-log-tags), as it breaks the JSON formatting produced by Lograge.
 
 ### Updating Docker files
 
