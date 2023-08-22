@@ -23,7 +23,9 @@ module Question
     end
 
     def question_text_size_and_tag
-      { tag: "h1", size: "l" }
+      return { tag: "h1", size: "l" } if question.page_heading.nil? && question.guidance_markdown.blank?
+
+      { size: "m" }
     end
   end
 end

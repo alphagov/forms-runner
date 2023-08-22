@@ -15,12 +15,19 @@ FactoryBot.define do
     answer_type { Page::ANSWER_TYPES.reject { |item| Page::ANSWER_TYPES_WITH_SETTINGS.include? item }.sample }
     is_optional { nil }
     answer_settings { nil }
+    page_heading { nil }
+    additional_guidance_markdown { nil }
     hint_text { nil }
     routing_conditions { [] }
     sequence(:position) { |n| n }
 
     trait :with_hints do
       hint_text { Faker::Quote.yoda }
+    end
+
+    trait :with_guidance do
+      page_heading { Faker::Quote.yoda }
+      additional_guidance_markdown { "## List of items \n\n\n #{Faker::Markdown.ordered_list}" }
     end
 
     trait :with_simple_answer_type do

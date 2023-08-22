@@ -18,7 +18,7 @@ RSpec.describe Question::SelectionComponent::View, type: :component do
     let(:question) { build :single_selection_question, is_optional: }
 
     it "renders the question text as a heading" do
-      expect(page.find("h1")).to have_text(question.question_text)
+      expect(page.find("legend h1")).to have_text(question.question_text)
     end
 
     it "contains the options" do
@@ -38,7 +38,7 @@ RSpec.describe Question::SelectionComponent::View, type: :component do
       let(:extra_question_text_suffix) { "Some extra text to add to the question text" }
 
       it "renders the question text and extra suffix as a heading" do
-        expect(page.find("h1")).to have_text("#{question.question_text} #{extra_question_text_suffix}")
+        expect(page.find("legend h1")).to have_text("#{question.question_text} #{extra_question_text_suffix}")
       end
     end
 
@@ -61,6 +61,14 @@ RSpec.describe Question::SelectionComponent::View, type: :component do
 
       it "contains the 'None of the above' option" do
         expect(page).to have_css("input[type='radio'] + label", text: "None of the above")
+      end
+    end
+
+    context "when question has guidance" do
+      let(:question) { build :single_selection_question, :with_guidance }
+
+      it "renders the question text as a legend" do
+        expect(page.find("legend.govuk-fieldset__legend--m")).to have_text(question.question_text)
       end
     end
   end
@@ -112,6 +120,14 @@ RSpec.describe Question::SelectionComponent::View, type: :component do
 
       it "contains the 'None of the above' option" do
         expect(page).to have_css("input[type='checkbox'] + label", text: "None of the above")
+      end
+    end
+
+    context "when question has guidance" do
+      let(:question) { build :multiple_selection_question, :with_guidance }
+
+      it "renders the question text as a legend" do
+        expect(page.find("legend.govuk-fieldset__legend--m")).to have_text(question.question_text)
       end
     end
   end

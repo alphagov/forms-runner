@@ -15,7 +15,7 @@ RSpec.describe Question::AddressComponent::View, type: :component do
     let(:question) { build :uk_address_question }
 
     it "renders the question text as a heading" do
-      expect(page.find("h1")).to have_text(question.question_text)
+      expect(page.find("legend h1")).to have_text(question.question_text)
     end
 
     it "renders 5 text fields (Address line 1, Address line 2, Town or city, County, Postcode) and include autocomplete" do
@@ -52,13 +52,21 @@ RSpec.describe Question::AddressComponent::View, type: :component do
         expect(page.find("h1").native.inner_html).to eq(expected_output)
       end
     end
+
+    context "when question has guidance" do
+      let(:question) { build :uk_address_question, :with_guidance }
+
+      it "renders the question text as a legend" do
+        expect(page.find("legend.govuk-fieldset__legend--m")).to have_text(question.question_text)
+      end
+    end
   end
 
   describe "when component is international address field" do
     let(:question) { build :international_address_question }
 
     it "renders the question text as a heading" do
-      expect(page.find("h1")).to have_text(question.question_text)
+      expect(page.find("legend h1")).to have_text(question.question_text)
     end
 
     it "renders 1 textarea (Street Address and 1 input(Country) and includes autocomplete" do
@@ -91,6 +99,14 @@ RSpec.describe Question::AddressComponent::View, type: :component do
       it "returns the escaped title with the optional suffix" do
         expected_output = "What is your name? &lt;script&gt;alert(\"Hi\")&lt;/script&gt; <span>Some trusted html</span>"
         expect(page.find("h1").native.inner_html).to eq(expected_output)
+      end
+    end
+
+    context "when question has guidance" do
+      let(:question) { build :international_address_question, :with_guidance }
+
+      it "renders the question text as a legend" do
+        expect(page.find("legend.govuk-fieldset__legend--m")).to have_text(question.question_text)
       end
     end
   end
@@ -126,12 +142,20 @@ RSpec.describe Question::AddressComponent::View, type: :component do
     end
 
     context "with unsafe question text" do
-      let(:question) { build :international_address_question, question_text: "What is your name? <script>alert(\"Hi\")</script>" }
+      let(:question) { build :address, question_text: "What is your name? <script>alert(\"Hi\")</script>" }
       let(:extra_question_text_suffix) { "<span>Some trusted html</span>" }
 
       it "returns the escaped title with the optional suffix" do
         expected_output = "What is your name? &lt;script&gt;alert(\"Hi\")&lt;/script&gt; <span>Some trusted html</span>"
         expect(page.find("h1").native.inner_html).to eq(expected_output)
+      end
+    end
+
+    context "when question has guidance" do
+      let(:question) { build :address, :with_guidance }
+
+      it "renders the question text as a legend" do
+        expect(page.find("legend.govuk-fieldset__legend--m")).to have_text(question.question_text)
       end
     end
   end
