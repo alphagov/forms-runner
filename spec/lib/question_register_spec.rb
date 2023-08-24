@@ -31,10 +31,10 @@ RSpec.describe QuestionRegister do
   context "when a question has guidance" do
     it "creates a question class with the page_heading and guidance_markdown" do
       %i[date address email national_insurance_number phone_number number organisation_name text].each do |type|
-        page = OpenStruct.new(answer_type: type, page_heading: "New page heading", additional_guidance_markdown: "## Heading level 2")
+        page = OpenStruct.new(answer_type: type, page_heading: "New page heading", guidance_markdown: "## Heading level 2")
         result = described_class.from_page(page)
         expect(result.page_heading).to eq page.page_heading
-        expect(result.guidance_markdown).to eq page.additional_guidance_markdown
+        expect(result.guidance_markdown).to eq page.guidance_markdown
       end
     end
   end

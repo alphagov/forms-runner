@@ -10,7 +10,7 @@ RSpec.describe Question::DateComponent::View, type: :component do
                    hint_text: question_page.hint_text,
                    answer_settings:,
                    page_heading: question_page.page_heading,
-                   guidance_markdown: question_page.additional_guidance_markdown)
+                   guidance_markdown: question_page.guidance_markdown)
   end
   let(:answer_settings) { question_page.answer_settings }
   let(:extra_question_text_suffix) { nil }

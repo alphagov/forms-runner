@@ -26,7 +26,7 @@ class QuestionRegister
             end
     hint_text = page.respond_to?(:hint_text) ? page.hint_text : nil
     page_heading = page.respond_to?(:page_heading) ? page.page_heading : nil
-    guidance_markdown = page.respond_to?(:additional_guidance_markdown) ? page.additional_guidance_markdown : nil
+    guidance_markdown = page.respond_to?(:guidance_markdown) ? page.guidance_markdown : nil
     klass.new({}, { question_text: page.question_text,
                     hint_text:,
                     is_optional: page.is_optional,
