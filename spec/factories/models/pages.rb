@@ -16,7 +16,7 @@ FactoryBot.define do
     is_optional { nil }
     answer_settings { nil }
     page_heading { nil }
-    additional_guidance_markdown { nil }
+    guidance_markdown { nil }
     hint_text { nil }
     routing_conditions { [] }
     sequence(:position) { |n| n }
@@ -27,7 +27,7 @@ FactoryBot.define do
 
     trait :with_guidance do
       page_heading { Faker::Quote.yoda }
-      additional_guidance_markdown { "## List of items \n\n\n #{Faker::Markdown.ordered_list}" }
+      guidance_markdown { "## List of items \n\n\n #{Faker::Markdown.ordered_list}" }
     end
 
     trait :with_simple_answer_type do
