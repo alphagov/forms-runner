@@ -22,7 +22,7 @@ jobs:
       RAILS_ENV: test
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       # Add or replace dependency steps here
       # The ruby version is taken from the .ruby-version file, no need to specify here.
       - name: Install Ruby and gems
