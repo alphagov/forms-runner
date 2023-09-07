@@ -4,7 +4,9 @@ class Base < ActiveResource::Base
 
   def self.headers
     headers = super
-    headers["X-API-Token"] = Settings.forms_api.auth_key
+    if Settings.forms_api.enabled_auth
+      headers["X-API-Token"] = Settings.forms_api.auth_key
+    end
     headers
   end
 end

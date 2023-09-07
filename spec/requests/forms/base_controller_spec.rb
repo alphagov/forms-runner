@@ -40,7 +40,6 @@ RSpec.describe Forms::BaseController, type: :request do
 
   let(:req_headers) do
     {
-      "X-API-Token" => Settings.forms_api.auth_key,
       "Accept" => "application/json",
     }
   end
