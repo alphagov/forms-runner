@@ -1,8 +1,5 @@
-class Page < ActiveResource::Base
-  self.site = Settings.forms_api.base_url
+class Page < Base
   self.prefix = "/api/v1/forms/:form_id/"
-  self.include_format_in_path = false
-  headers["X-API-Token"] = Settings.forms_api.auth_key
 
   belongs_to :form
 
