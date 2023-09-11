@@ -13,7 +13,7 @@
     <%if @rows %>
       <%= govuk_summary_list(rows: @rows.map { |row|
         { key: row[:key],
-          value: { text: format_paragraphs(row[:value][:text]) },
+          value: { text: format_paragraphs(row[:value][:text].present? ? row[:value][:text] : t('form.check_your_answers.not_completed')) },
           actions: row[:actions]
         } })
       %>
@@ -26,7 +26,7 @@
 
     <%= form_with url: @form_submit_path do |form| %>
       <%= form.hidden_field :notify_reference, id: 'notification-id', value: @notify_reference %>
-      <%= form.govuk_submit 'Submit' %>
+      <%= form.govuk_submit(@current_context.form.declaration_text.present? ? t('form.check_your_answers.agree_and_submit') : t('form.check_your_answers.submit')) %>
     <% end %>
   </div>
 </div>
