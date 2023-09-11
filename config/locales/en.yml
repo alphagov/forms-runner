@@ -85,6 +85,7 @@ en:
     privacy_policy: Privacy
   form:
     check_your_answers:
+      agree_and_submit: Agree and submit
       not_completed: Not completed
       submit: Submit
       title: Check your answers before submitting your form
