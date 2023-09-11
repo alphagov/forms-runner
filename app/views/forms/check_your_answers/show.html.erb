@@ -13,7 +13,7 @@
     <%if @rows %>
       <%= govuk_summary_list(rows: @rows.map { |row|
         { key: row[:key],
-          value: { text: format_paragraphs(row[:value][:text]) },
+          value: { text: format_paragraphs(row[:value][:text].present? ? row[:value][:text] : t('form.check_your_answers.not_completed')) },
           actions: row[:actions]
         } })
       %>
