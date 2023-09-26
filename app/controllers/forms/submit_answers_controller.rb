@@ -6,6 +6,7 @@ module Forms
       else
         unless mode.preview?
           EventLogger.log_form_event(current_context, request, "submission")
+          CloudWatchService.submitted(blahasdkfkajsdfkjhasdfkjasdf)
         end
 
         FormSubmissionService.call(current_context:,
