@@ -1,12 +1,13 @@
 require "rails_helper"
 
 RSpec.describe LogEventService do
+  let(:request) { "request" }
+  let(:current_context) { "current_context" }
+
   describe "#log_page_save" do
     let(:changing_answers) { true }
     let(:step) { OpenStruct.new(question:) }
     let(:question) { OpenStruct.new(is_optional?: true) }
-    let(:request) { "request" }
-    let(:current_context) { "current_context" }
     let(:answers) { { "name": "John" } }
 
     it "calls the event logger with log_page_event" do
@@ -21,6 +22,20 @@ RSpec.describe LogEventService do
         request,
         "change_answer_optional_save",
         false,
+      )
+    end
+  end
+
+  describe ".log_form_submit" do
+    it "calls the event logger with the log_form_event" do
+      allow(EventLogger).to receive(:log_form_event).and_return(true)
+
+      described_class.log_submit(current_context, request)
+
+      expect(EventLogger).to have_received(:log_form_event).with(
+        current_context,
+        request,
+        "submission",
       )
     end
   end

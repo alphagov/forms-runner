@@ -11,6 +11,10 @@ class LogEventService
     EventLogger.log_page_event(@current_context, @step, @request, log_event, skipped_question?)
   end
 
+  def self.log_submit(context, request)
+    EventLogger.log_form_event(context, request, "submission")
+  end
+
 private
 
   def log_event
