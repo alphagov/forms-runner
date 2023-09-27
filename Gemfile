@@ -86,3 +86,5 @@ group :test do
   # axe-core for running automated accessibility checks
   gem "axe-core-rspec"
 end
+
+gem "aws-sdk-cloudwatch"
