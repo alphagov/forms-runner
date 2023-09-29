@@ -28,6 +28,8 @@ class ApplicationController < ActionController::Base
     payload[:host] = request.host
     payload[:request_id] = request.request_id
     payload[:form_id] = params[:form_id] if params[:form_id].present?
+    payload[:page_id] = params[:page_slug] if params[:page_slug].present? && params[:page_slug].match(Page::PAGE_ID_REGEX)
+    payload[:page_slug] = params[:page_slug] if params[:page_slug].present?
   end
 
 private
