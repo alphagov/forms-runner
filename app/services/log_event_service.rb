@@ -12,7 +12,8 @@ class LogEventService
   end
 
   def self.log_submit(context, request)
-    EventLogger.log_form_event(context, request, "submission")
+    EventLogger.log_form_event(context, request, "submission") # Logging to Splunk
+    CloudWatchService.log_form_submission(form_id: context.form.id) # Logging to Cloudwatch
   end
 
 private

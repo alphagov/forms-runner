@@ -27,7 +27,11 @@ RSpec.describe LogEventService do
   end
 
   describe ".log_form_submit" do
-    it "calls the event logger with the log_form_event" do
+    let(:current_context) { OpenStruct.new(form:) }
+    let(:form) { OpenStruct.new(id: 1) }
+
+    it "calls the event logger with .log_form_event" do
+      allow(CloudWatchService).to receive(:log_form_submission).and_return(true)
       allow(EventLogger).to receive(:log_form_event).and_return(true)
 
       described_class.log_submit(current_context, request)
@@ -37,6 +41,15 @@ RSpec.describe LogEventService do
         request,
         "submission",
       )
+    end
+
+    it "calls the cloud watch service with .log_form_submission" do
+      allow(CloudWatchService).to receive(:log_form_submission).and_return(true)
+      allow(EventLogger).to receive(:log_form_event).and_return(true)
+
+      described_class.log_submit(current_context, request)
+
+      expect(CloudWatchService).to have_received(:log_form_submission).with(form_id: current_context.form.id)
     end
   end
 end
