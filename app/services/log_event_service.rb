@@ -11,6 +11,15 @@ class LogEventService
     EventLogger.log_page_event(@current_context, @step, @request, log_event, skipped_question?)
   end
 
+  def self.log_submit(context, request)
+    EventLogger.log_form_event(context, request, "submission") # Logging to Splunk
+    begin
+      CloudWatchService.log_form_submission(form_id: context.form.id) # Logging to Cloudwatch
+    rescue StandardError => e
+      Sentry.capture_exception(e)
+    end
+  end
+
 private
 
   def log_event

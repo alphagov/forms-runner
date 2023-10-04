@@ -5,7 +5,7 @@ module Forms
         redirect_to error_repeat_submission_path(current_form.id)
       else
         unless mode.preview?
-          EventLogger.log_form_event(current_context, request, "submission")
+          LogEventService.log_submit(current_context, request)
         end
 
         FormSubmissionService.call(current_context:,

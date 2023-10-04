@@ -75,7 +75,7 @@ RSpec.describe Forms::SubmitAnswersController, type: :request do
       mock.get "/api/v1/forms/2/live", req_headers, form_response_data.to_json, 200
     end
 
-    allow(EventLogger).to receive(:log_form_event).at_least(:once)
+    allow(LogEventService).to receive(:log_submit).at_least(:once)
 
     allow(Context).to receive(:new).and_wrap_original do |original_method, *args|
       context_spy = original_method.call(form: args[0][:form], store:)
@@ -97,7 +97,7 @@ RSpec.describe Forms::SubmitAnswersController, type: :request do
       end
 
       it "does not log the form_submission event" do
-        expect(EventLogger).not_to have_received(:log_form_event)
+        expect(LogEventService).not_to have_received(:log_submit)
       end
 
       it "emails the form submission" do
@@ -131,8 +131,8 @@ RSpec.describe Forms::SubmitAnswersController, type: :request do
         expect(response).to redirect_to(form_submitted_path)
       end
 
-      it "Logs the form_submission event" do
-        expect(EventLogger).to have_received(:log_form_event).with(instance_of(Context), instance_of(ActionDispatch::Request), "submission")
+      it "Logs the submit event with service logger" do
+        expect(LogEventService).to have_received(:log_submit).with(instance_of(Context), instance_of(ActionDispatch::Request))
       end
 
       it "emails the form submission" do
