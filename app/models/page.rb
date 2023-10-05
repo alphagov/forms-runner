@@ -1,4 +1,6 @@
 class Page < ActiveResource::Base
+  PAGE_ID_REGEX = /\d+/
+
   self.site = Settings.forms_api.base_url
   self.prefix = "/api/v1/forms/:form_id/"
   self.include_format_in_path = false
