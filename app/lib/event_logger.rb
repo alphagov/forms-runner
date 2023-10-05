@@ -8,6 +8,7 @@ class EventLogger
       url: request&.url,
       method: request&.method,
       form: context.form.name,
+      form_id: context.form.id,
       request_id: request&.request_id,
       event: "form_#{event}",
     })

@@ -32,6 +32,7 @@ RSpec.describe EventLogger do
       url: "http://example.gov.uk",
       method: "GET",
       form: form.name,
+      form_id: form.id,
       request_id: nil,
       event: "form_visit",
     }
