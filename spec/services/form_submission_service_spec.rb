@@ -26,6 +26,38 @@ RSpec.describe FormSubmissionService do
       end
     end
 
+    context "when the mailer raises an exception" do
+      exceptions = [
+        [Notifications::Client::BadRequestError, "BadRequest"],
+        [Notifications::Client::AuthError, "AuthError"],
+        [Notifications::Client::NotFoundError, "NotFoundError"],
+        [Notifications::Client::RateLimitError, "RateLimitError"],
+        [Notifications::Client::ClientError, "ClientError"],
+      ]
+
+      exceptions.each do |exception, error_message|
+        it "includes the email body in the #{exception} exception message" do
+          mailer = double
+
+          allow(mailer).to receive(:deliver_now).and_raise(exception.new(OpenStruct.new(code: 500, body: {
+            status_code: 500,
+            errors: [{ error: error_message, message: "" }],
+          }.to_json)))
+
+          allow(FormSubmissionMailer).to receive(:email_completed_form).and_return(mailer)
+
+          expect { service.submit_form_to_processing_team }.to raise_error(FormSubmissionService::SubmissionError).with_message("Notify failed to send email. Notify code: 500")
+        end
+      end
+
+      it "does not catch non-Notify exceptions" do
+        mailer = double
+        allow(mailer).to receive(:deliver_now).and_raise(StandardError, "some other error")
+        allow(FormSubmissionMailer).to receive(:email_completed_form).and_return(mailer)
+        expect { service.submit_form_to_processing_team }.to raise_error(StandardError).with_message("some other error")
+      end
+    end
+
     describe "validations" do
       context "when form has no submission email" do
         let(:form) { OpenStruct.new(id: 1, form_name: "Form 1", submission_email: nil, steps: [step]) }

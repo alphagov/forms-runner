@@ -1,4 +1,6 @@
 class FormSubmissionService
+  class SubmissionError < StandardError; end
+
   class << self
     def call(**args)
       new(**args)
@@ -22,13 +24,17 @@ class FormSubmissionService
     timestamp = submission_timestamp
 
     unless @form.submission_email.blank? && @preview_mode
-      FormSubmissionMailer
-        .email_completed_form(title: form_title,
-                              text_input: email_body,
-                              preview_mode: @preview_mode,
-                              reference: @reference,
-                              timestamp:,
-                              submission_email: @form.submission_email).deliver_now
+      begin
+        FormSubmissionMailer
+          .email_completed_form(title: form_title,
+                                text_input: email_body,
+                                preview_mode: @preview_mode,
+                                reference: @reference,
+                                timestamp:,
+                                submission_email: @form.submission_email).deliver_now
+      rescue Notifications::Client::RequestError => e
+        raise SubmissionError, "Notify failed to send email. Notify code: #{e.code}"
+      end
     end
   end
 
