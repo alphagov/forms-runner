@@ -93,6 +93,14 @@ RSpec.describe FormSubmissionService do
         end
       end
     end
+
+    context "when the mailer raises an exception" do
+      it "includes the email body in the exception message" do
+        allow(FormSubmissionMailer).to receive(:email_completed_form).and_raise(StandardError, "email body")
+
+        expect { service.submit_form_to_processing_team }.to raise_error(StandardError, "email body")
+      end
+    end
   end
 
   describe "FormSubmissionService::NotifyTemplateBodyFilter" do

@@ -17,8 +17,11 @@ class FormSubmissionMailer < GovukNotifyRails::Mailer
     set_reference(reference)
 
     set_email_reply_to(Settings.govuk_notify.form_submission_email_reply_to_id)
-
-    mail(to: submission_email)
+    begin
+      mail(to: submission_email)
+    rescue RequestError
+      raise StandardError, "Sending submission email error. Reference #{reference}"
+    end
   end
 
 private
