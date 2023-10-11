@@ -49,7 +49,7 @@ RSpec.describe Forms::BaseController, type: :request do
 
   before do
     ActiveResource::HttpMock.respond_to do |mock|
-      allow(EventLogger).to receive(:log_form_event).at_least(:once)
+      allow(LogEventService).to receive(:log_form_start).at_least(:once)
       mock.get "/api/v1/forms/2#{api_url_suffix}", req_headers, form_response_data.to_json, 200
       mock.get "/api/v1/forms/9999#{api_url_suffix}", req_headers, no_data_found_response, 404
     end
@@ -80,7 +80,7 @@ RSpec.describe Forms::BaseController, type: :request do
   describe "#error_repeat_submission" do
     before do
       ActiveResource::HttpMock.respond_to do |mock|
-        allow(EventLogger).to receive(:log_form_event).at_least(:once)
+        allow(LogEventService).to receive(:log_form_start).at_least(:once)
         mock.get "/api/v1/forms/2/live", req_headers, form_response_data.to_json, 200
       end
 
@@ -110,7 +110,7 @@ RSpec.describe Forms::BaseController, type: :request do
             end
 
             it "does not log the form_visit event" do
-              expect(EventLogger).not_to have_received(:log_form_event)
+              expect(LogEventService).not_to have_received(:log_form_start)
             end
           end
 
@@ -186,7 +186,7 @@ RSpec.describe Forms::BaseController, type: :request do
             end
 
             it "does not log the form_visit event" do
-              expect(EventLogger).not_to have_received(:log_form_event)
+              expect(LogEventService).not_to have_received(:log_form_start)
             end
           end
 
@@ -262,7 +262,7 @@ RSpec.describe Forms::BaseController, type: :request do
             end
 
             it "Logs the form_visit event" do
-              expect(EventLogger).to have_received(:log_form_event).with(an_instance_of(Context), an_instance_of(ActionDispatch::Request), "visit")
+              expect(LogEventService).to have_received(:log_form_start).with(an_instance_of(Context), an_instance_of(ActionDispatch::Request))
             end
           end
 

@@ -7,6 +7,10 @@ class LogEventService
     @answers = answers
   end
 
+  def self.log_form_start(context, request)
+    EventLogger.log_form_event(context, request, "visit")
+  end
+
   def log_page_save
     EventLogger.log_page_event(@current_context, @step, @request, log_event, skipped_question?)
   end

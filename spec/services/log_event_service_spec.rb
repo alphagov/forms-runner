@@ -62,4 +62,20 @@ RSpec.describe LogEventService do
       end
     end
   end
+
+  describe ".log_form_start" do
+    before do
+      allow(EventLogger).to receive(:log_form_event).and_return(true)
+    end
+
+    it "calls the event logger with .log_form_event" do
+      described_class.log_form_start(current_context, request)
+
+      expect(EventLogger).to have_received(:log_form_event).with(
+        current_context,
+        request,
+        "visit",
+      )
+    end
+  end
 end
