@@ -64,8 +64,12 @@ RSpec.describe LogEventService do
   end
 
   describe ".log_form_start" do
+    let(:current_context) { OpenStruct.new(form:) }
+    let(:form) { OpenStruct.new(id: 1) }
+
     before do
       allow(EventLogger).to receive(:log_form_event).and_return(true)
+      allow(CloudWatchService).to receive(:log_form_start).and_return(true)
     end
 
     it "calls the event logger with .log_form_event" do
@@ -76,6 +80,23 @@ RSpec.describe LogEventService do
         request,
         "visit",
       )
+    end
+
+    it "calls the cloud watch service with .log_form_start" do
+      described_class.log_form_start(current_context, request)
+
+      expect(CloudWatchService).to have_received(:log_form_start).with(form_id: current_context.form.id)
+    end
+
+    context "when CloudWatchService returns an error" do
+      it "raises the error to Sentry" do
+        allow(CloudWatchService).to receive(:log_form_start).and_raise(StandardError)
+        allow(Sentry).to receive(:capture_exception)
+
+        described_class.log_submit(current_context, request)
+
+        expect(Sentry).to have_received(:capture_exception)
+      end
     end
   end
 end

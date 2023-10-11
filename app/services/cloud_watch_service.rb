@@ -1,7 +1,7 @@
 class CloudWatchService
+  REGION = "eu-west-2".freeze
+
   def self.log_form_submission(form_id:)
-    region = "eu-west-2"
-    cloudwatch_client = Aws::CloudWatch::Client.new(region:)
     cloudwatch_client.put_metric_data(
       namespace: metric_namespace,
       metric_data: [
@@ -21,8 +21,6 @@ class CloudWatchService
   end
 
   def self.log_form_start(form_id:)
-    region = "eu-west-2"
-    cloudwatch_client = Aws::CloudWatch::Client.new(region:)
     cloudwatch_client.put_metric_data(
       namespace: metric_namespace,
       metric_data: [
@@ -43,5 +41,9 @@ class CloudWatchService
 
   def self.metric_namespace
     "forms/#{Settings.forms_env}".downcase
+  end
+
+  def self.cloudwatch_client
+    Aws::CloudWatch::Client.new(region: REGION)
   end
 end
