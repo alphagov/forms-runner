@@ -7,17 +7,26 @@ class LogEventService
     @answers = answers
   end
 
-  def log_page_save
-    EventLogger.log_page_event(@current_context, @step, @request, log_event, skipped_question?)
+  def self.log_form_start(context, request)
+    EventLogger.log_form_event(context, request, "visit") # Logging to Splunk
+    begin
+      CloudWatchService.log_form_start(form_id: context.form.id) # Logging to CloudWatch
+    rescue StandardError => e
+      Sentry.capture_exception(e)
+    end
   end
 
   def self.log_submit(context, request)
     EventLogger.log_form_event(context, request, "submission") # Logging to Splunk
     begin
-      CloudWatchService.log_form_submission(form_id: context.form.id) # Logging to Cloudwatch
+      CloudWatchService.log_form_submission(form_id: context.form.id) # Logging to CloudWatch
     rescue StandardError => e
       Sentry.capture_exception(e)
     end
+  end
+
+  def log_page_save
+    EventLogger.log_page_event(@current_context, @step, @request, log_event, skipped_question?)
   end
 
 private
