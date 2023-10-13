@@ -230,7 +230,7 @@ GEM
     jmespath (1.6.2)
     json (2.6.3)
     jwt (2.5.0)
-    lograge (0.13.0)
+    lograge (0.14.0)
       actionpack (>= 4)
       activesupport (>= 4)
       railties (>= 4)
