@@ -18,6 +18,12 @@ describe "Settings" do
     end
   end
 
+  describe ".features" do
+    features = settings[:features]
+
+    include_examples expected_value_test, :email_confirmations_enabled, features, false
+  end
+
   describe ".forms_api" do
     forms_api = settings[:forms_api]
 
