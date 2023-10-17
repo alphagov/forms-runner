@@ -34,7 +34,7 @@ module Forms
 
     def setup_instance_vars_for_view
       @is_question = true
-      @question_edit_link = "#{Settings.forms_admin.base_url}/forms/#{@step.form_id}/pages/#{@step.page_slug}/edit"
+      @question_edit_link = "#{Settings.forms_admin.base_url}/forms/#{@step.form_id}/pages/#{@step.page_slug}/edit/question"
     end
 
     def changing_existing_answer
