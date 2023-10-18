@@ -14,7 +14,7 @@ Rails.application.routes.draw do
     scope "/:form_id/:form_slug" do
       get "/" => "forms/base#redirect_to_friendly_url_start", as: :form
       get "/#{CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG}" => "forms/check_your_answers#show", as: :check_your_answers
-      post "/submit-answers" => "forms/submit_answers#submit_answers", as: :form_submit_answers
+      post "/#{CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG}" => "forms/check_your_answers#submit_answers", as: :form_submit_answers
       get "/submitted" => "forms/submitted#submitted", as: :form_submitted
       get "/privacy" => "forms/privacy_page#show", as: :form_privacy
       get "/:page_slug/change" => "forms/page#show", as: :form_change_answer, defaults: { changing_existing_answer: true }

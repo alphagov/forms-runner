@@ -14,21 +14,44 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
           pages: pages_data)
   end
 
+  let(:store) do
+    {
+      answers: {
+        "2" => {
+          "1" => {
+            "date_year" => "2000",
+            "date_month" => "1",
+            "date_day" => "1",
+          },
+          "2" => {
+            "date_year" => "2023",
+            "date_month" => "6",
+            "date_day" => "9",
+          },
+        },
+      },
+    }
+  end
+
   let(:live_at) { "2022-08-18 09:16:50 +0100" }
 
   let(:pages_data) do
     [
-      (build :page,
-             id: 1,
-             next_page: 2,
-             answer_type: "text",
-             answer_settings: { input_type: "single_line" }
-      ),
-      (build :page,
-             id: 2,
-             answer_type: "text",
-             answer_settings: { input_type: "single_line" }
-      ),
+      {
+        id: 1,
+        position: 1,
+        question_text: "Question one",
+        answer_type: "date",
+        next_page: 2,
+        is_optional: nil,
+      },
+      {
+        id: 2,
+        position: 2,
+        question_text: "Question two",
+        answer_type: "date",
+        is_optional: nil,
+      },
     ]
   end
 
@@ -41,9 +64,19 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
   let(:api_url_suffix) { "/live" }
 
+  let(:frozen_time) { Time.zone.local(2023, 3, 13, 9, 47, 57) }
+
+  let(:repeat_form_submission) { false }
+
   before do
     ActiveResource::HttpMock.respond_to do |mock|
       mock.get "/api/v1/forms/2#{api_url_suffix}", req_headers, form_data.to_json, 200
+    end
+
+    allow(Context).to receive(:new).and_wrap_original do |original_method, *args|
+      context_spy = original_method.call(form: args[0][:form], store:)
+      allow(context_spy).to receive(:form_submitted?).and_return(repeat_form_submission)
+      context_spy
     end
   end
 
@@ -52,6 +85,12 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       let(:api_url_suffix) { "/draft" }
 
       context "without any questions answered" do
+        let(:store) do
+          {
+            answers: {},
+          }
+        end
+
         it "redirects to first incomplete page of form" do
           get check_your_answers_path(mode: "preview-draft", form_id: 2, form_slug: form_data.form_slug)
           expect(response.status).to eq(302)
@@ -61,8 +100,6 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
       context "with all questions answered and valid" do
         before do
-          post save_form_page_path("preview-draft", 2, form_data.form_slug, 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
-          post save_form_page_path("preview-draft", 2, form_data.form_slug, 2), params: { question: { text: "answer text" }, changing_existing_answer: false }
           allow(EventLogger).to receive(:log).at_least(:once)
           get check_your_answers_path(mode: "preview-draft", form_id: 2, form_slug: form_data.form_slug)
         end
@@ -104,6 +141,12 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
     context "with preview mode off" do
       context "without any questions answered" do
+        let(:store) do
+          {
+            answers: {},
+          }
+        end
+
         it "redirects to first incomplete page of form" do
           get check_your_answers_path(mode: "form", form_id: 2, form_slug: form_data.form_slug)
           expect(response.status).to eq(302)
@@ -150,6 +193,94 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
           end
           get check_your_answers_path(mode: "form", form_id: 2, form_slug: form_data.form_slug)
         end
+      end
+    end
+  end
+
+  describe "#submit_answers" do
+    before do
+      allow(LogEventService).to receive(:log_submit).at_least(:once)
+    end
+
+    context "with preview mode on" do
+      before do
+        travel_to frozen_time do
+          post form_submit_answers_path("preview-live", 2, "form-name", 1)
+        end
+      end
+
+      it "redirects to confirmation page" do
+        expect(response).to redirect_to(form_submitted_path)
+      end
+
+      it "does not log the form_submission event" do
+        expect(LogEventService).not_to have_received(:log_submit)
+      end
+
+      it "emails the form submission" do
+        deliveries = ActionMailer::Base.deliveries
+        expect(deliveries.length).to eq 1
+
+        mail = deliveries[0]
+        expect(mail.to).to eq [form_data.submission_email]
+
+        expected_personalisation = {
+          title: form_data.name,
+          text_input: ".*",
+          submission_time: "09:47:57",
+          submission_date: "13 March 2023",
+          test: "yes",
+          not_test: "no",
+        }
+
+        expect(mail.body.raw_source).to match(expected_personalisation.to_s)
+      end
+    end
+
+    context "with preview mode off" do
+      before do
+        travel_to frozen_time do
+          post form_submit_answers_path("form", 2, "form-name", 1)
+        end
+      end
+
+      it "redirects to confirmation page" do
+        expect(response).to redirect_to(form_submitted_path)
+      end
+
+      it "Logs the submit event with service logger" do
+        expect(LogEventService).to have_received(:log_submit).with(instance_of(Context), instance_of(ActionDispatch::Request))
+      end
+
+      it "emails the form submission" do
+        deliveries = ActionMailer::Base.deliveries
+        expect(deliveries.length).to eq 1
+
+        mail = deliveries[0]
+        expect(mail.to).to eq [form_data.submission_email]
+
+        expected_personalisation = {
+          title: form_data.name,
+          text_input: ".*",
+          submission_time: "09:47:57",
+          submission_date: "13 March 2023",
+          test: "no",
+          not_test: "yes",
+        }
+
+        expect(mail.body.raw_source).to match(expected_personalisation.to_s)
+      end
+    end
+
+    context "when answers have already been submitted" do
+      let(:repeat_form_submission) { true }
+
+      before do
+        post form_submit_answers_path("form", 2, "form-name", 1)
+      end
+
+      it "redirects to repeat submission error page" do
+        expect(response).to redirect_to(error_repeat_submission_path(2))
       end
     end
   end

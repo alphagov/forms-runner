@@ -15,6 +15,24 @@ module Forms
       answers_need_full_width
     end
 
+    def submit_answers
+      if current_context.form_submitted?
+        redirect_to error_repeat_submission_path(current_form.id)
+      else
+        unless mode.preview?
+          LogEventService.log_submit(current_context, request)
+        end
+
+        FormSubmissionService.call(current_context:,
+                                   reference: params[:notify_reference],
+                                   preview_mode: mode.preview?).submit
+        redirect_to :form_submitted
+      end
+    rescue StandardError => e
+      Sentry.capture_exception(e)
+      render "errors/submission_error", status: :internal_server_error
+    end
+
   private
 
     def page_to_row(page)
