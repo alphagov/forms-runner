@@ -10,6 +10,7 @@ class FormSubmissionService
     @form = current_context.form
     @reference = reference
     @preview_mode = preview_mode
+    @timestamp = submission_timestamp
   end
 
   def submit
@@ -23,15 +24,13 @@ class FormSubmissionService
       raise StandardError, "Form id(#{@form.id}) is missing a submission email address"
     end
 
-    timestamp = submission_timestamp
-
     unless @form.submission_email.blank? && @preview_mode
       FormSubmissionMailer
         .email_completed_form(title: form_title,
                               text_input: email_body,
                               preview_mode: @preview_mode,
                               reference: @reference,
-                              timestamp:,
+                              timestamp: @timestamp,
                               submission_email: @form.submission_email).deliver_now
     end
   end
