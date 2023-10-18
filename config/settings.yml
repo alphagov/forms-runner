@@ -1,3 +1,6 @@
+features:
+  email_confirmations_enabled: false
+
 forms_admin:
   # URL to form-admin
   base_url: http://localhost:3000
