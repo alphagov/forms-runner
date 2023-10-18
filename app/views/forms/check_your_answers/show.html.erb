@@ -19,13 +19,25 @@
       %>
     <% end %>
 
-    <%if @current_context.form.declaration_text.present? %>
-      <h2 class="govuk-heading-m govuk-!-margin-top-7">Declaration</h2>
-      <%= simple_format(@current_context.form.declaration_text, class: 'govuk-body') %>
-    <% end %>
-
     <%= form_with url: @form_submit_path do |form| %>
+
+      <% if FeatureService.enabled?(:email_confirmations_enabled) %>
+        <%= form.govuk_radio_buttons_fieldset(:send_confirmation, legend: { size: 'm', tag: 'h2', text: 'Do you want to get an email confirming your form has been submitted?'},
+                                                                  hint: { text: "We'll only use this email to send a confirmation that your form's been successfully submitted. It will not contain a copy of your answers." }) do %>
+          <%= form.govuk_radio_button :send_confirmation, 'true', label: { text: 'Yes' } do %>
+            <%= form.govuk_text_field :confirmation_email_address, label: { text: 'What email address do you want us to send your confirmation to?' } %>
+          <% end %>
+          <%= form.govuk_radio_button :send_confirmation, 'false', label: { text: 'No' } %>
+        <% end %>
+      <% end %>
+
+      <%if @current_context.form.declaration_text.present? %>
+        <h2 class="govuk-heading-m govuk-!-margin-top-7">Declaration</h2>
+        <%= simple_format(@current_context.form.declaration_text, class: 'govuk-body') %>
+      <% end %>
+
       <%= form.hidden_field :notify_reference, id: 'notification-id', value: @notify_reference %>
+
       <%= form.govuk_submit(@current_context.form.declaration_text.present? ? t('form.check_your_answers.agree_and_submit') : t('form.check_your_answers.submit')) %>
     <% end %>
   </div>
