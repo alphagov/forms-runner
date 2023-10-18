@@ -10,7 +10,7 @@ module Forms
 
         FormSubmissionService.call(current_context:,
                                    reference: params[:notify_reference],
-                                   preview_mode: mode.preview?).submit_form_to_processing_team
+                                   preview_mode: mode.preview?).submit
         redirect_to :form_submitted
       end
     rescue StandardError => e

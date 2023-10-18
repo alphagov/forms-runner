@@ -7,6 +7,13 @@ RSpec.describe FormSubmissionService do
   let(:step) { OpenStruct.new({ question_text: "What is the meaning of life?", show_answer_in_email: "42" }) }
   let(:preview_mode) { false }
 
+  describe "#submit" do
+    it "calls submit_form_to_processing_team method" do
+      expect(service).to receive(:submit_form_to_processing_team).once
+      service.submit
+    end
+  end
+
   describe "#submit_form_to_processing_team" do
     it "calls FormSubmissionMailer" do
       freeze_time do

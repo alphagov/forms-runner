@@ -12,6 +12,10 @@ class FormSubmissionService
     @preview_mode = preview_mode
   end
 
+  def submit
+    submit_form_to_processing_team
+  end
+
   def submit_form_to_processing_team
     raise StandardError, "Form id(#{@form.id}) has no completed steps i.e questions/answers to include in submission email" if @current_context.completed_steps.blank?
 
