@@ -130,6 +130,32 @@ Refer to the [settings file](config/settings.yml) for all the settings required 
 | ----------- | ---------------------------- |
 | `REDIS_URL` | The URL for Redis (optional) |
 
+### Feature flags
+
+This repo supports the ability to set up feature flags. To do this, add your feature flag in the [settings file](config/settings.yml) under the `features` property. eg:
+
+```yaml
+features:
+  some_feature: true
+```
+
+You can then use the [feature service](app/service/feature_service.rb) to check whether the feature is enabled or not. Eg. `FeatureService.enabled?(:some_feature)`.
+
+You can also nest features:
+
+```yaml
+features:
+  some:
+    nested_feature: true
+```
+
+And check with `FeatureService.enabled?("some.nested_feature")`.
+
+### Testing with features
+
+You can also tag RSpec tests with `feature_{name}: true`. This will turn that feature on just for the duration of that test.
+
+
 ### Configuring Redis
 
 You can enable Redis sessions by providing the Redis connection URL in the environment variable `REDIS_URL`.
