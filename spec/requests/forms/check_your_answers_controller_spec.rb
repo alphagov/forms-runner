@@ -336,14 +336,35 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       end
 
       context "when user has requested a confirmation email" do
-        let(:email_confirmation_form) { { send_confirmation: "skip_confirmation", confirmation_email_address: Faker::Internet.email, notify_reference: "for-my-ref" } }
+        let(:email_confirmation_form) { { send_confirmation: "send_email", confirmation_email_address: Faker::Internet.email, notify_reference: "for-my-ref" } }
 
         before do
-          post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_form: }
+          travel_to timestamp_of_request do
+            post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_form: }
+          end
         end
 
         it "redirects to confirmation page" do
           expect(response).to redirect_to(form_submitted_path)
+        end
+
+        it "sends a confirmation email" do
+          deliveries = ActionMailer::Base.deliveries
+          expect(deliveries.length).to eq 2
+
+          mail = deliveries[1]
+          expect(mail.to).to eq([email_confirmation_form[:confirmation_email_address]])
+
+          expected_personalisation = {
+            title: form_data.name,
+            what_happens_next_text: form_data.what_happens_next_text,
+            support_contact_details: form_data.support_email,
+            submission_time: "10:00am",
+            submission_date: "14 December 2022",
+            test: "no",
+          }
+
+          expect(mail.body.raw_source).to match(expected_personalisation.to_s)
         end
       end
     end
