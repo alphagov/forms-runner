@@ -14,6 +14,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
           pages: pages_data)
   end
 
+  let(:email_confirmation_form) { { send_confirmation: "true", confirmation_email_address: 'test@example.com' }}
+
   let(:store) do
     {
       answers: {
@@ -205,7 +207,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
     context "with preview mode on" do
       before do
         travel_to frozen_time do
-          post form_submit_answers_path("preview-live", 2, "form-name", 1)
+          post form_submit_answers_path("preview-live", 2, "form-name", 1), params: { email_confirmation_form: }
         end
       end
 
@@ -240,7 +242,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
     context "with preview mode off" do
       before do
         travel_to frozen_time do
-          post form_submit_answers_path("form", 2, "form-name", 1)
+          post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_form: }
         end
       end
 
@@ -276,7 +278,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       let(:repeat_form_submission) { true }
 
       before do
-        post form_submit_answers_path("form", 2, "form-name", 1)
+        post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_form: }
       end
 
       it "redirects to repeat submission error page" do

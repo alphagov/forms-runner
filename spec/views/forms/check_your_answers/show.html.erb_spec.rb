@@ -5,13 +5,14 @@ describe "forms/check_your_answers/show.html.erb" do
   let(:context) { OpenStruct.new(form:) }
   let(:full_width) { false }
   let(:declaration_text) { nil }
+  let(:email_confirmation_form) { build :email_confirmation_form }
 
   before do
     assign(:current_context, context)
     assign(:mode, OpenStruct.new(preview_draft?: false, preview_live?: false))
     assign(:form_submit_path, "/")
     assign(:full_width, full_width)
-    render template: "forms/check_your_answers/show"
+    render template: "forms/check_your_answers/show", locals: { email_confirmation_form: }
   end
 
   context "when the form does not have a declaration" do
@@ -48,6 +49,30 @@ describe "forms/check_your_answers/show.html.erb" do
 
   it "contains a hidden notify reference" do
     expect(rendered).to have_css("input", id: "notification-id", visible: :hidden)
+  end
+
+  context "when the email confirmation feature flag is off", feature_email_confirmations_enabled: false do
+    it "does not display the email radio buttons" do
+      expect(rendered).not_to have_text(I18n.t("helpers.legend.email_confirmation_form.send_confirmation"))
+      expect(rendered).not_to have_field(I18n.t("helpers.label.email_confirmation_form.send_confirmation_options.send_email"))
+      expect(rendered).not_to have_field(I18n.t("helpers.label.email_confirmation_form.send_confirmation_options.skip_confirmation"))
+    end
+
+    it "does not display the email field" do
+      expect(rendered).not_to have_field(I18n.t("helpers.label.email_confirmation_form.confirmation_email_address"))
+    end
+  end
+
+  context "when the email confirmation feature flag is on", feature_email_confirmations_enabled: true do
+    it "displays the email radio buttons" do
+      expect(rendered).to have_text(I18n.t("helpers.legend.email_confirmation_form.send_confirmation"))
+      expect(rendered).to have_field(I18n.t("helpers.label.email_confirmation_form.send_confirmation_options.send_email"))
+      expect(rendered).to have_field(I18n.t("helpers.label.email_confirmation_form.send_confirmation_options.skip_confirmation"))
+    end
+
+    it "displays the email field" do
+      expect(rendered).to have_field(I18n.t("helpers.label.email_confirmation_form.confirmation_email_address"))
+    end
   end
 
   # TODO: add view tests for playing back questions and Answers

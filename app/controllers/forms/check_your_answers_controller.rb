@@ -7,12 +7,13 @@ module Forms
       @back_link = form_page_path(current_context.form.id, current_context.form.form_slug, previous_step)
       @rows = check_your_answers_rows
       @form_submit_path = form_submit_answers_path
-      @notify_reference ||= SecureRandom.uuid
+      email_confirmation_form = EmailConfirmationForm.new(notify_reference: SecureRandom.uuid)
       unless mode.preview?
         EventLogger.log_form_event(current_context, request, "check_answers")
       end
 
       answers_need_full_width
+      render template: "forms/check_your_answers/show", locals: { email_confirmation_form: }
     end
 
     def submit_answers
@@ -24,7 +25,7 @@ module Forms
         end
 
         FormSubmissionService.call(current_context:,
-                                   reference: params[:notify_reference],
+                                   reference: params[:email_confirmation_form][:notify_reference],
                                    preview_mode: mode.preview?).submit
         redirect_to :form_submitted
       end
