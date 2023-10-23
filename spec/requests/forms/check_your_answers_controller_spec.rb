@@ -14,7 +14,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
           pages: pages_data)
   end
 
-  let(:email_confirmation_form) { { send_confirmation: "true", confirmation_email_address: 'test@example.com' }}
+  let(:email_confirmation_form) { { send_confirmation: "send_email", confirmation_email_address: Faker::Internet.email } }
 
   let(:store) do
     {
@@ -283,6 +283,64 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
       it "redirects to repeat submission error page" do
         expect(response).to redirect_to(error_repeat_submission_path(2))
+      end
+    end
+
+    context "when the confirmation email flag is enabled", feature_email_confirmations_enabled: true do
+      context "when user has not specified whether they want a confirmation email" do
+        let(:email_confirmation_form) { { send_confirmation: nil } }
+
+        before do
+          post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_form: }
+        end
+
+        it "return 422 error code" do
+          expect(response).to have_http_status(:unprocessable_entity)
+        end
+
+        it "renders the check your answers page" do
+          expect(response).to render_template("forms/check_your_answers/show")
+        end
+      end
+
+      context "when user has not specified the confirmation email address" do
+        let(:email_confirmation_form) { { send_confirmation: "send_email", confirmation_email_address: nil } }
+
+        before do
+          post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_form: }
+        end
+
+        it "return 422 error code" do
+          expect(response).to have_http_status(:unprocessable_entity)
+        end
+
+        it "renders the check your answers page" do
+          expect(response).to render_template("forms/check_your_answers/show")
+        end
+      end
+
+      context "when user has not requested a confirmation email" do
+        let(:email_confirmation_form) { { send_confirmation: "skip_confirmation", confirmation_email_address: nil } }
+
+        before do
+          post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_form: }
+        end
+
+        it "redirects to confirmation page" do
+          expect(response).to redirect_to(form_submitted_path)
+        end
+      end
+
+      context "when user has requested a confirmation email" do
+        let(:email_confirmation_form) { { send_confirmation: "skip_confirmation", confirmation_email_address: Faker::Internet.email } }
+
+        before do
+          post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_form: }
+        end
+
+        it "redirects to confirmation page" do
+          expect(response).to redirect_to(form_submitted_path)
+        end
       end
     end
   end

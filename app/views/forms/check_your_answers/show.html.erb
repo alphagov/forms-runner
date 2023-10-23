@@ -9,6 +9,10 @@
 <div class="govuk-grid-row">
   <div class="<%= @full_width ? 'govuk-grid-column-full' : 'govuk-grid-column-two-thirds-from-desktop' %>">
     <%= form_with model: email_confirmation_form, url: @form_submit_path do |form| %>
+      <% if email_confirmation_form&.errors&.any? %>
+        <%= form.govuk_error_summary %>
+      <% end %>
+
       <h1 class="govuk-heading-l">Check your answers before submitting your form</h1>
 
       <%if @rows %>
