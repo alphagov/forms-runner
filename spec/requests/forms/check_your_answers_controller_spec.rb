@@ -14,7 +14,11 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
           pages: pages_data)
   end
 
-  let(:email_confirmation_form) { { send_confirmation: "send_email", confirmation_email_address: Faker::Internet.email } }
+  let(:email_confirmation_form) do
+    { send_confirmation: "send_email",
+      confirmation_email_address: Faker::Internet.email,
+      notify_reference: "for-my-ref" }
+  end
 
   let(:store) do
     {
@@ -320,7 +324,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       end
 
       context "when user has not requested a confirmation email" do
-        let(:email_confirmation_form) { { send_confirmation: "skip_confirmation", confirmation_email_address: nil } }
+        let(:email_confirmation_form) { { send_confirmation: "skip_confirmation", confirmation_email_address: nil, notify_reference: "for-my-ref" } }
 
         before do
           post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_form: }
@@ -332,7 +336,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       end
 
       context "when user has requested a confirmation email" do
-        let(:email_confirmation_form) { { send_confirmation: "skip_confirmation", confirmation_email_address: Faker::Internet.email } }
+        let(:email_confirmation_form) { { send_confirmation: "skip_confirmation", confirmation_email_address: Faker::Internet.email, notify_reference: "for-my-ref" } }
 
         before do
           post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_form: }

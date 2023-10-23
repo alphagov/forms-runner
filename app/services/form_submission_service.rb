@@ -5,10 +5,11 @@ class FormSubmissionService
     end
   end
 
-  def initialize(current_context:, reference:, preview_mode:)
+  def initialize(current_context:, email_confirmation_form:, preview_mode:)
     @current_context = current_context
     @form = current_context.form
-    @reference = reference
+    @email_confirmation_form = email_confirmation_form
+    @reference = @email_confirmation_form.notify_reference
     @preview_mode = preview_mode
     @timestamp = submission_timestamp
   end

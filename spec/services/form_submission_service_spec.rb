@@ -1,11 +1,12 @@
 require "rails_helper"
 
 RSpec.describe FormSubmissionService do
-  let(:service) { described_class.call(current_context:, reference: "for-my-ref", preview_mode:) }
+  let(:service) { described_class.call(current_context:, email_confirmation_form:, preview_mode:) }
   let(:form) { OpenStruct.new(id: 1, name: "Form 1", submission_email: "testing@gov.uk") }
   let(:current_context) { OpenStruct.new(form:, completed_steps: [step]) }
   let(:step) { OpenStruct.new({ question_text: "What is the meaning of life?", show_answer_in_email: "42" }) }
   let(:preview_mode) { false }
+  let(:email_confirmation_form) { EmailConfirmationForm.new(notify_reference: "for-my-ref") }
 
   describe "#submit" do
     it "calls submit_form_to_processing_team method" do

@@ -20,7 +20,7 @@ module Forms
           end
 
           FormSubmissionService.call(current_context:,
-                                     reference: email_confirmation_form.notify_reference,
+                                     email_confirmation_form:,
                                      preview_mode: mode.preview?).submit
           redirect_to :form_submitted
         end
