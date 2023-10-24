@@ -37,6 +37,7 @@ describe "Settings" do
     include_examples expected_value_test, :api_key, govuk_notify, "changeme"
     include_examples expected_value_test, :form_submission_email_reply_to_id, govuk_notify, "fab9373b-fb7c-483f-ae25-5a9852bfcc04"
     include_examples expected_value_test, :form_submission_email_template_id, govuk_notify, "427eb8bc-ce0d-40a3-bf54-d76e8c3ec916"
+    include_examples expected_value_test, :form_filler_confirmation_email_template_id, govuk_notify, "2d1f36dc-9799-43dd-8673-b631f9e0b4a5"
   end
 
   describe "sentry" do

@@ -1,16 +1,36 @@
 require "rails_helper"
 
 RSpec.describe FormSubmissionService do
-  let(:service) { described_class.call(current_context:, reference: "for-my-ref", preview_mode:) }
-  let(:form) { OpenStruct.new(id: 1, name: "Form 1", submission_email: "testing@gov.uk") }
+  let(:service) { described_class.call(current_context:, email_confirmation_form:, preview_mode:) }
+  let(:form) do
+    build(:form,
+          :with_support,
+          id: 1,
+          name: "Form 1",
+          what_happens_next_text: "We usually respond to applications within 10 working days.",
+          submission_email: "testing@gov.uk")
+  end
   let(:current_context) { OpenStruct.new(form:, completed_steps: [step]) }
   let(:step) { OpenStruct.new({ question_text: "What is the meaning of life?", show_answer_in_email: "42" }) }
   let(:preview_mode) { false }
+  let(:email_confirmation_form) { build :email_confirmation_form_opted_in }
 
   describe "#submit" do
     it "calls submit_form_to_processing_team method" do
       expect(service).to receive(:submit_form_to_processing_team).once
       service.submit
+    end
+
+    it "does not call submit_confirmation_email_to_user" do
+      expect(service).not_to receive(:submit_confirmation_email_to_user)
+      service.submit
+    end
+
+    describe "when email_confirmation feature is enabled", feature_email_confirmations_enabled: true do
+      it "calls submit_confirmation_email_to_user" do
+        expect(service).to receive(:submit_confirmation_email_to_user).once
+        service.submit
+      end
     end
   end
 
@@ -25,7 +45,7 @@ RSpec.describe FormSubmissionService do
         expect(FormSubmissionMailer).to have_received(:email_completed_form).with(
           { title: "Form 1",
             text_input: "# What is the meaning of life?\n42\n",
-            reference: "for-my-ref",
+            reference: email_confirmation_form.notify_reference,
             timestamp: Time.zone.now,
             submission_email: "testing@gov.uk",
             preview_mode: false },
@@ -65,7 +85,7 @@ RSpec.describe FormSubmissionService do
           expect(FormSubmissionMailer).to have_received(:email_completed_form).with(
             { title: "Form 1",
               text_input: "# What is the meaning of life?\n42\n",
-              reference: "for-my-ref",
+              reference: email_confirmation_form.notify_reference,
               timestamp: Time.zone.now,
               submission_email: "testing@gov.uk",
               preview_mode: true },
@@ -98,6 +118,41 @@ RSpec.describe FormSubmissionService do
             expect { result }.to raise_error("Form id(1) has no completed steps i.e questions/answers to include in submission email")
           end
         end
+      end
+    end
+  end
+
+  describe "#submit_confirmation_email_to_user" do
+    it "calls FormSubmissionConfirmationMailer" do
+      freeze_time do
+        delivery = double
+        expect(delivery).to receive(:deliver_now).with(no_args)
+        allow(FormSubmissionConfirmationMailer).to receive(:send_confirmation_email).and_return(delivery)
+
+        service.submit_confirmation_email_to_user
+        expect(FormSubmissionConfirmationMailer).to have_received(:send_confirmation_email).with(
+          { title: "Form 1",
+            what_happens_next_text: form.what_happens_next_text,
+            support_contact_details: form.support_email,
+            submission_timestamp: Time.zone.now,
+            preview_mode:,
+            confirmation_email_address: email_confirmation_form.confirmation_email_address },
+        ).once
+      end
+    end
+
+    context "when user does not want a confirmation email" do
+      let(:email_confirmation_form) { build :email_confirmation_form }
+
+      it "does not call FormSubmissionConfirmationMailer" do
+        allow(FormSubmissionConfirmationMailer).to receive(:send_confirmation_email)
+
+        service.submit_confirmation_email_to_user
+        expect(FormSubmissionConfirmationMailer).not_to have_received(:send_confirmation_email)
+      end
+
+      it "returns nil" do
+        expect(service.submit_confirmation_email_to_user).to be_nil
       end
     end
   end

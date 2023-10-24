@@ -5,16 +5,18 @@ class FormSubmissionService
     end
   end
 
-  def initialize(current_context:, reference:, preview_mode:)
+  def initialize(current_context:, email_confirmation_form:, preview_mode:)
     @current_context = current_context
     @form = current_context.form
-    @reference = reference
+    @email_confirmation_form = email_confirmation_form
+    @reference = @email_confirmation_form.notify_reference
     @preview_mode = preview_mode
     @timestamp = submission_timestamp
   end
 
   def submit
     submit_form_to_processing_team
+    submit_confirmation_email_to_user if FeatureService.enabled?(:email_confirmations_enabled)
   end
 
   def submit_form_to_processing_team
@@ -33,6 +35,19 @@ class FormSubmissionService
                               timestamp: @timestamp,
                               submission_email: @form.submission_email).deliver_now
     end
+  end
+
+  def submit_confirmation_email_to_user
+    return nil unless @email_confirmation_form.send_confirmation == "send_email"
+
+    FormSubmissionConfirmationMailer.send_confirmation_email(
+      title: form_title,
+      what_happens_next_text: @form.what_happens_next_text,
+      support_contact_details: @form.support_email,
+      submission_timestamp: @timestamp,
+      preview_mode: @preview_mode,
+      confirmation_email_address: @email_confirmation_form.confirmation_email_address,
+    ).deliver_now
   end
 
   class NotifyTemplateBodyFilter

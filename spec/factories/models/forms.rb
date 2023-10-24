@@ -8,6 +8,7 @@ FactoryBot.define do
     privacy_policy_url { Faker::Internet.url(host: "gov.uk") }
     org { "test-org" }
     live_at { nil }
+    what_happens_next_text { nil }
     support_email { nil }
     support_phone { nil }
     support_url { nil }
