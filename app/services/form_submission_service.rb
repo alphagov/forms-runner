@@ -38,6 +38,7 @@ class FormSubmissionService
   end
 
   def submit_confirmation_email_to_user
+    return nil if @form.what_happens_next_text.blank?
     return nil unless @email_confirmation_form.send_confirmation == "send_email"
 
     FormSubmissionConfirmationMailer.send_confirmation_email(

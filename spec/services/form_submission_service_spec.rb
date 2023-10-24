@@ -155,6 +155,35 @@ RSpec.describe FormSubmissionService do
         expect(service.submit_confirmation_email_to_user).to be_nil
       end
     end
+
+    context "when form is draft" do
+      context "when form does not have 'what happens next details'" do
+        let(:form) do
+          build(:form,
+                id: 1,
+                name: "Form 1",
+                what_happens_next_text:,
+                support_email: Faker::Internet.email(domain: "example.gov.uk"),
+                support_phone: Faker::Lorem.paragraph(sentence_count: 2, supplemental: true, random_sentences_to_add: 4),
+                support_url: Faker::Internet.url(host: "gov.uk"),
+                support_url_text: Faker::Lorem.sentence(word_count: 1, random_words_to_add: 4),
+                submission_email: "testing@gov.uk")
+        end
+
+        let(:what_happens_next_text) { nil }
+
+        it "does not call FormSubmissionConfirmationMailer" do
+          allow(FormSubmissionConfirmationMailer).to receive(:send_confirmation_email)
+
+          service.submit_confirmation_email_to_user
+          expect(FormSubmissionConfirmationMailer).not_to have_received(:send_confirmation_email)
+        end
+
+        it "returns nil" do
+          expect(service.submit_confirmation_email_to_user).to be_nil
+        end
+      end
+    end
   end
 
   describe "FormSubmissionService::NotifyTemplateBodyFilter" do
