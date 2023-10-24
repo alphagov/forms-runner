@@ -42,11 +42,11 @@ describe FormSubmissionMailer, type: :mailer do
 
     describe "submission date/time" do
       context "with a time in BST" do
-        let(:timestamp) { Time.utc(2022, 9, 14, 10, 0o0, 0o0) }
+        let(:timestamp) { Time.utc(2022, 9, 14, 8, 0o0, 0o0) }
 
         it "includes the time user submitted the form" do
           travel_to timestamp do
-            expect(mail.govuk_notify_personalisation[:submission_time]).to eq("11:00:00")
+            expect(mail.govuk_notify_personalisation[:submission_time]).to eq("9:00am")
           end
         end
 
@@ -58,11 +58,11 @@ describe FormSubmissionMailer, type: :mailer do
       end
 
       context "with a time in GMT" do
-        let(:timestamp) { Time.utc(2022, 12, 14, 10, 0o0, 0o0) }
+        let(:timestamp) { Time.utc(2022, 12, 14, 13, 0o0, 0o0) }
 
         it "includes the time user submitted the form" do
           travel_to timestamp do
-            expect(mail.govuk_notify_personalisation[:submission_time]).to eq("10:00:00")
+            expect(mail.govuk_notify_personalisation[:submission_time]).to eq("1:00pm")
           end
         end
 

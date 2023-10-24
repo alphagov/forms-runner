@@ -233,7 +233,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         expected_personalisation = {
           title: form_data.name,
           text_input: ".*",
-          submission_time: "09:47:57",
+          submission_time: "9:47am",
           submission_date: "13 March 2023",
           test: "yes",
           not_test: "no",
@@ -268,7 +268,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         expected_personalisation = {
           title: form_data.name,
           text_input: ".*",
-          submission_time: "09:47:57",
+          submission_time: "9:47am",
           submission_date: "13 March 2023",
           test: "no",
           not_test: "yes",

@@ -6,7 +6,7 @@ class FormSubmissionConfirmationMailer < GovukNotifyRails::Mailer
       title:,
       what_happens_next_text:,
       support_contact_details:,
-      submission_time: submission_timestamp.strftime("%H:%M:%S"),
+      submission_time: submission_timestamp.strftime("%l:%M%P").strip,
       submission_date: submission_timestamp.strftime("%-d %B %Y"),
       # GOV.UK Notify's templates have conditionals, but only positive
       # conditionals, so to simulate negative conditionals we add two boolean
