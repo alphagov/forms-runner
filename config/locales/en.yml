@@ -101,7 +101,7 @@ en:
   helpers:
     hint:
       email_confirmation_form:
-        send_confirmation: We’ll only use this email to send a confirmation that your form’s been successfully submitted. It will not contain a copy of your answers.
+        send_confirmation: We’ll only use your email address to send a confirmation that your form’s been successfully submitted. It will not contain a copy of your answers.
     label:
       email_confirmation_form:
         confirmation_email_address: What email address do you want us to send your confirmation to?
