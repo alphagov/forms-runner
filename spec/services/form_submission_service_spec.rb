@@ -4,12 +4,21 @@ RSpec.describe FormSubmissionService do
   let(:service) { described_class.call(current_context:, email_confirmation_form:, preview_mode:) }
   let(:form) do
     build(:form,
-          :with_support,
           id: 1,
           name: "Form 1",
-          what_happens_next_text: "We usually respond to applications within 10 working days.",
+          what_happens_next_text:,
+          support_email:,
+          support_phone:,
+          support_url:,
+          support_url_text:,
           submission_email: "testing@gov.uk")
   end
+  let(:what_happens_next_text) { "We usually respond to applications within 10 working days." }
+  let(:support_email) { Faker::Internet.email(domain: "example.gov.uk") }
+  let(:support_phone) { Faker::Lorem.paragraph(sentence_count: 2, supplemental: true, random_sentences_to_add: 4) }
+  let(:support_url) { Faker::Internet.url(host: "gov.uk") }
+  let(:support_url_text) { Faker::Lorem.sentence(word_count: 1, random_words_to_add: 4) }
+
   let(:current_context) { OpenStruct.new(form:, completed_steps: [step]) }
   let(:step) { OpenStruct.new({ question_text: "What is the meaning of life?", show_answer_in_email: "42" }) }
   let(:preview_mode) { false }
@@ -158,19 +167,25 @@ RSpec.describe FormSubmissionService do
 
     context "when form is draft" do
       context "when form does not have 'what happens next details'" do
-        let(:form) do
-          build(:form,
-                id: 1,
-                name: "Form 1",
-                what_happens_next_text:,
-                support_email: Faker::Internet.email(domain: "example.gov.uk"),
-                support_phone: Faker::Lorem.paragraph(sentence_count: 2, supplemental: true, random_sentences_to_add: 4),
-                support_url: Faker::Internet.url(host: "gov.uk"),
-                support_url_text: Faker::Lorem.sentence(word_count: 1, random_words_to_add: 4),
-                submission_email: "testing@gov.uk")
+        let(:what_happens_next_text) { nil }
+
+        it "does not call FormSubmissionConfirmationMailer" do
+          allow(FormSubmissionConfirmationMailer).to receive(:send_confirmation_email)
+
+          service.submit_confirmation_email_to_user
+          expect(FormSubmissionConfirmationMailer).not_to have_received(:send_confirmation_email)
         end
 
-        let(:what_happens_next_text) { nil }
+        it "returns nil" do
+          expect(service.submit_confirmation_email_to_user).to be_nil
+        end
+      end
+
+      context "when form does not have any support details " do
+        let(:support_email) { nil }
+        let(:support_phone) { nil }
+        let(:support_url) { nil }
+        let(:support_url_text) { nil }
 
         it "does not call FormSubmissionConfirmationMailer" do
           allow(FormSubmissionConfirmationMailer).to receive(:send_confirmation_email)
