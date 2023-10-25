@@ -358,15 +358,24 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
           expected_personalisation = {
             title: form_data.name,
             what_happens_next_text: form_data.what_happens_next_text,
-            support_contact_details: form_data.support_email,
+            support_contact_details: contact_support_details_format,
             submission_time: "10:00am",
             submission_date: "14 December 2022",
             test: "no",
           }
 
-          expect(mail.body.raw_source).to match(expected_personalisation.to_s)
+          expect(mail.body.raw_source).to include(expected_personalisation.to_s)
         end
       end
     end
+  end
+
+private
+
+  def contact_support_details_format
+    phone_number = "#{form_data.support_phone}\n\n[#{I18n.t('support_details.call_charges')}]()"
+    email = "[#{form_data.support_email}](mailto:#{form_data.support_email})"
+    online = "[#{form_data.support_url_text}](#{form_data.support_url})"
+    [phone_number, email, online].compact_blank.join("\n\n")
   end
 end
