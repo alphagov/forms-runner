@@ -97,6 +97,7 @@ en:
       submit: Submit
       title: Check your answers before submitting your form
     submitted:
+      email_sent: We have sent you a confirmation email.
       title: Your form has been submitted
   helpers:
     hint:

@@ -2,10 +2,14 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <%= govuk_panel(title_text: t('form.submitted.title')) %>
+    <%= govuk_panel(title_text: t('form.submitted.title'), classes: ["govuk-!-margin-bottom-7"]) %>
+
+    <% if email_sent %>
+      <p><%= t('form.submitted.email_sent') %></p>
+    <% end %>
 
     <%if @current_context.form.what_happens_next_text.present? %>
-      <h2 class="govuk-heading-m govuk-!-margin-top-7">What happens next</h2>
+      <h2 class="govuk-heading-m">What happens next</h2>
       <%= simple_format(@current_context.form.what_happens_next_text, class: 'govuk-body') %>
   <% end %>
   </div>

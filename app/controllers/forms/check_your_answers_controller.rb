@@ -22,7 +22,8 @@ module Forms
           FormSubmissionService.call(current_context:,
                                      email_confirmation_form:,
                                      preview_mode: mode.preview?).submit
-          redirect_to :form_submitted
+          redirect_to :form_submitted, email_sent: email_confirmation_form.send_confirmation == "send_email"
+
         end
       else
         setup_check_your_answers
