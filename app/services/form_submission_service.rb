@@ -38,12 +38,13 @@ class FormSubmissionService
   end
 
   def submit_confirmation_email_to_user
+    return nil unless @form.what_happens_next_text.present? && has_support_contact_details?
     return nil unless @email_confirmation_form.send_confirmation == "send_email"
 
     FormSubmissionConfirmationMailer.send_confirmation_email(
       title: form_title,
       what_happens_next_text: @form.what_happens_next_text,
-      support_contact_details: @form.support_email,
+      support_contact_details: formatted_support_details,
       submission_timestamp: @timestamp,
       preview_mode: @preview_mode,
       confirmation_email_address: @email_confirmation_form.confirmation_email_address,
@@ -123,5 +124,15 @@ private
 
   def submission_timestamp
     Time.use_zone(submission_timezone) { Time.zone.now }
+  end
+
+  def has_support_contact_details?
+    [@form.support_email, @form.support_phone].any?(&:present?) || [@form.support_url, @form.support_url_text].all?(&:present?)
+  end
+
+  def formatted_support_details
+    return nil unless has_support_contact_details?
+
+    @form.support_email.presence
   end
 end
