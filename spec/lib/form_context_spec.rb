@@ -49,17 +49,17 @@ RSpec.describe FormContext do
   end
 
   describe "#form_submitted?" do
-    let(:store) { { answers: { "1": nil } } }
+    let(:store) { { answers: { "123" => nil } } }
 
     it "returns true when a form has been submitted and cleared" do
-      expect(form_context.form_submitted?(1)).to eq true
+      expect(form_context.form_submitted?(123)).to eq true
     end
 
     context "when form answers have not been submitted and cleared" do
-      let(:store) { { answers: { "1": "This is my answer to question 1" } } }
+      let(:store) { { answers: { "123" => "This is my answer to question 1" } } }
 
       it "returns true when a form has been submitted and cleared" do
-        expect(form_context.form_submitted?(1)).to eq false
+        expect(form_context.form_submitted?(123)).to eq false
       end
     end
   end

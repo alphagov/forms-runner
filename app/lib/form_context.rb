@@ -23,7 +23,7 @@ class FormContext
   end
 
   def form_submitted?(form_id)
-    @store[ROOT_KEY][form_id.to_s.to_sym].nil?
+    @store[ROOT_KEY][form_id.to_s].nil?
   end
 
 private
