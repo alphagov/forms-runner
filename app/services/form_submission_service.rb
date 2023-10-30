@@ -133,6 +133,27 @@ private
   def formatted_support_details
     return nil unless has_support_contact_details?
 
-    @form.support_email.presence
+    [support_phone_details, support_email_details, support_online_details].compact_blank.join("\n\n")
+  end
+
+  def support_phone_details
+    return nil if @form.support_phone.blank?
+
+    notify_body = NotifyTemplateBodyFilter.new
+    formatted_phone_number = notify_body.normalize_whitespace(@form.support_phone)
+
+    "#{formatted_phone_number}\n\n[#{I18n.t('support_details.call_charges')}](#{@current_context.support_details.call_back_url})"
+  end
+
+  def support_email_details
+    return nil if @form.support_email.blank?
+
+    "[#{@form.support_email}](mailto:#{@form.support_email})"
+  end
+
+  def support_online_details
+    return nil if [@form.support_url, @form.support_url_text].all?(&:blank?)
+
+    "[#{@form.support_url_text}](#{@form.support_url})"
   end
 end

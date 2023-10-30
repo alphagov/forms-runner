@@ -19,7 +19,7 @@ RSpec.describe FormSubmissionService do
   let(:support_url) { Faker::Internet.url(host: "gov.uk") }
   let(:support_url_text) { Faker::Lorem.sentence(word_count: 1, random_words_to_add: 4) }
 
-  let(:current_context) { OpenStruct.new(form:, completed_steps: [step]) }
+  let(:current_context) { OpenStruct.new(form:, completed_steps: [step], support_details: OpenStruct.new(call_back_url: "http://gov.uk")) }
   let(:step) { OpenStruct.new({ question_text: "What is the meaning of life?", show_answer_in_email: "42" }) }
   let(:preview_mode) { false }
   let(:email_confirmation_form) { build :email_confirmation_form_opted_in }
@@ -142,7 +142,7 @@ RSpec.describe FormSubmissionService do
         expect(FormSubmissionConfirmationMailer).to have_received(:send_confirmation_email).with(
           { title: "Form 1",
             what_happens_next_text: form.what_happens_next_text,
-            support_contact_details: form.support_email,
+            support_contact_details: contact_support_details_format,
             submission_timestamp: Time.zone.now,
             preview_mode:,
             confirmation_email_address: email_confirmation_form.confirmation_email_address },
@@ -258,5 +258,14 @@ RSpec.describe FormSubmissionService do
         end
       end
     end
+  end
+
+private
+
+  def contact_support_details_format
+    phone_number = "#{form.support_phone}\n\n[#{I18n.t('support_details.call_charges')}](http://gov.uk)"
+    email = "[#{form.support_email}](mailto:#{form.support_email})"
+    online = "[#{form.support_url_text}](#{form.support_url})"
+    [phone_number, email, online].compact_blank.join("\n\n")
   end
 end

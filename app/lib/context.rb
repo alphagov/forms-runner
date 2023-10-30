@@ -10,6 +10,7 @@ class Context
     @support_details = OpenStruct.new({
       email: form.support_email,
       phone: form.support_phone,
+      call_charges_url: "https://www.gov.uk/call-charges",
       url: form.support_url,
       url_text: form.support_url_text,
     })
