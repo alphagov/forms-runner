@@ -13,8 +13,6 @@ gem "puma", "~> 6.4.0"
 gem "sentry-rails"
 gem "sentry-ruby"
 
-gem "dotenv-rails", groups: %i[development test]
-
 gem "config"
 
 # Use GOV.UK Nofity api to send emails
