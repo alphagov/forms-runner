@@ -10,19 +10,20 @@ module Forms
 
     def submit_answers
       email_confirmation_form = EmailConfirmationForm.new(email_confirmation_form_params)
+      requested_email_confirmation = email_confirmation_form.send_confirmation == "send_email"
 
       if email_confirmation_form.valid?
         if current_context.form_submitted?
           redirect_to error_repeat_submission_path(current_form.id)
         else
           unless mode.preview?
-            LogEventService.log_submit(current_context, request)
+            LogEventService.log_submit(current_context, request, requested_email_confirmation:)
           end
 
           FormSubmissionService.call(current_context:,
                                      email_confirmation_form:,
                                      preview_mode: mode.preview?).submit
-          redirect_to :form_submitted, email_sent: email_confirmation_form.send_confirmation == "send_email"
+          redirect_to :form_submitted, email_sent: requested_email_confirmation
 
         end
       else

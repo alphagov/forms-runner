@@ -16,10 +16,14 @@ class LogEventService
     end
   end
 
-  def self.log_submit(context, request)
-    EventLogger.log_form_event(context, request, "submission") # Logging to Splunk
+  def self.log_submit(context, request, requested_email_confirmation: false)
+    # Logging to Splunk
+    EventLogger.log_form_event(context, request, "submission")
+    EventLogger.log_form_event(context, request, "requested_email_confirmation") if requested_email_confirmation
+
+    # Logging to CloudWatch
     begin
-      CloudWatchService.log_form_submission(form_id: context.form.id) # Logging to CloudWatch
+      CloudWatchService.log_form_submission(form_id: context.form.id)
     rescue StandardError => e
       Sentry.capture_exception(e)
     end

@@ -255,7 +255,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       end
 
       it "Logs the submit event with service logger" do
-        expect(LogEventService).to have_received(:log_submit).with(instance_of(Context), instance_of(ActionDispatch::Request))
+        expect(LogEventService).to have_received(:log_submit).with(instance_of(Context), instance_of(ActionDispatch::Request), requested_email_confirmation: true)
       end
 
       it "emails the form submission" do
@@ -275,6 +275,24 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         }
 
         expect(mail.body.raw_source).to match(expected_personalisation.to_s)
+      end
+
+      context "when user has opted into the confirmation email" do
+        it "Logs the submit event with requested_email_confirmation set to true" do
+          expect(LogEventService).to have_received(:log_submit).with(instance_of(Context), instance_of(ActionDispatch::Request), requested_email_confirmation: true)
+        end
+      end
+
+      context "when user has not opted into the confirmation email" do
+        let(:email_confirmation_form) do
+          { send_confirmation: "skip_confirmation",
+            confirmation_email_address: nil,
+            notify_reference: "for-my-ref" }
+        end
+
+        it "Logs the submit event with requested_email_confirmation set to false" do
+          expect(LogEventService).to have_received(:log_submit).with(instance_of(Context), instance_of(ActionDispatch::Request), requested_email_confirmation: false)
+        end
       end
     end
 
