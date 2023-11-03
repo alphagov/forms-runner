@@ -9,11 +9,6 @@ class LogEventService
 
   def self.log_form_start(context, request)
     EventLogger.log_form_event(context, request, "visit") # Logging to Splunk
-    begin
-      CloudWatchService.log_form_start(form_id: context.form.id) # Logging to CloudWatch
-    rescue StandardError => e
-      Sentry.capture_exception(e)
-    end
   end
 
   def self.log_submit(context, request, requested_email_confirmation: false)
@@ -31,6 +26,13 @@ class LogEventService
 
   def log_page_save
     EventLogger.log_page_event(@current_context, @step, @request, log_event, skipped_question?)
+    if is_starting_form?
+      begin
+        CloudWatchService.log_form_start(form_id: @current_context.form.id) # Logging to CloudWatch
+      rescue StandardError => e
+        Sentry.capture_exception(e)
+      end
+    end
   end
 
 private
@@ -40,7 +42,7 @@ private
 
     if @changing_answer
       "change_answer_#{page_optional}_save"
-    elsif is_starting_form
+    elsif is_starting_form?
       "first_#{page_optional}_save"
     else
       "#{page_optional}_save"
@@ -51,7 +53,7 @@ private
     @step.question.is_optional? ? @answers.each_value.map.none?(&:present?) : nil
   end
 
-  def is_starting_form
+  def is_starting_form?
     @current_context.form.start_page == @step.id
   end
 end
