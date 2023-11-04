@@ -39,7 +39,7 @@ module ApplicationHelper
   end
 
   def format_paragraphs(text)
-    simple_format(html_escape(text), class: "govuk-body", sanitize: true)
+    HtmlMarkdownSanitizer.new.format_paragraphs(text)
   end
 
   def govuk_assets_path
