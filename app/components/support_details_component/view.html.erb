@@ -7,7 +7,7 @@
   <% end %>
   <% if @support_details.phone.present? %>
     <h3 class="govuk-heading-s"><%= t("support_details.phone") %></h3>
-    <%= simple_format(@support_details.phone) %>
+    <%= format_paragraphs(@support_details.phone) %>
     <p class="govuk-body">
       <a class="govuk-link" href="<% @support_details.call_charges_url %>" target="_blank" rel="noopener noreferrer"><%= t("support_details.call_charges") %></a>
     </p>

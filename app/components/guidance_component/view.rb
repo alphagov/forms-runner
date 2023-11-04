@@ -14,7 +14,7 @@ module GuidanceComponent
     end
 
     def guidance_html
-      ActionController::Base.helpers.sanitize(GovukFormsMarkdown.render(question.guidance_markdown), scrubber: MarkdownScrubber.new)
+      HtmlMarkdownSanitizer.new.render_scrubbed_markdown(question.guidance_markdown)
     end
   end
 end

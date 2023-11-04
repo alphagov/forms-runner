@@ -31,7 +31,7 @@ describe "forms/check_your_answers/show.html.erb" do
     end
 
     it "displays declaration text" do
-      expect(rendered).to have_css("p.govuk-body", text: form.declaration_text)
+      expect(rendered).to have_css("p", text: form.declaration_text)
     end
   end
 

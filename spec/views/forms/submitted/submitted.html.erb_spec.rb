@@ -25,7 +25,7 @@ describe "forms/submitted/submitted.html.erb" do
     end
 
     it "displays tells the user what happens next" do
-      expect(rendered).to have_css("p.govuk-body", text: "See what the day brings")
+      expect(rendered).to have_css("p", text: "See what the day brings")
     end
   end
 

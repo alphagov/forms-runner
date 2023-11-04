@@ -2,6 +2,8 @@
 
 module SupportDetailsComponent
   class View < ViewComponent::Base
+    include ApplicationHelper
+
     def initialize(support_details)
       super
       @support_details = support_details

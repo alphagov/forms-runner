@@ -35,7 +35,7 @@
 
       <%if @current_context.form.declaration_text.present? %>
         <h2 class="govuk-heading-m govuk-!-margin-top-7">Declaration</h2>
-        <%= simple_format(@current_context.form.declaration_text, class: 'govuk-body') %>
+        <%= HtmlMarkdownSanitizer.new.render_scrubbed_html(@current_context.form.declaration_text) %>
       <% end %>
 
       <%= form.hidden_field :notify_reference, id: 'notification-id' %>
