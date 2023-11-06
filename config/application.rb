@@ -76,6 +76,7 @@ module FormsRunner
         h[:page_id] = event.payload[:page_id] if event.payload[:page_id]
         h[:page_slug] = event.payload[:page_slug] if event.payload[:page_slug]
         h[:exception] = event.payload[:exception] if event.payload[:exception]
+        h[:session_id_hash] = event.payload[:session_hash] if event.payload[:session_hash]
       end
     end
   end
