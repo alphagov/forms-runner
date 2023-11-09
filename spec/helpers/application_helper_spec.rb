@@ -91,4 +91,10 @@ RSpec.describe ApplicationHelper, type: :helper do
       end
     end
   end
+
+  describe "#format_paragraphs" do
+    it "splits text into paragraphs and encodes HTML characters" do
+      expect(helper.format_paragraphs("Paragraph 1\n\n<h2>paragraph 2</h2>")).to eq "<p>Paragraph 1</p>\n\n<p>&lt;h2&gt;paragraph 2&lt;/h2&gt;</p>"
+    end
+  end
 end

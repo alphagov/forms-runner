@@ -10,7 +10,7 @@
 
     <%if @current_context.form.what_happens_next_text.present? %>
       <h2 class="govuk-heading-m">What happens next</h2>
-      <%= simple_format(@current_context.form.what_happens_next_text, class: 'govuk-body') %>
-  <% end %>
+      <%= HtmlMarkdownSanitizer.new.render_scrubbed_html(@current_context.form.what_happens_next_text) %>
+    <% end %>
   </div>
 </div>
