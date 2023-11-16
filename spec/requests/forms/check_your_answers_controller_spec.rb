@@ -375,7 +375,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
           expected_personalisation = {
             title: form_data.name,
-            what_happens_next_text: form_data.what_happens_next_markdown,
+            what_happens_next_text: form_data.what_happens_next,
             support_contact_details: contact_support_details_format,
             submission_time: "10:00am",
             submission_date: "14 December 2022",
