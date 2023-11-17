@@ -9,10 +9,11 @@ describe "forms/check_your_answers/show.html.erb" do
 
   before do
     assign(:current_context, context)
+    assign(:email_confirmation_form, email_confirmation_form)
     assign(:mode, OpenStruct.new(preview_draft?: false, preview_live?: false))
     assign(:form_submit_path, "/")
     assign(:full_width, full_width)
-    render template: "forms/check_your_answers/show", locals: { email_confirmation_form: }
+    render template: "forms/check_your_answers/show"
   end
 
   context "when the form does not have a declaration" do

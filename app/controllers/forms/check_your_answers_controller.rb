@@ -4,15 +4,16 @@ module Forms
       return redirect_to form_page_path(current_context.form.id, current_context.form.form_slug, current_context.next_page_slug) unless current_context.can_visit?(CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG)
 
       setup_check_your_answers
-      email_confirmation_form = EmailConfirmationForm.new(notify_reference: SecureRandom.uuid)
-      render template: "forms/check_your_answers/show", locals: { email_confirmation_form: }
+      @email_confirmation_form = EmailConfirmationForm.new(notify_reference: SecureRandom.uuid)
+
+      render template: "forms/check_your_answers/show"
     end
 
     def submit_answers
-      email_confirmation_form = EmailConfirmationForm.new(email_confirmation_form_params)
-      requested_email_confirmation = email_confirmation_form.send_confirmation == "send_email"
+      @email_confirmation_form = EmailConfirmationForm.new(email_confirmation_form_params)
+      requested_email_confirmation = @email_confirmation_form.send_confirmation == "send_email"
 
-      if email_confirmation_form.valid?
+      if @email_confirmation_form.valid?
         if current_context.form_submitted?
           redirect_to error_repeat_submission_path(current_form.id)
         else
@@ -21,15 +22,16 @@ module Forms
           end
 
           FormSubmissionService.call(current_context:,
-                                     email_confirmation_form:,
+                                     email_confirmation_form: @email_confirmation_form,
                                      preview_mode: mode.preview?).submit
           redirect_to :form_submitted, email_sent: requested_email_confirmation
 
         end
       else
         setup_check_your_answers
-        email_confirmation_form.notify_reference = SecureRandom.uuid
-        render template: "forms/check_your_answers/show", locals: { email_confirmation_form: }, status: :unprocessable_entity
+        @email_confirmation_form.notify_reference = SecureRandom.uuid
+
+        render template: "forms/check_your_answers/show", status: :unprocessable_entity
       end
     rescue StandardError => e
       Sentry.capture_exception(e)
