@@ -91,7 +91,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
     it "generates a random submission notification reference" do
       expect(assigns[:email_confirmation_form].notify_reference)
-        .to match(uuid)
+        .to match(uuid).and end_with("-submission-email")
     end
   end
 
