@@ -86,6 +86,15 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
     end
   end
 
+  shared_examples "for submission reference" do
+    uuid = /[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}/
+
+    it "generates a random submission notification reference" do
+      expect(assigns[:email_confirmation_form].notify_reference)
+        .to match(uuid)
+    end
+  end
+
   describe "#show" do
     context "with preview mode on" do
       let(:api_url_suffix) { "/draft" }
@@ -130,6 +139,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         it "does not log the form_check_answers event" do
           expect(EventLogger).not_to have_received(:log)
         end
+
+        include_examples "for submission reference"
       end
 
       context "and a form has a live_at value in the future" do
@@ -164,7 +175,9 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         before do
           post save_form_page_path("form", 2, "form-1", 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
           post save_form_page_path("form", 2, "form-1", 2), params: { question: { text: "answer text" }, changing_existing_answer: false }
+
           allow(EventLogger).to receive(:log_form_event).at_least(:once)
+
           get check_your_answers_path(mode: "form", form_id: 2, form_slug: form_data.form_slug)
         end
 
@@ -188,6 +201,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         it "Logs the form_check_answers event" do
           expect(EventLogger).to have_received(:log_form_event).with(instance_of(Context), instance_of(ActionDispatch::Request), "check_answers")
         end
+
+        include_examples "for submission reference"
       end
 
       context "and a form has a live_at value in the future" do
@@ -240,6 +255,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         }
 
         expect(mail.body.raw_source).to match(expected_personalisation.to_s)
+
+        expect(mail.govuk_notify_reference).to eq "for-my-ref"
       end
     end
 
@@ -323,6 +340,12 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         it "renders the check your answers page" do
           expect(response).to render_template("forms/check_your_answers/show")
         end
+
+        it "generates a new submission reference" do
+          expect(assigns[:email_confirmation_form].notify_reference).not_to eq email_confirmation_form[:notify_reference]
+        end
+
+        include_examples "for submission reference"
       end
 
       context "when user has not specified the confirmation email address" do
@@ -339,6 +362,12 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         it "renders the check your answers page" do
           expect(response).to render_template("forms/check_your_answers/show")
         end
+
+        it "generates a new submission reference" do
+          expect(assigns[:email_confirmation_form].notify_reference).not_to eq email_confirmation_form[:notify_reference]
+        end
+
+        include_examples "for submission reference"
       end
 
       context "when user has not requested a confirmation email" do
