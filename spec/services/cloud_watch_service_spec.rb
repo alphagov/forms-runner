@@ -2,12 +2,27 @@ require "rails_helper"
 require "aws-sdk-cloudwatch"
 
 RSpec.describe CloudWatchService do
-  describe ".log_form_submission" do
-    let(:form_id) { 3 }
-    let(:forms_env) { "test" }
+  let(:form_id) { 3 }
+  let(:forms_env) { "test" }
+  let(:cloudwatch_metrics_enabled) { true }
 
-    before do
-      allow(Settings).to receive(:forms_env).and_return(forms_env)
+  before do
+    allow(Settings).to receive(:forms_env).and_return(forms_env)
+    allow(Settings).to receive(:cloudwatch_metrics_enabled).and_return(cloudwatch_metrics_enabled)
+  end
+
+  describe ".log_form_submission" do
+    context "when CloudWatch metrics are disabled" do
+      let(:cloudwatch_metrics_enabled) { false }
+
+      it "does not call the CloudWatch client with .put_metric_data" do
+        cloudwatch_client = Aws::CloudWatch::Client.new(stub_responses: true)
+        allow(Aws::CloudWatch::Client).to receive(:new).and_return(cloudwatch_client)
+
+        expect(cloudwatch_client).not_to receive(:put_metric_data)
+
+        described_class.log_form_submission(form_id:)
+      end
     end
 
     it "calls the cloudwatch client with put_metric_data" do
@@ -37,11 +52,17 @@ RSpec.describe CloudWatchService do
   end
 
   describe ".log_form_start" do
-    let(:form_id) { 3 }
-    let(:forms_env) { "test" }
+    context "when CloudWatch metrics are disabled" do
+      let(:cloudwatch_metrics_enabled) { false }
 
-    before do
-      allow(Settings).to receive(:forms_env).and_return(forms_env)
+      it "does not call the CloudWatch client with .put_metric_data" do
+        cloudwatch_client = Aws::CloudWatch::Client.new(stub_responses: true)
+        allow(Aws::CloudWatch::Client).to receive(:new).and_return(cloudwatch_client)
+
+        expect(cloudwatch_client).not_to receive(:put_metric_data)
+
+        described_class.log_form_start(form_id:)
+      end
     end
 
     it "calls the cloudwatch client with put_metric_data" do
