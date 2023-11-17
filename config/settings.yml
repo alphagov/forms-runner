@@ -34,3 +34,6 @@ forms_env: local
 
 # When set to true, any capybara tests will run chrome normally rather than in headless mode.
 show_browser_during_tests: false
+
+# When set to true, the CloudWatch service will attempt to send data to CloudWatch
+cloudwatch_metrics_enabled: false
