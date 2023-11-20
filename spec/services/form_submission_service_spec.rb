@@ -147,6 +147,7 @@ RSpec.describe FormSubmissionService do
             support_contact_details: contact_support_details_format,
             submission_timestamp: Time.zone.now,
             preview_mode:,
+            reference: email_confirmation_form.confirmation_email_reference,
             confirmation_email_address: email_confirmation_form.confirmation_email_address },
         ).once
       end

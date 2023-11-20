@@ -31,6 +31,8 @@
           <% end %>
           <%= form.govuk_radio_button :send_confirmation, 'skip_confirmation' %>
         <% end %>
+
+        <%= form.hidden_field :confirmation_email_reference, id: 'confirmation-email-reference' %>
       <% end %>
 
       <%if @current_context.form.declaration_text.present? %>
