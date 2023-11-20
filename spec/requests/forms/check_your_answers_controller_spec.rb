@@ -17,6 +17,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
   let(:email_confirmation_form) do
     { send_confirmation: "send_email",
       confirmation_email_address: Faker::Internet.email,
+      confirmation_email_reference: "confirmation-email-ref",
       notify_reference: "for-my-ref" }
   end
 
@@ -89,9 +90,27 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
   shared_examples "for submission reference" do
     uuid = /[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}/
 
+    let(:notify_reference) { assigns[:email_confirmation_form].notify_reference }
+    let(:confirmation_email_reference) { assigns[:email_confirmation_form].confirmation_email_reference }
+
     it "generates a random submission notification reference" do
-      expect(assigns[:email_confirmation_form].notify_reference)
+      expect(notify_reference)
         .to match(uuid).and end_with("-submission-email")
+    end
+
+    it "generates a random email confirmation notification reference" do
+      expect(confirmation_email_reference)
+        .to match(uuid).and end_with("-confirmation-email")
+    end
+
+    it "generates a different string for all notification references" do
+      expect(notify_reference).not_to eq confirmation_email_reference
+    end
+
+    it "includes a common identifier in all notification references" do
+      uuid_in = ->(str) { uuid.match(str).to_s }
+
+      expect(uuid_in[notify_reference]).to eq uuid_in[confirmation_email_reference]
     end
   end
 
@@ -371,7 +390,12 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       end
 
       context "when user has requested a confirmation email" do
-        let(:email_confirmation_form) { { send_confirmation: "send_email", confirmation_email_address: Faker::Internet.email, notify_reference: "for-my-ref" } }
+        let(:email_confirmation_form) do
+          { send_confirmation: "send_email",
+            confirmation_email_address: Faker::Internet.email,
+            confirmation_email_reference: "confirmation-email-ref",
+            notify_reference: "for-my-ref" }
+        end
 
         before do
           travel_to timestamp_of_request do
@@ -400,6 +424,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
           }
 
           expect(mail.body.raw_source).to include(expected_personalisation.to_s)
+
+          expect(mail.govuk_notify_reference).to eq "confirmation-email-ref"
         end
       end
     end

@@ -47,6 +47,7 @@ class FormSubmissionService
       support_contact_details: formatted_support_details,
       submission_timestamp: @timestamp,
       preview_mode: @preview_mode,
+      reference: @email_confirmation_form.confirmation_email_reference,
       confirmation_email_address: @email_confirmation_form.confirmation_email_address,
     ).deliver_now
   end

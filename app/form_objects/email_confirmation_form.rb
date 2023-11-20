@@ -2,7 +2,7 @@ class EmailConfirmationForm
   include ActiveModel::Model
   include ActiveModel::Validations
 
-  attr_accessor :send_confirmation, :confirmation_email_address, :notify_reference
+  attr_accessor :send_confirmation, :confirmation_email_address, :confirmation_email_reference, :notify_reference
 
   validates :send_confirmation, presence: true, if: :validate_presence?
   validates :send_confirmation, inclusion: { in: %w[send_email skip_confirmation] }, if: :validate_presence?

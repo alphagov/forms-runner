@@ -42,7 +42,10 @@ module Forms
 
     def submission_reference_attributes
       reference = SecureRandom.uuid
-      { notify_reference: "#{reference}-submission-email" }
+      {
+        confirmation_email_reference: "#{reference}-confirmation-email",
+        notify_reference: "#{reference}-submission-email",
+      }
     end
 
     def page_to_row(page)
@@ -63,7 +66,7 @@ module Forms
     end
 
     def email_confirmation_form_params
-      params.require(:email_confirmation_form).permit(:send_confirmation, :confirmation_email_address, :notify_reference)
+      params.require(:email_confirmation_form).permit(:send_confirmation, :confirmation_email_address, :confirmation_email_reference, :notify_reference)
     end
 
     def setup_check_your_answers
