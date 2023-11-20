@@ -191,10 +191,10 @@ GEM
       i18n (>= 1.8.11, < 2)
     globalid (1.2.1)
       activesupport (>= 6.1)
-    govuk-components (4.1.1)
+    govuk-components (4.1.2)
       html-attributes-utils (~> 1.0.0, >= 1.0.0)
       pagy (~> 6.0)
-      view_component (>= 3.3, < 3.6)
+      view_component (>= 3.3, < 3.7)
     govuk_design_system_formbuilder (4.1.1)
       actionview (>= 6.1)
       activemodel (>= 6.1)
@@ -267,7 +267,7 @@ GEM
       racc (~> 1.4)
     notifications-ruby-client (5.4.0)
       jwt (>= 1.5, < 3)
-    pagy (6.0.4)
+    pagy (6.2.0)
     parallel (1.23.0)
     parser (3.2.2.4)
       ast (~> 2.4.1)
@@ -415,7 +415,7 @@ GEM
       tzinfo (>= 1.0.0)
     uk_postcode (2.1.8)
     unicode-display_width (2.5.0)
-    view_component (3.5.0)
+    view_component (3.6.0)
       activesupport (>= 5.2.0, < 8.0)
       concurrent-ruby (~> 1.0)
       method_source (~> 1.0)
@@ -459,7 +459,7 @@ DEPENDENCIES
   debug
   factory_bot_rails
   faker
-  govuk-components (~> 4.1.1)
+  govuk-components (~> 4.1.2)
   govuk-forms-markdown!
   govuk_design_system_formbuilder (~> 4.1.1)
   govuk_notify_rails
