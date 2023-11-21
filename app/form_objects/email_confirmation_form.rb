@@ -16,4 +16,12 @@ class EmailConfirmationForm
   def validate_presence?
     FeatureService.enabled?(:email_confirmations_enabled)
   end
+
+  def generate_submission_references!
+    reference = SecureRandom.uuid
+    self.attributes = {
+      confirmation_email_reference: "#{reference}-confirmation-email",
+      notify_reference: "#{reference}-submission-email",
+    }
+  end
 end

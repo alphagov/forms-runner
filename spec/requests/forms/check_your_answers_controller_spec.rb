@@ -88,29 +88,16 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
   end
 
   shared_examples "for submission reference" do
-    uuid = /[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}/
-
-    let(:notify_reference) { assigns[:email_confirmation_form].notify_reference }
-    let(:confirmation_email_reference) { assigns[:email_confirmation_form].confirmation_email_reference }
-
-    it "generates a random submission notification reference" do
-      expect(notify_reference)
-        .to match(uuid).and end_with("-submission-email")
+    prepend_before do
+      allow(EmailConfirmationForm).to receive(:new).and_wrap_original do |original_method, *args|
+        spy = original_method.call(*args)
+        allow(spy).to receive(:generate_submission_references!).and_call_original
+        spy
+      end
     end
 
-    it "generates a random email confirmation notification reference" do
-      expect(confirmation_email_reference)
-        .to match(uuid).and end_with("-confirmation-email")
-    end
-
-    it "generates a different string for all notification references" do
-      expect(notify_reference).not_to eq confirmation_email_reference
-    end
-
-    it "includes a common identifier in all notification references" do
-      uuid_in = ->(str) { uuid.match(str).to_s }
-
-      expect(uuid_in[notify_reference]).to eq uuid_in[confirmation_email_reference]
+    it "generates submission references" do
+      expect(assigns[:email_confirmation_form]).to have_received(:generate_submission_references!)
     end
   end
 
