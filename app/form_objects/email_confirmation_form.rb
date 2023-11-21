@@ -24,10 +24,12 @@ class EmailConfirmationForm
 
   private
   def generate_submission_references
+    return if confirmation_email_reference.present? && notify_reference.present?
+
     reference = SecureRandom.uuid
     self.attributes = {
-      confirmation_email_reference: confirmation_email_reference || "#{reference}-confirmation-email",
-      notify_reference: notify_reference || "#{reference}-submission-email",
+      confirmation_email_reference: "#{reference}-confirmation-email",
+      notify_reference: "#{reference}-submission-email",
     }
   end
 end
