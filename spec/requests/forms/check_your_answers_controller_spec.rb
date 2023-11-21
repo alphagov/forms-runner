@@ -88,29 +88,23 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
   end
 
   shared_examples "for submission reference" do
-    uuid = /[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}/
-
-    let(:notify_reference) { assigns[:email_confirmation_form].notify_reference }
-    let(:confirmation_email_reference) { assigns[:email_confirmation_form].confirmation_email_reference }
-
-    it "generates a random submission notification reference" do
-      expect(notify_reference)
-        .to match(uuid).and end_with("-submission-email")
+    prepend_before do
+      allow(EmailConfirmationForm).to receive(:new).and_wrap_original do |original_method, *args|
+        double = original_method.call(*args)
+        allow(double).to receive(:confirmation_email_reference).and_return("00000000-confirmation-email")
+        allow(double).to receive(:notify_reference).and_return("00000000-submission-email")
+        double
+      end
     end
 
-    it "generates a random email confirmation notification reference" do
-      expect(confirmation_email_reference)
-        .to match(uuid).and end_with("-confirmation-email")
+    it "includes a notification reference for the submission email" do
+      expect(response.body).to include "00000000-submission-email"
     end
 
-    it "generates a different string for all notification references" do
-      expect(notify_reference).not_to eq confirmation_email_reference
-    end
-
-    it "includes a common identifier in all notification references" do
-      uuid_in = ->(str) { uuid.match(str).to_s }
-
-      expect(uuid_in[notify_reference]).to eq uuid_in[confirmation_email_reference]
+    context "when the confirmation email flag is enabled", feature_email_confirmations_enabled: true do
+      it "includes a notification reference for the confirmation email" do
+        expect(response.body).to include "00000000-confirmation-email"
+      end
     end
   end
 
