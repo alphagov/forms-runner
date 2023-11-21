@@ -359,6 +359,12 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         it "renders the check your answers page" do
           expect(response).to render_template("forms/check_your_answers/show")
         end
+
+        it "generates a new submission reference" do
+          expect(assigns[:email_confirmation_form].notify_reference).not_to eq email_confirmation_form[:notify_reference]
+        end
+
+        include_examples "for submission reference"
       end
 
       context "when user has not specified the confirmation email address" do
@@ -375,6 +381,12 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         it "renders the check your answers page" do
           expect(response).to render_template("forms/check_your_answers/show")
         end
+
+        it "generates a new submission reference" do
+          expect(assigns[:email_confirmation_form].notify_reference).not_to eq email_confirmation_form[:notify_reference]
+        end
+
+        include_examples "for submission reference"
       end
 
       context "when user has not requested a confirmation email" do
