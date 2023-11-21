@@ -362,6 +362,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
         it "generates a new submission reference" do
           expect(assigns[:email_confirmation_form].notify_reference).not_to eq email_confirmation_form[:notify_reference]
+          expect(assigns[:email_confirmation_form].confirmation_email_reference).not_to eq email_confirmation_form[:confirmation_email_reference]
         end
 
         include_examples "for submission reference"
@@ -384,6 +385,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
         it "generates a new submission reference" do
           expect(assigns[:email_confirmation_form].notify_reference).not_to eq email_confirmation_form[:notify_reference]
+          expect(assigns[:email_confirmation_form].confirmation_email_reference).not_to eq email_confirmation_form[:confirmation_email_reference]
         end
 
         include_examples "for submission reference"
