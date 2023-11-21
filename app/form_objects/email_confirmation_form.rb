@@ -9,6 +9,11 @@ class EmailConfirmationForm
   validates :confirmation_email_address, presence: true, if: :validate_email?
   validates :confirmation_email_address, format: { with: URI::MailTo::EMAIL_REGEXP, message: :invalid_email }, allow_blank: true, if: :validate_email?
 
+  def initialize(attributes = nil)
+    super
+    generate_submission_references
+  end
+
   def validate_email?
     FeatureService.enabled?(:email_confirmations_enabled) && send_confirmation == "send_email"
   end
@@ -17,11 +22,12 @@ class EmailConfirmationForm
     FeatureService.enabled?(:email_confirmations_enabled)
   end
 
-  def generate_submission_references!
+  private
+  def generate_submission_references
     reference = SecureRandom.uuid
     self.attributes = {
-      confirmation_email_reference: "#{reference}-confirmation-email",
-      notify_reference: "#{reference}-submission-email",
+      confirmation_email_reference: confirmation_email_reference || "#{reference}-confirmation-email",
+      notify_reference: notify_reference || "#{reference}-submission-email",
     }
   end
 end
