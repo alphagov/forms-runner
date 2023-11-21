@@ -97,10 +97,21 @@ RSpec.describe Form, type: :model do
 
   describe "what_happens_next" do
     let(:what_happens_next_text) { "We’ll send you an email to let you know the outcome. Visit our <a href=\"https://example.com\" target=\"_blank\" rel\"noreferrer noopener\">service status page</a> to see current response times.\n\nYou'll also need to:\n\n<ul class=\"govuk-list govuk-list--bullet\"><li>provide a certified copy of your documents</li><li>make a payment</li></ul>" }
-    let(:response_data) { { id: 1, name: "form name", submission_email: "user@example.com", start_page: 1, what_happens_next_text: }.to_json }
+    let(:what_happens_next_markdown) { nil }
+    let(:response_data) { { id: 1, name: "form name", submission_email: "user@example.com", start_page: 1, what_happens_next_text:, what_happens_next_markdown: }.to_json }
 
-    it "returns the text in notify-compliant markdown format" do
-      expect(described_class.find(1).what_happens_next).to eq "We’ll send you an email to let you know the outcome. Visit our [service status page](https://example.com) to see current response times.\n\nYou'll also need to:\n\n- provide a certified copy of your documents\n- make a payment"
+    context "when what_happens_next_markdown is nil" do
+      it "returns the what_happens_next_text converted tp notify-compliant markdown format" do
+        expect(described_class.find(1).what_happens_next).to eq "We’ll send you an email to let you know the outcome. Visit our [service status page](https://example.com) to see current response times.\n\nYou'll also need to:\n\n- provide a certified copy of your documents\n- make a payment"
+      end
+    end
+
+    context "when what_happens_next_markdown has a value" do
+      let(:what_happens_next_markdown) { "We’ll send you an email to let you know the outcome. Visit our [service status page](https://example.com) to see current response times.\n\nYou'll also need to:\n\n1. provide a certified copy of your documents\n2. make a payment" }
+
+      it "returns the what_happens_next_markdown" do
+        expect(described_class.find(1).what_happens_next).to eq what_happens_next_markdown
+      end
     end
   end
 end

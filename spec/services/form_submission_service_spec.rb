@@ -7,6 +7,7 @@ RSpec.describe FormSubmissionService do
           id: 1,
           name: "Form 1",
           what_happens_next_text:,
+          what_happens_next_markdown:,
           support_email:,
           support_phone:,
           support_url:,
@@ -14,6 +15,7 @@ RSpec.describe FormSubmissionService do
           submission_email: "testing@gov.uk")
   end
   let(:what_happens_next_text) { "We usually respond to applications within 10 working days." }
+  let(:what_happens_next_markdown) { nil }
   let(:support_email) { Faker::Internet.email(domain: "example.gov.uk") }
   let(:support_phone) { Faker::Lorem.paragraph(sentence_count: 2, supplemental: true, random_sentences_to_add: 4) }
   let(:support_url) { Faker::Internet.url(host: "gov.uk") }

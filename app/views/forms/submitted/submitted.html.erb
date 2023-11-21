@@ -8,9 +8,9 @@
       <p><%= t('form.submitted.email_sent') %></p>
     <% end %>
 
-    <%if @current_context.form.what_happens_next_text.present? %>
+    <%if @current_context.form.what_happens_next.present? %>
       <h2 class="govuk-heading-m">What happens next</h2>
-      <%= HtmlMarkdownSanitizer.new.render_scrubbed_html(@current_context.form.what_happens_next_text) %>
+      <%= HtmlMarkdownSanitizer.new.render_scrubbed_markdown(@current_context.form.what_happens_next) %>
     <% end %>
   </div>
 </div>
