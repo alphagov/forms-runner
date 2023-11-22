@@ -38,12 +38,12 @@ class FormSubmissionService
   end
 
   def submit_confirmation_email_to_user
-    return nil unless @form.what_happens_next_markdown.present? && has_support_contact_details?
+    return nil unless @form.what_happens_next.present? && has_support_contact_details?
     return nil unless @email_confirmation_form.send_confirmation == "send_email"
 
     FormSubmissionConfirmationMailer.send_confirmation_email(
       title: form_title,
-      what_happens_next_text: @form.what_happens_next_markdown,
+      what_happens_next_text: @form.what_happens_next,
       support_contact_details: formatted_support_details,
       submission_timestamp: @timestamp,
       preview_mode: @preview_mode,

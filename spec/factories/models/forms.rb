@@ -9,6 +9,7 @@ FactoryBot.define do
     org { "test-org" }
     live_at { nil }
     what_happens_next_text { nil }
+    what_happens_next_markdown { nil }
     support_email { nil }
     support_phone { nil }
     support_url { nil }

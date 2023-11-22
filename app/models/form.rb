@@ -33,9 +33,8 @@ class Form < ActiveResource::Base
     try(:live_at).try(:to_time)
   end
 
-  def what_happens_next_markdown
-    # FIXME: We don't want to keep converting HTML to Markdown like this.
-    # We should make what_happens_next_text a markdown field and then remove this.
-    ReverseMarkdown.convert(HtmlMarkdownSanitizer.new.render_scrubbed_html(what_happens_next_text)).strip
+  # TODO: remove this method and ReverseMarkdown gem once we've converted the existing content in forms-api to markdown
+  def what_happens_next
+    (what_happens_next_markdown.presence || ReverseMarkdown.convert(HtmlMarkdownSanitizer.new.render_scrubbed_html(what_happens_next_text)).strip)
   end
 end
