@@ -23,9 +23,8 @@ class HtmlMarkdownSanitizer
 
   # renders the limited subset of HTML allowed by LimitedHtmlScrubber and strips all other tags.
   def render_scrubbed_html(unprocessed_html)
-    # TODO: rewrite this to use simple_format with sanitize_options once we've upgraded to Rails 7.1 (https://github.com/rails/rails/pull/48355)
-    html = simple_format(unprocessed_html, {}, sanitize: false)
+    scrubber = LimitedHtmlScrubber.new(allow_headings: false)
 
-    sanitize_html(html, LimitedHtmlScrubber.new(allow_headings: false))
+    simple_format(unprocessed_html, {}, sanitize: true, sanitize_options: { scrubber: })
   end
 end
