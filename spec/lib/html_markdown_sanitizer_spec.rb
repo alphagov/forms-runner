@@ -32,7 +32,7 @@ RSpec.describe HtmlMarkdownSanitizer do
 
   describe "#sanitize_html" do
     it "sanitizes the string" do
-      expect(form_context.sanitize_html(multiline_html_string_with_disallowed_content, LimitedHtmlScrubber.new)).to eq("Check out the following list:\n\nalert(\"script\")\n\n<ol>\n<li>this is a list item</li>\n<li>this is another list item</li>\n</ol>")
+      expect(form_context.sanitize_html(multiline_html_string_with_disallowed_content, LimitedHtmlScrubber.new)).to eq("Check out the following list:\n\nalert(\"script\")\n\n<ol><li>this is a list item</li><li>this is another list item</li></ol>")
     end
   end
 
@@ -52,11 +52,11 @@ RSpec.describe HtmlMarkdownSanitizer do
 
   describe "#render_scrubbed_html" do
     it "converts line breaks into <p> tags" do
-      expect(form_context.render_scrubbed_html(simple_multiline_string)).to eq("<p>This is a paragraph.</p>\n\n<p>This is another paragraph.\nThis is a new line within the same paragraph</p>")
+      expect(form_context.render_scrubbed_html(simple_multiline_string)).to eq("<p>This is a paragraph.</p>\n\n<p>This is another paragraph.\n<br />This is a new line within the same paragraph</p>")
     end
 
     it "sanitizes the string" do
-      expect(form_context.render_scrubbed_html(multiline_html_string_with_disallowed_content)).to eq("<p>Check out the following list:</p>\n\n<p>alert(\"script\")</p>\n\n<p></p><ol>\n<li>this is a list item</li>\n<li>this is another list item</li>\n</ol>")
+      expect(form_context.render_scrubbed_html(multiline_html_string_with_disallowed_content)).to eq("<p>Check out the following list:</p>\n\n<p>alert(\"script\")</p>\n\n<p><ol><li>this is a list item</li><li>this is another list item</li></ol></p>")
     end
   end
 end
