@@ -52,4 +52,49 @@ RSpec.describe EmailConfirmationForm, type: :model do
       end
     end
   end
+
+  describe "submission references" do
+    uuid = /[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}/
+
+    let(:email_confirmation_form) do
+      described_class.new
+    end
+
+    let(:notify_reference) { email_confirmation_form.notify_reference }
+    let(:confirmation_email_reference) { email_confirmation_form.confirmation_email_reference }
+
+    it "generates a random submission notification reference" do
+      expect(notify_reference)
+        .to match(uuid).and end_with("-submission-email")
+    end
+
+    it "generates a random email confirmation notification reference" do
+      expect(confirmation_email_reference)
+        .to match(uuid).and end_with("-confirmation-email")
+    end
+
+    it "generates a different string for all notification references" do
+      expect(notify_reference).not_to eq confirmation_email_reference
+    end
+
+    it "includes a common identifier in all notification references" do
+      uuid_in = ->(str) { uuid.match(str).to_s }
+
+      expect(uuid_in[notify_reference]).to eq uuid_in[confirmation_email_reference]
+    end
+
+    context "when intialised with references" do
+      let(:email_confirmation_form) do
+        described_class.new(
+          confirmation_email_reference: "foo",
+          notify_reference: "bar",
+        )
+      end
+
+      it "does not generate new references" do
+        expect(confirmation_email_reference).to eq "foo"
+        expect(notify_reference).to eq "bar"
+      end
+    end
+  end
 end

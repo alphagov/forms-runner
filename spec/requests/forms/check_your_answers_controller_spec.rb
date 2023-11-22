@@ -17,6 +17,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
   let(:email_confirmation_form) do
     { send_confirmation: "send_email",
       confirmation_email_address: Faker::Internet.email,
+      confirmation_email_reference: "confirmation-email-ref",
       notify_reference: "for-my-ref" }
   end
 
@@ -86,6 +87,27 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
     end
   end
 
+  shared_examples "for submission reference" do
+    prepend_before do
+      allow(EmailConfirmationForm).to receive(:new).and_wrap_original do |original_method, *args|
+        double = original_method.call(*args)
+        allow(double).to receive(:confirmation_email_reference).and_return("00000000-confirmation-email")
+        allow(double).to receive(:notify_reference).and_return("00000000-submission-email")
+        double
+      end
+    end
+
+    it "includes a notification reference for the submission email" do
+      expect(response.body).to include "00000000-submission-email"
+    end
+
+    context "when the confirmation email flag is enabled", feature_email_confirmations_enabled: true do
+      it "includes a notification reference for the confirmation email" do
+        expect(response.body).to include "00000000-confirmation-email"
+      end
+    end
+  end
+
   describe "#show" do
     context "with preview mode on" do
       let(:api_url_suffix) { "/draft" }
@@ -130,6 +152,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         it "does not log the form_check_answers event" do
           expect(EventLogger).not_to have_received(:log)
         end
+
+        include_examples "for submission reference"
       end
 
       context "and a form has a live_at value in the future" do
@@ -164,7 +188,9 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         before do
           post save_form_page_path("form", 2, "form-1", 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
           post save_form_page_path("form", 2, "form-1", 2), params: { question: { text: "answer text" }, changing_existing_answer: false }
+
           allow(EventLogger).to receive(:log_form_event).at_least(:once)
+
           get check_your_answers_path(mode: "form", form_id: 2, form_slug: form_data.form_slug)
         end
 
@@ -188,6 +214,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         it "Logs the form_check_answers event" do
           expect(EventLogger).to have_received(:log_form_event).with(instance_of(Context), instance_of(ActionDispatch::Request), "check_answers")
         end
+
+        include_examples "for submission reference"
       end
 
       context "and a form has a live_at value in the future" do
@@ -240,6 +268,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         }
 
         expect(mail.body.raw_source).to match(expected_personalisation.to_s)
+
+        expect(mail.govuk_notify_reference).to eq "for-my-ref"
       end
     end
 
@@ -310,7 +340,13 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
     context "when the confirmation email flag is enabled", feature_email_confirmations_enabled: true do
       context "when user has not specified whether they want a confirmation email" do
-        let(:email_confirmation_form) { { send_confirmation: nil } }
+        let(:email_confirmation_form) do
+          {
+            send_confirmation: nil,
+            confirmation_email_reference: "test-ref-for-confirmation-email",
+            notify_reference: "test-ref-for-submission-email",
+          }
+        end
 
         before do
           post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_form: }
@@ -322,11 +358,23 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
         it "renders the check your answers page" do
           expect(response).to render_template("forms/check_your_answers/show")
+        end
+
+        it "does not generate a new submission reference" do
+          expect(response.body).to include "test-ref-for-confirmation-email"
+          expect(response.body).to include "test-ref-for-submission-email"
         end
       end
 
       context "when user has not specified the confirmation email address" do
-        let(:email_confirmation_form) { { send_confirmation: "send_email", confirmation_email_address: nil } }
+        let(:email_confirmation_form) do
+          {
+            send_confirmation: "send_email",
+            confirmation_email_address: nil,
+            confirmation_email_reference: "test-ref-for-confirmation-email",
+            notify_reference: "test-ref-for-submission-email",
+          }
+        end
 
         before do
           post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_form: }
@@ -338,6 +386,11 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
         it "renders the check your answers page" do
           expect(response).to render_template("forms/check_your_answers/show")
+        end
+
+        it "does not generate a new submission reference" do
+          expect(response.body).to include "test-ref-for-confirmation-email"
+          expect(response.body).to include "test-ref-for-submission-email"
         end
       end
 
@@ -354,7 +407,12 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       end
 
       context "when user has requested a confirmation email" do
-        let(:email_confirmation_form) { { send_confirmation: "send_email", confirmation_email_address: Faker::Internet.email, notify_reference: "for-my-ref" } }
+        let(:email_confirmation_form) do
+          { send_confirmation: "send_email",
+            confirmation_email_address: Faker::Internet.email,
+            confirmation_email_reference: "confirmation-email-ref",
+            notify_reference: "for-my-ref" }
+        end
 
         before do
           travel_to timestamp_of_request do
@@ -383,6 +441,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
           }
 
           expect(mail.body.raw_source).to include(expected_personalisation.to_s)
+
+          expect(mail.govuk_notify_reference).to eq "confirmation-email-ref"
         end
       end
     end

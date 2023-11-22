@@ -4,7 +4,8 @@ module Forms
       return redirect_to form_page_path(current_context.form.id, current_context.form.form_slug, current_context.next_page_slug) unless current_context.can_visit?(CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG)
 
       setup_check_your_answers
-      email_confirmation_form = EmailConfirmationForm.new(notify_reference: SecureRandom.uuid)
+      email_confirmation_form = EmailConfirmationForm.new
+
       render template: "forms/check_your_answers/show", locals: { email_confirmation_form: }
     end
 
@@ -28,7 +29,7 @@ module Forms
         end
       else
         setup_check_your_answers
-        email_confirmation_form.notify_reference = SecureRandom.uuid
+
         render template: "forms/check_your_answers/show", locals: { email_confirmation_form: }, status: :unprocessable_entity
       end
     rescue StandardError => e
@@ -56,7 +57,7 @@ module Forms
     end
 
     def email_confirmation_form_params
-      params.require(:email_confirmation_form).permit(:send_confirmation, :confirmation_email_address, :notify_reference)
+      params.require(:email_confirmation_form).permit(:send_confirmation, :confirmation_email_address, :confirmation_email_reference, :notify_reference)
     end
 
     def setup_check_your_answers

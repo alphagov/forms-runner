@@ -7,6 +7,7 @@ describe FormSubmissionConfirmationMailer, type: :mailer do
                                             support_contact_details:,
                                             submission_timestamp:,
                                             preview_mode:,
+                                            reference: "for-my-ref",
                                             confirmation_email_address:)
   end
   let(:title) { "Form 1" }
@@ -36,6 +37,10 @@ describe FormSubmissionConfirmationMailer, type: :mailer do
 
     it "includes the forms support contact details" do
       expect(mail.govuk_notify_personalisation[:support_contact_details]).to eq("Call: 0203 222 2222")
+    end
+
+    it "includes an email reference (mostly used to retrieve specific email in notify for e2e tests)" do
+      expect(mail.govuk_notify_reference).to eq("for-my-ref")
     end
 
     it "does include an email-reply-to" do

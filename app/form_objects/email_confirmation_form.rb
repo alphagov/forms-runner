@@ -2,12 +2,17 @@ class EmailConfirmationForm
   include ActiveModel::Model
   include ActiveModel::Validations
 
-  attr_accessor :send_confirmation, :confirmation_email_address, :notify_reference
+  attr_accessor :send_confirmation, :confirmation_email_address, :confirmation_email_reference, :notify_reference
 
   validates :send_confirmation, presence: true, if: :validate_presence?
   validates :send_confirmation, inclusion: { in: %w[send_email skip_confirmation] }, if: :validate_presence?
   validates :confirmation_email_address, presence: true, if: :validate_email?
   validates :confirmation_email_address, format: { with: URI::MailTo::EMAIL_REGEXP, message: :invalid_email }, allow_blank: true, if: :validate_email?
+
+  def initialize(...)
+    super(...)
+    generate_submission_references! unless @confirmation_email_reference || @notify_reference
+  end
 
   def validate_email?
     FeatureService.enabled?(:email_confirmations_enabled) && send_confirmation == "send_email"
@@ -15,5 +20,15 @@ class EmailConfirmationForm
 
   def validate_presence?
     FeatureService.enabled?(:email_confirmations_enabled)
+  end
+
+private
+
+  def generate_submission_references!
+    reference = SecureRandom.uuid
+    self.attributes = {
+      confirmation_email_reference: "#{reference}-confirmation-email",
+      notify_reference: "#{reference}-submission-email",
+    }
   end
 end

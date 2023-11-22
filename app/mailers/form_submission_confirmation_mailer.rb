@@ -1,5 +1,5 @@
 class FormSubmissionConfirmationMailer < GovukNotifyRails::Mailer
-  def send_confirmation_email(title:, what_happens_next_text:, support_contact_details:, submission_timestamp:, preview_mode:, confirmation_email_address:)
+  def send_confirmation_email(title:, what_happens_next_text:, support_contact_details:, submission_timestamp:, preview_mode:, reference:, confirmation_email_address:)
     set_template(Settings.govuk_notify.form_filler_confirmation_email_template_id)
 
     set_personalisation(
@@ -13,6 +13,8 @@ class FormSubmissionConfirmationMailer < GovukNotifyRails::Mailer
       # flags; but they must always have opposite values!
       test: make_notify_boolean(preview_mode),
     )
+
+    set_reference(reference)
 
     set_email_reply_to(Settings.govuk_notify.form_submission_email_reply_to_id)
 
