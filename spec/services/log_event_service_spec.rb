@@ -85,20 +85,54 @@ RSpec.describe LogEventService do
       )
     end
 
-    it "calls the cloud watch service with .log_form_submission" do
-      described_class.log_submit(current_context, request)
-
-      expect(CloudWatchService).to have_received(:log_form_submission).with(form_id: current_context.form.id)
-    end
-
-    context "when CloudWatchService returns an error" do
-      it "raises the error to Sentry" do
-        allow(CloudWatchService).to receive(:log_form_submission).and_raise(StandardError)
-        allow(Sentry).to receive(:capture_exception)
-
+    context "when not in preview mode" do
+      it "calls the event logger with .log_form_event" do
         described_class.log_submit(current_context, request)
 
-        expect(Sentry).to have_received(:capture_exception)
+        expect(EventLogger).to have_received(:log_form_event).with(
+          current_context,
+          request,
+          "submission",
+        )
+      end
+
+      it "does not call the event logger for confirmation request" do
+        described_class.log_submit(current_context, request)
+
+        expect(EventLogger).not_to have_received(:log_form_event).with(
+          current_context,
+          request,
+          "requested_email_confirmation",
+        )
+      end
+
+      it "calls the cloud watch service with .log_form_submission" do
+        described_class.log_submit(current_context, request)
+
+        expect(CloudWatchService).to have_received(:log_form_submission).with(form_id: current_context.form.id)
+      end
+
+      context "when CloudWatchService returns an error" do
+        it "raises the error to Sentry" do
+          allow(CloudWatchService).to receive(:log_form_submission).and_raise(StandardError)
+          allow(Sentry).to receive(:capture_exception)
+
+          described_class.log_submit(current_context, request)
+
+          expect(Sentry).to have_received(:capture_exception)
+        end
+      end
+
+      context "when email confirmation is requested" do
+        it "calls the event logger with .log_form_event" do
+          described_class.log_submit(current_context, request, requested_email_confirmation: true)
+
+          expect(EventLogger).to have_received(:log_form_event).with(
+            current_context,
+            request,
+            "requested_email_confirmation",
+          )
+        end
       end
     end
   end
