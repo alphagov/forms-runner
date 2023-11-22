@@ -48,7 +48,7 @@ describe "forms/check_your_answers/show.html.erb" do
   end
 
   it "contains a hidden notify reference for the submission email" do
-    expect(rendered).to have_css("input", id: "notification-id", visible: :hidden)
+    expect(rendered).to have_field("notification-id", type: :hidden, with: email_confirmation_form.notify_reference)
   end
 
   context "when the email confirmation feature flag is off", feature_email_confirmations_enabled: false do
@@ -63,7 +63,7 @@ describe "forms/check_your_answers/show.html.erb" do
     end
 
     it "does not contain a hidden notify reference for the confirmation email" do
-      expect(rendered).not_to have_css("input", id: "confirmation-email-reference", visible: :hidden)
+      expect(rendered).not_to have_field("confirmation-email-reference", type: "hidden", with: email_confirmation_form.confirmation_email_reference)
     end
   end
 
@@ -79,7 +79,7 @@ describe "forms/check_your_answers/show.html.erb" do
     end
 
     it "contains a hidden notify reference for the confirmation email" do
-      expect(rendered).to have_css("input", id: "confirmation-email-reference", visible: :hidden)
+      expect(rendered).to have_field("confirmation-email-reference", type: "hidden", with: email_confirmation_form.confirmation_email_reference)
     end
   end
 
