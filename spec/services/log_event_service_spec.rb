@@ -75,14 +75,22 @@ RSpec.describe LogEventService do
       allow(CloudWatchService).to receive(:log_form_submission).and_return(true)
     end
 
-    it "calls the event logger with .log_form_event" do
-      described_class.log_submit(current_context, request)
+    context "when in preview mode" do
+      it "calls the event logger with .log_form_event" do
+        described_class.log_submit(current_context, request, preview: true)
 
-      expect(EventLogger).to have_received(:log_form_event).with(
-        current_context,
-        request,
-        "submission",
-      )
+        expect(EventLogger).to have_received(:log_form_event).with(
+          current_context,
+          request,
+          "preview_submission",
+        )
+      end
+
+      it "does not call the cloud watch service" do
+        described_class.log_submit(current_context, request, preview: true)
+
+        expect(CloudWatchService).not_to have_received(:log_form_submission)
+      end
     end
 
     context "when not in preview mode" do

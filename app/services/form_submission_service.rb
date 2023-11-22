@@ -37,7 +37,7 @@ class FormSubmissionService
                             submission_email: @form.submission_email).deliver_now
     end
 
-    LogEventService.log_submit(@current_context, @request, requested_email_confirmation: @requested_email_confirmation) unless @preview_mode
+    LogEventService.log_submit(@current_context, @request, requested_email_confirmation: @requested_email_confirmation, preview: @preview_mode)
   end
 
   def submit_confirmation_email_to_user

@@ -74,6 +74,7 @@ RSpec.describe FormSubmissionService do
         current_context,
         request,
         requested_email_confirmation: true,
+        preview: false,
       )
     end
 
@@ -115,6 +116,19 @@ RSpec.describe FormSubmissionService do
               preview_mode: true },
           ).once
         end
+      end
+
+      it "logs preview submission" do
+        allow(LogEventService).to receive(:log_submit).once
+
+        service.submit_form_to_processing_team
+
+        expect(LogEventService).to have_received(:log_submit).with(
+          current_context,
+          request,
+          requested_email_confirmation: true,
+          preview: true,
+        )
       end
 
       describe "validations" do
