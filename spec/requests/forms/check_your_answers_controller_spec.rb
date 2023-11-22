@@ -340,7 +340,13 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
     context "when the confirmation email flag is enabled", feature_email_confirmations_enabled: true do
       context "when user has not specified whether they want a confirmation email" do
-        let(:email_confirmation_form) { { send_confirmation: nil } }
+        let(:email_confirmation_form) do
+          {
+            send_confirmation: nil,
+            confirmation_email_reference: "test-ref-for-confirmation-email",
+            notify_reference: "test-ref-for-submission-email",
+          }
+        end
 
         before do
           post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_form: }
@@ -354,16 +360,21 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
           expect(response).to render_template("forms/check_your_answers/show")
         end
 
-        it "generates a new submission reference" do
-          expect(assigns[:email_confirmation_form].notify_reference).not_to eq email_confirmation_form[:notify_reference]
-          expect(assigns[:email_confirmation_form].confirmation_email_reference).not_to eq email_confirmation_form[:confirmation_email_reference]
+        it "does not generate a new submission reference" do
+          expect(response.body).to include "test-ref-for-confirmation-email"
+          expect(response.body).to include "test-ref-for-submission-email"
         end
-
-        include_examples "for submission reference"
       end
 
       context "when user has not specified the confirmation email address" do
-        let(:email_confirmation_form) { { send_confirmation: "send_email", confirmation_email_address: nil } }
+        let(:email_confirmation_form) do
+          {
+            send_confirmation: "send_email",
+            confirmation_email_address: nil,
+            confirmation_email_reference: "test-ref-for-confirmation-email",
+            notify_reference: "test-ref-for-submission-email",
+          }
+        end
 
         before do
           post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_form: }
@@ -377,12 +388,10 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
           expect(response).to render_template("forms/check_your_answers/show")
         end
 
-        it "generates a new submission reference" do
-          expect(assigns[:email_confirmation_form].notify_reference).not_to eq email_confirmation_form[:notify_reference]
-          expect(assigns[:email_confirmation_form].confirmation_email_reference).not_to eq email_confirmation_form[:confirmation_email_reference]
+        it "does not generate a new submission reference" do
+          expect(response.body).to include "test-ref-for-confirmation-email"
+          expect(response.body).to include "test-ref-for-submission-email"
         end
-
-        include_examples "for submission reference"
       end
 
       context "when user has not requested a confirmation email" do

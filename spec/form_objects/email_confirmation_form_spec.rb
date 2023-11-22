@@ -53,11 +53,11 @@ RSpec.describe EmailConfirmationForm, type: :model do
     end
   end
 
-  describe "#generate_submission_references!" do
+  describe "submission references" do
     uuid = /[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}/
 
-    before do
-      email_confirmation_form.generate_submission_references!
+    let(:email_confirmation_form) do
+      described_class.new
     end
 
     let(:notify_reference) { email_confirmation_form.notify_reference }
@@ -81,6 +81,20 @@ RSpec.describe EmailConfirmationForm, type: :model do
       uuid_in = ->(str) { uuid.match(str).to_s }
 
       expect(uuid_in[notify_reference]).to eq uuid_in[confirmation_email_reference]
+    end
+
+    context "when intialised with references" do
+      let(:email_confirmation_form) do
+        described_class.new(
+          confirmation_email_reference: "foo",
+          notify_reference: "bar",
+        )
+      end
+
+      it "does not generate new references" do
+        expect(confirmation_email_reference).to eq "foo"
+        expect(notify_reference).to eq "bar"
+      end
     end
   end
 end

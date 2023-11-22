@@ -5,7 +5,6 @@ module Forms
 
       setup_check_your_answers
       email_confirmation_form = EmailConfirmationForm.new
-      email_confirmation_form.generate_submission_references!
 
       render template: "forms/check_your_answers/show", locals: { email_confirmation_form: }
     end
@@ -30,7 +29,6 @@ module Forms
         end
       else
         setup_check_your_answers
-        email_confirmation_form.generate_submission_references!
 
         render template: "forms/check_your_answers/show", locals: { email_confirmation_form: }, status: :unprocessable_entity
       end
