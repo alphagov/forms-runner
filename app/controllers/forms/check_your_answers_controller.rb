@@ -17,15 +17,12 @@ module Forms
         if current_context.form_submitted?
           redirect_to error_repeat_submission_path(current_form.id)
         else
-          unless mode.preview?
-            LogEventService.log_submit(current_context, request, requested_email_confirmation:)
-          end
-
           FormSubmissionService.call(current_context:,
+                                     request:,
                                      email_confirmation_form:,
                                      preview_mode: mode.preview?).submit
-          redirect_to :form_submitted, email_sent: requested_email_confirmation
 
+          redirect_to :form_submitted, email_sent: requested_email_confirmation
         end
       else
         setup_check_your_answers

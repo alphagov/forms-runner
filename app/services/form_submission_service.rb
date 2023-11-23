@@ -5,11 +5,12 @@ class FormSubmissionService
     end
   end
 
-  def initialize(current_context:, email_confirmation_form:, preview_mode:)
+  def initialize(current_context:, request:, email_confirmation_form:, preview_mode:)
     @current_context = current_context
+    @request = request
     @form = current_context.form
     @email_confirmation_form = email_confirmation_form
-    @reference = @email_confirmation_form.notify_reference
+    @requested_email_confirmation = @email_confirmation_form.send_confirmation == "send_email"
     @preview_mode = preview_mode
     @timestamp = submission_timestamp
   end
@@ -28,18 +29,20 @@ class FormSubmissionService
 
     unless @form.submission_email.blank? && @preview_mode
       FormSubmissionMailer
-        .email_completed_form(title: form_title,
-                              text_input: email_body,
-                              preview_mode: @preview_mode,
-                              reference: @reference,
-                              timestamp: @timestamp,
-                              submission_email: @form.submission_email).deliver_now
+      .email_completed_form(title: form_title,
+                            text_input: email_body,
+                            preview_mode: @preview_mode,
+                            reference: @email_confirmation_form.notify_reference,
+                            timestamp: @timestamp,
+                            submission_email: @form.submission_email).deliver_now
     end
+
+    LogEventService.log_submit(@current_context, @request, requested_email_confirmation: @requested_email_confirmation, preview: @preview_mode)
   end
 
   def submit_confirmation_email_to_user
     return nil unless @form.what_happens_next.present? && has_support_contact_details?
-    return nil unless @email_confirmation_form.send_confirmation == "send_email"
+    return nil unless @requested_email_confirmation
 
     FormSubmissionConfirmationMailer.send_confirmation_email(
       title: form_title,

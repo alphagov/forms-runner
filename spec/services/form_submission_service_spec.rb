@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe FormSubmissionService do
-  let(:service) { described_class.call(current_context:, email_confirmation_form:, preview_mode:) }
+  let(:service) { described_class.call(current_context:, request:, email_confirmation_form:, preview_mode:) }
   let(:form) do
     build(:form,
           id: 1,
@@ -22,6 +22,7 @@ RSpec.describe FormSubmissionService do
   let(:support_url_text) { Faker::Lorem.sentence(word_count: 1, random_words_to_add: 4) }
 
   let(:current_context) { OpenStruct.new(form:, completed_steps: [step], support_details: OpenStruct.new(call_back_url: "http://gov.uk")) }
+  let(:request) { OpenStruct.new({ url: "url", method: "method" }) }
   let(:step) { OpenStruct.new({ question_text: "What is the meaning of life?", show_answer_in_email: "42" }) }
   let(:preview_mode) { false }
   let(:email_confirmation_form) { build :email_confirmation_form_opted_in }
@@ -64,6 +65,19 @@ RSpec.describe FormSubmissionService do
       end
     end
 
+    it "logs submission" do
+      allow(LogEventService).to receive(:log_submit).once
+
+      service.submit_form_to_processing_team
+
+      expect(LogEventService).to have_received(:log_submit).with(
+        current_context,
+        request,
+        requested_email_confirmation: true,
+        preview: false,
+      )
+    end
+
     describe "validations" do
       context "when form has no submission email" do
         let(:form) { OpenStruct.new(id: 1, form_name: "Form 1", submission_email: nil, steps: [step]) }
@@ -102,6 +116,19 @@ RSpec.describe FormSubmissionService do
               preview_mode: true },
           ).once
         end
+      end
+
+      it "logs preview submission" do
+        allow(LogEventService).to receive(:log_submit).once
+
+        service.submit_form_to_processing_team
+
+        expect(LogEventService).to have_received(:log_submit).with(
+          current_context,
+          request,
+          requested_email_confirmation: true,
+          preview: true,
+        )
       end
 
       describe "validations" do
