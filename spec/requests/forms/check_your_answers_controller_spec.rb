@@ -121,7 +121,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
         it "redirects to first incomplete page of form" do
           get check_your_answers_path(mode: "preview-draft", form_id: 2, form_slug: form_data.form_slug)
-          expect(response.status).to eq(302)
+          expect(response).to have_http_status(:found)
           expect(response.location).to eq(form_page_url(2, form_data.form_slug, 1))
         end
       end
@@ -132,8 +132,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
           get check_your_answers_path(mode: "preview-draft", form_id: 2, form_slug: form_data.form_slug)
         end
 
-        it "returns 200" do
-          expect(response.status).to eq(200)
+        it "returns 'ok' status code" do
+          expect(response).to have_http_status(:ok)
         end
 
         it "Displays a back link to the last page of the form" do
@@ -163,8 +163,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
           travel_to timestamp_of_request do
             get check_your_answers_path(mode: "preview-draft", form_id: 2, form_slug: form_data.form_slug)
           end
-
-          expect(response.status).not_to eq(404)
+          expect(response).not_to have_http_status(:not_found)
         end
       end
     end
@@ -179,7 +178,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
         it "redirects to first incomplete page of form" do
           get check_your_answers_path(mode: "form", form_id: 2, form_slug: form_data.form_slug)
-          expect(response.status).to eq(302)
+          expect(response).to have_http_status(:found)
           expect(response.location).to eq(form_page_url(2, form_data.form_slug, 1))
         end
       end
@@ -194,8 +193,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
           get check_your_answers_path(mode: "form", form_id: 2, form_slug: form_data.form_slug)
         end
 
-        it "returns 200" do
-          expect(response.status).to eq(200)
+        it "returns returns 'ok' status code" do
+          expect(response).to have_http_status(:ok)
         end
 
         it "Displays a back link to the last page of the form" do

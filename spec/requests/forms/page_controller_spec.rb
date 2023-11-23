@@ -62,7 +62,7 @@ RSpec.describe Forms::PageController, type: :request do
 
       it "Returns a 200" do
         get form_page_path("preview-draft", 2, form_data.form_slug, 1)
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(:ok)
       end
 
       it "redirects to first page if second request before first complete" do
@@ -120,7 +120,7 @@ RSpec.describe Forms::PageController, type: :request do
       context "with no questions answered" do
         it "redirects if a later page is requested" do
           get check_your_answers_path("preview-draft", 2, form_data.form_slug)
-          expect(response.status).to eq(302)
+          expect(response).to have_http_status(:found)
           expect(response.location).to eq(form_page_url("preview-draft", 2, form_data.form_slug, 1))
         end
       end
@@ -149,7 +149,7 @@ RSpec.describe Forms::PageController, type: :request do
           end
 
           it "returns a 404" do
-            expect(response.status).to eq(404)
+            expect(response).to have_http_status(:not_found)
           end
 
           it "does not send an expception to sentry" do
@@ -160,7 +160,7 @@ RSpec.describe Forms::PageController, type: :request do
 
       it "Returns a 200" do
         get form_page_path("form", 2, form_data.form_slug, 1)
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(:ok)
       end
 
       it "redirects to first page if second request before first complete" do
@@ -218,7 +218,7 @@ RSpec.describe Forms::PageController, type: :request do
       context "with no questions answered" do
         it "redirects if a later page is requested" do
           get check_your_answers_path("form", 2, form_data.form_slug)
-          expect(response.status).to eq(302)
+          expect(response).to have_http_status(:found)
           expect(response.location).to eq(form_page_url("form", 2, form_data.form_slug, 1))
         end
       end
@@ -231,7 +231,7 @@ RSpec.describe Forms::PageController, type: :request do
             get form_page_path("form", 2, form_data.form_slug, 1)
           end
 
-          expect(response.status).to eq(404)
+          expect(response).to have_http_status(:not_found)
         end
       end
     end
@@ -248,7 +248,7 @@ RSpec.describe Forms::PageController, type: :request do
 
       it "Returns a 200" do
         get form_page_path("preview-live", 2, form_data.form_slug, 1)
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(:ok)
       end
     end
 
@@ -282,7 +282,7 @@ RSpec.describe Forms::PageController, type: :request do
 
         it "returns a 422 response" do
           get form_page_path("preview-draft", 2, form_data.form_slug, 1)
-          expect(response.status).to eq(422)
+          expect(response).to have_http_status(:unprocessable_entity)
         end
 
         it "shows the error page" do
@@ -344,7 +344,7 @@ RSpec.describe Forms::PageController, type: :request do
           travel_to timestamp_of_request do
             post save_form_page_path("preview-draft", 2, form_data.form_slug, 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
           end
-          expect(response.status).not_to eq(404)
+          expect(response).not_to have_http_status(:not_found)
         end
       end
     end
@@ -449,7 +449,7 @@ RSpec.describe Forms::PageController, type: :request do
 
         it "returns a 422 response" do
           post save_form_page_path("preview-draft", 2, form_data.form_slug, 1), params: { question: { selection: "Option 2" }, changing_existing_answer: false }
-          expect(response.status).to eq(422)
+          expect(response).to have_http_status(:unprocessable_entity)
         end
 
         it "shows the error page" do
