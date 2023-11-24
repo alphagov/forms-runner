@@ -127,6 +127,9 @@ en:
     optional: "(optional)"
   page_titles:
     error_prefix: 'Error: '
+  preview_banner:
+    heading: This is a preview of this form. Do not enter personal information.
+    title: Important
   question/name:
     label:
       first_name: First name

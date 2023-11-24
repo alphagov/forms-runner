@@ -38,6 +38,8 @@
       <%= yield(:before_content) %>
 
       <%= render(MainComponent::View.new(mode: @mode, is_question: @is_question)) do %>
+        <%= render(PreviewBannerComponent::View.new(mode: @mode)) %>
+
         <%= yield %>
       <% end %>
     </div>

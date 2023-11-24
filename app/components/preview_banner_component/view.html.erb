@@ -1,0 +1,7 @@
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <%= govuk_notification_banner(title_text: t("preview_banner.title")) do |nb| %>
+      <% nb.with_heading(text: t("preview_banner.heading")) %>
+    <% end %>
+  </div>
+</div>
