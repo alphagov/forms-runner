@@ -65,6 +65,56 @@ RSpec.describe Question::Date, type: :model do
     end
   end
 
+  context "when a year is not 4-digits" do
+    let(:year) { "2023" }
+
+    before do
+      set_date("01", "11", year)
+    end
+
+    context "when year is less than 1000" do
+      let(:year) { "567" }
+
+      it "isn't valid" do
+        expect(question).not_to be_valid
+        expect(question.errors[:date]).to include(I18n.t("activemodel.errors.models.question/date.attributes.date.invalid_number_of_digits_for_year"))
+      end
+    end
+
+    context "when year is 1000" do
+      let(:year) { "1000" }
+
+      it "is valid" do
+        expect(question).to be_valid
+      end
+    end
+
+    context "when year is between 1000 and 9999" do
+      let(:year) { "3400" }
+
+      it "is valid" do
+        expect(question).to be_valid
+      end
+    end
+
+    context "when year is 9999" do
+      let(:year) { "9999" }
+
+      it "is valid" do
+        expect(question).to be_valid
+      end
+    end
+
+    context "when year more than 9999" do
+      let(:year) { "10000" }
+
+      it "isn't valid" do
+        expect(question).not_to be_valid
+        expect(question.errors[:date]).to include(I18n.t("activemodel.errors.models.question/date.attributes.date.invalid_number_of_digits_for_year"))
+      end
+    end
+  end
+
   context "when given non-integers as values for day, month or year" do
     it "isn't valid" do
       day_month_years = [

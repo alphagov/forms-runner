@@ -30,6 +30,7 @@ en:
               blank_date_fields: Enter a day, month and year
               future_date: Enter a date that’s in the past
               invalid_date: Enter a real date
+              invalid_number_of_digits_for_year: Year must include 4 numbers
         question/email:
           attributes:
             email:
