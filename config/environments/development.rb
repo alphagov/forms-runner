@@ -61,4 +61,8 @@ Rails.application.configure do
 
   # Raise error when a before_action's only/except options reference missing actions
   config.action_controller.raise_on_missing_callback_actions = true
+
+  # Allow storing session in cookies. This should only be allowed in local
+  # development and testing. In production redis should be used
+  config.unsafe_session_storage = true
 end
