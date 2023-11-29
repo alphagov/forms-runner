@@ -35,6 +35,7 @@ module Question
       return errors.add(:date, :blank) if blank?
       return errors.add(:date, :blank_date_fields, fields: blank_fields.to_sentence) if present? && blank_fields.any?
       return errors.add(:date, :invalid_date) if invalid?
+      return errors.add(:date, :invalid_number_of_digits_for_year) if invalid_year?
       return errors.add(:date, :future_date) if date_of_birth? && future_date?
     end
 
@@ -60,6 +61,10 @@ module Question
 
     def future_date?
       date.future?
+    end
+
+    def invalid_year?
+      !date_year.to_i.between?(1000, 9999)
     end
 
     def blank_fields
