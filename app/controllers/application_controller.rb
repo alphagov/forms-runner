@@ -32,7 +32,7 @@ class ApplicationController < ActionController::Base
     payload[:form_id] = params[:form_id] if params[:form_id].present?
     payload[:page_id] = params[:page_slug] if params[:page_slug].present? && params[:page_slug].match(Page::PAGE_ID_REGEX)
     payload[:page_slug] = params[:page_slug] if params[:page_slug].present?
-    payload[:session_id_hash] = Digest::SHA256.hexdigest session.id.to_s if session.exists?
+    payload[:session_id_hash] = session_id_hash
   end
 
 private
@@ -56,5 +56,9 @@ private
 
     bypass_ip_list = bypass_ips.split(",").map { |ip| IPAddr.new ip.strip }
     bypass_ip_list.none? { |ip| ip.include?(user_ip(request.env.fetch("HTTP_X_FORWARDED_FOR", ""))) }
+  end
+
+  def session_id_hash
+    SessionHasher.new(request).request_to_session_hash
   end
 end

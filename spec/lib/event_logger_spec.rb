@@ -18,6 +18,10 @@ RSpec.describe EventLogger do
     OpenStruct.new({ url: "http://example.gov.uk", method: "GET" })
   end
 
+  before do
+    allow(SessionHasher).to receive(:new).and_return(OpenStruct.new(request_to_session_hash: "session_hash"))
+  end
+
   it "logs an event" do
     allow(Rails.logger).to receive(:info).at_least(:once)
 
@@ -35,6 +39,7 @@ RSpec.describe EventLogger do
       form_id: form.id,
       request_id: nil,
       event: "form_visit",
+      session_id_hash: "session_hash",
     }
 
     described_class.log_form_event(context, request, "visit")
@@ -53,6 +58,7 @@ RSpec.describe EventLogger do
         question_text: page.question_text,
         request_id: nil,
         event: "page_save",
+        session_id_hash: "session_hash",
       }
 
       described_class.log_page_event(context, OpenStruct.new(question: page, page_number: 1), request, "page_save", nil)
@@ -73,6 +79,7 @@ RSpec.describe EventLogger do
         skipped_question: "true",
         request_id: nil,
         event: "optional_save",
+        session_id_hash: "session_hash",
       }
 
       described_class.log_page_event(context, OpenStruct.new(question: page, page_number: 1), request, "optional_save", true)
