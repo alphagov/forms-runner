@@ -9,7 +9,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
           live_at:,
           start_page: 1,
           privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
-          what_happens_next_text: "Good things come to those that wait",
+          what_happens_next_markdown: "Good things come to those that wait",
           declaration_text: "agree to the declaration",
           pages: pages_data)
   end
@@ -402,7 +402,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
           expected_personalisation = {
             title: form_data.name,
-            what_happens_next_text: form_data.what_happens_next,
+            what_happens_next_text: form_data.what_happens_next_markdown,
             support_contact_details: contact_support_details_format,
             submission_time: "10:00am",
             submission_date: "14 December 2022",

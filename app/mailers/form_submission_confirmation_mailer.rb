@@ -1,10 +1,10 @@
 class FormSubmissionConfirmationMailer < GovukNotifyRails::Mailer
-  def send_confirmation_email(title:, what_happens_next_text:, support_contact_details:, submission_timestamp:, preview_mode:, reference:, confirmation_email_address:)
+  def send_confirmation_email(title:, what_happens_next_markdown:, support_contact_details:, submission_timestamp:, preview_mode:, reference:, confirmation_email_address:)
     set_template(Settings.govuk_notify.form_filler_confirmation_email_template_id)
 
     set_personalisation(
       title:,
-      what_happens_next_text:,
+      what_happens_next_text: what_happens_next_markdown,
       support_contact_details:,
       submission_time: submission_timestamp.strftime("%l:%M%P").strip,
       submission_date: submission_timestamp.strftime("%-d %B %Y"),

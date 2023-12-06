@@ -23,7 +23,7 @@ RSpec.describe Context do
           id: 2,
           start_page: 1,
           privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
-          what_happens_next_text: "Good things come to those that wait",
+          what_happens_next_markdown: "Good things come to those that wait",
           declaration_text: "agree to the declaration",
           pages:)
   end

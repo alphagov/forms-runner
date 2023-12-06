@@ -9,7 +9,7 @@ RSpec.describe Forms::BaseController, type: :request do
           live_at:,
           start_page:,
           privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
-          what_happens_next_text: "Good things come to those that wait",
+          what_happens_next_markdown: "Good things come to those that wait",
           declaration_text: "agree to the declaration",
           pages: pages_data)
   end
