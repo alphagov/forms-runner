@@ -32,9 +32,4 @@ class Form < ActiveResource::Base
   def live_at_date
     try(:live_at).try(:to_time)
   end
-
-  # TODO: remove this method and ReverseMarkdown gem once we've converted the existing content in forms-api to markdown
-  def what_happens_next
-    what_happens_next_markdown
-  end
 end

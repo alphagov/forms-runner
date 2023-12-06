@@ -94,23 +94,4 @@ RSpec.describe Form, type: :model do
       end
     end
   end
-
-  describe "what_happens_next" do
-    let(:what_happens_next_markdown) { nil }
-    let(:response_data) { { id: 1, name: "form name", submission_email: "user@example.com", start_page: 1, what_happens_next_markdown: }.to_json }
-
-    context "when what_happens_next_markdown is nil" do
-      it "returns nil" do
-        expect(described_class.find(1).what_happens_next).to eq nil
-      end
-    end
-
-    context "when what_happens_next_markdown has a value" do
-      let(:what_happens_next_markdown) { "We’ll send you an email to let you know the outcome. Visit our [service status page](https://example.com) to see current response times.\n\nYou'll also need to:\n\n1. provide a certified copy of your documents\n2. make a payment" }
-
-      it "returns the what_happens_next_markdown" do
-        expect(described_class.find(1).what_happens_next).to eq what_happens_next_markdown
-      end
-    end
-  end
 end

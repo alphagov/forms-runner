@@ -3,7 +3,7 @@ require "rails_helper"
 describe FormSubmissionConfirmationMailer, type: :mailer do
   let(:mail) do
     described_class.send_confirmation_email(title:,
-                                            what_happens_next_text: what_happens_next,
+                                            what_happens_next_text: what_happens_next_markdown,
                                             support_contact_details:,
                                             submission_timestamp:,
                                             preview_mode:,
@@ -11,7 +11,7 @@ describe FormSubmissionConfirmationMailer, type: :mailer do
                                             confirmation_email_address:)
   end
   let(:title) { "Form 1" }
-  let(:what_happens_next) { "Please wait for a response" }
+  let(:what_happens_next_markdown) { "Please wait for a response" }
   let(:support_contact_details) { "Call: 0203 222 2222" }
   let(:preview_mode) { false }
   let(:confirmation_email_address) { "testing@gov.uk" }
