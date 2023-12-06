@@ -1,8 +1,8 @@
 require "rails_helper"
 
 describe "forms/submitted/submitted.html.erb" do
-  let(:form) { build :form, id: 1, what_happens_next_text: }
-  let(:what_happens_next_text) { nil }
+  let(:form) { build :form, id: 1, what_happens_next_markdown: }
+  let(:what_happens_next_markdown) { nil }
   let(:email_sent) { false }
 
   before do
@@ -18,7 +18,7 @@ describe "forms/submitted/submitted.html.erb" do
   end
 
   context "when the form has extra information about what happens next" do
-    let(:what_happens_next_text) { "See what the day brings" }
+    let(:what_happens_next_markdown) { "See what the day brings" }
 
     it "displays what happens next heading" do
       expect(rendered).to have_css("h2", text: "What happens next")
