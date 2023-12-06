@@ -353,8 +353,6 @@ GEM
       io-console (~> 0.5)
     request_store (1.5.1)
       rack (>= 1.4)
-    reverse_markdown (2.1.1)
-      nokogiri
     rexml (3.2.6)
     rspec-core (3.12.2)
       rspec-support (~> 3.12.0)
@@ -493,7 +491,6 @@ DEPENDENCIES
   rails-controller-testing
   redis
   redis-session-store
-  reverse_markdown (~> 2.1)
   rspec-rails
   rubocop-govuk
   selenium-webdriver
