@@ -3,7 +3,7 @@ require "rails_helper"
 describe FormSubmissionConfirmationMailer, type: :mailer do
   let(:mail) do
     described_class.send_confirmation_email(title:,
-                                            what_happens_next_text: what_happens_next_markdown,
+                                            what_happens_next_markdown:,
                                             support_contact_details:,
                                             submission_timestamp:,
                                             preview_mode:,

@@ -46,7 +46,7 @@ class FormSubmissionService
 
     FormSubmissionConfirmationMailer.send_confirmation_email(
       title: form_title,
-      what_happens_next_text: @form.what_happens_next_markdown,
+      what_happens_next_markdown: @form.what_happens_next_markdown,
       support_contact_details: formatted_support_details,
       submission_timestamp: @timestamp,
       preview_mode: @preview_mode,
