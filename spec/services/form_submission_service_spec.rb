@@ -31,16 +31,9 @@ RSpec.describe FormSubmissionService do
       service.submit
     end
 
-    it "does not call submit_confirmation_email_to_user" do
-      expect(service).not_to receive(:submit_confirmation_email_to_user)
+    it "calls submit_confirmation_email_to_user" do
+      expect(service).to receive(:submit_confirmation_email_to_user).once
       service.submit
-    end
-
-    describe "when email_confirmation feature is enabled", feature_email_confirmations_enabled: true do
-      it "calls submit_confirmation_email_to_user" do
-        expect(service).to receive(:submit_confirmation_email_to_user).once
-        service.submit
-      end
     end
   end
 

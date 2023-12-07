@@ -19,9 +19,11 @@ describe "Settings" do
   end
 
   describe ".features" do
-    features = settings[:features]
+    it "has a default value" do
+      features = settings[:features]
 
-    include_examples expected_value_test, :email_confirmations_enabled, features, false
+      expect(features).to eq({})
+    end
   end
 
   describe ".forms_api" do

@@ -51,36 +51,18 @@ describe "forms/check_your_answers/show.html.erb" do
     expect(rendered).to have_field("notification-id", type: :hidden, with: email_confirmation_form.notify_reference)
   end
 
-  context "when the email confirmation feature flag is off", feature_email_confirmations_enabled: false do
-    it "does not display the email radio buttons" do
-      expect(rendered).not_to have_text(I18n.t("helpers.legend.email_confirmation_form.send_confirmation"))
-      expect(rendered).not_to have_field(I18n.t("helpers.label.email_confirmation_form.send_confirmation_options.send_email"))
-      expect(rendered).not_to have_field(I18n.t("helpers.label.email_confirmation_form.send_confirmation_options.skip_confirmation"))
-    end
-
-    it "does not display the email field" do
-      expect(rendered).not_to have_field(I18n.t("helpers.label.email_confirmation_form.confirmation_email_address"))
-    end
-
-    it "does not contain a hidden notify reference for the confirmation email" do
-      expect(rendered).not_to have_field("confirmation-email-reference", type: "hidden", with: email_confirmation_form.confirmation_email_reference)
-    end
+  it "displays the email radio buttons" do
+    expect(rendered).to have_text(I18n.t("helpers.legend.email_confirmation_form.send_confirmation"))
+    expect(rendered).to have_field(I18n.t("helpers.label.email_confirmation_form.send_confirmation_options.send_email"))
+    expect(rendered).to have_field(I18n.t("helpers.label.email_confirmation_form.send_confirmation_options.skip_confirmation"))
   end
 
-  context "when the email confirmation feature flag is on", feature_email_confirmations_enabled: true do
-    it "displays the email radio buttons" do
-      expect(rendered).to have_text(I18n.t("helpers.legend.email_confirmation_form.send_confirmation"))
-      expect(rendered).to have_field(I18n.t("helpers.label.email_confirmation_form.send_confirmation_options.send_email"))
-      expect(rendered).to have_field(I18n.t("helpers.label.email_confirmation_form.send_confirmation_options.skip_confirmation"))
-    end
+  it "displays the email field" do
+    expect(rendered).to have_field(I18n.t("helpers.label.email_confirmation_form.confirmation_email_address"))
+  end
 
-    it "displays the email field" do
-      expect(rendered).to have_field(I18n.t("helpers.label.email_confirmation_form.confirmation_email_address"))
-    end
-
-    it "contains a hidden notify reference for the confirmation email" do
-      expect(rendered).to have_field("confirmation-email-reference", type: "hidden", with: email_confirmation_form.confirmation_email_reference)
-    end
+  it "contains a hidden notify reference for the confirmation email" do
+    expect(rendered).to have_field("confirmation-email-reference", type: "hidden", with: email_confirmation_form.confirmation_email_reference)
   end
 
   # TODO: add view tests for playing back questions and Answers

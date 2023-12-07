@@ -101,10 +101,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       expect(response.body).to include "00000000-submission-email"
     end
 
-    context "when the confirmation email flag is enabled", feature_email_confirmations_enabled: true do
-      it "includes a notification reference for the confirmation email" do
-        expect(response.body).to include "00000000-confirmation-email"
-      end
+    it "includes a notification reference for the confirmation email" do
+      expect(response.body).to include "00000000-confirmation-email"
     end
   end
 
@@ -244,7 +242,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
       it "emails the form submission" do
         deliveries = ActionMailer::Base.deliveries
-        expect(deliveries.length).to eq 1
+        expect(deliveries.length).to eq 2
 
         mail = deliveries[0]
         expect(mail.to).to eq [form_data.submission_email]
@@ -277,7 +275,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
       it "emails the form submission" do
         deliveries = ActionMailer::Base.deliveries
-        expect(deliveries.length).to eq 1
+        expect(deliveries.length).to eq 2
 
         mail = deliveries[0]
         expect(mail.to).to eq [form_data.submission_email]
@@ -307,112 +305,110 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       end
     end
 
-    context "when the confirmation email flag is enabled", feature_email_confirmations_enabled: true do
-      context "when user has not specified whether they want a confirmation email" do
-        let(:email_confirmation_form) do
-          {
-            send_confirmation: nil,
-            confirmation_email_reference: "test-ref-for-confirmation-email",
-            notify_reference: "test-ref-for-submission-email",
-          }
-        end
+    context "when user has not specified whether they want a confirmation email" do
+      let(:email_confirmation_form) do
+        {
+          send_confirmation: nil,
+          confirmation_email_reference: "test-ref-for-confirmation-email",
+          notify_reference: "test-ref-for-submission-email",
+        }
+      end
 
-        before do
+      before do
+        post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_form: }
+      end
+
+      it "return 422 error code" do
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it "renders the check your answers page" do
+        expect(response).to render_template("forms/check_your_answers/show")
+      end
+
+      it "does not generate a new submission reference" do
+        expect(response.body).to include "test-ref-for-confirmation-email"
+        expect(response.body).to include "test-ref-for-submission-email"
+      end
+    end
+
+    context "when user has not specified the confirmation email address" do
+      let(:email_confirmation_form) do
+        {
+          send_confirmation: "send_email",
+          confirmation_email_address: nil,
+          confirmation_email_reference: "test-ref-for-confirmation-email",
+          notify_reference: "test-ref-for-submission-email",
+        }
+      end
+
+      before do
+        post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_form: }
+      end
+
+      it "return 422 error code" do
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it "renders the check your answers page" do
+        expect(response).to render_template("forms/check_your_answers/show")
+      end
+
+      it "does not generate a new submission reference" do
+        expect(response.body).to include "test-ref-for-confirmation-email"
+        expect(response.body).to include "test-ref-for-submission-email"
+      end
+    end
+
+    context "when user has not requested a confirmation email" do
+      let(:email_confirmation_form) { { send_confirmation: "skip_confirmation", confirmation_email_address: nil, notify_reference: "for-my-ref" } }
+
+      before do
+        post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_form: }
+      end
+
+      it "redirects to confirmation page" do
+        expect(response).to redirect_to(form_submitted_path)
+      end
+    end
+
+    context "when user has requested a confirmation email" do
+      let(:email_confirmation_form) do
+        { send_confirmation: "send_email",
+          confirmation_email_address: Faker::Internet.email,
+          confirmation_email_reference: "confirmation-email-ref",
+          notify_reference: "for-my-ref" }
+      end
+
+      before do
+        travel_to timestamp_of_request do
           post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_form: }
-        end
-
-        it "return 422 error code" do
-          expect(response).to have_http_status(:unprocessable_entity)
-        end
-
-        it "renders the check your answers page" do
-          expect(response).to render_template("forms/check_your_answers/show")
-        end
-
-        it "does not generate a new submission reference" do
-          expect(response.body).to include "test-ref-for-confirmation-email"
-          expect(response.body).to include "test-ref-for-submission-email"
         end
       end
 
-      context "when user has not specified the confirmation email address" do
-        let(:email_confirmation_form) do
-          {
-            send_confirmation: "send_email",
-            confirmation_email_address: nil,
-            confirmation_email_reference: "test-ref-for-confirmation-email",
-            notify_reference: "test-ref-for-submission-email",
-          }
-        end
-
-        before do
-          post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_form: }
-        end
-
-        it "return 422 error code" do
-          expect(response).to have_http_status(:unprocessable_entity)
-        end
-
-        it "renders the check your answers page" do
-          expect(response).to render_template("forms/check_your_answers/show")
-        end
-
-        it "does not generate a new submission reference" do
-          expect(response.body).to include "test-ref-for-confirmation-email"
-          expect(response.body).to include "test-ref-for-submission-email"
-        end
+      it "redirects to confirmation page" do
+        expect(response).to redirect_to(form_submitted_path)
       end
 
-      context "when user has not requested a confirmation email" do
-        let(:email_confirmation_form) { { send_confirmation: "skip_confirmation", confirmation_email_address: nil, notify_reference: "for-my-ref" } }
+      it "sends a confirmation email" do
+        deliveries = ActionMailer::Base.deliveries
+        expect(deliveries.length).to eq 2
 
-        before do
-          post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_form: }
-        end
+        mail = deliveries[1]
+        expect(mail.to).to eq([email_confirmation_form[:confirmation_email_address]])
 
-        it "redirects to confirmation page" do
-          expect(response).to redirect_to(form_submitted_path)
-        end
-      end
+        expected_personalisation = {
+          title: form_data.name,
+          what_happens_next_text: form_data.what_happens_next_markdown,
+          support_contact_details: contact_support_details_format,
+          submission_time: "10:00am",
+          submission_date: "14 December 2022",
+          test: "no",
+        }
 
-      context "when user has requested a confirmation email" do
-        let(:email_confirmation_form) do
-          { send_confirmation: "send_email",
-            confirmation_email_address: Faker::Internet.email,
-            confirmation_email_reference: "confirmation-email-ref",
-            notify_reference: "for-my-ref" }
-        end
+        expect(mail.body.raw_source).to include(expected_personalisation.to_s)
 
-        before do
-          travel_to timestamp_of_request do
-            post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_form: }
-          end
-        end
-
-        it "redirects to confirmation page" do
-          expect(response).to redirect_to(form_submitted_path)
-        end
-
-        it "sends a confirmation email" do
-          deliveries = ActionMailer::Base.deliveries
-          expect(deliveries.length).to eq 2
-
-          mail = deliveries[1]
-          expect(mail.to).to eq([email_confirmation_form[:confirmation_email_address]])
-
-          expected_personalisation = {
-            title: form_data.name,
-            what_happens_next_text: form_data.what_happens_next_markdown,
-            support_contact_details: contact_support_details_format,
-            submission_time: "10:00am",
-            submission_date: "14 December 2022",
-            test: "no",
-          }
-
-          expect(mail.body.raw_source).to include(expected_personalisation.to_s)
-
-          expect(mail.govuk_notify_reference).to eq "confirmation-email-ref"
-        end
+        expect(mail.govuk_notify_reference).to eq "confirmation-email-ref"
       end
     end
   end

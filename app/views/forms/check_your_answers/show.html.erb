@@ -24,16 +24,14 @@
         %>
       <% end %>
 
-      <% if FeatureService.enabled?(:email_confirmations_enabled) %>
-        <%= form.govuk_radio_buttons_fieldset(:send_confirmation, legend: { size: 'm', tag: 'h2' }) do %>
-          <%= form.govuk_radio_button :send_confirmation, 'send_email' do %>
-            <%= form.govuk_text_field :confirmation_email_address %>
-          <% end %>
-          <%= form.govuk_radio_button :send_confirmation, 'skip_confirmation' %>
+      <%= form.govuk_radio_buttons_fieldset(:send_confirmation, legend: { size: 'm', tag: 'h2' }) do %>
+        <%= form.govuk_radio_button :send_confirmation, 'send_email' do %>
+          <%= form.govuk_text_field :confirmation_email_address %>
         <% end %>
-
-        <%= form.hidden_field :confirmation_email_reference, id: 'confirmation-email-reference' %>
+        <%= form.govuk_radio_button :send_confirmation, 'skip_confirmation' %>
       <% end %>
+
+      <%= form.hidden_field :confirmation_email_reference, id: 'confirmation-email-reference' %>
 
       <%if @current_context.form.declaration_text.present? %>
         <h2 class="govuk-heading-m govuk-!-margin-top-7">Declaration</h2>
