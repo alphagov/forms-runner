@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe EmailConfirmationForm, type: :model do
   let(:email_confirmation_form) { build :email_confirmation_form }
 
-  context "when the email confirmations flag is enabled", feature_email_confirmations_enabled: true do
+  context "when the email confirmations flag is enabled" do
     context "when given an empty string or nil" do
       it "returns invalid with blank email" do
         expect(email_confirmation_form).not_to be_valid
@@ -40,15 +40,6 @@ RSpec.describe EmailConfirmationForm, type: :model do
       it "returns valid with empty string" do
         email_confirmation_form.confirmation_email_address = ""
         expect(email_confirmation_form).to be_valid
-      end
-    end
-  end
-
-  context "when the email confirmations flag is not enabled", feature_email_confirmations_enabled: false do
-    context "when send_confirmation is null" do
-      it "returns valid" do
-        expect(email_confirmation_form).to be_valid
-        expect(email_confirmation_form.errors[:send_confirmation]).to be_empty
       end
     end
   end

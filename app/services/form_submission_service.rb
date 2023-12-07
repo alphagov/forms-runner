@@ -17,7 +17,7 @@ class FormSubmissionService
 
   def submit
     submit_form_to_processing_team
-    submit_confirmation_email_to_user if FeatureService.enabled?(:email_confirmations_enabled)
+    submit_confirmation_email_to_user
   end
 
   def submit_form_to_processing_team

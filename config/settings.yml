@@ -1,5 +1,4 @@
-features:
-  email_confirmations_enabled: false
+features: {}
 
 forms_admin:
   # URL to form-admin
