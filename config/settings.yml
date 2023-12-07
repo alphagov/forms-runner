@@ -22,6 +22,7 @@ govuk_notify:
 sentry:
   dsn:
   environment: local
+  filter_mask: "[Filtered (client-side)]"
 
 maintenance_mode:
   # When set to true, All pages will render 'Maintenance mode' message
