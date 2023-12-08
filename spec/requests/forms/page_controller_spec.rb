@@ -347,6 +347,20 @@ RSpec.describe Forms::PageController, type: :request do
           expect(response).not_to have_http_status(:not_found)
         end
       end
+
+      context "when the form is invalid" do
+        before do
+          post save_form_page_path("preview-draft", 2, form_data.form_slug, 1), params: { question: { text: "" }, changing_existing_answer: false }
+        end
+
+        it "renders the show page template" do
+          expect(response).to render_template("forms/page/show")
+        end
+
+        it "returns 422" do
+          expect(response).to have_http_status(:unprocessable_entity)
+        end
+      end
     end
 
     context "with preview mode off" do
@@ -403,6 +417,20 @@ RSpec.describe Forms::PageController, type: :request do
             expect(EventLogger).to receive(:log_page_event).with(instance_of(Context), instance_of(Step), instance_of(ActionDispatch::Request), "optional_save", false)
             post save_form_page_path("form", 2, form_data.form_slug, 2), params: { question: { text: "answer text" } }
           end
+        end
+      end
+
+      context "when the form is invalid" do
+        before do
+          post save_form_page_path("form", 2, form_data.form_slug, 1), params: { question: { text: "" }, changing_existing_answer: false }
+        end
+
+        it "renders the show page template" do
+          expect(response).to render_template("forms/page/show")
+        end
+
+        it "returns 422" do
+          expect(response).to have_http_status(:unprocessable_entity)
         end
       end
     end
