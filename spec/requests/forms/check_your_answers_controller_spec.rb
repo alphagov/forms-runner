@@ -411,6 +411,36 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         expect(mail.govuk_notify_reference).to eq "confirmation-email-ref"
       end
     end
+
+    context "when there is a submission error" do
+      let(:email_confirmation_form) do
+        { send_confirmation: "send_email",
+          confirmation_email_address: Faker::Internet.email,
+          confirmation_email_reference: "confirmation-email-ref",
+          notify_reference: "for-my-ref" }
+      end
+
+      before do
+        allow(FormSubmissionService).to receive(:call).and_throw(StandardError)
+        allow(Sentry).to receive(:capture_exception)
+
+        travel_to timestamp_of_request do
+          post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_form: }
+        end
+      end
+
+      it "calls Sentry" do
+        expect(Sentry).to have_received(:capture_exception)
+      end
+
+      it "renders the submission_error template" do
+        expect(response).to render_template("errors/submission_error")
+      end
+
+      it "returns 500" do
+        expect(response).to have_http_status(:internal_server_error)
+      end
+    end
   end
 
 private
