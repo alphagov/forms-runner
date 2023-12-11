@@ -35,11 +35,11 @@ module FormHeaderComponent
 
     def colour_for_environment
       case environment_name
-      when "local"
+      when "Local"
         "pink"
-      when "development"
+      when "Development"
         "green"
-      when "staging"
+      when "Staging"
         "yellow"
       else
         "blue"

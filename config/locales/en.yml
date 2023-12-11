@@ -81,11 +81,11 @@ en:
               long_text_too_long: The answer must be shorter than 5000 characters
               single_line_too_long: The answer must be shorter than 500 characters
   environment_names:
-    dev: development
-    local: local
-    production: production
-    staging: staging
-    user-research: user research
+    dev: Development
+    local: Local
+    production: Production
+    staging: Staging
+    user-research: User research
   footer:
     accessibility_statement: Accessibility statement
     cookies: Cookies
