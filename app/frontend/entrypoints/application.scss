@@ -1,9 +1,6 @@
 $govuk-images-path: "@govuk/assets/images/";
 $govuk-fonts-path: "@govuk/assets/fonts/";
 $govuk-global-styles: true;
-$govuk-suppressed-warnings: (
-  ie8
-);
 
 @import "@govuk/all";
 @import "../../components/form_header_component/";
