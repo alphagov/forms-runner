@@ -43,6 +43,6 @@ module ApplicationHelper
   end
 
   def govuk_assets_path
-    "/node_modules/govuk-frontend/govuk/assets"
+    "/node_modules/govuk-frontend/dist/govuk/assets"
   end
 end
