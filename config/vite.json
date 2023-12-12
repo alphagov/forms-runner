@@ -6,7 +6,9 @@
       "app/components/**/*.scss",
       "app/components/**/*.js"
     ],
-    "additionalEntrypoints": ["node_modules/govuk-frontend/govuk/assets/**/*"],
+    "additionalEntrypoints": [
+      "node_modules/govuk-frontend/dist/govuk/assets/**/*"
+    ],
     "publicOutputDir": "assets",
     "assetsDir": "",
     "autoBuild": false

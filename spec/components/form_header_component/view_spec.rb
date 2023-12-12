@@ -48,10 +48,10 @@ RSpec.describe FormHeaderComponent::View, type: :component do
   end
 
   [
-    { name: "local", colour: "pink" },
-    { name: "development", colour: "green" },
-    { name: "user research", colour: "blue" },
-    { name: "staging", colour: "yellow" },
+    { name: "Local", colour: "pink" },
+    { name: "Development", colour: "green" },
+    { name: "User research", colour: "blue" },
+    { name: "Staging", colour: "yellow" },
   ].each do |environment|
     context "when the environment is #{environment[:name]}" do
       before do
