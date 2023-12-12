@@ -26,7 +26,7 @@ module FormHeaderComponent
   private
 
     def service_name_with_tag
-      govuk_tag(colour: colour_for_environment, text: environment_name).html_safe unless environment_name == "production"
+      govuk_tag(colour: colour_for_environment, text: environment_name).html_safe unless environment_name == I18n.t("environment_names.production")
     end
 
     def environment_name

@@ -38,12 +38,12 @@ RSpec.describe FormHeaderComponent::View, type: :component do
 
   context "when the environment is production" do
     before do
-      allow(HostingEnvironment).to receive(:friendly_environment_name).and_return("production")
+      allow(HostingEnvironment).to receive(:friendly_environment_name).and_return(I18n.t("environment_names.production"))
       render_inline(described_class.new(current_context:, mode:, service_url_overide: "/form/1/test"))
     end
 
     it "does not show an environment tag" do
-      expect(page).not_to have_css(".govuk-tag", text: "production")
+      expect(page).not_to have_css(".govuk-tag", text: I18n.t("environment_names.production"))
     end
   end
 
