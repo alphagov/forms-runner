@@ -56,11 +56,8 @@ module FormsRunner
     # Use JSON log formatter for better support in Splunk. To use conventional
     # logging use the Logger::Formatter.new.
     config.log_formatter = JsonLogFormatter.new
-
-    if ENV["RAILS_LOG_TO_STDOUT"].present?
-      config.logger = ActiveSupport::Logger.new($stdout)
-      config.logger.formatter = config.log_formatter
-    end
+    config.logger = ActiveSupport::Logger.new($stdout)
+    config.logger.formatter = config.log_formatter
 
     # Lograge is used to format the standard HTTP request logging
     config.lograge.enabled = true
