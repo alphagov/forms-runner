@@ -54,13 +54,14 @@ module Question
     end
 
     def validate_radio
-      return errors.add(:selection, :inclusion) if allowed_options.exclude?(selection.to_sym)
+      errors.add(:selection, :inclusion) if allowed_options.exclude?(selection.to_sym)
     end
 
     def validate_checkbox
       return errors.add(:selection, is_optional? ? :both_none_and_value_selected : :checkbox_blank) if selection_without_blanks.empty?
       return errors.add(:selection, :both_none_and_value_selected) if selection_without_blanks.count > 1 && :none_of_the_above.to_s.in?(selection_without_blanks)
-      return errors.add(:selection, :inclusion) if selection_without_blanks.any? { |item| allowed_options.exclude?(item.to_sym) }
+
+      errors.add(:selection, :inclusion) if selection_without_blanks.any? { |item| allowed_options.exclude?(item.to_sym) }
     end
   end
 end
