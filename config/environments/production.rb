@@ -46,9 +46,8 @@ Rails.application.configure do
   config.ssl_options = { redirect: { exclude: ->(request) { request.path =~ /\/ping$/ } } }
 
   # Log to STDOUT by default
-  # config.logger = ActiveSupport::Logger.new(STDOUT)
-  #   .tap  { |logger| logger.formatter = ::Logger::Formatter.new }
-  #   .then { |logger| ActiveSupport::TaggedLogging.new(logger) }
+  config.logger = ActiveSupport::Logger.new($stdout)
+    .tap { |logger| logger.formatter = config.log_formatter }
 
   # Prepend all log lines with the following tags.
   # config.log_tags = [ :request_id ]
