@@ -7,7 +7,7 @@ ruby "3.2.2"
 gem "rails", "~> 7.1.2"
 
 # Use the Puma web server [https://github.com/puma/puma]
-gem "puma", "~> 6.4.0"
+gem "puma", "~> 6.4.1"
 
 # Use Sentry (https://sentry.io/for/ruby/?platform=sentry.ruby.rails#)
 gem "sentry-rails"
