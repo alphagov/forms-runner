@@ -1,5 +1,3 @@
-require_relative "support/factorybot"
-require_relative "support/axe_feature_helpers"
 require "simplecov"
 
 SimpleCov.formatters = [
