@@ -12,6 +12,12 @@ RSpec.describe FormHeaderComponent::View, type: :component do
     expect(page).to have_text("test_form_name")
   end
 
+  it "links to the GOV.UK homepage" do
+    render_inline(described_class.new(current_context:, mode:, service_url_overide: "/form/1/test"))
+
+    expect(page.find("a.govuk-header__link--homepage")[:href]).to eq "https://www.gov.uk/"
+  end
+
   context "when mode is preview_draft" do
     let(:mode) { Mode.new("preview-draft") }
 
@@ -21,6 +27,14 @@ RSpec.describe FormHeaderComponent::View, type: :component do
       expect(page).to have_selector(".govuk-header__service-name")
       expect(page).to have_selector(".app-header--preview-draft")
       expect(page).to have_content("test_form_name")
+    end
+
+    it "links to the forms-admin homepage" do
+      allow(Settings.forms_admin).to receive(:base_url).and_return("http://forms-admin/")
+
+      render_inline(described_class.new(current_context:, mode:, service_url_overide: "/form/1/test"))
+
+      expect(page.find(".govuk-header__link--homepage")[:href]).to eq "http://forms-admin/"
     end
   end
 

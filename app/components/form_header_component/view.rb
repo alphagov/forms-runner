@@ -1,4 +1,6 @@
 module FormHeaderComponent
+  GOVUK_BASE_URL = "https://www.gov.uk/".freeze
+
   class View < ViewComponent::Base
     def initialize(current_context:, mode:, service_url_overide: :not_set, hosting_environment: HostingEnvironment)
       @current_context = current_context
@@ -10,14 +12,16 @@ module FormHeaderComponent
 
     def call
       if @current_context.present?
+        homepage_url = @mode.preview? ? Settings.forms_admin.base_url : GOVUK_BASE_URL
+
         govuk_header(service_name: @current_context.form.name,
-                     homepage_url: "https://www.gov.uk/",
+                     homepage_url:,
                      service_url:,
                      classes: ["app-header", "app-header--#{@mode}"]) do |header|
           header.with_product_name(name: service_name_with_tag)
         end
       else
-        govuk_header(homepage_url: "https://www.gov.uk/", classes: ["app-header", "app-header--#{@mode}"]) do |header|
+        govuk_header(homepage_url: GOVUK_BASE_URL, classes: ["app-header", "app-header--#{@mode}"]) do |header|
           header.with_product_name(name: service_name_with_tag)
         end
       end
