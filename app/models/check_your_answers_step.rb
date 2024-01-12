@@ -1,5 +1,5 @@
 class CheckYourAnswersStep
-  CHECK_YOUR_ANSWERS_PAGE_SLUG = "check_your_answers".freeze
+  CHECK_YOUR_ANSWERS_PAGE_SLUG = "check-your-answers".freeze
 
   attr_reader :next_page_slug, :page_slug, :page_id, :form_id
 
