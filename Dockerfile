@@ -1,10 +1,19 @@
-FROM ruby:3.2.2-alpine3.18@sha256:198e97ccb12cd0297c274d10e504138f412f90bed50c36ebde0a466ab89cf526 AS build
+ARG ALPINE_VERSION=3.18
+ARG RUBY_VERSION=3.2.2
+
+ARG DOCKER_IMAGE_DIGEST=sha256:198e97ccb12cd0297c274d10e504138f412f90bed50c36ebde0a466ab89cf526
+
+FROM ruby:${RUBY_VERSION}-alpine${ALPINE_VERSION}@${DOCKER_IMAGE_DIGEST} AS base
+ARG NODEJS_VERSION=18
+ENV NODEJS_VERSION=${NODEJS_VERSION}
+
+FROM base AS build
 
 WORKDIR /app
 
 RUN apk update
 RUN apk upgrade --available
-RUN apk add libc6-compat openssl-dev build-base libpq-dev nodejs=~18 npm git
+RUN apk add libc6-compat openssl-dev build-base libpq-dev nodejs=~${NODEJS_VERSION} npm git
 RUN adduser -D ruby
 RUN mkdir /node_modules && chown ruby:ruby -R /node_modules /app
 
@@ -39,7 +48,7 @@ RUN npm ci --ignore-scripts --only=production
 
 CMD ["bash"]
 
-FROM ruby:3.2.2-alpine3.18@sha256:198e97ccb12cd0297c274d10e504138f412f90bed50c36ebde0a466ab89cf526 AS app
+FROM base AS app
 
 ENV RAILS_ENV="${RAILS_ENV:-production}" \
     PATH="${PATH}:/home/ruby/.local/bin" \
