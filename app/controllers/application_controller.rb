@@ -33,6 +33,7 @@ class ApplicationController < ActionController::Base
     payload[:page_id] = params[:page_slug] if params[:page_slug].present? && params[:page_slug].match(Page::PAGE_ID_REGEX)
     payload[:page_slug] = params[:page_slug] if params[:page_slug].present?
     payload[:session_id_hash] = session_id_hash
+    payload[:trace_id] = request.env["HTTP_X_AMZN_TRACE_ID"].presence
   end
 
 private
