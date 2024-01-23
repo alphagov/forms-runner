@@ -17,7 +17,8 @@ module Forms
         if current_context.form_submitted?
           redirect_to error_repeat_submission_path(current_form.id)
         else
-          FormSubmissionService.call(current_context:,
+          FormSubmissionService.call(logging_context:,
+                                     current_context:,
                                      request:,
                                      email_confirmation_form:,
                                      preview_mode: mode.preview?).submit
@@ -64,7 +65,7 @@ module Forms
       @form_submit_path = form_submit_answers_path
 
       unless mode.preview?
-        EventLogger.log_form_event(current_context, request, "check_answers")
+        EventLogger.log_form_event(@logging_context, "check_answers")
       end
 
       answers_need_full_width

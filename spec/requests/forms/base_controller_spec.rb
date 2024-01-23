@@ -262,7 +262,7 @@ RSpec.describe Forms::BaseController, type: :request do
             end
 
             it "Logs the form_visit event" do
-              expect(LogEventService).to have_received(:log_form_start).with(an_instance_of(Context), an_instance_of(ActionDispatch::Request))
+              expect(LogEventService).to have_received(:log_form_start).with(an_instance_of(Hash))
             end
           end
 

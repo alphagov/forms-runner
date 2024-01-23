@@ -4,7 +4,7 @@ module Forms
 
     def redirect_to_friendly_url_start
       redirect_to form_page_path(params.require(:form_id), current_form.form_slug, current_form.start_page)
-      LogEventService.log_form_start(Context.new(form: current_form, store: session), request) unless mode.preview?
+      LogEventService.log_form_start(@logging_context) unless mode.preview?
     end
 
     rescue_from ActiveResource::ResourceNotFound, StepFactory::PageNotFoundError do
@@ -24,6 +24,10 @@ module Forms
 
     def current_context
       @current_context ||= Context.new(form: current_form, store: session)
+    end
+
+    def logging_context
+      @logging_context ||= set_logging_context
     end
 
     def fetch_form

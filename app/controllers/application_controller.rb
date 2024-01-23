@@ -2,6 +2,7 @@
 
 class ApplicationController < ActionController::Base
   before_action :set_request_id
+  before_action :set_logging_context
   before_action :check_maintenance_mode_is_enabled
   after_action :add_robots_header
 
@@ -25,15 +26,21 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def set_logging_context
+    @logging_context = {}.tap do |h|
+      h[:host] = request.host
+      h[:request_id] = request.request_id
+      h[:form_id] = params[:form_id] if params[:form_id].present?
+      h[:page_id] = params[:page_slug] if params[:page_slug].present? && params[:page_slug].match(Page::PAGE_ID_REGEX)
+      h[:page_slug] = params[:page_slug] if params[:page_slug].present?
+      h[:session_id_hash] = session_id_hash
+      h[:trace_id] = request.env["HTTP_X_AMZN_TRACE_ID"].presence
+    end
+  end
+
   def append_info_to_payload(payload)
     super
-    payload[:host] = request.host
-    payload[:request_id] = request.request_id
-    payload[:form_id] = params[:form_id] if params[:form_id].present?
-    payload[:page_id] = params[:page_slug] if params[:page_slug].present? && params[:page_slug].match(Page::PAGE_ID_REGEX)
-    payload[:page_slug] = params[:page_slug] if params[:page_slug].present?
-    payload[:session_id_hash] = session_id_hash
-    payload[:trace_id] = request.env["HTTP_X_AMZN_TRACE_ID"].presence
+    payload.merge!(@logging_context)
   end
 
 private

@@ -1,0 +1,519 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+==	app/models/check_your_answers_step.rb	/^  def ==(other)$/;"	f	class:CheckYourAnswersStep
+==	app/models/step.rb	/^  def ==(other)$/;"	f	class:Step
+Address	app/models/question/address.rb	/^  class Address < Question::QuestionBase$/;"	c	class:Question
+AddressComponent	app/components/question/address_component/view.rb	/^  module AddressComponent$/;"	m	class:Question
+Application	config/application.rb	/^  class Application < Rails::Application$/;"	c	class:FormsRunner
+ApplicationCable	app/channels/application_cable/channel.rb	/^module ApplicationCable$/;"	m
+ApplicationCable	app/channels/application_cable/connection.rb	/^module ApplicationCable$/;"	m
+ApplicationController	app/controllers/application_controller.rb	/^class ApplicationController < ActionController::Base$/;"	c
+ApplicationHelper	app/helpers/application_helper.rb	/^module ApplicationHelper$/;"	m
+ApplicationJob	app/jobs/application_job.rb	/^class ApplicationJob < ActiveJob::Base$/;"	c
+ApplicationMailer	app/mailers/application_mailer.rb	/^class ApplicationMailer < ActionMailer::Base$/;"	c
+AxeFeatureHelpers	spec/support/axe_feature_helpers.rb	/^module AxeFeatureHelpers$/;"	m
+Base	app/components/question/base.rb	/^  class Base < ViewComponent::Base$/;"	c	class:Question
+BaseController	app/controllers/forms/base_controller.rb	/^  class BaseController < ApplicationController$/;"	c	class:Forms
+Channel	app/channels/application_cable/channel.rb	/^  class Channel < ActionCable::Channel::Base$/;"	c	class:ApplicationCable
+CheckYourAnswersController	app/controllers/forms/check_your_answers_controller.rb	/^  class CheckYourAnswersController < BaseController$/;"	c	class:Forms
+CheckYourAnswersStep	app/models/check_your_answers_step.rb	/^class CheckYourAnswersStep$/;"	c
+CloudWatchService	app/services/cloud_watch_service.rb	/^class CloudWatchService$/;"	c
+ComponentPreviewController	app/controllers/component_preview_controller.rb	/^class ComponentPreviewController < ApplicationController$/;"	c
+Connection	app/channels/application_cable/connection.rb	/^  class Connection < ActionCable::Connection::Base$/;"	c	class:ApplicationCable
+Context	app/lib/context.rb	/^class Context$/;"	c
+DataStruct	spec/factories/models/pages.rb	/^class DataStruct < OpenStruct$/;"	c
+Date	app/models/question/date.rb	/^  class Date < Question::QuestionBase$/;"	c	class:Question
+DateComponent	app/components/question/date_component/view.rb	/^  module DateComponent$/;"	m	class:Question
+Email	app/models/question/email.rb	/^  class Email < Question::QuestionBase$/;"	c	class:Question
+EmailComponent	app/components/question/email_component/view.rb	/^  module EmailComponent$/;"	m	class:Question
+EmailConfirmationForm	app/form_objects/email_confirmation_form.rb	/^class EmailConfirmationForm$/;"	c
+EmailParameterFilterProc	app/lib/email_parameter_filter_proc.rb	/^class EmailParameterFilterProc$/;"	c
+ErrorsController	app/controllers/errors_controller.rb	/^class ErrorsController < ApplicationController$/;"	c
+EventLogger	app/lib/event_logger.rb	/^class EventLogger$/;"	c
+FeatureService	app/services/feature_service.rb	/^class FeatureService$/;"	c
+Form	app/models/form.rb	/^class Form < ActiveResource::Base$/;"	c
+FormContext	app/lib/form_context.rb	/^class FormContext$/;"	c
+FormHeaderComponent	app/components/form_header_component/view.rb	/^module FormHeaderComponent$/;"	m
+FormHeaderComponent	spec/components/form_header_component/form_header_component_preview.rb	/^class FormHeaderComponent::FormHeaderComponentPreview < ViewComponent::Preview$/;"	c
+FormSubmissionConfirmationMailer	app/mailers/form_submission_confirmation_mailer.rb	/^class FormSubmissionConfirmationMailer < GovukNotifyRails::Mailer$/;"	c
+FormSubmissionMailer	app/mailers/form_submission_mailer.rb	/^class FormSubmissionMailer < GovukNotifyRails::Mailer$/;"	c
+FormSubmissionService	app/services/form_submission_service.rb	/^class FormSubmissionService$/;"	c
+Forms	app/controllers/forms/base_controller.rb	/^module Forms$/;"	m
+Forms	app/controllers/forms/check_your_answers_controller.rb	/^module Forms$/;"	m
+Forms	app/controllers/forms/page_controller.rb	/^module Forms$/;"	m
+Forms	app/controllers/forms/privacy_page_controller.rb	/^module Forms$/;"	m
+Forms	app/controllers/forms/submitted_controller.rb	/^module Forms$/;"	m
+Forms	app/helpers/forms/pages_helper.rb	/^module Forms$/;"	m
+FormsHelper	app/helpers/forms_helper.rb	/^module FormsHelper$/;"	m
+FormsRunner	config/application.rb	/^module FormsRunner$/;"	m
+GuidanceComponent	app/components/guidance_component/view.rb	/^module GuidanceComponent$/;"	m
+GuidanceComponent	spec/components/guidance_component/guidance_component_preview.rb	/^class GuidanceComponent::GuidanceComponentPreview < ViewComponent::Preview$/;"	c
+HeartbeatController	app/controllers/heartbeat_controller.rb	/^class HeartbeatController < ActionController::API$/;"	c
+HostingEnvironment	app/lib/hosting_environment.rb	/^module HostingEnvironment$/;"	m
+HtmlMarkdownSanitizer	app/lib/html_markdown_sanitizer.rb	/^class HtmlMarkdownSanitizer$/;"	c
+Journey	app/lib/journey.rb	/^class Journey$/;"	c
+JsonLogFormatter	app/lib/json_log_formatter.rb	/^class JsonLogFormatter < ActiveSupport::Logger::Formatter$/;"	c
+LimitedHtmlScrubber	app/lib/limited_html_scrubber.rb	/^class LimitedHtmlScrubber < Rails::Html::PermitScrubber$/;"	c
+LogEventService	app/services/log_event_service.rb	/^class LogEventService$/;"	c
+MainComponent	app/components/main_component/view.rb	/^module MainComponent$/;"	m
+MainComponent	spec/components/main_component/main_component_preview.rb	/^class MainComponent::MainComponentPreview < ViewComponent::Preview$/;"	c
+MissingQuestionEditLink	app/components/preview_component/view.rb	/^  class MissingQuestionEditLink < StandardError; end$/;"	c	class:PreviewComponent
+Mode	app/models/mode.rb	/^class Mode$/;"	c
+Name	app/models/question/name.rb	/^  class Name < Question::QuestionBase$/;"	c	class:Question
+NameComponent	app/components/question/name_component/view.rb	/^  module NameComponent$/;"	m	class:Question
+NationalInsuranceNumber	app/models/question/national_insurance_number.rb	/^  class NationalInsuranceNumber < Question::QuestionBase$/;"	c	class:Question
+NationalInsuranceNumberComponent	app/components/question/national_insurance_number_component/view.rb	/^  module NationalInsuranceNumberComponent$/;"	m	class:Question
+NotifyTemplateBodyFilter	app/services/form_submission_service.rb	/^  class NotifyTemplateBodyFilter$/;"	c
+Number	app/models/question/number.rb	/^  class Number < QuestionBase$/;"	c	class:Question
+NumberComponent	app/components/question/number_component/view.rb	/^  module NumberComponent$/;"	m	class:Question
+OrganisationName	app/models/question/organisation_name.rb	/^  class OrganisationName < QuestionBase$/;"	c	class:Question
+OrganisationNameComponent	app/components/question/organisation_name_component/view.rb	/^  module OrganisationNameComponent$/;"	m	class:Question
+Page	app/models/page.rb	/^class Page < ActiveResource::Base$/;"	c
+PageController	app/controllers/forms/page_controller.rb	/^  class PageController < BaseController$/;"	c	class:Forms
+PageNotFoundError	app/lib/step_factory.rb	/^  class PageNotFoundError < StandardError$/;"	c	class:StepFactory
+PagesHelper	app/helpers/forms/pages_helper.rb	/^  module PagesHelper$/;"	m	class:Forms
+PhoneNumber	app/models/question/phone_number.rb	/^  class PhoneNumber < Question::QuestionBase$/;"	c	class:Question
+PhoneNumberComponent	app/components/question/phone_number_component/view.rb	/^  module PhoneNumberComponent$/;"	m	class:Question
+PreviewBannerComponent	app/components/preview_banner_component/view.rb	/^module PreviewBannerComponent$/;"	m
+PreviewBannerComponent	spec/components/preview_banner_component/preview_banner_component_preview.rb	/^class PreviewBannerComponent::PreviewBannerComponentPreview < ViewComponent::Preview$/;"	c
+PreviewComponent	app/components/preview_component/view.rb	/^module PreviewComponent$/;"	m
+PreviewComponent	spec/components/preview_component/preview_component_preview.rb	/^class PreviewComponent::PreviewComponentPreview < ViewComponent::Preview$/;"	c
+PrivacyPageController	app/controllers/forms/privacy_page_controller.rb	/^  class PrivacyPageController < BaseController$/;"	c	class:Forms
+Question	app/components/question/address_component/view.rb	/^module Question$/;"	m
+Question	app/components/question/base.rb	/^module Question$/;"	m
+Question	app/components/question/date_component/view.rb	/^module Question$/;"	m
+Question	app/components/question/email_component/view.rb	/^module Question$/;"	m
+Question	app/components/question/name_component/view.rb	/^module Question$/;"	m
+Question	app/components/question/national_insurance_number_component/view.rb	/^module Question$/;"	m
+Question	app/components/question/number_component/view.rb	/^module Question$/;"	m
+Question	app/components/question/organisation_name_component/view.rb	/^module Question$/;"	m
+Question	app/components/question/phone_number_component/view.rb	/^module Question$/;"	m
+Question	app/components/question/selection_component/view.rb	/^module Question$/;"	m
+Question	app/components/question/text_component/view.rb	/^module Question$/;"	m
+Question	app/models/question/address.rb	/^module Question$/;"	m
+Question	app/models/question/date.rb	/^module Question$/;"	m
+Question	app/models/question/email.rb	/^module Question$/;"	m
+Question	app/models/question/name.rb	/^module Question$/;"	m
+Question	app/models/question/national_insurance_number.rb	/^module Question$/;"	m
+Question	app/models/question/number.rb	/^module Question$/;"	m
+Question	app/models/question/organisation_name.rb	/^module Question$/;"	m
+Question	app/models/question/phone_number.rb	/^module Question$/;"	m
+Question	app/models/question/question_base.rb	/^module Question$/;"	m
+Question	app/models/question/selection.rb	/^module Question$/;"	m
+Question	app/models/question/text.rb	/^module Question$/;"	m
+Question	spec/components/question/address_component/address_component_preview.rb	/^class Question::AddressComponent::AddressComponentPreview < ViewComponent::Preview$/;"	c
+Question	spec/components/question/date_component/date_component_preview.rb	/^class Question::DateComponent::DateComponentPreview < ViewComponent::Preview$/;"	c
+Question	spec/components/question/email_component/email_component_preview.rb	/^class Question::EmailComponent::EmailComponentPreview < ViewComponent::Preview$/;"	c
+Question	spec/components/question/name_component/name_component_preview.rb	/^class Question::NameComponent::NameComponentPreview < ViewComponent::Preview$/;"	c
+Question	spec/components/question/national_insurance_number_component/national_insurance_number_component_preview.rb	/^class Question::NationalInsuranceNumberComponent::NationalInsuranceNumberComponentPreview < ViewComponent::Preview$/;"	c
+Question	spec/components/question/number_component/number_component_preview.rb	/^class Question::NumberComponent::NumberComponentPreview < ViewComponent::Preview$/;"	c
+Question	spec/components/question/organisation_name_component/organisation_name_component_preview.rb	/^class Question::OrganisationNameComponent::OrganisationNameComponentPreview < ViewComponent::Preview$/;"	c
+Question	spec/components/question/phone_number_component/phone_number_component_preview.rb	/^class Question::PhoneNumberComponent::PhoneNumberComponentPreview < ViewComponent::Preview$/;"	c
+Question	spec/components/question/selection_component/selection_component_preview.rb	/^class Question::SelectionComponent::SelectionComponentPreview < ViewComponent::Preview$/;"	c
+Question	spec/components/question/text_component/text_component_preview.rb	/^class Question::TextComponent::TextComponentPreview < ViewComponent::Preview$/;"	c
+QuestionBase	app/models/question/question_base.rb	/^  class QuestionBase$/;"	c	class:Question
+QuestionRegister	app/lib/question_register.rb	/^class QuestionRegister$/;"	c
+RedisConfig	app/lib/redis_config.rb	/^class RedisConfig$/;"	c
+Selection	app/models/question/selection.rb	/^  class Selection < QuestionBase$/;"	c	class:Question
+SelectionComponent	app/components/question/selection_component/view.rb	/^  module SelectionComponent$/;"	m	class:Question
+SessionHasher	app/lib/session_hasher.rb	/^class SessionHasher$/;"	c
+Step	app/models/step.rb	/^class Step$/;"	c
+StepFactory	app/lib/step_factory.rb	/^class StepFactory$/;"	c
+SubmittedController	app/controllers/forms/submitted_controller.rb	/^  class SubmittedController < BaseController$/;"	c	class:Forms
+SupportDetailsComponent	app/components/support_details_component/view.rb	/^module SupportDetailsComponent$/;"	m
+SupportDetailsComponent	spec/components/support_details_component/support_details_component_preview.rb	/^class SupportDetailsComponent::SupportDetailsComponentPreview < ViewComponent::Preview$/;"	c
+Text	app/models/question/text.rb	/^  class Text < QuestionBase$/;"	c	class:Question
+TextComponent	app/components/question/text_component/view.rb	/^  module TextComponent$/;"	m	class:Question
+View	app/components/form_header_component/view.rb	/^  class View < ViewComponent::Base$/;"	c	class:FormHeaderComponent
+View	app/components/guidance_component/view.rb	/^  class View < ViewComponent::Base$/;"	c	class:GuidanceComponent
+View	app/components/main_component/view.rb	/^  class View < ViewComponent::Base$/;"	c	class:MainComponent
+View	app/components/preview_banner_component/view.rb	/^  class View < ViewComponent::Base$/;"	c	class:PreviewBannerComponent
+View	app/components/preview_component/view.rb	/^  class View < ViewComponent::Base$/;"	c	class:PreviewComponent
+View	app/components/question/address_component/view.rb	/^    class View < Question::Base$/;"	c	class:Question.AddressComponent
+View	app/components/question/date_component/view.rb	/^    class View < Question::Base$/;"	c	class:Question.DateComponent
+View	app/components/question/email_component/view.rb	/^    class View < Question::Base$/;"	c	class:Question.EmailComponent
+View	app/components/question/name_component/view.rb	/^    class View < Question::Base$/;"	c	class:Question.NameComponent
+View	app/components/question/national_insurance_number_component/view.rb	/^    class View < Question::Base$/;"	c	class:Question.NationalInsuranceNumberComponent
+View	app/components/question/number_component/view.rb	/^    class View < Question::Base$/;"	c	class:Question.NumberComponent
+View	app/components/question/organisation_name_component/view.rb	/^    class View < Question::Base$/;"	c	class:Question.OrganisationNameComponent
+View	app/components/question/phone_number_component/view.rb	/^    class View < Question::Base$/;"	c	class:Question.PhoneNumberComponent
+View	app/components/question/selection_component/view.rb	/^    class View < Question::Base$/;"	c	class:Question.SelectionComponent
+View	app/components/question/text_component/view.rb	/^    class View < Question::Base$/;"	c	class:Question.TextComponent
+View	app/components/support_details_component/view.rb	/^  class View < ViewComponent::Base$/;"	c	class:SupportDetailsComponent
+accessibility_statement	app/controllers/application_controller.rb	/^  def accessibility_statement; end$/;"	f	class:ApplicationController
+activate_bundler	bin/bundle	/^  def activate_bundler$/;"	f
+activation_error_handling	bin/bundle	/^  def activation_error_handling$/;"	f
+add_robots_header	app/controllers/application_controller.rb	/^  def add_robots_header$/;"	f	class:ApplicationController
+allow_multiple_answers?	app/components/question/selection_component/view.rb	/^      def allow_multiple_answers?$/;"	f	class:Question.SelectionComponent.View
+allow_multiple_answers?	app/models/question/selection.rb	/^    def allow_multiple_answers?$/;"	f	class:Question.Selection
+allowed_options	app/models/question/selection.rb	/^    def allowed_options$/;"	f
+and_i_click_on_continue	spec/features/fill_in_and_submit_form_spec.rb	/^  def and_i_click_on_continue$/;"	f
+and_i_submit_my_form	spec/features/fill_in_and_submit_form_spec.rb	/^  def and_i_submit_my_form$/;"	f
+answer_settings	app/models/page.rb	/^  def answer_settings$/;"	f	class:Page
+answer_settings	app/models/step.rb	/^  def answer_settings$/;"	f	class:Step
+answers_need_full_width	app/controllers/forms/check_your_answers_controller.rb	/^    def answers_need_full_width$/;"	f	class:Forms.CheckYourAnswersController
+any_address_field	spec/components/question/address_component/address_component_preview.rb	/^  def any_address_field$/;"	f	class:Question
+any_address_field_with_hint	spec/components/question/address_component/address_component_preview.rb	/^  def any_address_field_with_hint$/;"	f	class:Question
+append_info_to_payload	app/controllers/application_controller.rb	/^  def append_info_to_payload(payload)$/;"	f	class:ApplicationController
+as_json	spec/factories/models/pages.rb	/^  def as_json(*args)$/;"	f	class:DataStruct
+assign_attributes	app/models/question/date.rb	/^    def assign_attributes(new_attributes)$/;"	f	class:Question.Date
+attributes	app/models/question/question_base.rb	/^    def attributes$/;"	f	class:Question.QuestionBase
+back_link	app/controllers/forms/page_controller.rb	/^    def back_link(page_slug)$/;"	f	class:Forms.PageController
+before_render	app/components/question/address_component/view.rb	/^      def before_render$/;"	f	class:Question.AddressComponent.View
+before_render	app/components/question/name_component/view.rb	/^      def before_render$/;"	f	class:Question.NameComponent.View
+before_render	app/components/question/selection_component/view.rb	/^      def before_render$/;"	f	class:Question.SelectionComponent.View
+blank?	app/models/question/date.rb	/^    def blank?$/;"	f	class:Question.Date
+blank_fields	app/models/question/date.rb	/^    def blank_fields$/;"	f	class:Question.Date
+build_fields	app/components/question/address_component/view.rb	/^      def build_fields$/;"	f	class:Question.AddressComponent.View
+build_fields	app/components/question/name_component/view.rb	/^      def build_fields$/;"	f	class:Question.NameComponent.View
+build_multiple_answers_from_a_list	app/components/question/selection_component/view.rb	/^      def build_multiple_answers_from_a_list$/;"	f	class:Question.SelectionComponent.View
+build_question_answers_section	app/services/form_submission_service.rb	/^    def build_question_answers_section(current_context)$/;"	f	class:NotifyTemplateBodyFilter
+build_single_answer_list_from_a_list	app/components/question/selection_component/view.rb	/^      def build_single_answer_list_from_a_list$/;"	f	class:Question.SelectionComponent.View
+bundler_requirement	bin/bundle	/^  def bundler_requirement$/;"	f
+bundler_requirement_for	bin/bundle	/^  def bundler_requirement_for(version)$/;"	f
+calculate_page_routing	app/controllers/forms/page_controller.rb	/^    def calculate_page_routing$/;"	f	class:Forms.PageController
+call	app/components/form_header_component/view.rb	/^    def call$/;"	f	class:FormHeaderComponent.View
+call	app/components/main_component/view.rb	/^    def call$/;"	f	class:MainComponent.View
+call	app/lib/json_log_formatter.rb	/^  def call(severity, timestamp, _progname, message)$/;"	f	class:JsonLogFormatter
+call	app/services/form_submission_service.rb	/^    def call(**args)$/;"	f	class:FormSubmissionService
+can_visit?	app/lib/context.rb	/^  def can_visit?(page_slug)$/;"	f	class:Context
+changing_existing_answer	app/controllers/forms/page_controller.rb	/^    def changing_existing_answer$/;"	f	class:Forms.PageController
+check_available	app/controllers/forms/base_controller.rb	/^    def check_available$/;"	f	class:Forms.BaseController
+check_goto_page_before_routing_page	app/controllers/forms/page_controller.rb	/^    def check_goto_page_before_routing_page$/;"	f	class:Forms.PageController
+check_maintenance_mode_is_enabled	app/controllers/application_controller.rb	/^  def check_maintenance_mode_is_enabled$/;"	f	class:ApplicationController
+check_your_answers_rows	app/controllers/forms/check_your_answers_controller.rb	/^    def check_your_answers_rows$/;"	f	class:Forms.CheckYourAnswersController
+checkbox_options	app/components/question/selection_component/view.rb	/^      def checkbox_options$/;"	f	class:Question.SelectionComponent.View
+clear	app/lib/context.rb	/^  def clear$/;"	f	class:Context
+clear	app/lib/form_context.rb	/^  def clear(form_id)$/;"	f	class:FormContext
+clear_errors	app/models/step.rb	/^  def clear_errors$/;"	f	class:Step
+clear_stored_answer	app/lib/form_context.rb	/^  def clear_stored_answer(step)$/;"	f	class:FormContext
+cli_arg_version	bin/bundle	/^  def cli_arg_version$/;"	f
+cloudwatch_client	app/services/cloud_watch_service.rb	/^  def self.cloudwatch_client$/;"	F	class:CloudWatchService
+colour_for_environment	app/components/form_header_component/view.rb	/^    def colour_for_environment$/;"	f
+completed_steps	app/lib/context.rb	/^  def completed_steps$/;"	f	class:Context
+component_layout	app/controllers/component_preview_controller.rb	/^  def component_layout$/;"	f	class:ComponentPreviewController
+contact_support_details_format	spec/requests/forms/check_your_answers_controller_spec.rb	/^  def contact_support_details_format$/;"	f
+contact_support_details_format	spec/services/form_submission_service_spec.rb	/^  def contact_support_details_format$/;"	f
+cookies	app/controllers/application_controller.rb	/^  def cookies; end$/;"	f	class:ApplicationController
+create_step	app/lib/step_factory.rb	/^  def create_step(page_slug_or_start)$/;"	f	class:StepFactory
+current_context	app/controllers/forms/base_controller.rb	/^    def current_context$/;"	f	class:Forms.BaseController
+current_form	app/controllers/forms/base_controller.rb	/^    def current_form$/;"	f	class:Forms.BaseController
+date	app/models/question/date.rb	/^    def date$/;"	f	class:Question.Date
+date_field_to_attribute	app/models/question/date.rb	/^    def date_field_to_attribute(key)$/;"	f	class:Question.Date
+date_of_birth?	app/components/question/date_component/view.rb	/^      def date_of_birth?$/;"	f	class:Question.DateComponent.View
+date_of_birth?	app/models/question/date.rb	/^    def date_of_birth?$/;"	f	class:Question.Date
+date_of_birth_field	spec/components/question/date_component/date_component_preview.rb	/^  def date_of_birth_field$/;"	f	class:Question
+date_of_birth_field_with_hint	spec/components/question/date_component/date_component_preview.rb	/^  def date_of_birth_field_with_hint$/;"	f	class:Question
+date_valid	app/models/question/date.rb	/^    def date_valid$/;"	f	class:Question.Date
+deafult	spec/components/main_component/main_component_preview.rb	/^  def deafult$/;"	f	class:MainComponent
+default	spec/components/form_header_component/form_header_component_preview.rb	/^  def default$/;"	f	class:FormHeaderComponent
+default	spec/components/guidance_component/guidance_component_preview.rb	/^  def default$/;"	f	class:GuidanceComponent
+default_url_options	app/controllers/forms/base_controller.rb	/^    def default_url_options$/;"	f	class:Forms.BaseController
+dev	app/lib/hosting_environment.rb	/^  def self.dev?$/;"	F	class:HostingEnvironment
+divider	app/components/question/selection_component/view.rb	/^      def divider$/;"	f	class:Question.SelectionComponent.View
+draft_preview	spec/components/main_component/main_component_preview.rb	/^  def draft_preview$/;"	f	class:MainComponent
+draft_preview_question	spec/components/main_component/main_component_preview.rb	/^  def draft_preview_question$/;"	f
+email_body	app/services/form_submission_service.rb	/^  def email_body$/;"	f
+email_completed_form	app/mailers/form_submission_mailer.rb	/^  def email_completed_form(title:, text_input:, reference:, preview_mode:, timestamp:, submission_email:)$/;"	f	class:FormSubmissionMailer
+email_confirmation_form_params	app/controllers/forms/check_your_answers_controller.rb	/^    def email_confirmation_form_params$/;"	f	class:Forms.CheckYourAnswersController
+email_field	spec/components/question/email_component/email_component_preview.rb	/^  def email_field$/;"	f	class:Question
+email_field_with_hint	spec/components/question/email_component/email_component_preview.rb	/^  def email_field_with_hint$/;"	f	class:Question
+enabled?	app/services/feature_service.rb	/^    def enabled?(feature_name)$/;"	f	class:FeatureService
+end_page?	app/models/check_your_answers_step.rb	/^  def end_page?$/;"	f	class:CheckYourAnswersStep
+end_page?	app/models/step.rb	/^  def end_page?$/;"	f	class:Step
+env_var_version	bin/bundle	/^  def env_var_version$/;"	f
+environment_name	app/components/form_header_component/view.rb	/^    def environment_name$/;"	f
+environment_name	app/lib/hosting_environment.rb	/^  def self.environment_name$/;"	F	class:HostingEnvironment
+error_repeat_submission	app/controllers/forms/base_controller.rb	/^    def error_repeat_submission$/;"	f	class:Forms.BaseController
+escape	app/services/form_submission_service.rb	/^    def escape(text)$/;"	f	class:NotifyTemplateBodyFilter
+escape_markdown_characters	app/services/form_submission_service.rb	/^    def escape_markdown_characters(text)$/;"	f
+escape_markdown_text	app/services/form_submission_service.rb	/^    def escape_markdown_text(text)$/;"	f	class:NotifyTemplateBodyFilter
+expect_component_to_have_no_axe_errors	spec/support/axe_feature_helpers.rb	/^  def expect_component_to_have_no_axe_errors(page)$/;"	f	class:AxeFeatureHelpers
+expect_page_to_have_no_axe_errors	spec/support/axe_feature_helpers.rb	/^  def expect_page_to_have_no_axe_errors(page)$/;"	f	class:AxeFeatureHelpers
+fetch_form	app/controllers/forms/base_controller.rb	/^    def fetch_form$/;"	f	class:Forms.BaseController
+fields_for_full_name_and_no_title	app/components/question/name_component/view.rb	/^      def fields_for_full_name_and_no_title$/;"	f	class:Question.NameComponent.View
+fields_for_international_address	app/components/question/address_component/view.rb	/^      def fields_for_international_address$/;"	f	class:Question.AddressComponent.View
+fields_for_name_with_or_without_title	app/components/question/name_component/view.rb	/^      def fields_for_name_with_or_without_title$/;"	f	class:Question.NameComponent.View
+fields_for_uk_address	app/components/question/address_component/view.rb	/^      def fields_for_uk_address$/;"	f	class:Question.AddressComponent.View
+fill_in_form	spec/features/email_confirmation_spec.rb	/^  def fill_in_form$/;"	f
+find_draft	app/models/form.rb	/^  def self.find_draft(id)$/;"	F	class:Form
+find_existing_step	app/lib/journey.rb	/^  def find_existing_step(page_slug)$/;"	f	class:Journey
+find_live	app/models/form.rb	/^  def self.find_live(id)$/;"	F	class:Form
+find_or_create	app/lib/context.rb	/^  def find_or_create(page_slug)$/;"	f	class:Context
+first_and_last_name_valid?	app/models/question/name.rb	/^    def first_and_last_name_valid?$/;"	f	class:Question.Name
+first_and_last_name_with_no_title_field	spec/components/question/name_component/name_component_preview.rb	/^  def first_and_last_name_with_no_title_field$/;"	f	class:Question
+first_and_last_name_with_no_title_field_with_hint	spec/components/question/name_component/name_component_preview.rb	/^  def first_and_last_name_with_no_title_field_with_hint$/;"	f	class:Question
+first_and_last_name_with_title_field	spec/components/question/name_component/name_component_preview.rb	/^  def first_and_last_name_with_title_field$/;"	f	class:Question
+first_and_last_name_with_title_field_with_hint	spec/components/question/name_component/name_component_preview.rb	/^  def first_and_last_name_with_title_field_with_hint$/;"	f	class:Question
+first_middle_and_last_name_with_no_title_field	spec/components/question/name_component/name_component_preview.rb	/^  def first_middle_and_last_name_with_no_title_field$/;"	f	class:Question
+first_middle_and_last_name_with_no_title_field_with_hint	spec/components/question/name_component/name_component_preview.rb	/^  def first_middle_and_last_name_with_no_title_field_with_hint$/;"	f	class:Question
+first_middle_and_last_name_with_title_field	spec/components/question/name_component/name_component_preview.rb	/^  def first_middle_and_last_name_with_title_field$/;"	f	class:Question
+first_middle_and_last_name_with_title_field_with_hint	spec/components/question/name_component/name_component_preview.rb	/^  def first_middle_and_last_name_with_title_field_with_hint$/;"	f	class:Question
+form_id	app/models/page.rb	/^  def form_id$/;"	f	class:Page
+form_key	app/lib/form_context.rb	/^  def form_key(step)$/;"	f	class:FormContext
+form_submitted?	app/lib/context.rb	/^  def form_submitted?$/;"	f	class:Context
+form_submitted?	app/lib/form_context.rb	/^  def form_submitted?(form_id)$/;"	f	class:FormContext
+form_title	app/helpers/application_helper.rb	/^  def form_title(page_name:, form_name:, mode:, error: false)$/;"	f	class:ApplicationHelper
+form_title	app/services/form_submission_service.rb	/^  def form_title$/;"	f
+format_paragraphs	app/helpers/application_helper.rb	/^  def format_paragraphs(text)$/;"	f
+format_paragraphs	app/lib/html_markdown_sanitizer.rb	/^  def format_paragraphs(text)$/;"	f	class:HtmlMarkdownSanitizer
+formatted_support_details	app/services/form_submission_service.rb	/^  def formatted_support_details$/;"	f
+friendly_environment_name	app/lib/hosting_environment.rb	/^  def self.friendly_environment_name$/;"	F	class:HostingEnvironment
+friendly_name_for_attribute	app/models/question/name.rb	/^    def friendly_name_for_attribute(attribute)$/;"	f	class:Question.Name
+from_page	app/lib/question_register.rb	/^  def self.from_page(page)$/;"	F	class:QuestionRegister
+full_name_valid?	app/models/question/name.rb	/^    def full_name_valid?$/;"	f	class:Question.Name
+full_name_with_no_title_field	spec/components/question/name_component/name_component_preview.rb	/^  def full_name_with_no_title_field$/;"	f	class:Question
+full_name_with_no_title_field_with_hint	spec/components/question/name_component/name_component_preview.rb	/^  def full_name_with_no_title_field_with_hint$/;"	f	class:Question
+full_name_with_title_field	spec/components/question/name_component/name_component_preview.rb	/^  def full_name_with_title_field$/;"	f	class:Question
+full_name_with_title_field_with_hint	spec/components/question/name_component/name_component_preview.rb	/^  def full_name_with_title_field_with_hint$/;"	f	class:Question
+future_date?	app/models/question/date.rb	/^    def future_date?$/;"	f	class:Question.Date
+gemfile	bin/bundle	/^  def gemfile$/;"	f
+generate_completed_steps	app/lib/journey.rb	/^  def generate_completed_steps$/;"	f	class:Journey
+generate_string_for_processing_email	app/models/question/name.rb	/^    def generate_string_for_processing_email(attribute)$/;"	f	class:Question.Name
+generate_submission_references!	app/form_objects/email_confirmation_form.rb	/^  def generate_submission_references!$/;"	f	class:EmailConfirmationForm
+get_stored_answer	app/lib/form_context.rb	/^  def get_stored_answer(step)$/;"	f	class:FormContext
+goto_page_slug	app/models/step.rb	/^  def goto_page_slug$/;"	f	class:Step
+govuk_assets_path	app/helpers/application_helper.rb	/^  def govuk_assets_path$/;"	f
+guidance_html	app/components/guidance_component/view.rb	/^    def guidance_html$/;"	f	class:GuidanceComponent.View
+has_blank_values?	app/models/question/name.rb	/^    def has_blank_values?(attribute)$/;"	f	class:Question.Name
+has_long_answer?	app/models/question/question_base.rb	/^    def has_long_answer?$/;"	f	class:Question.QuestionBase
+has_long_answer?	app/models/question/text.rb	/^    def has_long_answer?$/;"	f	class:Question.Text
+has_next_page?	app/models/page.rb	/^  def has_next_page?$/;"	f	class:Page
+has_support_contact_details?	app/services/form_submission_service.rb	/^  def has_support_contact_details?$/;"	f
+hidden_field	app/components/question/selection_component/view.rb	/^      def hidden_field$/;"	f	class:Question.SelectionComponent.View
+hidden_text_mode	app/helpers/application_helper.rb	/^  def hidden_text_mode(mode)$/;"	f
+hint_text	app/components/question/base.rb	/^    def hint_text$/;"	f	class:Question.Base
+hint_text	app/models/step.rb	/^  def hint_text$/;"	f	class:Step
+include_middle_name?	app/components/question/name_component/view.rb	/^      def include_middle_name?$/;"	f	class:Question.NameComponent.View
+include_middle_name?	app/models/question/name.rb	/^    def include_middle_name?$/;"	f	class:Question.Name
+initialize	app/components/form_header_component/view.rb	/^    def initialize(current_context:, mode:, service_url_overide: :not_set, hosting_environment: HostingEnvironment)$/;"	f	class:FormHeaderComponent.View
+initialize	app/components/guidance_component/view.rb	/^    def initialize(question)$/;"	f	class:GuidanceComponent.View
+initialize	app/components/main_component/view.rb	/^    def initialize(mode:, is_question: false, is_component_preview: false)$/;"	f	class:MainComponent.View
+initialize	app/components/preview_banner_component/view.rb	/^    def initialize(mode:)$/;"	f	class:PreviewBannerComponent.View
+initialize	app/components/preview_component/view.rb	/^    def initialize(mode:, question_edit_link: nil)$/;"	f	class:PreviewComponent.View
+initialize	app/components/question/base.rb	/^    def initialize(form_builder:, question:, extra_question_text_suffix:)$/;"	f	class:Question.Base
+initialize	app/components/support_details_component/view.rb	/^    def initialize(support_details)$/;"	f	class:SupportDetailsComponent.View
+initialize	app/form_objects/email_confirmation_form.rb	/^  def initialize(...)$/;"	f	class:EmailConfirmationForm
+initialize	app/lib/context.rb	/^  def initialize(form:, store:)$/;"	f	class:Context
+initialize	app/lib/form_context.rb	/^  def initialize(store)$/;"	f	class:FormContext
+initialize	app/lib/journey.rb	/^  def initialize(form_context:, step_factory:)$/;"	f	class:Journey
+initialize	app/lib/limited_html_scrubber.rb	/^  def initialize(allow_headings: false)$/;"	f	class:LimitedHtmlScrubber
+initialize	app/lib/session_hasher.rb	/^  def initialize(request)$/;"	f	class:SessionHasher
+initialize	app/lib/step_factory.rb	/^    def initialize(msg = "Page not found.")$/;"	f	class:StepFactory.PageNotFoundError
+initialize	app/lib/step_factory.rb	/^  def initialize(form:)$/;"	f	class:StepFactory
+initialize	app/models/check_your_answers_step.rb	/^  def initialize(form_id:)$/;"	f	class:CheckYourAnswersStep
+initialize	app/models/mode.rb	/^  def initialize(mode_string = "live")$/;"	f	class:Mode
+initialize	app/models/question/question_base.rb	/^    def initialize(attributes = {}, options = {})$/;"	f	class:Question.QuestionBase
+initialize	app/models/step.rb	/^  def initialize(question:, page:, form_id:, form_slug:, next_page_slug:, page_slug:)$/;"	f	class:Step
+initialize	app/services/form_submission_service.rb	/^  def initialize(logging_context:, current_context:, request:, email_confirmation_form:, preview_mode:)$/;"	f
+initialize	app/services/log_event_service.rb	/^  def initialize(current_context, step, request, changing_answer, answers)$/;"	f	class:LogEventService
+internal_server_error	app/controllers/errors_controller.rb	/^  def internal_server_error$/;"	f	class:ErrorsController
+international_address_field	spec/components/question/address_component/address_component_preview.rb	/^  def international_address_field$/;"	f	class:Question
+international_address_field_with_hint	spec/components/question/address_component/address_component_preview.rb	/^  def international_address_field_with_hint$/;"	f	class:Question
+international_adress_valid?	app/models/question/address.rb	/^    def international_adress_valid?$/;"	f	class:Question.Address
+invalid?	app/models/question/date.rb	/^    def invalid?$/;"	f	class:Question.Date
+invalid_postcode?	app/models/question/address.rb	/^    def invalid_postcode?$/;"	f	class:Question.Address
+invalid_year?	app/models/question/date.rb	/^    def invalid_year?$/;"	f	class:Question.Date
+invoked_as_script?	bin/bundle	/^  def invoked_as_script?$/;"	f
+is_full_name?	app/components/question/name_component/view.rb	/^      def is_full_name?$/;"	f	class:Question.NameComponent.View
+is_full_name?	app/models/question/name.rb	/^    def is_full_name?$/;"	f	class:Question.Name
+is_international_address?	app/components/question/address_component/view.rb	/^      def is_international_address?$/;"	f	class:Question.AddressComponent.View
+is_international_address?	app/models/question/address.rb	/^    def is_international_address?$/;"	f	class:Question.Address
+is_json	app/lib/json_log_formatter.rb	/^  def is_json(message)$/;"	f	class:JsonLogFormatter
+is_optional?	app/models/question/question_base.rb	/^    def is_optional?$/;"	f	class:Question.QuestionBase
+is_question_class	app/components/main_component/view.rb	/^    def is_question_class$/;"	f	class:MainComponent
+is_single_line?	app/models/question/text.rb	/^    def is_single_line?$/;"	f	class:Question.Text
+is_starting_form?	app/services/log_event_service.rb	/^  def is_starting_form?$/;"	f	class:LogEventService
+last_page	app/models/form.rb	/^  def last_page$/;"	f	class:Form
+live	app/models/mode.rb	/^  def live$/;"	f	class:Mode
+live	spec/components/preview_banner_component/preview_banner_component_preview.rb	/^  def live$/;"	f	class:PreviewBannerComponent
+live	spec/components/preview_component/preview_component_preview.rb	/^  def live$/;"	f	class:PreviewComponent
+live?	app/models/form.rb	/^  def live?(current_datetime = Time.zone.now)$/;"	f	class:Form
+live_at_date	app/models/form.rb	/^  def live_at_date$/;"	f	class:Form
+live_preview	spec/components/main_component/main_component_preview.rb	/^  def live_preview$/;"	f
+live_preview_question	spec/components/main_component/main_component_preview.rb	/^  def live_preview_question$/;"	f
+load_bundler!	bin/bundle	/^  def load_bundler!$/;"	f
+load_from_context	app/models/step.rb	/^  def load_from_context(form_context)$/;"	f	class:Step
+local_development	app/lib/hosting_environment.rb	/^  def self.local_development?$/;"	F	class:HostingEnvironment
+lockfile	bin/bundle	/^  def lockfile$/;"	f
+lockfile_version	bin/bundle	/^  def lockfile_version$/;"	f
+log	app/lib/event_logger.rb	/^  def self.log(object)$/;"	F	class:EventLogger
+log_event	app/services/log_event_service.rb	/^  def log_event$/;"	f	class:LogEventService
+log_form_event	app/lib/event_logger.rb	/^  def self.log_form_event(logging_context, event)$/;"	F	class:EventLogger
+log_form_start	app/services/cloud_watch_service.rb	/^  def self.log_form_start(form_id:)$/;"	F	class:CloudWatchService
+log_form_start	app/services/log_event_service.rb	/^  def self.log_form_start(logging_context)$/;"	F	class:LogEventService
+log_form_submission	app/services/cloud_watch_service.rb	/^  def self.log_form_submission(form_id:)$/;"	F	class:CloudWatchService
+log_page_event	app/lib/event_logger.rb	/^  def self.log_page_event(logging_context, event, skipped_question)$/;"	F	class:EventLogger
+log_page_save	app/services/log_event_service.rb	/^  def log_page_save(logging_context)$/;"	f	class:LogEventService
+log_submit	app/services/log_event_service.rb	/^  def self.log_submit(logging_context, context, requested_email_confirmation: false, preview: false)$/;"	F	class:LogEventService
+logging_context	app/controllers/forms/base_controller.rb	/^    def logging_context$/;"	f	class:Forms.BaseController
+maintenance	app/controllers/errors_controller.rb	/^  def maintenance$/;"	f	class:ErrorsController
+make_notify_boolean	app/mailers/form_submission_confirmation_mailer.rb	/^  def make_notify_boolean(bool)$/;"	f	class:FormSubmissionConfirmationMailer
+make_notify_boolean	app/mailers/form_submission_mailer.rb	/^  def make_notify_boolean(bool)$/;"	f	class:FormSubmissionMailer
+metric_namespace	app/services/cloud_watch_service.rb	/^  def self.metric_namespace$/;"	F	class:CloudWatchService
+mode	app/controllers/forms/base_controller.rb	/^    def mode$/;"	f	class:Forms.BaseController
+mode_class	app/components/main_component/view.rb	/^    def mode_class$/;"	f	class:MainComponent
+multiline_text_field	spec/components/question/text_component/text_component_preview.rb	/^  def multiline_text_field$/;"	f	class:Question
+multiline_text_field_with_hints	spec/components/question/text_component/text_component_preview.rb	/^  def multiline_text_field_with_hints$/;"	f	class:Question
+national_insurance_number_field	spec/components/question/national_insurance_number_component/national_insurance_number_component_preview.rb	/^  def national_insurance_number_field$/;"	f	class:Question
+national_insurance_number_field_with_hint	spec/components/question/national_insurance_number_component/national_insurance_number_component_preview.rb	/^  def national_insurance_number_field_with_hint$/;"	f	class:Question
+needs_title?	app/components/question/name_component/view.rb	/^      def needs_title?$/;"	f	class:Question.NameComponent.View
+needs_title?	app/models/question/name.rb	/^    def needs_title?$/;"	f	class:Question.Name
+new	app/lib/email_parameter_filter_proc.rb	/^  def self.new(mask: ActiveSupport::ParameterFilter::FILTERED)$/;"	F	class:EmailParameterFilterProc
+next_page	app/controllers/forms/page_controller.rb	/^    def next_page$/;"	f	class:Forms.PageController
+next_page_slug	app/lib/context.rb	/^  def next_page_slug$/;"	f	class:Context
+next_page_slug_after_routing	app/models/step.rb	/^  def next_page_slug_after_routing$/;"	f	class:Step
+non_maintenance_bypass_ip_address?	app/controllers/application_controller.rb	/^  def non_maintenance_bypass_ip_address?$/;"	f	class:ApplicationController
+none_of_the_above_checkbox	app/components/question/selection_component/view.rb	/^      def none_of_the_above_checkbox$/;"	f	class:Question.SelectionComponent.View
+none_of_the_above_radio_button	app/components/question/selection_component/view.rb	/^      def none_of_the_above_radio_button$/;"	f	class:Question.SelectionComponent.View
+normalize_nino	app/models/question/national_insurance_number.rb	/^    def normalize_nino(nino)$/;"	f	class:Question.NationalInsuranceNumber
+normalize_whitespace	app/services/form_submission_service.rb	/^    def normalize_whitespace(text)$/;"	f
+not_enough_digits?	app/models/question/phone_number.rb	/^    def not_enough_digits?$/;"	f	class:Question.PhoneNumber
+not_found	app/controllers/errors_controller.rb	/^  def not_found$/;"	f	class:ErrorsController
+number_field	spec/components/question/number_component/number_component_preview.rb	/^  def number_field$/;"	f	class:Question
+number_field_with_hint	spec/components/question/number_component/number_component_preview.rb	/^  def number_field_with_hint$/;"	f	class:Question
+organisation_name_field	spec/components/question/organisation_name_component/organisation_name_component_preview.rb	/^  def organisation_name_field$/;"	f	class:Question
+organisation_name_field_with_hint	spec/components/question/organisation_name_component/organisation_name_component_preview.rb	/^  def organisation_name_field_with_hint$/;"	f	class:Question
+other_date_field	spec/components/question/date_component/date_component_preview.rb	/^  def other_date_field$/;"	f	class:Question
+other_date_field_with_hint	spec/components/question/date_component/date_component_preview.rb	/^  def other_date_field_with_hint$/;"	f	class:Question
+page_by_id	app/models/form.rb	/^  def page_by_id(page_id)$/;"	f	class:Form
+page_key	app/lib/form_context.rb	/^  def page_key(step)$/;"	f	class:FormContext
+page_title	app/helpers/application_helper.rb	/^  def page_title(separator = " – ")$/;"	f	class:ApplicationHelper
+page_to_row	app/controllers/forms/check_your_answers_controller.rb	/^    def page_to_row(page)$/;"	f	class:Forms.CheckYourAnswersController
+params	app/models/step.rb	/^  def params$/;"	f	class:Step
+phase_banner_colour	app/components/preview_component/view.rb	/^    def phase_banner_colour$/;"	f	class:PreviewComponent.View
+phase_banner_text	app/components/preview_component/view.rb	/^    def phase_banner_text$/;"	f	class:PreviewComponent.View
+phone_number_field	spec/components/question/phone_number_component/phone_number_component_preview.rb	/^  def phone_number_field$/;"	f	class:Question
+phone_number_field_with_hint	spec/components/question/phone_number_component/phone_number_component_preview.rb	/^  def phone_number_field_with_hint$/;"	f	class:Question
+ping	app/controllers/heartbeat_controller.rb	/^  def ping$/;"	f	class:HeartbeatController
+postcode=	app/models/question/address.rb	/^    def postcode=(str)$/;"	f	class:Question.Address
+prep_answer_text	app/services/form_submission_service.rb	/^    def prep_answer_text(answer)$/;"	f	class:NotifyTemplateBodyFilter
+prep_question_title	app/services/form_submission_service.rb	/^    def prep_question_title(question_text)$/;"	f	class:NotifyTemplateBodyFilter
+prepare_step	app/controllers/forms/page_controller.rb	/^    def prepare_step$/;"	f	class:Forms.PageController
+preview?	app/models/mode.rb	/^  def preview?$/;"	f	class:Mode
+preview_draft	spec/components/form_header_component/form_header_component_preview.rb	/^  def preview_draft$/;"	f	class:FormHeaderComponent
+preview_draft	spec/components/preview_banner_component/preview_banner_component_preview.rb	/^  def preview_draft$/;"	f	class:PreviewBannerComponent
+preview_draft	spec/components/preview_component/preview_component_preview.rb	/^  def preview_draft$/;"	f	class:PreviewComponent
+preview_draft?	app/models/mode.rb	/^  def preview_draft?$/;"	f	class:Mode
+preview_live	spec/components/form_header_component/form_header_component_preview.rb	/^  def preview_live$/;"	f	class:FormHeaderComponent
+preview_live	spec/components/preview_banner_component/preview_banner_component_preview.rb	/^  def preview_live$/;"	f	class:PreviewBannerComponent
+preview_live	spec/components/preview_component/preview_component_preview.rb	/^  def preview_live$/;"	f	class:PreviewComponent
+preview_live?	app/models/mode.rb	/^  def preview_live?$/;"	f	class:Mode
+previous_step	app/lib/context.rb	/^  def previous_step(page_slug)$/;"	f	class:Context
+question_text	app/models/step.rb	/^  def question_text$/;"	f	class:Step
+question_text_size_and_tag	app/components/question/base.rb	/^    def question_text_size_and_tag$/;"	f	class:Question
+question_text_with_extra_suffix	app/components/question/base.rb	/^    def question_text_with_extra_suffix$/;"	f	class:Question.Base
+question_text_with_optional_suffix	app/models/question/question_base.rb	/^    def question_text_with_optional_suffix$/;"	f	class:Question.QuestionBase
+question_text_with_optional_suffix_inc_mode	app/helpers/application_helper.rb	/^  def question_text_with_optional_suffix_inc_mode(page, mode)$/;"	f
+radio_button_options	app/components/question/selection_component/view.rb	/^      def radio_button_options$/;"	f	class:Question.SelectionComponent.View
+redirect_to_friendly_url_start	app/controllers/forms/base_controller.rb	/^    def redirect_to_friendly_url_start$/;"	f	class:Forms.BaseController
+redis_url	app/lib/redis_config.rb	/^  def self.redis_url$/;"	F	class:RedisConfig
+render?	app/components/guidance_component/view.rb	/^    def render?$/;"	f	class:GuidanceComponent.View
+render?	app/components/preview_banner_component/view.rb	/^    def render?$/;"	f	class:PreviewBannerComponent.View
+render?	app/components/preview_component/view.rb	/^    def render?$/;"	f	class:PreviewComponent.View
+render?	app/components/support_details_component/view.rb	/^    def render?$/;"	f	class:SupportDetailsComponent.View
+render_scrubbed_html	app/lib/html_markdown_sanitizer.rb	/^  def render_scrubbed_html(unprocessed_html)$/;"	f	class:HtmlMarkdownSanitizer
+render_scrubbed_markdown	app/lib/html_markdown_sanitizer.rb	/^  def render_scrubbed_markdown(markdown)$/;"	f	class:HtmlMarkdownSanitizer
+replace_none_of_the_above	app/models/question/selection.rb	/^    def replace_none_of_the_above(answer)$/;"	f
+replace_setext_headings	app/services/form_submission_service.rb	/^    def replace_setext_headings(text)$/;"	f
+request_to_session_hash	app/lib/session_hasher.rb	/^  def request_to_session_hash$/;"	f	class:SessionHasher
+sanitize_html	app/lib/html_markdown_sanitizer.rb	/^  def sanitize_html(html, scrubber)$/;"	f	class:HtmlMarkdownSanitizer
+save	app/controllers/forms/page_controller.rb	/^    def save$/;"	f	class:Forms.PageController
+save_step	app/lib/context.rb	/^  def save_step(step)$/;"	f	class:Context
+save_step	app/lib/form_context.rb	/^  def save_step(step, answer)$/;"	f	class:FormContext
+save_to_context	app/models/step.rb	/^  def save_to_context(form_context)$/;"	f	class:Step
+select_multiple_from_a_list_field	spec/components/question/selection_component/selection_component_preview.rb	/^  def select_multiple_from_a_list_field$/;"	f	class:Question
+select_multiple_from_a_list_field_with_hint	spec/components/question/selection_component/selection_component_preview.rb	/^  def select_multiple_from_a_list_field_with_hint$/;"	f	class:Question
+select_multiple_from_a_list_optional_field	spec/components/question/selection_component/selection_component_preview.rb	/^  def select_multiple_from_a_list_optional_field$/;"	f	class:Question
+select_multiple_from_a_list_optional_field_with_hint	spec/components/question/selection_component/selection_component_preview.rb	/^  def select_multiple_from_a_list_optional_field_with_hint$/;"	f	class:Question
+select_single_from_a_list_field	spec/components/question/selection_component/selection_component_preview.rb	/^  def select_single_from_a_list_field$/;"	f	class:Question
+select_single_from_a_list_field_with_hint	spec/components/question/selection_component/selection_component_preview.rb	/^  def select_single_from_a_list_field_with_hint$/;"	f	class:Question
+select_single_from_a_list_optional_field	spec/components/question/selection_component/selection_component_preview.rb	/^  def select_single_from_a_list_optional_field$/;"	f	class:Question
+select_single_from_a_list_optional_field_with_hint	spec/components/question/selection_component/selection_component_preview.rb	/^  def select_single_from_a_list_optional_field_with_hint$/;"	f	class:Question
+selection_without_blanks	app/models/question/selection.rb	/^    def selection_without_blanks$/;"	f
+send_confirmation_email	app/mailers/form_submission_confirmation_mailer.rb	/^  def send_confirmation_email(title:, what_happens_next_markdown:, support_contact_details:, submission_timestamp:, preview_mode:, reference:, confirmation_email_address:)$/;"	f	class:FormSubmissionConfirmationMailer
+service_name_with_tag	app/components/form_header_component/view.rb	/^    def service_name_with_tag$/;"	f
+service_url	app/components/form_header_component/view.rb	/^    def service_url$/;"	f
+session_id_hash	app/controllers/application_controller.rb	/^  def session_id_hash$/;"	f	class:ApplicationController
+set_date	spec/models/question/date_spec.rb	/^  def set_date(day, month, year)$/;"	f
+set_logging_context	app/controllers/application_controller.rb	/^  def set_logging_context$/;"	f	class:ApplicationController
+set_page_title	app/helpers/application_helper.rb	/^  def set_page_title(title)$/;"	f	class:ApplicationHelper
+set_request_id	app/controllers/application_controller.rb	/^  def set_request_id$/;"	f	class:ApplicationController
+setup_check_your_answers	app/controllers/forms/check_your_answers_controller.rb	/^    def setup_check_your_answers$/;"	f	class:Forms.CheckYourAnswersController
+setup_instance_vars_for_view	app/controllers/forms/page_controller.rb	/^    def setup_instance_vars_for_view$/;"	f	class:Forms.PageController
+short_text_field	spec/components/question/text_component/text_component_preview.rb	/^  def short_text_field$/;"	f	class:Question
+short_text_field_with_hint	spec/components/question/text_component/text_component_preview.rb	/^  def short_text_field_with_hint$/;"	f	class:Question
+show	app/controllers/forms/check_your_answers_controller.rb	/^    def show$/;"	f	class:Forms.CheckYourAnswersController
+show	app/controllers/forms/page_controller.rb	/^    def show$/;"	f	class:Forms.PageController
+show	app/controllers/forms/privacy_page_controller.rb	/^    def show$/;"	f	class:Forms.PrivacyPageController
+show_answer	app/models/question/date.rb	/^    def show_answer$/;"	f	class:Question.Date
+show_answer	app/models/question/name.rb	/^    def show_answer$/;"	f	class:Question.Name
+show_answer	app/models/question/national_insurance_number.rb	/^    def show_answer$/;"	f	class:Question.NationalInsuranceNumber
+show_answer	app/models/question/question_base.rb	/^    def show_answer$/;"	f	class:Question.QuestionBase
+show_answer	app/models/question/selection.rb	/^    def show_answer$/;"	f	class:Question.Selection
+show_answer	app/models/step.rb	/^  def show_answer$/;"	f	class:Step
+show_answer_in_email	app/models/question/name.rb	/^    def show_answer_in_email$/;"	f	class:Question.Name
+show_answer_in_email	app/models/question/question_base.rb	/^    def show_answer_in_email$/;"	f	class:Question.QuestionBase
+show_answer_in_email	app/models/question/selection.rb	/^    def show_answer_in_email$/;"	f	class:Question
+show_answer_in_email	app/models/step.rb	/^  def show_answer_in_email$/;"	f	class:Step
+show_full_name_and_no_title	app/components/question/name_component/view.rb	/^      def show_full_name_and_no_title$/;"	f	class:Question.NameComponent.View
+show_optional_suffix	app/models/question/question_base.rb	/^    def show_optional_suffix$/;"	f	class:Question.QuestionBase
+show_optional_suffix	app/models/question/selection.rb	/^    def show_optional_suffix$/;"	f
+skipped_question?	app/services/log_event_service.rb	/^  def skipped_question?$/;"	f	class:LogEventService
+skipping_question?	app/models/question/address.rb	/^    def skipping_question?$/;"	f	class:Question.Address
+skipping_question?	app/models/question/name.rb	/^    def skipping_question?$/;"	f	class:Question.Name
+start_step	app/lib/step_factory.rb	/^  def start_step$/;"	f	class:StepFactory
+state	app/models/check_your_answers_step.rb	/^  def state$/;"	f	class:CheckYourAnswersStep
+state	app/models/step.rb	/^  def state$/;"	f	class:Step
+submission_timestamp	app/services/form_submission_service.rb	/^  def submission_timestamp$/;"	f
+submission_timestamp	spec/mailers/form_submission_confirmation_mailer_spec.rb	/^  def submission_timestamp$/;"	f
+submission_timestamp	spec/mailers/form_submission_mailer_spec.rb	/^  def submission_timestamp$/;"	f
+submission_timezone	app/services/form_submission_service.rb	/^  def submission_timezone$/;"	f
+submission_timezone	spec/mailers/form_submission_confirmation_mailer_spec.rb	/^  def submission_timezone$/;"	f
+submission_timezone	spec/mailers/form_submission_mailer_spec.rb	/^  def submission_timezone$/;"	f
+submit	app/services/form_submission_service.rb	/^  def submit$/;"	f
+submit_answers	app/controllers/forms/check_your_answers_controller.rb	/^    def submit_answers$/;"	f	class:Forms.CheckYourAnswersController
+submit_confirmation_email_to_user	app/services/form_submission_service.rb	/^  def submit_confirmation_email_to_user$/;"	f
+submit_form_to_processing_team	app/services/form_submission_service.rb	/^  def submit_form_to_processing_team$/;"	f
+submitted	app/controllers/forms/submitted_controller.rb	/^    def submitted$/;"	f	class:Forms.SubmittedController
+support_email_details	app/services/form_submission_service.rb	/^  def support_email_details$/;"	f
+support_online_details	app/services/form_submission_service.rb	/^  def support_online_details$/;"	f
+support_phone_details	app/services/form_submission_service.rb	/^  def support_phone_details$/;"	f
+system!	bin/setup	/^def system!(*args)$/;"	f
+test_environment	app/lib/hosting_environment.rb	/^  def self.test_environment?$/;"	F	class:HostingEnvironment
+then_i_should_see_the_check_your_answers_page	spec/features/fill_in_and_submit_form_spec.rb	/^  def then_i_should_see_the_check_your_answers_page$/;"	f
+then_i_should_see_the_first_question	spec/features/fill_in_and_submit_form_spec.rb	/^  def then_i_should_see_the_first_question$/;"	f
+then_my_form_should_be_submitted	spec/features/fill_in_and_submit_form_spec.rb	/^  def then_my_form_should_be_submitted$/;"	f
+title_field	app/components/question/name_component/view.rb	/^      def title_field$/;"	f	class:Question.NameComponent
+to_s	app/models/mode.rb	/^  def to_s$/;"	f	class:Mode
+too_many_digits?	app/models/question/phone_number.rb	/^    def too_many_digits?$/;"	f	class:Question.PhoneNumber
+uk_address_field	spec/components/question/address_component/address_component_preview.rb	/^  def uk_address_field$/;"	f	class:Question
+uk_address_field_with_hint	spec/components/question/address_component/address_component_preview.rb	/^  def uk_address_field_with_hint$/;"	f	class:Question
+uk_address_valid?	app/models/question/address.rb	/^    def uk_address_valid?$/;"	f	class:Question.Address
+update!	app/models/step.rb	/^  def update!(params)$/;"	f	class:Step
+user_ip	app/controllers/application_controller.rb	/^  def user_ip(forwarded_for = "")$/;"	f	class:ApplicationController
+valid?	app/models/step.rb	/^  def valid?$/;"	f	class:Step
+valid_format	app/models/question/national_insurance_number.rb	/^    def valid_format$/;"	f	class:Question.NationalInsuranceNumber
+valid_or_invalid_date	app/models/question/date.rb	/^    def valid_or_invalid_date(year, month, day)$/;"	f	class:Question.Date
+validate_checkbox	app/models/question/selection.rb	/^    def validate_checkbox$/;"	f
+validate_email?	app/form_objects/email_confirmation_form.rb	/^  def validate_email?$/;"	f	class:EmailConfirmationForm
+validate_radio	app/models/question/selection.rb	/^    def validate_radio$/;"	f
+validate_title	app/models/question/name.rb	/^    def validate_title$/;"	f	class:Question.Name
+when_i_fill_in_the_question	spec/features/fill_in_and_submit_form_spec.rb	/^  def when_i_fill_in_the_question$/;"	f
+when_i_opt_out_of_email_confirmation	spec/features/fill_in_and_submit_form_spec.rb	/^  def when_i_opt_out_of_email_confirmation$/;"	f
+when_i_visit_the_form_start_page	spec/features/fill_in_and_submit_form_spec.rb	/^  def when_i_visit_the_form_start_page$/;"	f
+with_all_fields	spec/components/support_details_component/support_details_component_preview.rb	/^  def with_all_fields$/;"	f	class:SupportDetailsComponent
+with_bulleted_list	spec/components/guidance_component/guidance_component_preview.rb	/^  def with_bulleted_list$/;"	f	class:GuidanceComponent
+with_email_and_phone	spec/components/support_details_component/support_details_component_preview.rb	/^  def with_email_and_phone$/;"	f	class:SupportDetailsComponent
+with_email_and_url_fields	spec/components/support_details_component/support_details_component_preview.rb	/^  def with_email_and_url_fields$/;"	f	class:SupportDetailsComponent
+with_numbered_list	spec/components/guidance_component/guidance_component_preview.rb	/^  def with_numbered_list$/;"	f	class:GuidanceComponent
+with_only_email	spec/components/support_details_component/support_details_component_preview.rb	/^  def with_only_email$/;"	f	class:SupportDetailsComponent
+with_only_phone	spec/components/support_details_component/support_details_component_preview.rb	/^  def with_only_phone$/;"	f	class:SupportDetailsComponent
+with_only_url_fields	spec/components/support_details_component/support_details_component_preview.rb	/^  def with_only_url_fields$/;"	f	class:SupportDetailsComponent
+with_paragraph_content	spec/components/guidance_component/guidance_component_preview.rb	/^  def with_paragraph_content$/;"	f	class:GuidanceComponent
+with_phone_and_url_fields	spec/components/support_details_component/support_details_component_preview.rb	/^  def with_phone_and_url_fields$/;"	f	class:SupportDetailsComponent
+without_contact_details	spec/components/support_details_component/support_details_component_preview.rb	/^  def without_contact_details$/;"	f	class:SupportDetailsComponent
