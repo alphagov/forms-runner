@@ -38,11 +38,6 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def append_info_to_payload(payload)
-    super
-    payload.merge!(@logging_context)
-  end
-
 private
 
   def add_robots_header

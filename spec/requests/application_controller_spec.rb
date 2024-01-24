@@ -36,7 +36,7 @@ RSpec.describe ApplicationController, type: :request do
     end
 
     it "adds the trace ID to the instrumentation payload" do
-      expect(payload).to include(trace_id: "Root=1-63441c4a-abcdef012345678912345678")
+      expect(payload[:custom_payload]).to include(trace_id: "Root=1-63441c4a-abcdef012345678912345678")
     end
   end
 
