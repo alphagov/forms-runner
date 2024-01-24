@@ -399,21 +399,21 @@ RSpec.describe Forms::PageController, type: :request do
         end
 
         it "Logs the change_answer_page_save event" do
-          expect(EventLogger).to receive(:log_page_event).with(anything, "change_answer_page_save", nil)
+          expect(EventLogger).to receive(:log_page_event).with(instance_of(Hash), page_1.question_text, "change_answer_page_save", nil)
           post save_form_page_path("form", 2, form_data.form_slug, 1, params: { question: { text: "answer text" }, changing_existing_answer: true })
         end
       end
 
       context "with the first page" do
         it "Logs the first_page_save event" do
-          expect(EventLogger).to receive(:log_page_event).with(anything, "first_page_save", nil)
+          expect(EventLogger).to receive(:log_page_event).with(instance_of(Hash), page_1.question_text, "first_page_save", nil)
           post save_form_page_path("form", 2, form_data.form_slug, 1), params: { question: { text: "answer text" } }
         end
       end
 
       context "with a subsequent page" do
         it "Logs the page_save event" do
-          expect(EventLogger).to receive(:log_page_event).with(instance_of(Hash), "page_save", nil)
+          expect(EventLogger).to receive(:log_page_event).with(instance_of(Hash), page_2.question_text, "page_save", nil)
           post save_form_page_path("form", 2, form_data.form_slug, 2), params: { question: { text: "answer text" } }
         end
       end
@@ -430,14 +430,14 @@ RSpec.describe Forms::PageController, type: :request do
 
         context "when an optional question is completed" do
           it "Logs the optional_save event with skipped_question as true" do
-            expect(EventLogger).to receive(:log_page_event).with(instance_of(Hash), "optional_save", true)
+            expect(EventLogger).to receive(:log_page_event).with(instance_of(Hash), page_2.question_text, "optional_save", true)
             post save_form_page_path("form", 2, form_data.form_slug, 2), params: { question: { text: "" } }
           end
         end
 
         context "when an optional question is skipped" do
           it "Logs the optional_save event with skipped_question as false" do
-            expect(EventLogger).to receive(:log_page_event).with(instance_of(Hash), "optional_save", false)
+            expect(EventLogger).to receive(:log_page_event).with(instance_of(Hash), page_2.question_text, "optional_save", false)
             post save_form_page_path("form", 2, form_data.form_slug, 2), params: { question: { text: "answer text" } }
           end
         end

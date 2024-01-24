@@ -30,7 +30,7 @@ class LogEventService
   end
 
   def log_page_save(logging_context)
-    EventLogger.log_page_event(logging_context, log_event, skipped_question?)
+    EventLogger.log_page_event(logging_context, @step.question.question_text, log_event, skipped_question?)
     if is_starting_form?
       begin
         CloudWatchService.log_form_start(form_id: @current_context.form.id) # Logging to CloudWatch

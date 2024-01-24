@@ -26,9 +26,11 @@ RSpec.describe EventLogger do
     it "logs a page event" do
       allow(described_class).to receive(:log).at_least(:once)
 
-      described_class.log_page_event(logging_context, "page_save", nil)
+      described_class.log_page_event(logging_context, "question_text", "page_save", nil)
 
-      expect(described_class).to have_received(:log).with(logging_context.merge({event: "page_save"}))
+      expect(described_class).to have_received(:log).with(logging_context.merge(
+        { event: "page_save", question_text: "question_text" }
+      ))
     end
   end
 
@@ -36,10 +38,11 @@ RSpec.describe EventLogger do
     it "logs a page event with a question_skipped parameter" do
       allow(described_class).to receive(:log).at_least(:once)
 
-      described_class.log_page_event(logging_context, "optional_save", true)
+      described_class.log_page_event(logging_context, "question_text", "optional_save", true)
 
       expect(described_class).to have_received(:log).with(logging_context.merge({
         event: "optional_save",
+        question_text: "question_text",
         skipped_question: "true",
       }))
     end

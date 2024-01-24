@@ -10,7 +10,7 @@ RSpec.describe LogEventService do
     let(:changing_answers) { true }
     let(:step) { OpenStruct.new(id: step_id, question:) }
     let(:step_id) { 2 }
-    let(:question) { OpenStruct.new(is_optional?: true) }
+    let(:question) { OpenStruct.new(is_optional?: true, question_text: "question text") }
     let(:answers) { { "name": "John" } }
 
     it "calls the event logger with log_page_event" do
@@ -21,6 +21,7 @@ RSpec.describe LogEventService do
       log_event_service.log_page_save(logging_context)
       expect(EventLogger).to have_received(:log_page_event).with(
         logging_context,
+        "question text",
         "change_answer_optional_save",
         false,
       )
