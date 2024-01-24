@@ -45,6 +45,9 @@ coverage/
 # Vim
 *.swp
 
+# Ctags
+tags
+
 # Ignore config settings needed locally
 config/settings.local.yml
 config/settings/*.local.yml
