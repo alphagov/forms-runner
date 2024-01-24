@@ -1,4 +1,6 @@
 class FormSubmissionService
+  class SubmissionError < StandardError; end
+
   class << self
     def call(**args)
       new(**args)
@@ -22,20 +24,24 @@ class FormSubmissionService
   end
 
   def submit_form_to_processing_team
-    raise StandardError, "Form id(#{@form.id}) has no completed steps i.e questions/answers to include in submission email" if @current_context.completed_steps.blank?
+    raise SubmissionError, "Form id(#{@form.id}) has no completed steps i.e questions/answers to include in submission email" if @current_context.completed_steps.blank?
 
     if !@preview_mode && @form.submission_email.blank?
-      raise StandardError, "Form id(#{@form.id}) is missing a submission email address"
+      raise SubmissionError, "Form id(#{@form.id}) is missing a submission email address"
     end
 
-    unless @form.submission_email.blank? && @preview_mode
-      FormSubmissionMailer
-      .email_completed_form(title: form_title,
-                            text_input: email_body,
-                            preview_mode: @preview_mode,
-                            reference: @email_confirmation_form.submission_email_reference,
-                            timestamp: @timestamp,
-                            submission_email: @form.submission_email).deliver_now
+    begin
+      unless @form.submission_email.blank? && @preview_mode
+        FormSubmissionMailer
+        .email_completed_form(title: form_title,
+                              text_input: email_body,
+                              preview_mode: @preview_mode,
+                              reference: @email_confirmation_form.submission_email_reference,
+                              timestamp: @timestamp,
+                              submission_email: @form.submission_email).deliver_now
+      end
+    rescue StandardError
+      raise SubmissionError # original exception will be accessable as .cause
     end
 
     LogEventService.log_submit(@logging_context, @current_context, requested_email_confirmation: @requested_email_confirmation, preview: @preview_mode)
@@ -54,6 +60,8 @@ class FormSubmissionService
       reference: @email_confirmation_form.confirmation_email_reference,
       confirmation_email_address: @email_confirmation_form.confirmation_email_address,
     ).deliver_now
+  rescue StandardError
+    raise SubmissionError # original exception will be accessable as .cause
   end
 
   class NotifyTemplateBodyFilter

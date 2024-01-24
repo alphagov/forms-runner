@@ -71,7 +71,7 @@ RSpec.describe ErrorsController, type: :request do
         form_submission_service = original_method.call(**args)
 
         allow(form_submission_service).to receive(:submit_form_to_processing_team)
-          .and_raise("Oh no!").with(any_args)
+          .and_raise(FormSubmissionService::SubmissionError, "Oh no!").with(any_args)
 
         form_submission_service
       end
