@@ -94,7 +94,7 @@ RSpec.describe LogEventService do
 
     context "when not in preview mode" do
       it "calls the event logger with .log_form_event" do
-        described_class.log_submit(logging_context,current_context)
+        described_class.log_submit(logging_context, current_context)
 
         expect(EventLogger).to have_received(:log_form_event).with(
           logging_context,

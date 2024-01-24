@@ -19,7 +19,7 @@ RSpec.describe EventLogger do
 
     described_class.log_form_event(logging_context, "visit")
 
-    expect(described_class).to have_received(:log).with(logging_context.merge({event: "form_visit"}))
+    expect(described_class).to have_received(:log).with(logging_context.merge({ event: "form_visit" }))
   end
 
   context "when completing a question" do
@@ -29,8 +29,8 @@ RSpec.describe EventLogger do
       described_class.log_page_event(logging_context, "question_text", "page_save", nil)
 
       expect(described_class).to have_received(:log).with(logging_context.merge(
-        { event: "page_save", question_text: "question_text" }
-      ))
+                                                            { event: "page_save", question_text: "question_text" },
+                                                          ))
     end
   end
 
