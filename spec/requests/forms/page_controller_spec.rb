@@ -56,6 +56,29 @@ RSpec.describe Forms::PageController, type: :request do
     end
   end
 
+  context "when setting logging context" do
+    let(:payloads) { [] }
+    let(:payload) { payloads.last }
+
+    let!(:subscriber) do
+      ActiveSupport::Notifications.subscribe("process_action.action_controller") do |_, _, _, _, payload|
+        payloads << payload
+      end
+    end
+
+    before do
+      get form_page_path("form", 2, form_data.form_slug, 1)
+    end
+
+    after do
+      ActiveSupport::Notifications.unsubscribe(subscriber)
+    end
+
+    it "adds the page ID to the instrumentation payload" do
+      expect(payload[:custom_payload]).to include(page_id: "1")
+    end
+  end
+
   describe "#show" do
     context "with preview mode on" do
       let(:api_url_suffix) { "/draft" }

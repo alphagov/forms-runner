@@ -16,6 +16,11 @@ module Forms
       render template: "errors/repeat_submission", locals: { current_form: }
     end
 
+    def set_logging_context
+      super
+      @logging_context[:form_name] = current_form.name
+    end
+
   private
 
     def current_form

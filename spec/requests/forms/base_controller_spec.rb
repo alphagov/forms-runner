@@ -55,6 +55,34 @@ RSpec.describe Forms::BaseController, type: :request do
     end
   end
 
+  context "when setting logging context" do
+    let(:payloads) { [] }
+    let(:payload) { payloads.last }
+
+    let!(:subscriber) do
+      ActiveSupport::Notifications.subscribe("process_action.action_controller") do |_, _, _, _, payload|
+        payloads << payload
+      end
+    end
+
+    before do
+      get form_id_path(mode: "form", form_id: 2)
+    end
+
+    after do
+      ActiveSupport::Notifications.unsubscribe(subscriber)
+    end
+
+    it "adds the form ID to the instrumentation payload" do
+      expect(payload[:custom_payload]).to include(form_id: "2")
+    end
+
+    it "adds the form name to the instrumentation payload" do
+      expect(payload[:custom_payload]).to include(:form_name)
+      expect(payload[:custom_payload][:form_name]).to match(/Form \d+/)
+    end
+  end
+
   describe "#redirect_to_user_friendly_url" do
     before do
       get form_id_path(mode: "form", form_id: 2)
