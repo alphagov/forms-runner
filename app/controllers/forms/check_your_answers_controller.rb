@@ -65,7 +65,7 @@ module Forms
       @form_submit_path = form_submit_answers_path
 
       unless mode.preview?
-        EventLogger.log_form_event(@logging_context, "check_answers")
+        EventLogger.log_form_event(logging_context, "check_answers")
       end
 
       answers_need_full_width

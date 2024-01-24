@@ -67,7 +67,7 @@ module FormsRunner
     config.lograge.keep_original_rails_log = false
 
     config.lograge.custom_payload do |controller|
-      controller.instance_variable_get(:@logging_context)
+      controller.try(:logging_context) || { message: "There is no logging context" }
     end
   end
 end

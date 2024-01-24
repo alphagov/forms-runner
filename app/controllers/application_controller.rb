@@ -26,6 +26,10 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def logging_context
+    @logging_context ||= {}
+  end
+
   def set_logging_context
     @logging_context = {}.tap do |h|
       h[:host] = request.host
@@ -34,7 +38,7 @@ class ApplicationController < ActionController::Base
       h[:page_id] = params[:page_slug] if params[:page_slug].present? && params[:page_slug].match(Page::PAGE_ID_REGEX)
       h[:page_slug] = params[:page_slug] if params[:page_slug].present?
       h[:session_id_hash] = session_id_hash
-      h[:trace_id] = request.env["HTTP_X_AMZN_TRACE_ID"].presence
+      h[:trace_id] = request.env["HTTP_X_AMZN_TRACE_ID"] if request.env["HTTP_X_AMZN_TRACE_ID"].present?
     end
   end
 
