@@ -421,7 +421,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       end
 
       before do
-        allow(FormSubmissionService).to receive(:call).and_throw(StandardError)
+        allow(FormSubmissionService).to receive(:call).and_raise(StandardError)
         allow(Sentry).to receive(:capture_exception)
 
         travel_to timestamp_of_request do

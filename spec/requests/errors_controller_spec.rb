@@ -60,7 +60,7 @@ RSpec.describe ErrorsController, type: :request do
         mock.get "/api/v1/forms/2/live", req_headers, form_response_data, 200
       end
 
-      allow(form_submission_service).to receive(:submit_form_to_processing_team).and_throw("Oh no!").with(any_args)
+      allow(form_submission_service).to receive(:submit_form_to_processing_team).and_raise("Oh no!").with(any_args)
       allow(FormSubmissionService).to receive(:new).and_return(form_submission_service)
     end
 
