@@ -35,18 +35,21 @@ RSpec.describe ErrorsController, type: :request do
   end
 
   describe "Submission error" do
-    let(:form_response_data) do
-      {
+    let(:form_data) do
+      build(
+        :form,
+        :with_support,
         id: 2,
         name: "Form name",
         form_slug: "form-name",
         live_at: "2022-08-18 09:16:50 +0100",
         submission_email: "submission@email.com",
         start_page: 1,
-      }.to_json
+        pages: [
+          (build :page, id: 1, answer_type: "text", answer_settings: { input_type: "single_line" }),
+        ],
+      )
     end
-
-    let(:form_submission_service) { instance_double(FormSubmissionService) }
 
     let(:req_headers) do
       {
@@ -57,15 +60,34 @@ RSpec.describe ErrorsController, type: :request do
 
     before do
       ActiveResource::HttpMock.respond_to do |mock|
-        mock.get "/api/v1/forms/2/live", req_headers, form_response_data, 200
+        mock.get "/api/v1/forms/2/live", req_headers, form_data.to_json, 200
       end
 
-      allow(form_submission_service).to receive(:submit_form_to_processing_team).and_raise("Oh no!").with(any_args)
-      allow(FormSubmissionService).to receive(:new).and_return(form_submission_service)
+      # setup the context in the session
+      get form_page_path(mode: "form", form_id: 2, form_slug: "form-name", page_slug: 1)
+      post save_form_page_path(mode: "form", form_id: 2, form_slug: "form-name", page_slug: 1, question: { text: "test" })
+
+      allow(FormSubmissionService).to receive(:call).and_wrap_original do |original_method, **args|
+        form_submission_service = original_method.call(**args)
+
+        allow(form_submission_service).to receive(:submit_form_to_processing_team)
+          .and_raise("Oh no!").with(any_args)
+
+        form_submission_service
+      end
     end
 
     it "returns http code 500" do
-      post form_submit_answers_path(mode: "form", form_id: 2, form_slug: "form-name")
+      post form_submit_answers_path(
+        mode: "form",
+        form_id: 2,
+        form_slug: "form-name",
+        email_confirmation_form: {
+          send_confirmation: "skip_confirmation",
+          notify_reference: "test-ref",
+        },
+      )
+
       expect(response).to have_http_status(:internal_server_error)
     end
   end
