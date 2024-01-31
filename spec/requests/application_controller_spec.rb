@@ -18,21 +18,8 @@ RSpec.describe ApplicationController, type: :request do
   end
 
   context "when setting logging context" do
-    let(:payloads) { [] }
-    let(:payload) { payloads.last }
-
-    let!(:subscriber) do
-      ActiveSupport::Notifications.subscribe("process_action.action_controller") do |_, _, _, _, payload|
-        payloads << payload
-      end
-    end
-
     before do
       get root_path, headers: { "HTTP_X_AMZN_TRACE_ID": "Root=1-63441c4a-abcdef012345678912345678" }
-    end
-
-    after do
-      ActiveSupport::Notifications.unsubscribe(subscriber)
     end
 
     it "adds the trace ID to the instrumentation payload" do

@@ -56,21 +56,8 @@ RSpec.describe Forms::BaseController, type: :request do
   end
 
   context "when setting logging context" do
-    let(:payloads) { [] }
-    let(:payload) { payloads.last }
-
-    let!(:subscriber) do
-      ActiveSupport::Notifications.subscribe("process_action.action_controller") do |_, _, _, _, payload|
-        payloads << payload
-      end
-    end
-
     before do
       get form_id_path(mode: "form", form_id: 2)
-    end
-
-    after do
-      ActiveSupport::Notifications.unsubscribe(subscriber)
     end
 
     it "adds the form ID to the instrumentation payload" do
