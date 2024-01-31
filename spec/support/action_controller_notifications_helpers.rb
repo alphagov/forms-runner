@@ -1,6 +1,12 @@
+# rubocop:disable Style/ClassVars
+
 module ActionControllerNotificationsHelpers
   @@payloads = []
   @@process_action_subscriber = nil
+
+  def logging_context
+    payload[:custom_payload]
+  end
 
   def payloads
     @@payloads ||= []
@@ -24,6 +30,8 @@ module ActionControllerNotificationsHelpers
     process_action_subscriber
   end
 end
+
+# rubocop:enable Style/ClassVars
 
 RSpec.configure do |config|
   config.include ActionControllerNotificationsHelpers, type: :request

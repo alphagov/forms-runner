@@ -62,7 +62,7 @@ RSpec.describe Forms::PageController, type: :request do
     end
 
     it "adds the page ID to the instrumentation payload" do
-      expect(payload[:custom_payload]).to include(page_id: "1")
+      expect(logging_context).to include(page_id: "1")
     end
   end
 

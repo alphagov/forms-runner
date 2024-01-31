@@ -22,20 +22,20 @@ RSpec.describe ApplicationController, type: :request do
       get root_path, headers: { "HTTP_X_AMZN_TRACE_ID": "Root=1-63441c4a-abcdef012345678912345678" }
     end
 
-    it "adds the trace ID to the instrumentation payload" do
-      expect(payload[:custom_payload]).to include(trace_id: "Root=1-63441c4a-abcdef012345678912345678")
+    it "adds the trace ID to the logging context" do
+      expect(logging_context).to include(trace_id: "Root=1-63441c4a-abcdef012345678912345678")
     end
 
-    it "adds the host to the instrumentation payload" do
-      expect(payload[:custom_payload]).to include(host: "www.example.com")
+    it "adds the host to the logging context" do
+      expect(logging_context).to include(host: "www.example.com")
     end
 
-    it "adds the request_id to the instrumentation payload" do
-      expect(payload[:custom_payload]).to include(:request_id)
+    it "adds the request_id to the logging context" do
+      expect(logging_context).to include(:request_id)
     end
 
-    it "adds the session_id_has to the instrumentation payload" do
-      expect(payload[:custom_payload]).to include(:session_id_hash)
+    it "adds the session_id_has to the logging context" do
+      expect(logging_context).to include(:session_id_hash)
     end
   end
 

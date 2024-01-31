@@ -60,13 +60,13 @@ RSpec.describe Forms::BaseController, type: :request do
       get form_id_path(mode: "form", form_id: 2)
     end
 
-    it "adds the form ID to the instrumentation payload" do
-      expect(payload[:custom_payload]).to include(form_id: "2")
+    it "adds the form ID to the logging context" do
+      expect(logging_context).to include(form_id: "2")
     end
 
-    it "adds the form name to the instrumentation payload" do
-      expect(payload[:custom_payload]).to include(:form_name)
-      expect(payload[:custom_payload][:form_name]).to match(/Form \d+/)
+    it "adds the form name to the logging context" do
+      expect(logging_context).to include(:form_name)
+      expect(logging_context[:form_name]).to match(/Form \d+/)
     end
   end
 
