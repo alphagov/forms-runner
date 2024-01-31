@@ -5,7 +5,8 @@ class FormSubmissionService
     end
   end
 
-  def initialize(current_context:, request:, email_confirmation_form:, preview_mode:)
+  def initialize(logging_context:, current_context:, request:, email_confirmation_form:, preview_mode:)
+    @logging_context = logging_context
     @current_context = current_context
     @request = request
     @form = current_context.form
@@ -37,7 +38,7 @@ class FormSubmissionService
                             submission_email: @form.submission_email).deliver_now
     end
 
-    LogEventService.log_submit(@current_context, @request, requested_email_confirmation: @requested_email_confirmation, preview: @preview_mode)
+    LogEventService.log_submit(@logging_context, @current_context, requested_email_confirmation: @requested_email_confirmation, preview: @preview_mode)
   end
 
   def submit_confirmation_email_to_user

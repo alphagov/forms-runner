@@ -14,7 +14,7 @@ module Forms
 
       if current_context.save_step(@step)
         unless mode.preview?
-          LogEventService.new(current_context, @step, request, changing_existing_answer, page_params).log_page_save
+          LogEventService.new(current_context, @step, request, changing_existing_answer, page_params).log_page_save(logging_context)
         end
         redirect_to next_page
       else
@@ -71,7 +71,7 @@ module Forms
     def check_goto_page_before_routing_page
       return unless @step.routing_conditions.filter { |condition| condition.validation_errors.filter { |error| error.name == "cannot_have_goto_page_before_routing_page" }.any? }.any?
 
-      EventLogger.log_page_event(current_context, @step, request, "goto_page_before_routing_page_error", nil)
+      EventLogger.log_page_event(logging_context, @step.question.question_text, "goto_page_before_routing_page_error", nil)
       render template: "errors/goto_page_before_routing_page", locals: { link_url: "#{Settings.forms_admin.base_url}/forms/#{@step.form_id}/pages/#{@step.page_slug}/conditions/#{@step.routing_conditions.first.id}", question_number: @step.page_number }, status: :unprocessable_entity
     end
   end

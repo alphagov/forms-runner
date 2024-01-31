@@ -66,17 +66,8 @@ module FormsRunner
     # information.
     config.lograge.keep_original_rails_log = false
 
-    config.lograge.custom_options = lambda do |event|
-      {}.tap do |h|
-        h[:host] = event.payload[:host]
-        h[:request_id] = event.payload[:request_id]
-        h[:form_id] = event.payload[:form_id] if event.payload[:form_id]
-        h[:page_id] = event.payload[:page_id] if event.payload[:page_id]
-        h[:page_slug] = event.payload[:page_slug] if event.payload[:page_slug]
-        h[:exception] = event.payload[:exception] if event.payload[:exception]
-        h[:session_id_hash] = event.payload[:session_id_hash] if event.payload[:session_id_hash]
-        h[:trace_id] = event.payload[:trace_id] if event.payload[:trace_id]
-      end
+    config.lograge.custom_payload do |controller|
+      controller.try(:logging_context) || { message: "There is no logging context" }
     end
   end
 end

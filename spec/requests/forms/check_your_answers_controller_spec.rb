@@ -209,7 +209,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         end
 
         it "Logs the form_check_answers event" do
-          expect(EventLogger).to have_received(:log_form_event).with(instance_of(Context), instance_of(ActionDispatch::Request), "check_answers")
+          expect(EventLogger).to have_received(:log_form_event).with(instance_of(Hash), "check_answers")
         end
 
         include_examples "for submission reference"

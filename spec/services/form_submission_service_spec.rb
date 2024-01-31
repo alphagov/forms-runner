@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe FormSubmissionService do
-  let(:service) { described_class.call(current_context:, request:, email_confirmation_form:, preview_mode:) }
+  let(:service) { described_class.call(logging_context:, current_context:, request:, email_confirmation_form:, preview_mode:) }
   let(:form) do
     build(:form,
           id: 1,
@@ -18,8 +18,8 @@ RSpec.describe FormSubmissionService do
   let(:support_phone) { Faker::Lorem.paragraph(sentence_count: 2, supplemental: true, random_sentences_to_add: 4) }
   let(:support_url) { Faker::Internet.url(host: "gov.uk") }
   let(:support_url_text) { Faker::Lorem.sentence(word_count: 1, random_words_to_add: 4) }
-
   let(:current_context) { OpenStruct.new(form:, completed_steps: [step], support_details: OpenStruct.new(call_back_url: "http://gov.uk")) }
+  let(:logging_context) { { some_key: "some_value" } }
   let(:request) { OpenStruct.new({ url: "url", method: "method" }) }
   let(:step) { OpenStruct.new({ question_text: "What is the meaning of life?", show_answer_in_email: "42" }) }
   let(:preview_mode) { false }
@@ -62,8 +62,8 @@ RSpec.describe FormSubmissionService do
       service.submit_form_to_processing_team
 
       expect(LogEventService).to have_received(:log_submit).with(
+        logging_context,
         current_context,
-        request,
         requested_email_confirmation: true,
         preview: false,
       )
@@ -115,8 +115,8 @@ RSpec.describe FormSubmissionService do
         service.submit_form_to_processing_team
 
         expect(LogEventService).to have_received(:log_submit).with(
+          logging_context,
           current_context,
-          request,
           requested_email_confirmation: true,
           preview: true,
         )
