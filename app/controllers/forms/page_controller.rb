@@ -1,6 +1,11 @@
 module Forms
   class PageController < BaseController
-    before_action :prepare_step, :changing_existing_answer, :check_goto_page_before_routing_page
+    before_action :prepare_step, :set_logging_context, :changing_existing_answer, :check_goto_page_before_routing_page
+
+    def set_logging_context
+      super
+      @logging_context[:question_number] = @step.page_number if @step&.page_number
+    end
 
     def show
       redirect_to form_page_path(@step.form_id, @step.form_slug, current_context.next_page_slug) unless current_context.can_visit?(@step.page_slug)
