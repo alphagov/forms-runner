@@ -57,12 +57,34 @@ RSpec.describe Forms::PageController, type: :request do
   end
 
   context "when setting logging context" do
+    let(:form_data) do
+      build(:form, :with_support,
+            id: 200,
+            live_at:,
+            start_page: 101,
+            declaration_text: "agree to the declaration",
+            pages: [
+              build(:page, :with_text_settings,
+                    id: 101,
+                    position: 1,
+                    is_optional: false),
+            ])
+    end
+
     before do
-      get form_page_path("form", 2, form_data.form_slug, 1)
+      ActiveResource::HttpMock.respond_to do |mock|
+        mock.get "/api/v1/forms/200#{api_url_suffix}", req_headers, form_data.to_json, 200
+      end
+
+      get form_page_path("form", 200, form_data.form_slug, 101)
     end
 
     it "adds the page ID to the instrumentation payload" do
-      expect(logging_context).to include(page_id: "1")
+      expect(logging_context).to include(page_id: "101")
+    end
+
+    it "adds the question_number to the instrumentation payload" do
+      expect(logging_context).to include(question_number: 1)
     end
   end
 
