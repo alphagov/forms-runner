@@ -36,4 +36,22 @@ RSpec.describe SupportDetailsComponent::View, type: :component do
       expect(page).not_to have_content("Get help with this form")
     end
   end
+
+  context "with phone contact details" do
+    let(:contact_details) do
+      {
+        call_charges_url: "#call-charges",
+        email: nil,
+        phone: "Call 01610123456\n\nThis line is only open on Tuesdays.",
+        url: nil,
+        url_text: nil,
+      }
+    end
+
+    it "includes a link to information about call charges" do
+      render_inline(described_class.new(OpenStruct.new(contact_details)))
+
+      expect(page).to have_link "Find out about call charges", href: "#call-charges", visible: :hidden
+    end
+  end
 end
