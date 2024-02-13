@@ -42,6 +42,36 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def log_rescued_exception(exception)
+    # add exception to payload with same format used by ActiveSupport::Notifications::Instrumenter
+    logging_context[:rescued_exception] = [exception.class.name, exception.message]
+
+    # log exception with the same format used by ActionDispatch::DebugExceptions
+    backtrace_cleaner = request.get_header("action_dispatch.backtrace_cleaner")
+    wrapper = ActionDispatch::ExceptionWrapper.new(backtrace_cleaner, exception)
+    trace = wrapper.exception_trace
+    message = []
+    message << "Rescued exception:"
+    message << "  "
+    message << "#{wrapper.exception_class_name} (#{wrapper.message}):"
+    if wrapper.has_cause?
+      message << "\nCauses:"
+      wrapper.wrapped_causes.each do |wrapped_cause|
+        message << "#{wrapped_cause.exception_class_name} (#{wrapped_cause.message})"
+      end
+    end
+    message.concat(wrapper.annotated_source_code)
+    message << "  "
+    message.concat(trace)
+    logger.warn message.join("\n")
+
+    # add additional info to request log
+    logging_context[:rescued_exception_trace] = message
+
+    # send exception to Sentry
+    Sentry.capture_exception(exception)
+  end
+
 private
 
   def add_robots_header
