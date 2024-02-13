@@ -31,7 +31,8 @@ module Forms
         render template: "forms/check_your_answers/show", locals: { email_confirmation_form: }, status: :unprocessable_entity
       end
     rescue StandardError => e
-      Sentry.capture_exception(e)
+      log_rescued_exception(e)
+
       render "errors/submission_error", status: :internal_server_error
     end
 
