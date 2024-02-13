@@ -36,6 +36,25 @@ RSpec.describe ApplicationController do
 
       expect(controller.logging_context).to include(rescued_exception: ["RuntimeError", "oh no\nwhat happened"])
     end
+
+    it "adds exception trace to logging context" do
+      get :raise_error
+
+      expect(controller.logging_context).to include(:rescued_exception_trace)
+      expect(controller.logging_context[:rescued_exception_trace]).to include(
+        "spec/controllers/application_controller_spec.rb:11:in `raise_error'",
+      )
+    end
+
+    it "adds exception causes to logging context" do
+      get :raise_error_with_cause
+
+      expect(controller.logging_context).to include(:rescued_exception_trace)
+      expect(controller.logging_context[:rescued_exception_trace]).to include(
+        "\nCauses:",
+        "RuntimeError (inner error)",
+      )
+    end
   end
 
   describe "logging exception" do

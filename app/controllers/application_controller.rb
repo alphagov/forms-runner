@@ -65,6 +65,9 @@ class ApplicationController < ActionController::Base
     message.concat(trace)
     logger.warn message.join("\n")
 
+    # add additional info to request log
+    logging_context[:rescued_exception_trace] = message
+
     # send exception to Sentry
     Sentry.capture_exception(exception)
   end
