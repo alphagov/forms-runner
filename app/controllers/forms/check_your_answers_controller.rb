@@ -71,5 +71,16 @@ module Forms
 
       answers_need_full_width
     end
+
+    def set_logging_context
+      super
+      if params[:email_confirmation_form].present?
+        logging_context[:notification_references] =
+          email_confirmation_form_params.permit(
+            :confirmation_email_reference,
+            :notify_reference,
+          ).to_hash.symbolize_keys
+      end
+    end
   end
 end
