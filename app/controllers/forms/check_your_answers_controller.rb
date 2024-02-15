@@ -71,5 +71,15 @@ module Forms
 
       answers_need_full_width
     end
+
+    def set_logging_context
+      super
+      if params[:email_confirmation_form].present?
+        logging_context[:notification_references] = {}.tap do |h|
+          h[:confirmation_email_reference] = email_confirmation_form_params[:confirmation_email_reference] if email_confirmation_form_params[:send_confirmation] == "send_email"
+          h[:notify_reference] = email_confirmation_form_params[:notify_reference]
+        end
+      end
+    end
   end
 end
