@@ -376,7 +376,14 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
     end
 
     context "when user has not requested a confirmation email" do
-      let(:email_confirmation_form) { { send_confirmation: "skip_confirmation", confirmation_email_address: nil, notify_reference: "for-my-ref" } }
+      let(:email_confirmation_form) do
+        {
+          send_confirmation: "skip_confirmation",
+          confirmation_email_address: nil,
+          confirmation_email_reference: "confirmation-email-ref",
+          notify_reference: "for-my-ref",
+        }
+      end
 
       before do
         post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_form: }
@@ -386,7 +393,13 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         expect(response).to redirect_to(form_submitted_path)
       end
 
-      include_examples "for submission references"
+      it "does include submission email reference in logging context" do
+        expect(logging_context[:notification_references]).to include(notify_reference: "for-my-ref")
+      end
+
+      it "does not include confirmation email reference in logging context" do
+        expect(logging_context[:notification_references]).not_to include(:confirmation_email_reference)
+      end
     end
 
     context "when user has requested a confirmation email" do
