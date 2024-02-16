@@ -7,7 +7,7 @@ GOV.UK Forms is a service for creating forms. GOV.UK Forms Runner is a an applic
 To run the project, you will need to install:
 
 - [Ruby](https://www.ruby-lang.org/en/) - we use version 3 of Ruby. Before running the project, double check the [.ruby-version](.ruby-version) file to see the exact version.
-- [Node.js](https://nodejs.org/en/) - the frontend build requires Node.js. We use Node 18 LTS versions.
+- [Node.js](https://nodejs.org/en/) - the frontend build requires Node.js. We use Node 20 LTS versions.
 
 We recommend using a version manager to install and manage these, such as:
 
@@ -154,7 +154,6 @@ And check with `FeatureService.enabled?("some.nested_feature")`.
 ### Testing with features
 
 You can also tag RSpec tests with `feature_{name}: true`. This will turn that feature on just for the duration of that test.
-
 
 ### Configuring Redis
 
