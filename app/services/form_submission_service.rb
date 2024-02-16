@@ -33,7 +33,7 @@ class FormSubmissionService
       .email_completed_form(title: form_title,
                             text_input: email_body,
                             preview_mode: @preview_mode,
-                            reference: @email_confirmation_form.notify_reference,
+                            reference: @email_confirmation_form.submission_email_reference,
                             timestamp: @timestamp,
                             submission_email: @form.submission_email).deliver_now
     end

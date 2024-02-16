@@ -48,7 +48,7 @@ describe "forms/check_your_answers/show.html.erb" do
   end
 
   it "contains a hidden notify reference for the submission email" do
-    expect(rendered).to have_field("notification-id", type: :hidden, with: email_confirmation_form.notify_reference)
+    expect(rendered).to have_field("submission-email-reference", type: :hidden, with: email_confirmation_form.submission_email_reference)
   end
 
   it "displays the email radio buttons" do
