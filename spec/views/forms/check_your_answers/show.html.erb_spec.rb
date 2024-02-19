@@ -59,7 +59,14 @@ describe "forms/check_your_answers/show.html.erb" do
   end
 
   it "displays the email field" do
-    expect(rendered).to have_field(I18n.t("helpers.label.email_confirmation_form.confirmation_email_address"))
+    expect(rendered).to have_field(
+      I18n.t("helpers.label.email_confirmation_form.confirmation_email_address"),
+      type: "email",
+    )
+  end
+
+  it "email field has correct atttributes set" do
+    expect(rendered).to have_selector("input[name='email_confirmation_form[confirmation_email_address]'][autocomplete='email'][spellcheck='false']")
   end
 
   it "contains a hidden notify reference for the confirmation email" do
