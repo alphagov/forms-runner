@@ -6,27 +6,6 @@ GIT
     govuk-forms-markdown (0.5.0)
       redcarpet (~> 3.6)
 
-GIT
-  remote: https://github.com/x-govuk/govuk-components.git
-  revision: 1136580771a34c373f4a723baa68c3433bcdcd40
-  ref: 1136580771a34c373f4a723baa68c3433bcdcd40
-  specs:
-    govuk-components (5.0.2)
-      html-attributes-utils (~> 1.0.0, >= 1.0.0)
-      pagy (~> 6.0)
-      view_component (>= 3.9, < 3.11)
-
-GIT
-  remote: https://github.com/x-govuk/govuk-form-builder.git
-  revision: cbd6b8c3e799da336bca8081ee8d1bef55c4f460
-  ref: cbd6b8c3e799da336bca8081ee8d1bef55c4f460
-  specs:
-    govuk_design_system_formbuilder (5.0.0)
-      actionview (>= 6.1)
-      activemodel (>= 6.1)
-      activesupport (>= 6.1)
-      html-attributes-utils (~> 1)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -227,6 +206,15 @@ GEM
       i18n (>= 1.8.11, < 2)
     globalid (1.2.1)
       activesupport (>= 6.1)
+    govuk-components (5.1.0)
+      html-attributes-utils (~> 1.0.0, >= 1.0.0)
+      pagy (~> 6.0)
+      view_component (>= 3.9, < 3.11)
+    govuk_design_system_formbuilder (5.1.0)
+      actionview (>= 6.1)
+      activemodel (>= 6.1)
+      activesupport (>= 6.1)
+      html-attributes-utils (~> 1)
     govuk_notify_rails (2.2.0)
       notifications-ruby-client (~> 5.1)
       rails (>= 4.1.0)
@@ -295,7 +283,7 @@ GEM
       racc (~> 1.4)
     notifications-ruby-client (5.4.0)
       jwt (>= 1.5, < 3)
-    pagy (6.4.4)
+    pagy (6.5.0)
     parallel (1.24.0)
     parser (3.3.0.5)
       ast (~> 2.4.1)
@@ -497,9 +485,9 @@ DEPENDENCIES
   debug
   factory_bot_rails
   faker
-  govuk-components!
+  govuk-components
   govuk-forms-markdown!
-  govuk_design_system_formbuilder!
+  govuk_design_system_formbuilder
   govuk_notify_rails
   i18n-tasks (~> 1.0.12)
   lograge
