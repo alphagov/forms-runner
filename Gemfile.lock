@@ -206,11 +206,11 @@ GEM
       i18n (>= 1.8.11, < 2)
     globalid (1.2.1)
       activesupport (>= 6.1)
-    govuk-components (5.0.2)
+    govuk-components (5.1.0)
       html-attributes-utils (~> 1.0.0, >= 1.0.0)
       pagy (~> 6.0)
-      view_component (>= 3.9, < 3.10)
-    govuk_design_system_formbuilder (5.0.0)
+      view_component (>= 3.9, < 3.11)
+    govuk_design_system_formbuilder (5.1.0)
       actionview (>= 6.1)
       activemodel (>= 6.1)
       activesupport (>= 6.1)
@@ -260,7 +260,7 @@ GEM
     matrix (0.4.2)
     method_source (1.0.0)
     mini_mime (1.1.5)
-    minitest (5.21.2)
+    minitest (5.22.2)
     msgpack (1.7.2)
     mutex_m (0.2.0)
     net-imap (0.4.9.1)
@@ -283,7 +283,7 @@ GEM
       racc (~> 1.4)
     notifications-ruby-client (5.4.0)
       jwt (>= 1.5, < 3)
-    pagy (6.2.0)
+    pagy (6.5.0)
     parallel (1.24.0)
     parser (3.3.0.5)
       ast (~> 2.4.1)
@@ -438,7 +438,7 @@ GEM
       tzinfo (>= 1.0.0)
     uk_postcode (2.1.8)
     unicode-display_width (2.5.0)
-    view_component (3.9.0)
+    view_component (3.10.0)
       activesupport (>= 5.2.0, < 8.0)
       concurrent-ruby (~> 1.0)
       method_source (~> 1.0)
@@ -485,9 +485,9 @@ DEPENDENCIES
   debug
   factory_bot_rails
   faker
-  govuk-components (~> 5.0.2)
+  govuk-components
   govuk-forms-markdown!
-  govuk_design_system_formbuilder (~> 5.0.0)
+  govuk_design_system_formbuilder
   govuk_notify_rails
   i18n-tasks (~> 1.0.12)
   lograge

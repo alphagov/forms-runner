@@ -39,8 +39,8 @@ gem "bootsnap", require: false
 gem "activeresource"
 
 # For GOV.UK branding
-gem "govuk-components", "~> 5.0.2"
-gem "govuk_design_system_formbuilder", "~> 5.0.0"
+gem "govuk-components"
+gem "govuk_design_system_formbuilder"
 
 # Our own custom markdown renderer
 gem "govuk-forms-markdown", github: "alphagov/govuk-forms-markdown", tag: "0.5.0"

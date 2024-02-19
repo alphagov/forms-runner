@@ -33,7 +33,7 @@
     "vite-plugin-ruby": "^5.0.0"
   },
   "dependencies": {
-    "govuk-frontend": "~5.0.0"
+    "govuk-frontend": "5.1.0"
   },
   "standard": {
     "globals": [
