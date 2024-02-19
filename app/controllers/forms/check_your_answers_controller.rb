@@ -56,7 +56,7 @@ module Forms
     end
 
     def email_confirmation_form_params
-      params.require(:email_confirmation_form).permit(:send_confirmation, :confirmation_email_address, :confirmation_email_reference, :notify_reference)
+      params.require(:email_confirmation_form).permit(:send_confirmation, :confirmation_email_address, :confirmation_email_reference, :submission_email_reference)
     end
 
     def setup_check_your_answers
@@ -77,7 +77,7 @@ module Forms
       if params[:email_confirmation_form].present?
         logging_context[:notification_references] = {}.tap do |h|
           h[:confirmation_email_reference] = email_confirmation_form_params[:confirmation_email_reference] if email_confirmation_form_params[:send_confirmation] == "send_email"
-          h[:notify_reference] = email_confirmation_form_params[:notify_reference]
+          h[:submission_email_reference] = email_confirmation_form_params[:submission_email_reference]
         end
       end
     end

@@ -2,7 +2,7 @@ class EmailConfirmationForm
   include ActiveModel::Model
   include ActiveModel::Validations
 
-  attr_accessor :send_confirmation, :confirmation_email_address, :confirmation_email_reference, :notify_reference
+  attr_accessor :send_confirmation, :confirmation_email_address, :confirmation_email_reference, :submission_email_reference
 
   validates :send_confirmation, presence: true
   validates :send_confirmation, inclusion: { in: %w[send_email skip_confirmation] }
@@ -11,7 +11,7 @@ class EmailConfirmationForm
 
   def initialize(...)
     super(...)
-    generate_submission_references! unless @confirmation_email_reference || @notify_reference
+    generate_submission_references! unless @confirmation_email_reference || @submission_email_reference
   end
 
   def validate_email?
@@ -24,7 +24,7 @@ private
     reference = SecureRandom.uuid
     self.attributes = {
       confirmation_email_reference: "#{reference}-confirmation-email",
-      notify_reference: "#{reference}-submission-email",
+      submission_email_reference: "#{reference}-submission-email",
     }
   end
 end
