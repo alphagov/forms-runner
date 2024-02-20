@@ -26,7 +26,7 @@
 
       <%= form.govuk_radio_buttons_fieldset(:send_confirmation, legend: { size: 'm', tag: 'h2' }) do %>
         <%= form.govuk_radio_button :send_confirmation, 'send_email' do %>
-          <%= form.govuk_text_field :confirmation_email_address %>
+          <%= form.govuk_email_field :confirmation_email_address, autocomplete: 'email', spellcheck: false  %>
         <% end %>
         <%= form.govuk_radio_button :send_confirmation, 'skip_confirmation' %>
       <% end %>
