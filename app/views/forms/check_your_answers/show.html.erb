@@ -38,7 +38,6 @@
         <%= HtmlMarkdownSanitizer.new.render_scrubbed_html(@current_context.form.declaration_text) %>
       <% end %>
 
-      <%= form.hidden_field :submission_email_reference, id: 'notification-id' %>
       <%= form.hidden_field :submission_email_reference, id: 'submission-email-reference' %>
 
       <%= form.govuk_submit(@current_context.form.declaration_text.present? ? t('form.check_your_answers.agree_and_submit') : t('form.check_your_answers.submit')) %>
