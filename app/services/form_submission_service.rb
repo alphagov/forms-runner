@@ -29,13 +29,16 @@ class FormSubmissionService
     end
 
     unless @form.submission_email.blank? && @preview_mode
-      FormSubmissionMailer
+      mail = FormSubmissionMailer
       .email_completed_form(title: form_title,
                             text_input: email_body,
                             preview_mode: @preview_mode,
                             reference: @email_confirmation_form.submission_email_reference,
                             timestamp: @timestamp,
                             submission_email: @form.submission_email).deliver_now
+
+      @logging_context[:notification_ids] ||= {}
+      @logging_context[:notification_ids][:submission_email_id] = mail.govuk_notify_response.id
     end
 
     LogEventService.log_submit(@logging_context, @current_context, requested_email_confirmation: @requested_email_confirmation, preview: @preview_mode)
@@ -45,7 +48,7 @@ class FormSubmissionService
     return nil unless @form.what_happens_next_markdown.present? && has_support_contact_details?
     return nil unless @requested_email_confirmation
 
-    FormSubmissionConfirmationMailer.send_confirmation_email(
+    mail = FormSubmissionConfirmationMailer.send_confirmation_email(
       title: form_title,
       what_happens_next_markdown: @form.what_happens_next_markdown,
       support_contact_details: formatted_support_details,
@@ -54,6 +57,9 @@ class FormSubmissionService
       reference: @email_confirmation_form.confirmation_email_reference,
       confirmation_email_address: @email_confirmation_form.confirmation_email_address,
     ).deliver_now
+
+    @logging_context[:notification_ids] ||= {}
+    @logging_context[:notification_ids][:confirmation_email_id] = mail.govuk_notify_response.id
   end
 
   class NotifyTemplateBodyFilter
