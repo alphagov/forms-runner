@@ -15,6 +15,7 @@ class FormSubmissionService
     @preview_mode = preview_mode
     @timestamp = submission_timestamp
     @submission_reference = generate_submission_reference
+    @logging_context[:submission_reference] = @submission_reference
   end
 
   def submit

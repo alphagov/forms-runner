@@ -44,6 +44,11 @@ RSpec.describe FormSubmissionService do
     it "returns the submission reference" do
       expect(service.submit).to eq reference
     end
+
+    it "includes the submission reference in the logging context" do
+      service.submit
+      expect(logging_context).to include({ submission_reference: reference })
+    end
   end
 
   describe "#submit_form_to_processing_team" do
