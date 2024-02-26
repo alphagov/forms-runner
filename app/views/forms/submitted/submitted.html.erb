@@ -9,7 +9,7 @@
       <% end %>
     <% end %>
 
-    <% if email_sent %>
+    <% if @current_context.email_sent? %>
       <p><%= t('form.submitted.email_sent') %></p>
     <% end %>
 

@@ -58,11 +58,15 @@ class Context
     @form_context.form_submitted?(form.id)
   end
 
-  def save_submission_reference(reference)
-    @form_context.save_submission_reference(form.id, reference)
+  def save_submission_details(reference, email_sent)
+    @form_context.save_submission_details(form.id, reference, email_sent)
   end
 
   def get_submission_reference
     @form_context.get_submission_reference(form.id)
+  end
+
+  def email_sent?
+    @form_context.email_sent?(form.id)
   end
 end

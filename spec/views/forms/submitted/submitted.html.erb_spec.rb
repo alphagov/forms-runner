@@ -9,7 +9,7 @@ describe "forms/submitted/submitted.html.erb" do
   before do
     assign(:mode, OpenStruct.new(preview_draft?: false, preview_live?: false))
 
-    assign(:current_context, OpenStruct.new(form:, get_submission_reference: reference))
+    assign(:current_context, OpenStruct.new(form:, get_submission_reference: reference, email_sent?: email_sent))
 
     render template: "forms/submitted/submitted", locals: { email_sent: }
   end

@@ -23,9 +23,9 @@ module Forms
                                                             email_confirmation_form:,
                                                             preview_mode: mode.preview?).submit
 
-          current_context.save_submission_reference(submission_reference)
+          current_context.save_submission_details(submission_reference, requested_email_confirmation)
 
-          redirect_to :form_submitted, email_sent: requested_email_confirmation
+          redirect_to :form_submitted
         end
       else
         setup_check_your_answers

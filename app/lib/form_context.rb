@@ -2,6 +2,7 @@ class FormContext
   ANSWERS_KEY = :answers
   CONFIRMATION_KEY = :confirmation_details
   SUBMISSION_REFERENCE_KEY = :submission_reference
+  EMAIL_SENT_KEY = :email_sent
 
   def initialize(store)
     @store = store
@@ -30,13 +31,18 @@ class FormContext
     @store[ANSWERS_KEY][form_id.to_s].nil?
   end
 
-  def save_submission_reference(form_id, reference)
+  def save_submission_details(form_id, reference, email_sent)
     @store[CONFIRMATION_KEY][form_id.to_s] ||= {}
     @store[CONFIRMATION_KEY][form_id.to_s][SUBMISSION_REFERENCE_KEY.to_s] = reference
+    @store[CONFIRMATION_KEY][form_id.to_s][EMAIL_SENT_KEY.to_s] = email_sent
   end
 
   def get_submission_reference(form_id)
     @store.dig(CONFIRMATION_KEY, form_id.to_s, SUBMISSION_REFERENCE_KEY.to_s)
+  end
+
+  def email_sent?(form_id)
+    @store.dig(CONFIRMATION_KEY, form_id.to_s, EMAIL_SENT_KEY.to_s)
   end
 
 private
