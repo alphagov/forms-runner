@@ -99,19 +99,19 @@ RSpec.describe Context do
   describe "submission references" do
     let(:context) { described_class.new(form:, store: {}) }
     let(:reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
-    let(:email_sent) { true }
+    let(:requested_email_confirmation) { true }
 
     context "when submission details have been stored" do
       before do
-        context.save_submission_details(reference, email_sent)
+        context.save_submission_details(reference, requested_email_confirmation)
       end
 
       it "the reference number can be retrieved" do
         expect(context.get_submission_reference).to eq(reference)
       end
 
-      it "the email_sent value can be retrieved" do
-        expect(context.email_sent?).to eq(email_sent)
+      it "the requested_email_confirmation value can be retrieved" do
+        expect(context.requested_email_confirmation?).to eq(requested_email_confirmation)
       end
     end
   end

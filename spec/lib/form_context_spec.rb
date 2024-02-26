@@ -8,7 +8,7 @@ RSpec.describe FormContext do
   let(:step2) { OpenStruct.new({ page_id: "1", form_id: 2 }) }
   let(:form_context) { described_class.new(store) }
   let(:reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
-  let(:email_sent) { true }
+  let(:requested_email_confirmation) { true }
 
   it "stores the answer for a step" do
     form_context.save_step(step, "test answer")
@@ -67,28 +67,28 @@ RSpec.describe FormContext do
   end
 
   it "stores submission details " do
-    form_context.save_submission_details(1, reference, email_sent)
+    form_context.save_submission_details(1, reference, requested_email_confirmation)
     expect(form_context.get_submission_reference(1)).to eq(reference)
-    expect(form_context.email_sent?(1)).to eq(email_sent)
+    expect(form_context.requested_email_confirmation?(1)).to eq(requested_email_confirmation)
   end
 
   it "stores the submission details for multiple forms without overwriting them" do
-    form_context.save_submission_details(1, reference, email_sent)
+    form_context.save_submission_details(1, reference, requested_email_confirmation)
 
     reference2 = Faker::Alphanumeric.alphanumeric(number: 8).upcase
-    email_sent2 = false
-    form_context.save_submission_details(2, reference2, email_sent2)
+    requested_email_confirmation2 = false
+    form_context.save_submission_details(2, reference2, requested_email_confirmation2)
 
     expect(form_context.get_submission_reference(1)).to eq(reference)
-    expect(form_context.email_sent?(1)).to eq(email_sent)
+    expect(form_context.requested_email_confirmation?(1)).to eq(requested_email_confirmation)
     expect(form_context.get_submission_reference(2)).to eq(reference2)
-    expect(form_context.email_sent?(2)).to eq(email_sent2)
+    expect(form_context.requested_email_confirmation?(2)).to eq(requested_email_confirmation2)
   end
 
   it "clearing answers for a form doesn't clear the submission details" do
-    form_context.save_submission_details(1, reference, email_sent)
+    form_context.save_submission_details(1, reference, requested_email_confirmation)
     form_context.clear(1)
     expect(form_context.get_submission_reference(1)).to eq(reference)
-    expect(form_context.email_sent?(1)).to eq(email_sent)
+    expect(form_context.requested_email_confirmation?(1)).to eq(requested_email_confirmation)
   end
 end
