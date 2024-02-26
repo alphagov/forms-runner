@@ -18,9 +18,12 @@ module Forms
       @step.update!(page_params)
 
       if current_context.save_step(@step)
+        current_context.clear_submission_details if is_first_page?
+
         unless mode.preview?
           LogEventService.new(current_context, @step, request, changing_existing_answer, page_params).log_page_save(logging_context)
         end
+
         redirect_to next_page
       else
         setup_instance_vars_for_view
@@ -78,6 +81,10 @@ module Forms
 
       EventLogger.log_page_event(logging_context, @step.question.question_text, "goto_page_before_routing_page_error", nil)
       render template: "errors/goto_page_before_routing_page", locals: { link_url: "#{Settings.forms_admin.base_url}/forms/#{@step.form_id}/pages/#{@step.page_slug}/conditions/#{@step.routing_conditions.first.id}", question_number: @step.page_number }, status: :unprocessable_entity
+    end
+
+    def is_first_page?
+      current_context.form.start_page == @step.id
     end
   end
 end

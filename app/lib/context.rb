@@ -69,4 +69,8 @@ class Context
   def requested_email_confirmation?
     @form_context.requested_email_confirmation?(form.id)
   end
+
+  def clear_submission_details
+    @form_context.clear_submission_details(form.id)
+  end
 end

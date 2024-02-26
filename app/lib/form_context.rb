@@ -45,6 +45,10 @@ class FormContext
     @store.dig(CONFIRMATION_KEY, form_id.to_s, REQUESTED_EMAIL_KEY.to_s)
   end
 
+  def clear_submission_details(form_id)
+    @store[CONFIRMATION_KEY][form_id.to_s] = nil
+  end
+
 private
 
   def page_key(step)
