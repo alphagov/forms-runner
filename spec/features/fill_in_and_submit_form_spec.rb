@@ -41,7 +41,7 @@ feature "Fill in and submit a form", type: :feature do
     when_i_opt_out_of_email_confirmation
     and_i_submit_my_form
     then_my_form_should_be_submitted
-    and_i_should_receive_a_reference_number
+    and_i_should_receive_a_reference_number if FeatureService.enabled?(:reference_numbers_enabled)
   end
 
   def when_i_visit_the_form_start_page
