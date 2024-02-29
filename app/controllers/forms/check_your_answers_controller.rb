@@ -17,11 +17,13 @@ module Forms
         if current_context.form_submitted?
           redirect_to error_repeat_submission_path(current_form.id)
         else
-          FormSubmissionService.call(logging_context:,
-                                     current_context:,
-                                     request:,
-                                     email_confirmation_form:,
-                                     preview_mode: mode.preview?).submit
+          submission_reference = FormSubmissionService.call(logging_context:,
+                                                            current_context:,
+                                                            request:,
+                                                            email_confirmation_form:,
+                                                            preview_mode: mode.preview?).submit
+
+          current_context.save_submission_reference(submission_reference)
 
           redirect_to :form_submitted, email_sent: requested_email_confirmation
         end

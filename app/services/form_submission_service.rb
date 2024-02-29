@@ -14,11 +14,13 @@ class FormSubmissionService
     @requested_email_confirmation = @email_confirmation_form.send_confirmation == "send_email"
     @preview_mode = preview_mode
     @timestamp = submission_timestamp
+    @submission_reference = generate_submission_reference
   end
 
   def submit
     submit_form_to_processing_team
     submit_confirmation_email_to_user
+    @submission_reference
   end
 
   def submit_form_to_processing_team
@@ -160,5 +162,9 @@ private
     return nil if [@form.support_url, @form.support_url_text].all?(&:blank?)
 
     "[#{@form.support_url_text}](#{@form.support_url})"
+  end
+
+  def generate_submission_reference
+    SecureRandom.base58(8).upcase
   end
 end
