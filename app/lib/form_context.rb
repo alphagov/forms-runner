@@ -1,29 +1,42 @@
 class FormContext
-  ROOT_KEY = :answers
+  ANSWERS_KEY = :answers
+  CONFIRMATION_KEY = :confirmation_details
+  SUBMISSION_REFERENCE_KEY = :submission_reference
+
   def initialize(store)
     @store = store
-    @store[ROOT_KEY] ||= {}
+    @store[ANSWERS_KEY] ||= {}
+    @store[CONFIRMATION_KEY] ||= {}
   end
 
   def save_step(step, answer)
-    @store[ROOT_KEY][form_key(step)] ||= {}
-    @store[ROOT_KEY][form_key(step)][page_key(step)] = answer
+    @store[ANSWERS_KEY][form_key(step)] ||= {}
+    @store[ANSWERS_KEY][form_key(step)][page_key(step)] = answer
   end
 
   def get_stored_answer(step)
-    @store.dig(ROOT_KEY, form_key(step), page_key(step))
+    @store.dig(ANSWERS_KEY, form_key(step), page_key(step))
   end
 
   def clear_stored_answer(step)
-    @store.dig(ROOT_KEY, form_key(step))&.delete(page_key(step))
+    @store.dig(ANSWERS_KEY, form_key(step))&.delete(page_key(step))
   end
 
   def clear(form_id)
-    @store[ROOT_KEY][form_id.to_s] = nil
+    @store[ANSWERS_KEY][form_id.to_s] = nil
   end
 
   def form_submitted?(form_id)
-    @store[ROOT_KEY][form_id.to_s].nil?
+    @store[ANSWERS_KEY][form_id.to_s].nil?
+  end
+
+  def save_submission_reference(form_id, reference)
+    @store[CONFIRMATION_KEY][form_id.to_s] ||= {}
+    @store[CONFIRMATION_KEY][form_id.to_s][SUBMISSION_REFERENCE_KEY.to_s] = reference
+  end
+
+  def get_submission_reference(form_id)
+    @store.dig(CONFIRMATION_KEY, form_id.to_s, SUBMISSION_REFERENCE_KEY.to_s)
   end
 
 private

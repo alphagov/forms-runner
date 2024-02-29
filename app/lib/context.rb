@@ -57,4 +57,12 @@ class Context
   def form_submitted?
     @form_context.form_submitted?(form.id)
   end
+
+  def save_submission_reference(reference)
+    @form_context.save_submission_reference(form.id, reference)
+  end
+
+  def get_submission_reference
+    @form_context.get_submission_reference(form.id)
+  end
 end

@@ -7,6 +7,7 @@ RSpec.describe FormContext do
   let(:step) { OpenStruct.new({ page_id: "5", form_id: 1 }) }
   let(:step2) { OpenStruct.new({ page_id: "1", form_id: 2 }) }
   let(:form_context) { described_class.new(store) }
+  let(:reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
 
   it "stores the answer for a step" do
     form_context.save_step(step, "test answer")
@@ -62,5 +63,24 @@ RSpec.describe FormContext do
         expect(form_context.form_submitted?(123)).to eq false
       end
     end
+  end
+
+  it "stores a submission reference " do
+    form_context.save_submission_reference(1, reference)
+    expect(form_context.get_submission_reference(1)).to eq(reference)
+  end
+
+  it "stores the submission reference for multiple forms without overwriting them" do
+    form_context.save_submission_reference(1, reference)
+    reference2 = Faker::Alphanumeric.alphanumeric(number: 8).upcase
+    form_context.save_submission_reference(2, reference2)
+    expect(form_context.get_submission_reference(1)).to eq(reference)
+    expect(form_context.get_submission_reference(2)).to eq(reference2)
+  end
+
+  it "clearing answers for a form doesn't clear the reference" do
+    form_context.save_submission_reference(1, reference)
+    form_context.clear(1)
+    expect(form_context.get_submission_reference(1)).to eq(reference)
   end
 end

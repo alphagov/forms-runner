@@ -95,5 +95,20 @@ RSpec.describe Context do
       expect(context2.find_or_create("1").show_answer).to eq("")
     end
   end
+
+  describe "submission references" do
+    let(:context) { described_class.new(form:, store: {}) }
+    let(:reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
+
+    context "when a reference has been stored" do
+      before do
+        context.save_submission_reference(reference)
+      end
+
+      it "the reference number can be retrieved" do
+        expect(context.get_submission_reference).to eq(reference)
+      end
+    end
+  end
 end
 # rubocop:enable RSpec/InstanceVariable
