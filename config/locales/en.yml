@@ -100,6 +100,8 @@ en:
     submitted:
       email_sent: We have sent you a confirmation email.
       title: Your form has been submitted
+      what_happens_next: What happens next
+      your_reference: Your reference number
   helpers:
     hint:
       email_confirmation_form:

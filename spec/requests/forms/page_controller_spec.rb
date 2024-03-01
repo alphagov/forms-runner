@@ -328,6 +328,10 @@ RSpec.describe Forms::PageController, type: :request do
   end
 
   describe "#save" do
+    before do
+      allow_any_instance_of(Context).to receive(:clear_submission_details)
+    end
+
     context "with preview mode on" do
       let(:api_url_suffix) { "/draft" }
 
@@ -353,11 +357,21 @@ RSpec.describe Forms::PageController, type: :request do
           expect(EventLogger).not_to receive(:log)
           post save_form_page_path("preview-draft", 2, form_data.form_slug, 1), params: { question: { text: "answer text" } }
         end
+
+        it "clears the submission reference from the session" do
+          expect_any_instance_of(Context).to receive(:clear_submission_details).once
+          post save_form_page_path("preview-draft", 2, form_data.form_slug, 1), params: { question: { text: "answer text" } }
+        end
       end
 
       context "with a subsequent page" do
         it "Logs the page_save event" do
           expect(EventLogger).not_to receive(:log)
+          post save_form_page_path("preview-draft", 2, form_data.form_slug, 2), params: { question: { text: "answer text" } }
+        end
+
+        it "does not clear the submission reference from the session" do
+          expect_any_instance_of(Context).not_to receive(:clear_submission_details)
           post save_form_page_path("preview-draft", 2, form_data.form_slug, 2), params: { question: { text: "answer text" } }
         end
       end

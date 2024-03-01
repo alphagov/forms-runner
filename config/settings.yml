@@ -1,4 +1,5 @@
-features: {}
+features:
+  reference_numbers_enabled: false
 
 forms_admin:
   # URL to form-admin

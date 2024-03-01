@@ -5,6 +5,7 @@ feature "Fill in and submit a form", type: :feature do
   let(:form) { build :form, :live, id: 1, name: "Fill in this form", pages:, start_page: 1 }
   let(:question_text) { pages[0].question_text }
   let(:answer_text) { "Answer text" }
+  let(:reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
 
   let(:req_headers) do
     {
@@ -25,6 +26,8 @@ feature "Fill in and submit a form", type: :feature do
       mock.get "/api/v1/forms/1", req_headers, form.to_json, 200
       mock.get "/api/v1/forms/1/live", req_headers, form.to_json(include: [:pages]), 200
     end
+
+    allow(SecureRandom).to receive(:base58).with(8).and_return(reference)
   end
 
   scenario "As a form filler" do
@@ -38,6 +41,7 @@ feature "Fill in and submit a form", type: :feature do
     when_i_opt_out_of_email_confirmation
     and_i_submit_my_form
     then_my_form_should_be_submitted
+    and_i_should_receive_a_reference_number if FeatureService.enabled?(:reference_numbers_enabled)
   end
 
   def when_i_visit_the_form_start_page
@@ -75,5 +79,9 @@ feature "Fill in and submit a form", type: :feature do
   def then_my_form_should_be_submitted
     expect(page.find("h1")).to have_text "Your form has been submitted"
     expect_page_to_have_no_axe_errors(page)
+  end
+
+  def and_i_should_receive_a_reference_number
+    expect(page).to have_text reference
   end
 end

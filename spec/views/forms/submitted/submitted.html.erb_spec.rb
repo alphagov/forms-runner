@@ -3,25 +3,41 @@ require "rails_helper"
 describe "forms/submitted/submitted.html.erb" do
   let(:form) { build :form, id: 1, what_happens_next_markdown: }
   let(:what_happens_next_markdown) { nil }
-  let(:email_sent) { false }
+  let(:requested_email_confirmation) { false }
+  let(:reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
 
   before do
     assign(:mode, OpenStruct.new(preview_draft?: false, preview_live?: false))
 
-    assign(:current_context, OpenStruct.new(form:))
+    assign(:current_context, OpenStruct.new(form:, get_submission_reference: reference, requested_email_confirmation?: requested_email_confirmation))
 
-    render template: "forms/submitted/submitted", locals: { email_sent: }
+    render template: "forms/submitted/submitted", locals: { requested_email_confirmation: }
   end
 
   it "contains a green govuk panel with success message " do
     expect(rendered).to have_css("h1.govuk-panel__title", text: "Your form has been submitted")
   end
 
+  context "when there is a reference present in the session", feature_reference_numbers_enabled: true do
+    it "displays the submission reference" do
+      expect(rendered).to have_text(I18n.t("form.submitted.your_reference"))
+      expect(rendered).to have_text(reference)
+    end
+  end
+
+  context "when there is no reference present in the session", feature_reference_numbers_enabled: true do
+    let(:reference) { nil }
+
+    it "does not display the submission reference text" do
+      expect(rendered).not_to have_text(I18n.t("form.submitted.your_reference"))
+    end
+  end
+
   context "when the form has extra information about what happens next" do
     let(:what_happens_next_markdown) { "See what the day brings" }
 
     it "displays what happens next heading" do
-      expect(rendered).to have_css("h2", text: "What happens next")
+      expect(rendered).to have_css("h2", text: I18n.t("form.submitted.what_happens_next"))
     end
 
     it "displays tells the user what happens next" do
@@ -36,7 +52,7 @@ describe "forms/submitted/submitted.html.erb" do
   end
 
   context "when the user has opted into the confirmation email" do
-    let(:email_sent) { true }
+    let(:requested_email_confirmation) { true }
 
     it "displays the email confirmation message" do
       expect(rendered).to have_css("p", text: I18n.t("form.submitted.email_sent"))

@@ -2,14 +2,19 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <%= govuk_panel(title_text: t('form.submitted.title'), classes: ["govuk-!-margin-bottom-7"]) %>
+    <%= govuk_panel(title_text: t('form.submitted.title'), classes: ["govuk-!-margin-bottom-7"], ) do %>
+      <% if FeatureService.enabled?(:reference_numbers_enabled) && @current_context.get_submission_reference.present? %>
+        <%= t('form.submitted.your_reference') %><br>
+        <strong><%= @current_context.get_submission_reference %></strong>
+      <% end %>
+    <% end %>
 
-    <% if email_sent %>
+    <% if @current_context.requested_email_confirmation? %>
       <p><%= t('form.submitted.email_sent') %></p>
     <% end %>
 
     <%if @current_context.form.what_happens_next_markdown.present? %>
-      <h2 class="govuk-heading-m">What happens next</h2>
+      <h2 class="govuk-heading-m"><%= t('form.submitted.what_happens_next') %></h2>
       <%= HtmlMarkdownSanitizer.new.render_scrubbed_markdown(@current_context.form.what_happens_next_markdown) %>
     <% end %>
   </div>

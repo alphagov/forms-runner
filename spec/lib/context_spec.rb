@@ -95,5 +95,33 @@ RSpec.describe Context do
       expect(context2.find_or_create("1").show_answer).to eq("")
     end
   end
+
+  describe "submission details" do
+    let(:context) { described_class.new(form:, store: {}) }
+    let(:reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
+    let(:requested_email_confirmation) { true }
+
+    context "when submission details have been stored" do
+      before do
+        context.save_submission_details(reference, requested_email_confirmation)
+      end
+
+      it "the reference number can be retrieved" do
+        expect(context.get_submission_reference).to eq(reference)
+      end
+
+      it "the requested_email_confirmation value can be retrieved" do
+        expect(context.requested_email_confirmation?).to eq(requested_email_confirmation)
+      end
+
+      it "can be cleared" do
+        context.save_submission_details(reference, requested_email_confirmation)
+        context.clear_submission_details
+
+        expect(context.get_submission_reference).to eq(nil)
+        expect(context.requested_email_confirmation?).to eq(nil)
+      end
+    end
+  end
 end
 # rubocop:enable RSpec/InstanceVariable

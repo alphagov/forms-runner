@@ -57,4 +57,20 @@ class Context
   def form_submitted?
     @form_context.form_submitted?(form.id)
   end
+
+  def save_submission_details(reference, requested_email_confirmation)
+    @form_context.save_submission_details(form.id, reference, requested_email_confirmation)
+  end
+
+  def get_submission_reference
+    @form_context.get_submission_reference(form.id)
+  end
+
+  def requested_email_confirmation?
+    @form_context.requested_email_confirmation?(form.id)
+  end
+
+  def clear_submission_details
+    @form_context.clear_submission_details(form.id)
+  end
 end

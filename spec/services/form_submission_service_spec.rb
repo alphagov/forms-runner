@@ -24,6 +24,11 @@ RSpec.describe FormSubmissionService do
   let(:step) { OpenStruct.new({ question_text: "What is the meaning of life?", show_answer_in_email: "42" }) }
   let(:preview_mode) { false }
   let(:email_confirmation_form) { build :email_confirmation_form_opted_in }
+  let(:reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
+
+  before do
+    allow(SecureRandom).to receive(:base58).with(8).and_return(reference)
+  end
 
   describe "#submit" do
     it "calls submit_form_to_processing_team method" do
@@ -34,6 +39,15 @@ RSpec.describe FormSubmissionService do
     it "calls submit_confirmation_email_to_user" do
       expect(service).to receive(:submit_confirmation_email_to_user).once
       service.submit
+    end
+
+    it "returns the submission reference" do
+      expect(service.submit).to eq reference
+    end
+
+    it "includes the submission reference in the logging context", feature_reference_numbers_enabled: true do
+      service.submit
+      expect(logging_context).to include({ submission_reference: reference })
     end
   end
 
