@@ -229,6 +229,19 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
   end
 
   describe "#submit_answers" do
+    before do
+      allow_mailer_to_return_mail_with_govuk_notify_response_with(
+        FormSubmissionMailer,
+        :email_completed_form,
+        id: "1111",
+      )
+      allow_mailer_to_return_mail_with_govuk_notify_response_with(
+        FormSubmissionConfirmationMailer,
+        :send_confirmation_email,
+        id: "2222",
+      )
+    end
+
     shared_examples "for notification references" do
       it "includes the notification references in the logging_context" do
         expect(logging_context).to include(notification_references: {
@@ -270,6 +283,14 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         expect(mail.govuk_notify_reference).to eq "for-my-ref"
       end
 
+      it "includes the submission notification IDs in the logging context" do
+        expect(logging_context[:notification_ids]).to include(submission_email_id: "1111")
+      end
+
+      it "includes the confirmation notification IDs in the logging context" do
+        expect(logging_context[:notification_ids]).to include(confirmation_email_id: "2222")
+      end
+
       include_examples "for notification references"
     end
 
@@ -301,6 +322,14 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         }
 
         expect(mail.body.raw_source).to match(expected_personalisation.to_s)
+      end
+
+      it "includes the submission notification IDs in the logging context" do
+        expect(logging_context[:notification_ids]).to include(submission_email_id: "1111")
+      end
+
+      it "includes the confirmation notification IDs in the logging context" do
+        expect(logging_context[:notification_ids]).to include(confirmation_email_id: "2222")
       end
 
       include_examples "for notification references"
@@ -393,6 +422,14 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         expect(response).to redirect_to(form_submitted_path)
       end
 
+      it "includes the submission notification IDs in the logging context" do
+        expect(logging_context[:notification_ids]).to include(submission_email_id: "1111")
+      end
+
+      it "does not include the confirmation notification IDs in the logging context" do
+        expect(logging_context[:notification_ids]).not_to include(:confirmation_email_id)
+      end
+
       it "does include submission email reference in logging context" do
         expect(logging_context[:notification_references]).to include(submission_email_reference: "for-my-ref")
       end
@@ -439,6 +476,14 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         expect(mail.body.raw_source).to include(expected_personalisation.to_s)
 
         expect(mail.govuk_notify_reference).to eq "confirmation-email-ref"
+      end
+
+      it "includes the submission notification IDs in the logging context" do
+        expect(logging_context[:notification_ids]).to include(submission_email_id: "1111")
+      end
+
+      it "includes the confirmation notification IDs in the logging context" do
+        expect(logging_context[:notification_ids]).to include(confirmation_email_id: "2222")
       end
 
       include_examples "for notification references"

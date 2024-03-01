@@ -40,11 +40,10 @@ RSpec.describe FormSubmissionService do
   describe "#submit_form_to_processing_team" do
     it "calls FormSubmissionMailer" do
       freeze_time do
-        delivery = double
-        expect(delivery).to receive(:deliver_now).with(no_args)
-        allow(FormSubmissionMailer).to receive(:email_completed_form).and_return(delivery)
+        allow(FormSubmissionMailer).to receive(:email_completed_form).and_call_original
 
         service.submit_form_to_processing_team
+
         expect(FormSubmissionMailer).to have_received(:email_completed_form).with(
           { title: "Form 1",
             text_input: "# What is the meaning of life?\n42\n",
@@ -54,6 +53,20 @@ RSpec.describe FormSubmissionService do
             preview_mode: false },
         ).once
       end
+    end
+
+    it "adds the notification ID to the logging context" do
+      allow_mailer_to_return_mail_with_govuk_notify_response_with(
+        FormSubmissionMailer,
+        :email_completed_form,
+        id: "id-for-submission-email-notification",
+      )
+
+      service.submit_form_to_processing_team
+
+      expect(logging_context).to include(notification_ids: {
+        submission_email_id: "id-for-submission-email-notification",
+      })
     end
 
     it "logs submission" do
@@ -93,11 +106,10 @@ RSpec.describe FormSubmissionService do
 
       it "calls FormSubmissionMailer" do
         freeze_time do
-          delivery = double
-          expect(delivery).to receive(:deliver_now).with(no_args)
-          allow(FormSubmissionMailer).to receive(:email_completed_form).and_return(delivery)
+          allow(FormSubmissionMailer).to receive(:email_completed_form).and_call_original
 
           service.submit_form_to_processing_team
+
           expect(FormSubmissionMailer).to have_received(:email_completed_form).with(
             { title: "Form 1",
               text_input: "# What is the meaning of life?\n42\n",
@@ -154,9 +166,7 @@ RSpec.describe FormSubmissionService do
   describe "#submit_confirmation_email_to_user" do
     it "calls FormSubmissionConfirmationMailer" do
       freeze_time do
-        delivery = double
-        expect(delivery).to receive(:deliver_now).with(no_args)
-        allow(FormSubmissionConfirmationMailer).to receive(:send_confirmation_email).and_return(delivery)
+        allow(FormSubmissionConfirmationMailer).to receive(:send_confirmation_email).and_call_original
 
         service.submit_confirmation_email_to_user
         expect(FormSubmissionConfirmationMailer).to have_received(:send_confirmation_email).with(
