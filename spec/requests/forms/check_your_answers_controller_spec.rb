@@ -75,6 +75,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
   let(:repeat_form_submission) { false }
 
+  let(:reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
+
   before do
     ActiveResource::HttpMock.respond_to do |mock|
       mock.get "/api/v1/forms/2#{api_url_suffix}", req_headers, form_data.to_json, 200
@@ -85,6 +87,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       allow(context_spy).to receive(:form_submitted?).and_return(repeat_form_submission)
       context_spy
     end
+
+    allow(SecureRandom).to receive(:base58).with(8).and_return(reference)
   end
 
   describe "#show" do
@@ -457,25 +461,54 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         expect(response).to redirect_to(form_submitted_path)
       end
 
-      it "sends a confirmation email" do
-        deliveries = ActionMailer::Base.deliveries
-        expect(deliveries.length).to eq 2
+      context "when submission references are enabled", feature_reference_numbers_enabled: true do
+        it "sends a confirmation email" do
+          deliveries = ActionMailer::Base.deliveries
+          expect(deliveries.length).to eq 2
 
-        mail = deliveries[1]
-        expect(mail.to).to eq([email_confirmation_form[:confirmation_email_address]])
+          mail = deliveries[1]
+          expect(mail.to).to eq([email_confirmation_form[:confirmation_email_address]])
 
-        expected_personalisation = {
-          title: form_data.name,
-          what_happens_next_text: form_data.what_happens_next_markdown,
-          support_contact_details: contact_support_details_format,
-          submission_time: "10:00am",
-          submission_date: "14 December 2022",
-          test: "no",
-        }
+          expected_personalisation = {
+            title: form_data.name,
+            what_happens_next_text: form_data.what_happens_next_markdown,
+            support_contact_details: contact_support_details_format,
+            submission_time: "10:00am",
+            submission_date: "14 December 2022",
+            test: "no",
+            include_submission_reference: "yes",
+            submission_reference: reference,
+          }
 
-        expect(mail.body.raw_source).to include(expected_personalisation.to_s)
+          expect(mail.body.raw_source).to include(expected_personalisation.to_s)
 
-        expect(mail.govuk_notify_reference).to eq "confirmation-email-ref"
+          expect(mail.govuk_notify_reference).to eq "confirmation-email-ref"
+        end
+      end
+
+      context "when submission references are not enabled", feature_reference_numbers_enabled: false do
+        it "sends a confirmation email" do
+          deliveries = ActionMailer::Base.deliveries
+          expect(deliveries.length).to eq 2
+
+          mail = deliveries[1]
+          expect(mail.to).to eq([email_confirmation_form[:confirmation_email_address]])
+
+          expected_personalisation = {
+            title: form_data.name,
+            what_happens_next_text: form_data.what_happens_next_markdown,
+            support_contact_details: contact_support_details_format,
+            submission_time: "10:00am",
+            submission_date: "14 December 2022",
+            test: "no",
+            include_submission_reference: "no",
+            submission_reference: "",
+          }
+
+          expect(mail.body.raw_source).to include(expected_personalisation.to_s)
+
+          expect(mail.govuk_notify_reference).to eq "confirmation-email-ref"
+        end
       end
 
       it "includes the submission notification IDs in the logging context" do

@@ -1,5 +1,5 @@
 class FormSubmissionConfirmationMailer < GovukNotifyRails::Mailer
-  def send_confirmation_email(title:, what_happens_next_markdown:, support_contact_details:, submission_timestamp:, preview_mode:, reference:, confirmation_email_address:)
+  def send_confirmation_email(title:, what_happens_next_markdown:, support_contact_details:, submission_timestamp:, preview_mode:, reference:, confirmation_email_address:, submission_reference:)
     set_template(Settings.govuk_notify.form_filler_confirmation_email_template_id)
 
     set_personalisation(
@@ -12,6 +12,8 @@ class FormSubmissionConfirmationMailer < GovukNotifyRails::Mailer
       # conditionals, so to simulate negative conditionals we add two boolean
       # flags; but they must always have opposite values!
       test: make_notify_boolean(preview_mode),
+      include_submission_reference: make_notify_boolean(FeatureService.enabled?(:reference_numbers_enabled)),
+      submission_reference: FeatureService.enabled?(:reference_numbers_enabled) ? submission_reference : "",
     )
 
     set_reference(reference)

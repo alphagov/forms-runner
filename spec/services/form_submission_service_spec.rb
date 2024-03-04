@@ -190,7 +190,8 @@ RSpec.describe FormSubmissionService do
             submission_timestamp: Time.zone.now,
             preview_mode:,
             reference: email_confirmation_form.confirmation_email_reference,
-            confirmation_email_address: email_confirmation_form.confirmation_email_address },
+            confirmation_email_address: email_confirmation_form.confirmation_email_address,
+            submission_reference: reference },
         ).once
       end
     end

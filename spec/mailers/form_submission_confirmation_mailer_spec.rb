@@ -8,7 +8,8 @@ describe FormSubmissionConfirmationMailer, type: :mailer do
                                             submission_timestamp:,
                                             preview_mode:,
                                             reference: "for-my-ref",
-                                            confirmation_email_address:)
+                                            confirmation_email_address:,
+                                            submission_reference:)
   end
   let(:title) { "Form 1" }
   let(:what_happens_next_markdown) { "Please wait for a response" }
@@ -16,6 +17,7 @@ describe FormSubmissionConfirmationMailer, type: :mailer do
   let(:preview_mode) { false }
   let(:confirmation_email_address) { "testing@gov.uk" }
   let(:submission_timestamp) { Time.zone.now }
+  let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
 
   context "when form filler wants an form submission confirmation email" do
     it "sends an email with the correct template" do

@@ -62,6 +62,7 @@ class FormSubmissionService
       preview_mode: @preview_mode,
       reference: @email_confirmation_form.confirmation_email_reference,
       confirmation_email_address: @email_confirmation_form.confirmation_email_address,
+      submission_reference: @submission_reference,
     ).deliver_now
 
     @logging_context[:notification_ids] ||= {}
