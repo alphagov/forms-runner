@@ -64,7 +64,8 @@ RSpec.describe FormSubmissionService do
             reference: email_confirmation_form.submission_email_reference,
             timestamp: Time.zone.now,
             submission_email: "testing@gov.uk",
-            preview_mode: false },
+            preview_mode: false,
+            submission_reference: reference },
         ).once
       end
     end
@@ -130,7 +131,8 @@ RSpec.describe FormSubmissionService do
               reference: email_confirmation_form.submission_email_reference,
               timestamp: Time.zone.now,
               submission_email: "testing@gov.uk",
-              preview_mode: true },
+              preview_mode: true,
+              submission_reference: reference },
           ).once
         end
       end

@@ -41,7 +41,8 @@ class FormSubmissionService
                             preview_mode: @preview_mode,
                             reference: @email_confirmation_form.submission_email_reference,
                             timestamp: @timestamp,
-                            submission_email: @form.submission_email).deliver_now
+                            submission_email: @form.submission_email,
+                            submission_reference: @submission_reference).deliver_now
 
       @logging_context[:notification_ids] ||= {}
       @logging_context[:notification_ids][:submission_email_id] = mail.govuk_notify_response.id
