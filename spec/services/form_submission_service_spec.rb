@@ -59,13 +59,10 @@ RSpec.describe FormSubmissionService do
         service.submit_form_to_processing_team
 
         expect(FormSubmissionMailer).to have_received(:email_completed_form).with(
-          { title: "Form 1",
-            text_input: "# What is the meaning of life?\n42\n",
+          { text_input: "# What is the meaning of life?\n42\n",
             reference: email_confirmation_form.submission_email_reference,
-            timestamp: Time.zone.now,
             submission_email: "testing@gov.uk",
-            preview_mode: false,
-            submission_reference: reference },
+            mailer_options: instance_of(FormSubmissionService::MailerOptions) },
         ).once
       end
     end
@@ -126,13 +123,10 @@ RSpec.describe FormSubmissionService do
           service.submit_form_to_processing_team
 
           expect(FormSubmissionMailer).to have_received(:email_completed_form).with(
-            { title: "Form 1",
-              text_input: "# What is the meaning of life?\n42\n",
+            { text_input: "# What is the meaning of life?\n42\n",
               reference: email_confirmation_form.submission_email_reference,
-              timestamp: Time.zone.now,
               submission_email: "testing@gov.uk",
-              preview_mode: true,
-              submission_reference: reference },
+              mailer_options: instance_of(FormSubmissionService::MailerOptions) },
           ).once
         end
       end

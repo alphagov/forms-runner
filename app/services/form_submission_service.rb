@@ -42,14 +42,12 @@ class FormSubmissionService
     end
 
     unless @form.submission_email.blank? && @preview_mode
+
       mail = FormSubmissionMailer
-      .email_completed_form(title: form_title,
-                            text_input: email_body,
-                            preview_mode: @preview_mode,
+      .email_completed_form(text_input: email_body,
                             reference: @email_confirmation_form.submission_email_reference,
-                            timestamp: @timestamp,
                             submission_email: @form.submission_email,
-                            submission_reference: @submission_reference).deliver_now
+                            mailer_options: @mailer_options).deliver_now
 
       @logging_context[:notification_ids] ||= {}
       @logging_context[:notification_ids][:submission_email_id] = mail.govuk_notify_response.id
