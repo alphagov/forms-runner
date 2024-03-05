@@ -18,6 +18,11 @@ class FormSubmissionService
     @timestamp = submission_timestamp
     @submission_reference = generate_submission_reference
 
+    @mailer_options = MailerOptions.new(title: form_title,
+                                        preview_mode: @preview_mode,
+                                        timestamp: @timestamp,
+                                        submission_reference: @submission_reference)
+
     if FeatureService.enabled?(:reference_numbers_enabled)
       @logging_context[:submission_reference] = @submission_reference
     end
@@ -58,14 +63,11 @@ class FormSubmissionService
     return nil unless @requested_email_confirmation
 
     mail = FormSubmissionConfirmationMailer.send_confirmation_email(
-      title: form_title,
       what_happens_next_markdown: @form.what_happens_next_markdown,
       support_contact_details: formatted_support_details,
-      submission_timestamp: @timestamp,
-      preview_mode: @preview_mode,
       reference: @email_confirmation_form.confirmation_email_reference,
       confirmation_email_address: @email_confirmation_form.confirmation_email_address,
-      submission_reference: @submission_reference,
+      mailer_options: @mailer_options,
     ).deliver_now
 
     @logging_context[:notification_ids] ||= {}

@@ -2,14 +2,17 @@ require "rails_helper"
 
 describe FormSubmissionConfirmationMailer, type: :mailer do
   let(:mail) do
-    described_class.send_confirmation_email(title:,
-                                            what_happens_next_markdown:,
+    described_class.send_confirmation_email(what_happens_next_markdown:,
                                             support_contact_details:,
-                                            submission_timestamp:,
-                                            preview_mode:,
                                             reference: "for-my-ref",
                                             confirmation_email_address:,
-                                            submission_reference:)
+                                            mailer_options:)
+  end
+  let(:mailer_options) do
+    FormSubmissionService::MailerOptions.new(title:,
+                                             preview_mode:,
+                                             timestamp: submission_timestamp,
+                                             submission_reference:)
   end
   let(:title) { "Form 1" }
   let(:what_happens_next_markdown) { "Please wait for a response" }

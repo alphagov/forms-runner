@@ -186,14 +186,11 @@ RSpec.describe FormSubmissionService do
 
         service.submit_confirmation_email_to_user
         expect(FormSubmissionConfirmationMailer).to have_received(:send_confirmation_email).with(
-          { title: "Form 1",
-            what_happens_next_markdown: form.what_happens_next_markdown,
+          { what_happens_next_markdown: form.what_happens_next_markdown,
             support_contact_details: contact_support_details_format,
-            submission_timestamp: Time.zone.now,
-            preview_mode:,
             reference: email_confirmation_form.confirmation_email_reference,
             confirmation_email_address: email_confirmation_form.confirmation_email_address,
-            submission_reference: reference },
+            mailer_options: instance_of(FormSubmissionService::MailerOptions) },
         ).once
       end
     end
