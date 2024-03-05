@@ -5,6 +5,8 @@ class FormSubmissionService
     end
   end
 
+  MailerOptions = Data.define(:title, :preview_mode, :timestamp, :submission_reference)
+
   def initialize(logging_context:, current_context:, request:, email_confirmation_form:, preview_mode:)
     @logging_context = logging_context
     @current_context = current_context
