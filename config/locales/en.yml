@@ -98,10 +98,10 @@ en:
       submit: Submit
       title: Check your answers before submitting your form
     submitted:
-      email_sent: We have sent you a confirmation email.
+      email_sent: We’ve sent you a confirmation email.
       title: Your form has been submitted
       what_happens_next: What happens next
-      your_reference: Your reference number
+      your_reference: 'Your form reference number is:'
   helpers:
     hint:
       email_confirmation_form:
