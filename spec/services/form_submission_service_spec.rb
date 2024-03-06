@@ -59,12 +59,10 @@ RSpec.describe FormSubmissionService do
         service.submit_form_to_processing_team
 
         expect(FormSubmissionMailer).to have_received(:email_completed_form).with(
-          { title: "Form 1",
-            text_input: "# What is the meaning of life?\n42\n",
-            reference: email_confirmation_form.submission_email_reference,
-            timestamp: Time.zone.now,
+          { text_input: "# What is the meaning of life?\n42\n",
+            notify_response_id: email_confirmation_form.submission_email_reference,
             submission_email: "testing@gov.uk",
-            preview_mode: false },
+            mailer_options: instance_of(FormSubmissionService::MailerOptions) },
         ).once
       end
     end
@@ -125,12 +123,10 @@ RSpec.describe FormSubmissionService do
           service.submit_form_to_processing_team
 
           expect(FormSubmissionMailer).to have_received(:email_completed_form).with(
-            { title: "Form 1",
-              text_input: "# What is the meaning of life?\n42\n",
-              reference: email_confirmation_form.submission_email_reference,
-              timestamp: Time.zone.now,
+            { text_input: "# What is the meaning of life?\n42\n",
+              notify_response_id: email_confirmation_form.submission_email_reference,
               submission_email: "testing@gov.uk",
-              preview_mode: true },
+              mailer_options: instance_of(FormSubmissionService::MailerOptions) },
           ).once
         end
       end
@@ -184,13 +180,11 @@ RSpec.describe FormSubmissionService do
 
         service.submit_confirmation_email_to_user
         expect(FormSubmissionConfirmationMailer).to have_received(:send_confirmation_email).with(
-          { title: "Form 1",
-            what_happens_next_markdown: form.what_happens_next_markdown,
+          { what_happens_next_markdown: form.what_happens_next_markdown,
             support_contact_details: contact_support_details_format,
-            submission_timestamp: Time.zone.now,
-            preview_mode:,
-            reference: email_confirmation_form.confirmation_email_reference,
-            confirmation_email_address: email_confirmation_form.confirmation_email_address },
+            notify_response_id: email_confirmation_form.confirmation_email_reference,
+            confirmation_email_address: email_confirmation_form.confirmation_email_address,
+            mailer_options: instance_of(FormSubmissionService::MailerOptions) },
         ).once
       end
     end

@@ -1,12 +1,19 @@
 require "rails_helper"
 
 describe FormSubmissionMailer, type: :mailer do
-  let(:mail) { described_class.email_completed_form(title:, text_input:, reference: "for-my-ref", preview_mode:, timestamp: submission_timestamp, submission_email:) }
+  let(:mail) { described_class.email_completed_form(text_input:, notify_response_id: "for-my-ref", submission_email:, mailer_options:) }
   let(:title) { "Form 1" }
   let(:text_input) { "My question: My answer" }
   let(:preview_mode) { false }
   let(:submission_email) { "testing@gov.uk" }
   let(:submission_timestamp) { Time.zone.now }
+  let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
+  let(:mailer_options) do
+    FormSubmissionService::MailerOptions.new(title:,
+                                             preview_mode:,
+                                             timestamp: submission_timestamp,
+                                             submission_reference:)
+  end
 
   context "when form filler submits a completed form" do
     it "sends an email with the correct template" do

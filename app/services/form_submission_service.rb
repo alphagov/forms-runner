@@ -5,6 +5,8 @@ class FormSubmissionService
     end
   end
 
+  MailerOptions = Data.define(:title, :preview_mode, :timestamp, :submission_reference)
+
   def initialize(logging_context:, current_context:, request:, email_confirmation_form:, preview_mode:)
     @logging_context = logging_context
     @current_context = current_context
@@ -15,6 +17,11 @@ class FormSubmissionService
     @preview_mode = preview_mode
     @timestamp = submission_timestamp
     @submission_reference = generate_submission_reference
+
+    @mailer_options = MailerOptions.new(title: form_title,
+                                        preview_mode: @preview_mode,
+                                        timestamp: @timestamp,
+                                        submission_reference: @submission_reference)
 
     if FeatureService.enabled?(:reference_numbers_enabled)
       @logging_context[:submission_reference] = @submission_reference
@@ -35,13 +42,12 @@ class FormSubmissionService
     end
 
     unless @form.submission_email.blank? && @preview_mode
+
       mail = FormSubmissionMailer
-      .email_completed_form(title: form_title,
-                            text_input: email_body,
-                            preview_mode: @preview_mode,
-                            reference: @email_confirmation_form.submission_email_reference,
-                            timestamp: @timestamp,
-                            submission_email: @form.submission_email).deliver_now
+      .email_completed_form(text_input: email_body,
+                            notify_response_id: @email_confirmation_form.submission_email_reference,
+                            submission_email: @form.submission_email,
+                            mailer_options: @mailer_options).deliver_now
 
       @logging_context[:notification_ids] ||= {}
       @logging_context[:notification_ids][:submission_email_id] = mail.govuk_notify_response.id
@@ -55,13 +61,11 @@ class FormSubmissionService
     return nil unless @requested_email_confirmation
 
     mail = FormSubmissionConfirmationMailer.send_confirmation_email(
-      title: form_title,
       what_happens_next_markdown: @form.what_happens_next_markdown,
       support_contact_details: formatted_support_details,
-      submission_timestamp: @timestamp,
-      preview_mode: @preview_mode,
-      reference: @email_confirmation_form.confirmation_email_reference,
+      notify_response_id: @email_confirmation_form.confirmation_email_reference,
       confirmation_email_address: @email_confirmation_form.confirmation_email_address,
+      mailer_options: @mailer_options,
     ).deliver_now
 
     @logging_context[:notification_ids] ||= {}

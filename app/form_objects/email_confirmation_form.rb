@@ -11,7 +11,7 @@ class EmailConfirmationForm
 
   def initialize(...)
     super(...)
-    generate_submission_references! unless @confirmation_email_reference || @submission_email_reference
+    generate_notify_response_ids! unless @confirmation_email_reference || @submission_email_reference
   end
 
   def validate_email?
@@ -20,11 +20,11 @@ class EmailConfirmationForm
 
 private
 
-  def generate_submission_references!
-    reference = SecureRandom.uuid
+  def generate_notify_response_ids!
+    uuid = SecureRandom.uuid
     self.attributes = {
-      confirmation_email_reference: "#{reference}-confirmation-email",
-      submission_email_reference: "#{reference}-submission-email",
+      confirmation_email_reference: "#{uuid}-confirmation-email",
+      submission_email_reference: "#{uuid}-submission-email",
     }
   end
 end
