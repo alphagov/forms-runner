@@ -1,5 +1,5 @@
 class FormSubmissionConfirmationMailer < GovukNotifyRails::Mailer
-  def send_confirmation_email(what_happens_next_markdown:, support_contact_details:, reference:, confirmation_email_address:, mailer_options:)
+  def send_confirmation_email(what_happens_next_markdown:, support_contact_details:, notify_response_id:, confirmation_email_address:, mailer_options:)
     set_template(Settings.govuk_notify.form_filler_confirmation_email_template_id)
 
     set_personalisation(
@@ -16,7 +16,7 @@ class FormSubmissionConfirmationMailer < GovukNotifyRails::Mailer
       submission_reference: FeatureService.enabled?(:reference_numbers_enabled) ? mailer_options.submission_reference : "",
     )
 
-    set_reference(reference)
+    set_reference(notify_response_id)
 
     set_email_reply_to(Settings.govuk_notify.form_submission_email_reply_to_id)
 

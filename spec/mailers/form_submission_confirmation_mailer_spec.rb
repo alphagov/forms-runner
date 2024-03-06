@@ -4,7 +4,7 @@ describe FormSubmissionConfirmationMailer, type: :mailer do
   let(:mail) do
     described_class.send_confirmation_email(what_happens_next_markdown:,
                                             support_contact_details:,
-                                            reference: "for-my-ref",
+                                            notify_response_id: "for-my-ref",
                                             confirmation_email_address:,
                                             mailer_options:)
   end

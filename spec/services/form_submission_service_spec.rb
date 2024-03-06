@@ -60,7 +60,7 @@ RSpec.describe FormSubmissionService do
 
         expect(FormSubmissionMailer).to have_received(:email_completed_form).with(
           { text_input: "# What is the meaning of life?\n42\n",
-            reference: email_confirmation_form.submission_email_reference,
+            notify_response_id: email_confirmation_form.submission_email_reference,
             submission_email: "testing@gov.uk",
             mailer_options: instance_of(FormSubmissionService::MailerOptions) },
         ).once
@@ -124,7 +124,7 @@ RSpec.describe FormSubmissionService do
 
           expect(FormSubmissionMailer).to have_received(:email_completed_form).with(
             { text_input: "# What is the meaning of life?\n42\n",
-              reference: email_confirmation_form.submission_email_reference,
+              notify_response_id: email_confirmation_form.submission_email_reference,
               submission_email: "testing@gov.uk",
               mailer_options: instance_of(FormSubmissionService::MailerOptions) },
           ).once
@@ -182,7 +182,7 @@ RSpec.describe FormSubmissionService do
         expect(FormSubmissionConfirmationMailer).to have_received(:send_confirmation_email).with(
           { what_happens_next_markdown: form.what_happens_next_markdown,
             support_contact_details: contact_support_details_format,
-            reference: email_confirmation_form.confirmation_email_reference,
+            notify_response_id: email_confirmation_form.confirmation_email_reference,
             confirmation_email_address: email_confirmation_form.confirmation_email_address,
             mailer_options: instance_of(FormSubmissionService::MailerOptions) },
         ).once

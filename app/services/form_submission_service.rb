@@ -45,7 +45,7 @@ class FormSubmissionService
 
       mail = FormSubmissionMailer
       .email_completed_form(text_input: email_body,
-                            reference: @email_confirmation_form.submission_email_reference,
+                            notify_response_id: @email_confirmation_form.submission_email_reference,
                             submission_email: @form.submission_email,
                             mailer_options: @mailer_options).deliver_now
 
@@ -63,7 +63,7 @@ class FormSubmissionService
     mail = FormSubmissionConfirmationMailer.send_confirmation_email(
       what_happens_next_markdown: @form.what_happens_next_markdown,
       support_contact_details: formatted_support_details,
-      reference: @email_confirmation_form.confirmation_email_reference,
+      notify_response_id: @email_confirmation_form.confirmation_email_reference,
       confirmation_email_address: @email_confirmation_form.confirmation_email_address,
       mailer_options: @mailer_options,
     ).deliver_now
