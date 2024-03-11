@@ -12,7 +12,8 @@ describe FormSubmissionConfirmationMailer, type: :mailer do
     FormSubmissionService::MailerOptions.new(title:,
                                              preview_mode:,
                                              timestamp: submission_timestamp,
-                                             submission_reference:)
+                                             submission_reference:,
+                                             payment_url:)
   end
   let(:title) { "Form 1" }
   let(:what_happens_next_markdown) { "Please wait for a response" }
@@ -21,6 +22,7 @@ describe FormSubmissionConfirmationMailer, type: :mailer do
   let(:confirmation_email_address) { "testing@gov.uk" }
   let(:submission_timestamp) { Time.zone.now }
   let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
+  let(:payment_url) { nil }
 
   context "when form filler wants an form submission confirmation email" do
     it "sends an email with the correct template" do
@@ -51,6 +53,30 @@ describe FormSubmissionConfirmationMailer, type: :mailer do
     it "does include an email-reply-to" do
       Settings.govuk_notify.form_submission_email_reply_to_id = "send-this-to-me@gov.uk"
       expect(mail.govuk_notify_email_reply_to).to eq("send-this-to-me@gov.uk")
+    end
+
+    context "when a payment url is in" do
+      let(:payment_url) { "https://www.gov.uk/payments/test-service/pay-for-licence?reference=#{submission_reference}" }
+
+      it "sets the boolean for the payment content to 'yes'" do
+        expect(mail.govuk_notify_personalisation[:include_payment_link]).to eq("yes")
+      end
+
+      it "sets the payment_link" do
+        expect(mail.govuk_notify_personalisation[:payment_link]).to eq(payment_url)
+      end
+    end
+
+    context "when a payment link is not set" do
+      let(:payment_url) { nil }
+
+      it "sets the boolean for the payment content to 'no'" do
+        expect(mail.govuk_notify_personalisation[:include_payment_link]).to eq("no")
+      end
+
+      it "sets the payment link personalisation to an empty string" do
+        expect(mail.govuk_notify_personalisation[:payment_link]).to eq("")
+      end
     end
 
     describe "submission date/time" do

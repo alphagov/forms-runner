@@ -283,6 +283,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
             not_test: "no",
             include_submission_reference: "no",
             submission_reference: "",
+            include_payment_link: "no",
           }
 
           expect(mail.body.raw_source).to match(expected_personalisation.to_s)
@@ -308,6 +309,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
             not_test: "no",
             include_submission_reference: "yes",
             submission_reference: reference,
+            include_payment_link: "no",
           }
 
           expect(mail.body.raw_source).to match(expected_personalisation.to_s)
@@ -354,6 +356,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
           not_test: "yes",
           include_submission_reference: "no",
           submission_reference: "",
+          include_payment_link: "no",
         }
 
         expect(mail.body.raw_source).to match(expected_personalisation.to_s)
@@ -509,6 +512,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
             test: "no",
             include_submission_reference: "yes",
             submission_reference: reference,
+            include_payment_link: "no",
+            payment_link: "",
           }
 
           expect(mail.body.raw_source).to include(expected_personalisation.to_s)
@@ -534,6 +539,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
             test: "no",
             include_submission_reference: "no",
             submission_reference: "",
+            include_payment_link: "no",
+            payment_link: "",
           }
 
           expect(mail.body.raw_source).to include(expected_personalisation.to_s)

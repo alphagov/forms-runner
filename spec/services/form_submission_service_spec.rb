@@ -11,7 +11,8 @@ RSpec.describe FormSubmissionService do
           support_phone:,
           support_url:,
           support_url_text:,
-          submission_email: "testing@gov.uk")
+          submission_email:,
+          payment_url:)
   end
   let(:what_happens_next_markdown) { "We usually respond to applications within 10 working days." }
   let(:support_email) { Faker::Internet.email(domain: "example.gov.uk") }
@@ -25,6 +26,8 @@ RSpec.describe FormSubmissionService do
   let(:preview_mode) { false }
   let(:email_confirmation_form) { build :email_confirmation_form_opted_in }
   let(:reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
+  let(:payment_url) { nil }
+  let(:submission_email)  { "testing@gov.uk" }
 
   before do
     allow(SecureRandom).to receive(:base58).with(8).and_return(reference)
@@ -96,7 +99,7 @@ RSpec.describe FormSubmissionService do
 
     describe "validations" do
       context "when form has no submission email" do
-        let(:form) { OpenStruct.new(id: 1, form_name: "Form 1", submission_email: nil, steps: [step]) }
+        let(:submission_email) { nil }
 
         it "raises an error" do
           expect { service.submit_form_to_processing_team }.to raise_error("Form id(1) is missing a submission email address")
@@ -146,7 +149,7 @@ RSpec.describe FormSubmissionService do
 
       describe "validations" do
         context "when form has no submission email" do
-          let(:form) { OpenStruct.new(id: 1, form_name: "Form 1", submission_email: nil, steps: [step]) }
+          let(:submission_email) { nil }
 
           it "does not raise an error" do
             expect { service.submit_form_to_processing_team }.not_to raise_error
