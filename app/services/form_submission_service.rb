@@ -7,10 +7,9 @@ class FormSubmissionService
 
   MailerOptions = Data.define(:title, :preview_mode, :timestamp, :submission_reference, :payment_url)
 
-  def initialize(logging_context:, current_context:, request:, email_confirmation_form:, preview_mode:)
+  def initialize(logging_context:, current_context:, email_confirmation_form:, preview_mode:)
     @logging_context = logging_context
     @current_context = current_context
-    @request = request
     @form = current_context.form
     @email_confirmation_form = email_confirmation_form
     @requested_email_confirmation = @email_confirmation_form.send_confirmation == "send_email"
