@@ -1,9 +1,10 @@
 require "rails_helper"
 
 describe "forms/submitted/submitted.html.erb" do
-  let(:form) { build :form, id: 1, what_happens_next_markdown: }
+  let(:form) { build :form, id: 1, what_happens_next_markdown:, payment_url: }
   let(:what_happens_next_markdown) { nil }
   let(:requested_email_confirmation) { false }
+  let(:payment_url) { nil }
   let(:reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
 
   before do
@@ -22,6 +23,18 @@ describe "forms/submitted/submitted.html.erb" do
     it "displays the submission reference" do
       expect(rendered).to have_text(I18n.t("form.submitted.your_reference"))
       expect(rendered).to have_text(reference)
+    end
+
+    context "when there is a payment url for the form" do
+      let(:payment_url) { "https://www.gov.uk/payments/organisation/service" }
+
+      it "displays the need to pay panel" do
+        expect(rendered).to have_css(".app-panel--payment-required", text: I18n.t("form.submitted.need_to_pay"))
+      end
+
+      it "displays the payment button" do
+        expect(rendered).to have_button(I18n.t("form.submitted.continue_to_pay"))
+      end
     end
   end
 

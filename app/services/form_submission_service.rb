@@ -5,7 +5,7 @@ class FormSubmissionService
     end
   end
 
-  MailerOptions = Data.define(:title, :preview_mode, :timestamp, :submission_reference)
+  MailerOptions = Data.define(:title, :preview_mode, :timestamp, :submission_reference, :payment_url)
 
   def initialize(logging_context:, current_context:, request:, email_confirmation_form:, preview_mode:)
     @logging_context = logging_context
@@ -21,7 +21,8 @@ class FormSubmissionService
     @mailer_options = MailerOptions.new(title: form_title,
                                         preview_mode: @preview_mode,
                                         timestamp: @timestamp,
-                                        submission_reference: @submission_reference)
+                                        submission_reference: @submission_reference,
+                                        payment_url: @form.payment_url_with_reference(@submission_reference))
 
     if FeatureService.enabled?(:reference_numbers_enabled)
       @logging_context[:submission_reference] = @submission_reference

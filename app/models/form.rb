@@ -32,4 +32,10 @@ class Form < ActiveResource::Base
   def live_at_date
     try(:live_at).try(:to_time)
   end
+
+  def payment_url_with_reference(reference)
+    return nil if payment_url.blank?
+
+    "#{payment_url}?reference=#{reference}"
+  end
 end

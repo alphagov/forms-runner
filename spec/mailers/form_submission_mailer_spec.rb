@@ -8,11 +8,13 @@ describe FormSubmissionMailer, type: :mailer do
   let(:submission_email) { "testing@gov.uk" }
   let(:submission_timestamp) { Time.zone.now }
   let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
+  let(:payment_url) { nil }
   let(:mailer_options) do
     FormSubmissionService::MailerOptions.new(title:,
                                              preview_mode:,
                                              timestamp: submission_timestamp,
-                                             submission_reference:)
+                                             submission_reference:,
+                                             payment_url:)
   end
 
   context "when form filler submits a completed form" do
@@ -40,6 +42,22 @@ describe FormSubmissionMailer, type: :mailer do
     it "does not use the preview personalisation" do
       expect(mail.govuk_notify_personalisation[:test]).to eq("no")
       expect(mail.govuk_notify_personalisation[:not_test]).to eq("yes")
+    end
+
+    context "when a payment url is in" do
+      let(:payment_url) { "https://www.gov.uk/payments/test-service/pay-for-licence?reference=#{submission_reference}" }
+
+      it "sets the boolean for the payment content to 'yes'" do
+        expect(mail.govuk_notify_personalisation[:include_payment_link]).to eq("yes")
+      end
+    end
+
+    context "when a payment link is not set" do
+      let(:payment_url) { nil }
+
+      it "sets the boolean for the payment content to 'no'" do
+        expect(mail.govuk_notify_personalisation[:include_payment_link]).to eq("no")
+      end
     end
 
     it "does include an email-reply-to" do

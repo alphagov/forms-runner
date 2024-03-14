@@ -94,4 +94,25 @@ RSpec.describe Form, type: :model do
       end
     end
   end
+
+  describe "#payment_url_with_reference" do
+    let(:response_data) { { id: 1, name: "form name", payment_url:, start_page: 1 }.to_json }
+    let(:reference) { SecureRandom.base58(8).upcase }
+
+    context "when there is a payment_url" do
+      let(:payment_url) { "https://www.gov.uk/payments/test-service/pay-for-licence" }
+
+      it "returns a full payment link" do
+        expect(described_class.find(1).payment_url_with_reference(reference)).to eq("#{payment_url}?reference=#{reference}")
+      end
+    end
+
+    context "when there is no payment_url" do
+      let(:payment_url) { nil }
+
+      it "returns nil" do
+        expect(described_class.find(1).payment_url_with_reference(reference)).to be_nil
+      end
+    end
+  end
 end

@@ -13,6 +13,7 @@ FactoryBot.define do
     support_phone { nil }
     support_url { nil }
     support_url_text { nil }
+    payment_url { nil }
 
     declaration_text { nil }
     declaration_section_completed { false }
@@ -62,6 +63,10 @@ FactoryBot.define do
       pages do
         Array.new(pages_count) { association(:page, :with_selections_settings) }
       end
+    end
+
+    trait :with_payment_url do
+      payment_url { "https://www.gov.uk/payments/test-service/pay-for-licence" }
     end
   end
 end
