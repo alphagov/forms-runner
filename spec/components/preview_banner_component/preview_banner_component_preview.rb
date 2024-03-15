@@ -5,12 +5,17 @@ class PreviewBannerComponent::PreviewBannerComponentPreview < ViewComponent::Pre
   end
 
   def preview_draft
-    mode = OpenStruct.new(live: false, preview?: true, preview_draft?: true, preview_live?: false, to_s: "preview-draft")
+    mode = OpenStruct.new(live: false, preview?: true, preview_draft?: true, preview_archived?: false, preview_live?: false, to_s: "preview-draft")
+    render(PreviewBannerComponent::View.new(mode:))
+  end
+
+  def preview_archived
+    mode = OpenStruct.new(live: false, preview?: true, preview_draft?: false, preview_archived?: true, preview_live?: false, to_s: "preview-archived")
     render(PreviewBannerComponent::View.new(mode:))
   end
 
   def preview_live
-    mode = OpenStruct.new(live: false, preview?: true, preview_draft?: false, preview_live?: true, to_s: "preview-live")
+    mode = OpenStruct.new(live: false, preview?: true, preview_draft?: false, preview_archived?: false, preview_live?: true, to_s: "preview-live")
     render(PreviewBannerComponent::View.new(mode:))
   end
 end
