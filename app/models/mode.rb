@@ -8,11 +8,15 @@ class Mode
   end
 
   def preview?
-    preview_draft? || preview_live?
+    preview_draft? || preview_archived? || preview_live?
   end
 
   def preview_draft?
     @mode_string == "preview-draft"
+  end
+
+  def preview_archived?
+    @mode_string == "preview-archived"
   end
 
   def preview_live?

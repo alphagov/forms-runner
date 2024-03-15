@@ -14,6 +14,10 @@ class Form < ActiveResource::Base
     find(:one, from: "#{prefix}forms/#{id}/draft")
   end
 
+  def self.find_archived(id)
+    find(:one, from: "#{prefix}forms/#{id}/archived")
+  end
+
   def last_page
     pages.find { |p| !p.has_next_page? }
   end

@@ -123,9 +123,11 @@ en:
     phase_banner_text_preview-draft: You’re previewing the draft version of this form
     phase_banner_text_preview-draft_edit_link: Edit this question
     phase_banner_text_preview-live: You’re previewing the live version of this form
+    title_text_preview-archived: Archived preview
     title_text_preview-draft: Draft preview
     title_text_preview-live: Live preview
   page:
+    archived_preview: archived preview
     draft_preview: draft preview
     live_preview: live preview
     none_of_the_above: None of the above

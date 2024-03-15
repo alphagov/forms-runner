@@ -36,6 +36,8 @@ module Forms
 
       if mode.preview_draft?
         Form.find_draft(form_id)
+      elsif mode.preview_archived?
+        Form.find_archived(form_id)
       elsif mode.preview_live?
         Form.find_live(form_id)
       elsif mode.live

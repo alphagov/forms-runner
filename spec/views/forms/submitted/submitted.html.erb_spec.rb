@@ -8,7 +8,7 @@ describe "forms/submitted/submitted.html.erb" do
   let(:reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
 
   before do
-    assign(:mode, OpenStruct.new(preview_draft?: false, preview_live?: false))
+    assign(:mode, OpenStruct.new(preview_draft?: false, preview_archived?: false, preview_live?: false))
 
     assign(:current_context, OpenStruct.new(form:, get_submission_reference: reference, requested_email_confirmation?: requested_email_confirmation))
 
