@@ -10,6 +10,14 @@ RSpec.describe PreviewComponent::View, type: :component do
     expect(page).to have_link(I18n.t("mode.phase_banner_text_preview-draft_edit_link", href: "https://gov.uk"))
   end
 
+  it "shows in preview_archived" do
+    mode = Mode.new("preview-archived")
+    render_inline(described_class.new(mode:))
+    expect(page).to have_selector(".govuk-phase-banner")
+    expect(page).to have_selector(".govuk-tag--orange", text: I18n.t("mode.phase_banner_tag_preview-archived"))
+    expect(page).to have_content(I18n.t("mode.phase_banner_text_preview-archived"))
+  end
+
   it "shows in preview_live" do
     mode = Mode.new("preview-live")
     render_inline(described_class.new(mode:))
