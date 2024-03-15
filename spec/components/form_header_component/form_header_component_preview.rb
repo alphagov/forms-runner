@@ -11,6 +11,12 @@ class FormHeaderComponent::FormHeaderComponentPreview < ViewComponent::Preview
     render(FormHeaderComponent::View.new(current_context:, mode:, service_url_overide: "/form/1/test"))
   end
 
+  def preview_archived
+    mode = Mode.new("preview-archived")
+    current_context = OpenStruct.new(form: OpenStruct.new(id: 1, name: "test"), form_slug: "test")
+    render(FormHeaderComponent::View.new(current_context:, mode:, service_url_overide: "/form/1/test"))
+  end
+
   def preview_live
     mode = Mode.new("preview-live")
     current_context = OpenStruct.new(form: OpenStruct.new(id: 1, name: "test"), form_slug: "test")

@@ -38,6 +38,26 @@ RSpec.describe FormHeaderComponent::View, type: :component do
     end
   end
 
+  context "when mode is preview_archived" do
+    let(:mode) { Mode.new("preview-archived") }
+
+    it "has service name" do
+      render_inline(described_class.new(current_context:, mode:, service_url_overide: "/form/1/test"))
+
+      expect(page).to have_selector(".govuk-header__service-name")
+      expect(page).to have_selector(".app-header--preview-archived")
+      expect(page).to have_content("test_form_name")
+    end
+
+    it "links to the forms-admin homepage" do
+      allow(Settings.forms_admin).to receive(:base_url).and_return("http://forms-admin/")
+
+      render_inline(described_class.new(current_context:, mode:, service_url_overide: "/form/1/test"))
+
+      expect(page.find(".govuk-header__link--homepage")[:href]).to eq "http://forms-admin/"
+    end
+  end
+
   context "when mode is preview_live" do
     let(:mode) { Mode.new("preview-live") }
 
