@@ -88,7 +88,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       context_spy
     end
 
-    allow(SecureRandom).to receive(:base58).with(8).and_return(reference)
+    allow(ReferenceNumberService).to receive(:generate).and_return(reference)
   end
 
   describe "#show" do

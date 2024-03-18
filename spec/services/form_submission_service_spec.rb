@@ -30,7 +30,7 @@ RSpec.describe FormSubmissionService do
   let(:submission_email)  { "testing@gov.uk" }
 
   before do
-    allow(SecureRandom).to receive(:base58).with(8).and_return(reference)
+    allow(ReferenceNumberService).to receive(:generate).and_return(reference)
   end
 
   describe "#submit" do

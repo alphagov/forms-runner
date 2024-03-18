@@ -16,7 +16,7 @@ class FormSubmissionService
     @requested_email_confirmation = @email_confirmation_form.send_confirmation == "send_email"
     @preview_mode = preview_mode
     @timestamp = submission_timestamp
-    @submission_reference = generate_submission_reference
+    @submission_reference = ReferenceNumberService.generate
 
     @mailer_options = MailerOptions.new(title: form_title,
                                         preview_mode: @preview_mode,
@@ -177,9 +177,5 @@ private
     return nil if [@form.support_url, @form.support_url_text].all?(&:blank?)
 
     "[#{@form.support_url_text}](#{@form.support_url})"
-  end
-
-  def generate_submission_reference
-    SecureRandom.base58(8).upcase
   end
 end
