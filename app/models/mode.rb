@@ -3,7 +3,7 @@ class Mode
     @mode_string = mode_string
   end
 
-  def live
+  def live?
     !preview?
   end
 

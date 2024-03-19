@@ -40,7 +40,7 @@ module Forms
         Form.find_archived(form_id)
       elsif mode.preview_live?
         Form.find_live(form_id)
-      elsif mode.live
+      elsif mode.live?
         Form.find_live(form_id)
       end
     end
