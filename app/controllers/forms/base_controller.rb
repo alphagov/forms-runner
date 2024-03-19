@@ -24,25 +24,11 @@ module Forms
   private
 
     def current_form
-      @current_form ||= fetch_form
+      @current_form ||= Form.find_with_mode(id: params.require(:form_id), mode:)
     end
 
     def current_context
       @current_context ||= Context.new(form: current_form, store: session)
-    end
-
-    def fetch_form
-      form_id = params.require(:form_id)
-
-      if mode.preview_draft?
-        Form.find_draft(form_id)
-      elsif mode.preview_archived?
-        Form.find_archived(form_id)
-      elsif mode.preview_live?
-        Form.find_live(form_id)
-      elsif mode.live?
-        Form.find_live(form_id)
-      end
     end
 
     def mode
