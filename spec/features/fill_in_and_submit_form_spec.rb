@@ -2,7 +2,7 @@ require "rails_helper"
 
 feature "Fill in and submit a form", type: :feature do
   let(:pages) { [(build :page, :with_text_settings, id: 1, form_id: 1, routing_conditions: [])] }
-  let(:form) { build :form, :live, id: 1, name: "Fill in this form", pages:, start_page: 1 }
+  let(:form) { build :form, :live?, id: 1, name: "Fill in this form", pages:, start_page: 1 }
   let(:question_text) { pages[0].question_text }
   let(:answer_text) { "Answer text" }
   let(:reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }

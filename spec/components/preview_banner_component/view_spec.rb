@@ -9,6 +9,14 @@ RSpec.describe PreviewBannerComponent::View, type: :component do
     expect(page).to have_content(I18n.t("preview_banner.heading"))
   end
 
+  it "shows in preview_archived" do
+    mode = Mode.new("preview-archived")
+    render_inline(described_class.new(mode:))
+    expect(page).to have_selector(".govuk-notification-banner")
+    expect(page).to have_content(I18n.t("preview_banner.title"))
+    expect(page).to have_content(I18n.t("preview_banner.heading"))
+  end
+
   it "shows in preview_live" do
     mode = Mode.new("preview-live")
     render_inline(described_class.new(mode:))

@@ -2,7 +2,7 @@ require "rails_helper"
 
 feature "Email confirmation", type: :feature do
   let(:pages) { [(build :page, :with_text_settings, id: 1, form_id: 1, routing_conditions: [])] }
-  let(:form) { build :form, :live, id: 1, name: "Apply for a juggling license", pages:, start_page: 1 }
+  let(:form) { build :form, :live?, id: 1, name: "Apply for a juggling license", pages:, start_page: 1 }
   let(:text_answer) { Faker::Lorem.sentence }
 
   let(:req_headers) do

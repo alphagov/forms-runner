@@ -18,6 +18,8 @@ module PreviewComponent
     def phase_banner_colour
       if @mode.preview_draft?
         "yellow"
+      elsif @mode.preview_archived?
+        "orange"
       else
         "turquoise"
       end
