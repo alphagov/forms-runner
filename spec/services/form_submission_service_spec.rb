@@ -244,7 +244,7 @@ RSpec.describe FormSubmissionService do
   end
 
   describe "FormSubmissionService::NotifyTemplateBodyFilter" do
-    let(:notify_template_body_filter) { FormSubmissionService::NotifyTemplateBodyFilter.new }
+    let(:notify_template_body_filter) { NotifyTemplateFormatter.new }
 
     describe "#build_question_answers_section" do
       let(:form) { OpenStruct.new(completed_steps: [step]) }

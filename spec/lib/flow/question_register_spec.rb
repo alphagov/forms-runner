@@ -1,7 +1,7 @@
 require "rails_helper"
 require "ostruct"
 
-RSpec.describe QuestionRegister do
+RSpec.describe Flow::QuestionRegister do
   it "returns a class given a valid answer_type" do
     %i[date address email national_insurance_number phone_number number organisation_name text].each do |type|
       page = OpenStruct.new(answer_type: type)

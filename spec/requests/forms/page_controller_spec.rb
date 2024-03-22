@@ -124,9 +124,9 @@ RSpec.describe Forms::PageController, type: :request do
 
       context "with a page that has a previous page" do
         it "Displays a link to the previous page" do
-          allow_any_instance_of(Context).to receive(:can_visit?)
+          allow_any_instance_of(Flow::Context).to receive(:can_visit?)
                                               .and_return(true)
-          allow_any_instance_of(Context).to receive(:previous_step).and_return(1)
+          allow_any_instance_of(Flow::Context).to receive(:previous_step).and_return(1)
           get form_page_path("preview-draft", 2, form_data.form_slug, 2)
           expect(response.body).to include(form_page_path(2, form_data.form_slug, 1))
         end
@@ -222,9 +222,9 @@ RSpec.describe Forms::PageController, type: :request do
 
       context "with a page that has a previous page" do
         it "Displays a link to the previous page" do
-          allow_any_instance_of(Context).to receive(:can_visit?)
+          allow_any_instance_of(Flow::Context).to receive(:can_visit?)
                                               .and_return(true)
-          allow_any_instance_of(Context).to receive(:previous_step).and_return(1)
+          allow_any_instance_of(Flow::Context).to receive(:previous_step).and_return(1)
           get form_page_path("form", 2, form_data.form_slug, 2)
           expect(response.body).to include(form_page_path(2, form_data.form_slug, 1))
         end
@@ -329,7 +329,7 @@ RSpec.describe Forms::PageController, type: :request do
 
   describe "#save" do
     before do
-      allow_any_instance_of(Context).to receive(:clear_submission_details)
+      allow_any_instance_of(Flow::Context).to receive(:clear_submission_details)
     end
 
     context "with preview mode on" do
@@ -359,7 +359,7 @@ RSpec.describe Forms::PageController, type: :request do
         end
 
         it "clears the submission reference from the session" do
-          expect_any_instance_of(Context).to receive(:clear_submission_details).once
+          expect_any_instance_of(Flow::Context).to receive(:clear_submission_details).once
           post save_form_page_path("preview-draft", 2, form_data.form_slug, 1), params: { question: { text: "answer text" } }
         end
       end
@@ -371,7 +371,7 @@ RSpec.describe Forms::PageController, type: :request do
         end
 
         it "does not clear the submission reference from the session" do
-          expect_any_instance_of(Context).not_to receive(:clear_submission_details)
+          expect_any_instance_of(Flow::Context).not_to receive(:clear_submission_details)
           post save_form_page_path("preview-draft", 2, form_data.form_slug, 2), params: { question: { text: "answer text" } }
         end
       end

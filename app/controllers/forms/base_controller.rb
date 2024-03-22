@@ -7,12 +7,12 @@ module Forms
       LogEventService.log_form_start(logging_context) unless mode.preview?
     end
 
-    rescue_from ActiveResource::ResourceNotFound, StepFactory::PageNotFoundError do
+    rescue_from ActiveResource::ResourceNotFound, Flow::StepFactory::PageNotFoundError do
       render template: "errors/not_found", status: :not_found
     end
 
     def error_repeat_submission
-      @current_context = Context.new(form: current_form, store: session)
+      @current_context = Flow::Context.new(form: current_form, store: session)
       render template: "errors/repeat_submission", locals: { current_form: }
     end
 
@@ -28,7 +28,7 @@ module Forms
     end
 
     def current_context
-      @current_context ||= Context.new(form: current_form, store: session)
+      @current_context ||= Flow::Context.new(form: current_form, store: session)
     end
 
     def mode

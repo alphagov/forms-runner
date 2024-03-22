@@ -1,7 +1,7 @@
 require "rails_helper"
 
 # rubocop:disable RSpec/InstanceVariable
-RSpec.describe Context do
+RSpec.describe Flow::Context do
   before do
     ActiveResource::HttpMock.disable_net_connection!
   end
