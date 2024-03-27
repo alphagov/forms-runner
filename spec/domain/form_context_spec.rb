@@ -1,6 +1,6 @@
 require "rails_helper"
 require "ostruct"
-require_relative "../../app/lib/form_context"
+require_relative "../../app/domain/form_context"
 
 RSpec.describe FormContext do
   let(:store) { {} }

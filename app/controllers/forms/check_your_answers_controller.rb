@@ -19,7 +19,6 @@ module Forms
         else
           submission_reference = FormSubmissionService.call(logging_context:,
                                                             current_context:,
-                                                            request:,
                                                             email_confirmation_form:,
                                                             preview_mode: mode.preview?).submit
 

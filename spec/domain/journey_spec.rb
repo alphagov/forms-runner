@@ -1,5 +1,5 @@
 require "rails_helper"
-require_relative "../../app/lib/journey"
+require_relative "../../app/domain/journey"
 
 RSpec.describe Journey do
   let(:store) { {} }
