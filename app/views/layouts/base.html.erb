@@ -33,7 +33,7 @@
     <div class="govuk-width-container ">
       <%= yield(:before_content) %>
 
-      <main class="govuk-main-wrapper" id="main-content" role="main">
+      <main class="govuk-main-wrapper" id="main-content">
         <%= render(PreviewBannerComponent::View.new(mode: @mode)) %>
 
         <%= yield %>
