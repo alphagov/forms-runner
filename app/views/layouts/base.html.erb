@@ -22,7 +22,9 @@
   </head>
 
   <body class="govuk-template__body ">
-    <script>document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');</script>
+    <script>
+      document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');
+    </script>
 
     <%= yield :skip_link %>
 
@@ -31,11 +33,11 @@
     <div class="govuk-width-container ">
       <%= yield(:before_content) %>
 
-      <%= render(MainComponent::View.new(mode: @mode, is_question: @is_question)) do %>
+      <main class="govuk-main-wrapper" id="main-content">
         <%= render(PreviewBannerComponent::View.new(mode: @mode)) %>
 
         <%= yield %>
-      <% end %>
+      </main>
     </div>
 
     <%= yield :footer %>
