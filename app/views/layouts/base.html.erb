@@ -33,11 +33,11 @@
     <div class="govuk-width-container ">
       <%= yield(:before_content) %>
 
-      <%= render(MainComponent::View.new) do %>
+      <main class="govuk-main-wrapper" id="main-content" role="main">
         <%= render(PreviewBannerComponent::View.new(mode: @mode)) %>
 
         <%= yield %>
-      <% end %>
+      </main>
     </div>
 
     <%= yield :footer %>
