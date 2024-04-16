@@ -4,7 +4,7 @@ RSpec.describe LimitedHtmlScrubber do
   let(:limited_html_scrubber) { described_class.new }
 
   it "returns an array of html tags allowed" do
-    expect(limited_html_scrubber.tags).to eq %w[a ol ul li p]
+    expect(limited_html_scrubber.tags).to eq %w[a ol ul li p br]
   end
 
   it "returns an array of html attributes allowed" do
@@ -44,7 +44,7 @@ RSpec.describe LimitedHtmlScrubber do
     let(:limited_html_scrubber) { described_class.new(allow_headings: true) }
 
     it "returns an array of html tags allowed" do
-      expect(limited_html_scrubber.tags).to match_array %w[a h2 h3 ol ul li p]
+      expect(limited_html_scrubber.tags).to match_array %w[a h2 h3 ol ul li p br]
     end
 
     it "returns an array of html attributes allowed" do
