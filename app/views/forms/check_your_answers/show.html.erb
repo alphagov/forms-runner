@@ -6,24 +6,32 @@
   <% end %>
 <% end %>
 
-<div class="govuk-grid-row">
-  <div class="<%= @full_width ? 'govuk-grid-column-full' : 'govuk-grid-column-two-thirds-from-desktop' %>">
-    <%= form_with model: email_confirmation_form, url: @form_submit_path do |form| %>
+<%= form_with model: email_confirmation_form, url: @form_submit_path do |form| %>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds-from-desktop">
       <% if email_confirmation_form&.errors&.any? %>
         <%= form.govuk_error_summary %>
       <% end %>
 
       <h1 class="govuk-heading-l">Check your answers before submitting your form</h1>
+    </div>
+  </div>
 
+  <div class="govuk-grid-row">
+    <div class="<%= @full_width ? 'govuk-grid-column-full' : 'govuk-grid-column-two-thirds-from-desktop' %>">
       <%if @rows %>
         <%= govuk_summary_list(rows: @rows.map { |row|
-          { key: row[:key],
-            value: { text: format_paragraphs(row[:value][:text].present? ? row[:value][:text] : t('form.check_your_answers.not_completed')) },
-            actions: row[:actions]
-          } })
-        %>
+            { key: row[:key],
+              value: { text: format_paragraphs(row[:value][:text].present? ? row[:value][:text] : t('form.check_your_answers.not_completed')) },
+              actions: row[:actions]
+            } })
+          %>
       <% end %>
+    </div>
+  </div>
 
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds-from-desktop">
       <%= form.govuk_radio_buttons_fieldset(:send_confirmation, legend: { size: 'm', tag: 'h2' }) do %>
         <%= form.govuk_radio_button :send_confirmation, 'send_email' do %>
           <%= form.govuk_email_field :confirmation_email_address, autocomplete: 'email', spellcheck: false  %>
@@ -41,6 +49,6 @@
       <%= form.hidden_field :submission_email_reference, id: 'submission-email-reference' %>
 
       <%= form.govuk_submit(@current_context.form.declaration_text.present? ? t('form.check_your_answers.agree_and_submit') : t('form.check_your_answers.submit')) %>
-    <% end %>
+    </div>
   </div>
-</div>
+<% end %>
