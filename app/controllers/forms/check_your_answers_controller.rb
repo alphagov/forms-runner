@@ -17,6 +17,12 @@ module Forms
         if current_context.form_submitted?
           redirect_to error_repeat_submission_path(current_form.id)
         else
+          unless current_context.can_visit?(CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG)
+            message = "current_context.can_visit? is false, about to do incomplete or repeat submission?"
+            EventLogger.log_form_event(logging_context, "incomplete_or_repeat_submission_error")
+            Sentry.capture_message(message)
+          end
+
           submission_reference = FormSubmissionService.call(logging_context:,
                                                             current_context:,
                                                             request:,
