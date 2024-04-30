@@ -1,5 +1,5 @@
 class FormSubmissionMailer < GovukNotifyRails::Mailer
-  def email_completed_form(text_input:, notify_response_id:, submission_email:, mailer_options:)
+  def email_confirmation_input(text_input:, notify_response_id:, submission_email:, mailer_options:)
     set_template(Settings.govuk_notify.form_submission_email_template_id)
 
     set_personalisation(

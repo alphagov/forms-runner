@@ -4,16 +4,16 @@ module Forms
       return redirect_to form_page_path(current_context.form.id, current_context.form.form_slug, current_context.next_page_slug) unless current_context.can_visit?(CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG)
 
       setup_check_your_answers
-      email_confirmation_form = EmailConfirmationForm.new
+      email_confirmation_input = EmailConfirmationInput.new
 
-      render template: "forms/check_your_answers/show", locals: { email_confirmation_form: }
+      render template: "forms/check_your_answers/show", locals: { email_confirmation_input: }
     end
 
     def submit_answers
-      email_confirmation_form = EmailConfirmationForm.new(email_confirmation_form_params)
-      requested_email_confirmation = email_confirmation_form.send_confirmation == "send_email"
+      email_confirmation_input = EmailConfirmationInput.new(email_confirmation_input_params)
+      requested_email_confirmation = email_confirmation_input.send_confirmation == "send_email"
 
-      if email_confirmation_form.valid?
+      if email_confirmation_input.valid?
         if current_context.form_submitted?
           redirect_to error_repeat_submission_path(current_form.id)
         else
@@ -26,7 +26,7 @@ module Forms
           submission_reference = FormSubmissionService.call(logging_context:,
                                                             current_context:,
                                                             request:,
-                                                            email_confirmation_form:,
+                                                            email_confirmation_input:,
                                                             preview_mode: mode.preview?).submit
 
           current_context.save_submission_details(submission_reference, requested_email_confirmation)
@@ -36,7 +36,7 @@ module Forms
       else
         setup_check_your_answers
 
-        render template: "forms/check_your_answers/show", locals: { email_confirmation_form: }, status: :unprocessable_entity
+        render template: "forms/check_your_answers/show", locals: { email_confirmation_input: }, status: :unprocessable_entity
       end
     rescue StandardError => e
       log_rescued_exception(e)
@@ -63,8 +63,8 @@ module Forms
       @full_width = current_context.completed_steps.any? { |step| step.question.has_long_answer? }
     end
 
-    def email_confirmation_form_params
-      params.require(:email_confirmation_form).permit(:send_confirmation, :confirmation_email_address, :confirmation_email_reference, :submission_email_reference)
+    def email_confirmation_input_params
+      params.require(:email_confirmation_input).permit(:send_confirmation, :confirmation_email_address, :confirmation_email_reference, :submission_email_reference)
     end
 
     def setup_check_your_answers
@@ -82,10 +82,10 @@ module Forms
 
     def set_logging_context
       super
-      if params[:email_confirmation_form].present?
+      if params[:email_confirmation_input].present?
         logging_context[:notification_references] = {}.tap do |h|
-          h[:confirmation_email_reference] = email_confirmation_form_params[:confirmation_email_reference] if email_confirmation_form_params[:send_confirmation] == "send_email"
-          h[:submission_email_reference] = email_confirmation_form_params[:submission_email_reference]
+          h[:confirmation_email_reference] = email_confirmation_input_params[:confirmation_email_reference] if email_confirmation_input_params[:send_confirmation] == "send_email"
+          h[:submission_email_reference] = email_confirmation_input_params[:submission_email_reference]
         end
       end
     end

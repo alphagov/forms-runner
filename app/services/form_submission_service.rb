@@ -7,13 +7,13 @@ class FormSubmissionService
 
   MailerOptions = Data.define(:title, :preview_mode, :timestamp, :submission_reference, :payment_url)
 
-  def initialize(logging_context:, current_context:, request:, email_confirmation_form:, preview_mode:)
+  def initialize(logging_context:, current_context:, request:, email_confirmation_input:, preview_mode:)
     @logging_context = logging_context
     @current_context = current_context
     @request = request
     @form = current_context.form
-    @email_confirmation_form = email_confirmation_form
-    @requested_email_confirmation = @email_confirmation_form.send_confirmation == "send_email"
+    @email_confirmation_input = email_confirmation_input
+    @requested_email_confirmation = @email_confirmation_input.send_confirmation == "send_email"
     @preview_mode = preview_mode
     @timestamp = submission_timestamp
     @submission_reference = ReferenceNumberService.generate
@@ -45,10 +45,10 @@ class FormSubmissionService
     unless @form.submission_email.blank? && @preview_mode
 
       mail = FormSubmissionMailer
-      .email_completed_form(text_input: email_body,
-                            notify_response_id: @email_confirmation_form.submission_email_reference,
-                            submission_email: @form.submission_email,
-                            mailer_options: @mailer_options).deliver_now
+      .email_confirmation_input(text_input: email_body,
+                                notify_response_id: @email_confirmation_input.submission_email_reference,
+                                submission_email: @form.submission_email,
+                                mailer_options: @mailer_options).deliver_now
 
       @logging_context[:notification_ids] ||= {}
       @logging_context[:notification_ids][:submission_email_id] = mail.govuk_notify_response.id
@@ -64,8 +64,8 @@ class FormSubmissionService
     mail = FormSubmissionConfirmationMailer.send_confirmation_email(
       what_happens_next_markdown: @form.what_happens_next_markdown,
       support_contact_details: formatted_support_details,
-      notify_response_id: @email_confirmation_form.confirmation_email_reference,
-      confirmation_email_address: @email_confirmation_form.confirmation_email_address,
+      notify_response_id: @email_confirmation_input.confirmation_email_reference,
+      confirmation_email_address: @email_confirmation_input.confirmation_email_address,
       mailer_options: @mailer_options,
     ).deliver_now
 
