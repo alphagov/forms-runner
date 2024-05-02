@@ -82,7 +82,7 @@ RSpec.describe ErrorsController, type: :request do
         mode: "form",
         form_id: 2,
         form_slug: "form-name",
-        email_confirmation_form: {
+        email_confirmation_input: {
           send_confirmation: "skip_confirmation",
           notify_reference: "test-ref",
         },

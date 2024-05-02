@@ -3,7 +3,7 @@ en:
   activemodel:
     errors:
       models:
-        email_confirmation_form:
+        email_confirmation_input:
           attributes:
             confirmation_email_address:
               blank: Enter an email address
@@ -106,16 +106,16 @@ en:
       your_reference: 'Your form reference number is:'
   helpers:
     hint:
-      email_confirmation_form:
+      email_confirmation_input:
         send_confirmation: We’ll only use the email address you provide here to send a confirmation that your form’s been successfully submitted. It will not contain a copy of your answers.
     label:
-      email_confirmation_form:
+      email_confirmation_input:
         confirmation_email_address: What email address do you want us to send your confirmation to?
         send_confirmation_options:
           send_email: 'Yes'
           skip_confirmation: 'No'
     legend:
-      email_confirmation_form:
+      email_confirmation_input:
         send_confirmation: Do you want to get an email confirming your form has been submitted?
   mode:
     phase_banner_tag_preview-archived: Archived preview

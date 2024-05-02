@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe FormSubmissionService do
-  let(:service) { described_class.call(logging_context:, current_context:, request:, email_confirmation_form:, preview_mode:) }
+  let(:service) { described_class.call(logging_context:, current_context:, request:, email_confirmation_input:, preview_mode:) }
   let(:form) do
     build(:form,
           id: 1,
@@ -24,7 +24,7 @@ RSpec.describe FormSubmissionService do
   let(:request) { OpenStruct.new({ url: "url", method: "method" }) }
   let(:step) { OpenStruct.new({ question_text: "What is the meaning of life?", show_answer_in_email: "42" }) }
   let(:preview_mode) { false }
-  let(:email_confirmation_form) { build :email_confirmation_form_opted_in }
+  let(:email_confirmation_input) { build :email_confirmation_input_opted_in }
   let(:reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
   let(:payment_url) { nil }
   let(:submission_email)  { "testing@gov.uk" }
@@ -57,13 +57,13 @@ RSpec.describe FormSubmissionService do
   describe "#submit_form_to_processing_team" do
     it "calls FormSubmissionMailer" do
       freeze_time do
-        allow(FormSubmissionMailer).to receive(:email_completed_form).and_call_original
+        allow(FormSubmissionMailer).to receive(:email_confirmation_input).and_call_original
 
         service.submit_form_to_processing_team
 
-        expect(FormSubmissionMailer).to have_received(:email_completed_form).with(
+        expect(FormSubmissionMailer).to have_received(:email_confirmation_input).with(
           { text_input: "# What is the meaning of life?\n42\n",
-            notify_response_id: email_confirmation_form.submission_email_reference,
+            notify_response_id: email_confirmation_input.submission_email_reference,
             submission_email: "testing@gov.uk",
             mailer_options: instance_of(FormSubmissionService::MailerOptions) },
         ).once
@@ -73,7 +73,7 @@ RSpec.describe FormSubmissionService do
     it "adds the notification ID to the logging context" do
       allow_mailer_to_return_mail_with_govuk_notify_response_with(
         FormSubmissionMailer,
-        :email_completed_form,
+        :email_confirmation_input,
         id: "id-for-submission-email-notification",
       )
 
@@ -121,13 +121,13 @@ RSpec.describe FormSubmissionService do
 
       it "calls FormSubmissionMailer" do
         freeze_time do
-          allow(FormSubmissionMailer).to receive(:email_completed_form).and_call_original
+          allow(FormSubmissionMailer).to receive(:email_confirmation_input).and_call_original
 
           service.submit_form_to_processing_team
 
-          expect(FormSubmissionMailer).to have_received(:email_completed_form).with(
+          expect(FormSubmissionMailer).to have_received(:email_confirmation_input).with(
             { text_input: "# What is the meaning of life?\n42\n",
-              notify_response_id: email_confirmation_form.submission_email_reference,
+              notify_response_id: email_confirmation_input.submission_email_reference,
               submission_email: "testing@gov.uk",
               mailer_options: instance_of(FormSubmissionService::MailerOptions) },
           ).once
@@ -156,11 +156,11 @@ RSpec.describe FormSubmissionService do
           end
 
           it "does not call the FormSubmissionMailer" do
-            allow(FormSubmissionMailer).to receive(:email_completed_form).at_least(:once)
+            allow(FormSubmissionMailer).to receive(:email_confirmation_input).at_least(:once)
 
             service.submit_form_to_processing_team
 
-            expect(FormSubmissionMailer).not_to have_received(:email_completed_form)
+            expect(FormSubmissionMailer).not_to have_received(:email_confirmation_input)
           end
         end
 
@@ -185,15 +185,15 @@ RSpec.describe FormSubmissionService do
         expect(FormSubmissionConfirmationMailer).to have_received(:send_confirmation_email).with(
           { what_happens_next_markdown: form.what_happens_next_markdown,
             support_contact_details: contact_support_details_format,
-            notify_response_id: email_confirmation_form.confirmation_email_reference,
-            confirmation_email_address: email_confirmation_form.confirmation_email_address,
+            notify_response_id: email_confirmation_input.confirmation_email_reference,
+            confirmation_email_address: email_confirmation_input.confirmation_email_address,
             mailer_options: instance_of(FormSubmissionService::MailerOptions) },
         ).once
       end
     end
 
     context "when user does not want a confirmation email" do
-      let(:email_confirmation_form) { build :email_confirmation_form }
+      let(:email_confirmation_input) { build :email_confirmation_input }
 
       it "does not call FormSubmissionConfirmationMailer" do
         allow(FormSubmissionConfirmationMailer).to receive(:send_confirmation_email)

@@ -1,4 +1,4 @@
-class EmailConfirmationForm
+class EmailConfirmationInput
   include ActiveModel::Model
   include ActiveModel::Validations
 

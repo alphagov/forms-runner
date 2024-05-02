@@ -6,10 +6,10 @@
   <% end %>
 <% end %>
 
-<%= form_with model: email_confirmation_form, url: @form_submit_path do |form| %>
+<%= form_with model: email_confirmation_input, url: @form_submit_path do |form| %>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds-from-desktop">
-      <% if email_confirmation_form&.errors&.any? %>
+      <% if email_confirmation_input&.errors&.any? %>
         <%= form.govuk_error_summary %>
       <% end %>
 

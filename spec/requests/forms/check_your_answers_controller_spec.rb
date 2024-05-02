@@ -14,7 +14,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
           pages: pages_data)
   end
 
-  let(:email_confirmation_form) do
+  let(:email_confirmation_input) do
     { send_confirmation: "send_email",
       confirmation_email_address: Faker::Internet.email,
       confirmation_email_reference: "confirmation-email-ref",
@@ -94,7 +94,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
   describe "#show" do
     shared_examples "for notification references" do
       prepend_before do
-        allow(EmailConfirmationForm).to receive(:new).and_wrap_original do |original_method, *args|
+        allow(EmailConfirmationInput).to receive(:new).and_wrap_original do |original_method, *args|
           double = original_method.call(*args)
           allow(double).to receive(:confirmation_email_reference).and_return("00000000-confirmation-email")
           allow(double).to receive(:submission_email_reference).and_return("00000000-submission-email")
@@ -236,7 +236,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
     before do
       allow_mailer_to_return_mail_with_govuk_notify_response_with(
         FormSubmissionMailer,
-        :email_completed_form,
+        :email_confirmation_input,
         id: "1111",
       )
       allow_mailer_to_return_mail_with_govuk_notify_response_with(
@@ -249,8 +249,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
     shared_examples "for notification references" do
       it "includes the notification references in the logging_context" do
         expect(logging_context).to include(notification_references: {
-          confirmation_email_reference: email_confirmation_form[:confirmation_email_reference],
-          submission_email_reference: email_confirmation_form[:submission_email_reference],
+          confirmation_email_reference: email_confirmation_input[:confirmation_email_reference],
+          submission_email_reference: email_confirmation_input[:submission_email_reference],
         }.compact)
       end
     end
@@ -258,7 +258,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
     context "with preview mode on" do
       before do
         travel_to frozen_time do
-          post form_submit_answers_path("preview-live", 2, "form-name", 1), params: { email_confirmation_form: }
+          post form_submit_answers_path("preview-live", 2, "form-name", 1), params: { email_confirmation_input: }
         end
       end
 
@@ -332,7 +332,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
     context "with preview mode off" do
       before do
         travel_to frozen_time do
-          post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_form: }
+          post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_input: }
         end
       end
 
@@ -377,7 +377,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       let(:repeat_form_submission) { true }
 
       before do
-        post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_form: }
+        post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_input: }
       end
 
       it "redirects to repeat submission error page" do
@@ -386,7 +386,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
     end
 
     context "when user has not specified whether they want a confirmation email" do
-      let(:email_confirmation_form) do
+      let(:email_confirmation_input) do
         {
           send_confirmation: nil,
           confirmation_email_reference: "test-ref-for-confirmation-email",
@@ -395,7 +395,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       end
 
       before do
-        post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_form: }
+        post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_input: }
       end
 
       it "return 422 error code" do
@@ -413,7 +413,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
     end
 
     context "when user has not specified the confirmation email address" do
-      let(:email_confirmation_form) do
+      let(:email_confirmation_input) do
         {
           send_confirmation: "send_email",
           confirmation_email_address: nil,
@@ -423,7 +423,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       end
 
       before do
-        post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_form: }
+        post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_input: }
       end
 
       it "return 422 error code" do
@@ -443,7 +443,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
     end
 
     context "when user has not requested a confirmation email" do
-      let(:email_confirmation_form) do
+      let(:email_confirmation_input) do
         {
           send_confirmation: "skip_confirmation",
           confirmation_email_address: nil,
@@ -453,7 +453,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       end
 
       before do
-        post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_form: }
+        post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_input: }
       end
 
       it "redirects to confirmation page" do
@@ -478,7 +478,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
     end
 
     context "when user has requested a confirmation email" do
-      let(:email_confirmation_form) do
+      let(:email_confirmation_input) do
         { send_confirmation: "send_email",
           confirmation_email_address: Faker::Internet.email,
           confirmation_email_reference: "confirmation-email-ref",
@@ -487,7 +487,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
       before do
         travel_to timestamp_of_request do
-          post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_form: }
+          post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_input: }
         end
       end
 
@@ -501,7 +501,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
           expect(deliveries.length).to eq 2
 
           mail = deliveries[1]
-          expect(mail.to).to eq([email_confirmation_form[:confirmation_email_address]])
+          expect(mail.to).to eq([email_confirmation_input[:confirmation_email_address]])
 
           expected_personalisation = {
             title: form_data.name,
@@ -528,7 +528,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
           expect(deliveries.length).to eq 2
 
           mail = deliveries[1]
-          expect(mail.to).to eq([email_confirmation_form[:confirmation_email_address]])
+          expect(mail.to).to eq([email_confirmation_input[:confirmation_email_address]])
 
           expected_personalisation = {
             title: form_data.name,
@@ -561,7 +561,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
     end
 
     context "when there is a submission error" do
-      let(:email_confirmation_form) do
+      let(:email_confirmation_input) do
         { send_confirmation: "send_email",
           confirmation_email_address: Faker::Internet.email,
           confirmation_email_reference: "confirmation-email-ref",
@@ -573,7 +573,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         allow(Sentry).to receive(:capture_exception)
 
         travel_to timestamp_of_request do
-          post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_form: }
+          post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_input: }
         end
       end
 
