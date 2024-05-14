@@ -64,7 +64,7 @@ group :development, :test do
   gem "faker"
 
   # Support for locale tasks tests
-  gem "i18n-tasks", "~> 1.0.12"
+  gem "i18n-tasks", "~> 1.0.14"
 
   gem "rspec-rails"
   gem "rubocop-govuk", require: false

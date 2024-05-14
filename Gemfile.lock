@@ -118,14 +118,7 @@ GEM
       ice_nine (~> 0.11.0)
       thread_safe (~> 0.3, >= 0.3.1)
     base64 (0.2.0)
-    better_html (2.0.2)
-      actionview (>= 6.0)
-      activesupport (>= 6.0)
-      ast (~> 2.0)
-      erubi (~> 1.4)
-      parser (>= 2.4)
-      smart_properties
-    bigdecimal (3.1.7)
+    bigdecimal (3.1.8)
     bootsnap (1.18.3)
       msgpack (~> 1.2)
     brakeman (6.1.2)
@@ -184,15 +177,14 @@ GEM
     govuk_notify_rails (2.2.0)
       notifications-ruby-client (~> 5.1)
       rails (>= 4.1.0)
-    highline (2.1.0)
+    highline (3.0.1)
     html-attributes-utils (1.0.2)
       activesupport (>= 6.1.4.4)
-    i18n (1.14.4)
+    i18n (1.14.5)
       concurrent-ruby (~> 1.0)
-    i18n-tasks (1.0.13)
+    i18n-tasks (1.0.14)
       activesupport (>= 4.0.2)
       ast (>= 2.1.0)
-      better_html (>= 1.0, < 3.0)
       erubi
       highline (>= 2.0.0)
       i18n
@@ -202,8 +194,8 @@ GEM
       terminal-table (>= 1.5.1)
     ice_nine (0.11.2)
     io-console (0.7.2)
-    irb (1.12.0)
-      rdoc
+    irb (1.13.1)
+      rdoc (>= 4.0.0)
       reline (>= 0.4.2)
     jmespath (1.6.2)
     json (2.7.1)
@@ -239,19 +231,19 @@ GEM
     net-smtp (0.4.0.1)
       net-protocol
     nio4r (2.7.0)
-    nokogiri (1.16.4-aarch64-linux)
+    nokogiri (1.16.5-aarch64-linux)
       racc (~> 1.4)
-    nokogiri (1.16.4-arm64-darwin)
+    nokogiri (1.16.5-arm64-darwin)
       racc (~> 1.4)
-    nokogiri (1.16.4-x86_64-darwin)
+    nokogiri (1.16.5-x86_64-darwin)
       racc (~> 1.4)
-    nokogiri (1.16.4-x86_64-linux)
+    nokogiri (1.16.5-x86_64-linux)
       racc (~> 1.4)
     notifications-ruby-client (5.4.0)
       jwt (>= 1.5, < 3)
     pagy (7.0.11)
     parallel (1.24.0)
-    parser (3.3.0.5)
+    parser (3.3.1.0)
       ast (~> 2.4.1)
       racc
     psych (5.1.2)
@@ -260,7 +252,7 @@ GEM
     puma (6.4.2)
       nio4r (~> 2.0)
     racc (1.7.3)
-    rack (3.0.10)
+    rack (3.0.11)
     rack-proxy (0.7.7)
       rack
     rack-session (2.0.0)
@@ -295,7 +287,7 @@ GEM
     rails-html-sanitizer (1.6.0)
       loofah (~> 2.21)
       nokogiri (~> 1.14)
-    rails-i18n (7.0.8)
+    rails-i18n (7.0.9)
       i18n (>= 0.7, < 2)
       railties (>= 6.0.0, < 8)
     railties (7.1.3.2)
@@ -316,7 +308,7 @@ GEM
       actionpack (>= 6, < 8)
       redis (>= 3, < 6)
     regexp_parser (2.9.0)
-    reline (0.5.1)
+    reline (0.5.7)
       io-console (~> 0.5)
     request_store (1.5.1)
       rack (>= 1.4)
@@ -394,7 +386,6 @@ GEM
       simplecov_json_formatter (~> 0.1)
     simplecov-html (0.12.3)
     simplecov_json_formatter (0.1.4)
-    smart_properties (1.17.0)
     stringio (3.1.0)
     terminal-table (3.0.2)
       unicode-display_width (>= 1.1.1, < 3)
@@ -429,7 +420,7 @@ GEM
     websocket-extensions (0.1.5)
     xpath (3.2.0)
       nokogiri (~> 1.8)
-    zeitwerk (2.6.13)
+    zeitwerk (2.6.14)
 
 PLATFORMS
   aarch64-linux
@@ -458,7 +449,7 @@ DEPENDENCIES
   govuk-forms-markdown!
   govuk_design_system_formbuilder
   govuk_notify_rails
-  i18n-tasks (~> 1.0.12)
+  i18n-tasks (~> 1.0.14)
   lograge
   puma (~> 6.4.2)
   rails (~> 7.1.3)
