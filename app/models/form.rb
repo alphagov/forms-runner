@@ -7,6 +7,8 @@ class Form < ActiveResource::Base
   has_many :pages
 
   def self.find_with_mode(id:, mode:)
+    raise ActiveResource::ResourceNotFound.new(404, "Not Found") unless id.to_s =~ /^[[:alnum:]]+$/
+
     return find_draft(id) if mode.preview_draft?
     return find_archived(id) if mode.preview_archived?
     return find_live(id) if mode.live?

@@ -129,6 +129,35 @@ RSpec.describe Form, type: :model do
         expect(form.live?).to eq(false)
       end
     end
+
+    context "when validating the provided form id" do
+      let(:response_data) { { id: "Alpha123", name: "form name", live_at: nil }.to_json }
+
+      before do
+        ActiveResource::HttpMock.respond_to do |mock|
+          mock.get "/api/v1/forms/Alpha123/draft", req_headers, response_data, 200
+        end
+      end
+
+      it "returns ResourceNotFound when the id contains non-alpha-numeric chars" do
+        expect {
+          described_class.find_with_mode(id: "<id>", mode: Mode.new("preview-draft"))
+        }.to raise_error(ActiveResource::ResourceNotFound)
+      end
+
+      it "returns ResourceNotFound when the id is blank" do
+        expect {
+          described_class.find_with_mode(id: "", mode: Mode.new("preview-draft"))
+        }.to raise_error(ActiveResource::ResourceNotFound)
+      end
+
+      it "returns the form when the id is alphanumeric" do
+        form = described_class.find_with_mode(id: "Alpha123", mode: Mode.new("preview-draft"))
+
+        expect(form).to have_attributes(id: "Alpha123", name: "form name")
+        expect(form.live?).to eq(false)
+      end
+    end
   end
 
   describe "#payment_url_with_reference" do
