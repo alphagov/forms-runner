@@ -266,56 +266,27 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         expect(response).to redirect_to(form_submitted_path)
       end
 
-      context "when submission references are not enabled", feature_reference_numbers_enabled: false do
-        it "emails the form submission" do
-          deliveries = ActionMailer::Base.deliveries
-          expect(deliveries.length).to eq 2
+      it "emails the form submission" do
+        deliveries = ActionMailer::Base.deliveries
+        expect(deliveries.length).to eq 2
 
-          mail = deliveries[0]
-          expect(mail.to).to eq [form_data.submission_email]
+        mail = deliveries[0]
+        expect(mail.to).to eq [form_data.submission_email]
 
-          expected_personalisation = {
-            title: form_data.name,
-            text_input: ".*",
-            submission_time: "9:47am",
-            submission_date: "13 March 2023",
-            test: "yes",
-            not_test: "no",
-            include_submission_reference: "no",
-            submission_reference: "",
-            include_payment_link: "no",
-          }
+        expected_personalisation = {
+          title: form_data.name,
+          text_input: ".*",
+          submission_time: "9:47am",
+          submission_date: "13 March 2023",
+          test: "yes",
+          not_test: "no",
+          submission_reference: reference,
+          include_payment_link: "no",
+        }
 
-          expect(mail.body.raw_source).to match(expected_personalisation.to_s)
+        expect(mail.body.raw_source).to match(expected_personalisation.to_s)
 
-          expect(mail.govuk_notify_reference).to eq "for-my-ref"
-        end
-      end
-
-      context "when submission references are enabled", feature_reference_numbers_enabled: true do
-        it "emails the form submission" do
-          deliveries = ActionMailer::Base.deliveries
-          expect(deliveries.length).to eq 2
-
-          mail = deliveries[0]
-          expect(mail.to).to eq [form_data.submission_email]
-
-          expected_personalisation = {
-            title: form_data.name,
-            text_input: ".*",
-            submission_time: "9:47am",
-            submission_date: "13 March 2023",
-            test: "yes",
-            not_test: "no",
-            include_submission_reference: "yes",
-            submission_reference: reference,
-            include_payment_link: "no",
-          }
-
-          expect(mail.body.raw_source).to match(expected_personalisation.to_s)
-
-          expect(mail.govuk_notify_reference).to eq "for-my-ref"
-        end
+        expect(mail.govuk_notify_reference).to eq "for-my-ref"
       end
 
       it "includes the submission notification IDs in the logging context" do
@@ -354,8 +325,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
           submission_date: "13 March 2023",
           test: "no",
           not_test: "yes",
-          include_submission_reference: "no",
-          submission_reference: "",
+          submission_reference: reference,
           include_payment_link: "no",
         }
 
@@ -495,58 +465,28 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         expect(response).to redirect_to(form_submitted_path)
       end
 
-      context "when submission references are enabled", feature_reference_numbers_enabled: true do
-        it "sends a confirmation email" do
-          deliveries = ActionMailer::Base.deliveries
-          expect(deliveries.length).to eq 2
+      it "sends a confirmation email" do
+        deliveries = ActionMailer::Base.deliveries
+        expect(deliveries.length).to eq 2
 
-          mail = deliveries[1]
-          expect(mail.to).to eq([email_confirmation_input[:confirmation_email_address]])
+        mail = deliveries[1]
+        expect(mail.to).to eq([email_confirmation_input[:confirmation_email_address]])
 
-          expected_personalisation = {
-            title: form_data.name,
-            what_happens_next_text: form_data.what_happens_next_markdown,
-            support_contact_details: contact_support_details_format,
-            submission_time: "10:00am",
-            submission_date: "14 December 2022",
-            test: "no",
-            include_submission_reference: "yes",
-            submission_reference: reference,
-            include_payment_link: "no",
-            payment_link: "",
-          }
+        expected_personalisation = {
+          title: form_data.name,
+          what_happens_next_text: form_data.what_happens_next_markdown,
+          support_contact_details: contact_support_details_format,
+          submission_time: "10:00am",
+          submission_date: "14 December 2022",
+          test: "no",
+          submission_reference: reference,
+          include_payment_link: "no",
+          payment_link: "",
+        }
 
-          expect(mail.body.raw_source).to include(expected_personalisation.to_s)
+        expect(mail.body.raw_source).to include(expected_personalisation.to_s)
 
-          expect(mail.govuk_notify_reference).to eq "confirmation-email-ref"
-        end
-      end
-
-      context "when submission references are not enabled", feature_reference_numbers_enabled: false do
-        it "sends a confirmation email" do
-          deliveries = ActionMailer::Base.deliveries
-          expect(deliveries.length).to eq 2
-
-          mail = deliveries[1]
-          expect(mail.to).to eq([email_confirmation_input[:confirmation_email_address]])
-
-          expected_personalisation = {
-            title: form_data.name,
-            what_happens_next_text: form_data.what_happens_next_markdown,
-            support_contact_details: contact_support_details_format,
-            submission_time: "10:00am",
-            submission_date: "14 December 2022",
-            test: "no",
-            include_submission_reference: "no",
-            submission_reference: "",
-            include_payment_link: "no",
-            payment_link: "",
-          }
-
-          expect(mail.body.raw_source).to include(expected_personalisation.to_s)
-
-          expect(mail.govuk_notify_reference).to eq "confirmation-email-ref"
-        end
+        expect(mail.govuk_notify_reference).to eq "confirmation-email-ref"
       end
 
       it "includes the submission notification IDs in the logging context" do

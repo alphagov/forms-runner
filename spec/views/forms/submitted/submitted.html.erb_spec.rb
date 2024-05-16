@@ -19,30 +19,20 @@ describe "forms/submitted/submitted.html.erb" do
     expect(rendered).to have_css("h1.govuk-panel__title", text: "Your form has been submitted")
   end
 
-  context "when there is a reference present in the session", feature_reference_numbers_enabled: true do
-    it "displays the submission reference" do
-      expect(rendered).to have_text(I18n.t("form.submitted.your_reference"))
-      expect(rendered).to have_text(reference)
-    end
-
-    context "when there is a payment url for the form" do
-      let(:payment_url) { "https://www.gov.uk/payments/organisation/service" }
-
-      it "displays the need to pay panel" do
-        expect(rendered).to have_css(".app-panel--payment-required", text: I18n.t("form.submitted.need_to_pay"))
-      end
-
-      it "displays the payment button" do
-        expect(rendered).to have_button(I18n.t("form.submitted.continue_to_pay"))
-      end
-    end
+  it "displays the submission reference" do
+    expect(rendered).to have_text(I18n.t("form.submitted.your_reference"))
+    expect(rendered).to have_text(reference)
   end
 
-  context "when there is no reference present in the session", feature_reference_numbers_enabled: true do
-    let(:reference) { nil }
+  context "when there is a payment url for the form" do
+    let(:payment_url) { "https://www.gov.uk/payments/organisation/service" }
 
-    it "does not display the submission reference text" do
-      expect(rendered).not_to have_text(I18n.t("form.submitted.your_reference"))
+    it "displays the need to pay panel" do
+      expect(rendered).to have_css(".app-panel--payment-required", text: I18n.t("form.submitted.need_to_pay"))
+    end
+
+    it "displays the payment button" do
+      expect(rendered).to have_button(I18n.t("form.submitted.continue_to_pay"))
     end
   end
 
