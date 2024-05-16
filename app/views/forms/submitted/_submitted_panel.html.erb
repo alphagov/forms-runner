@@ -5,7 +5,7 @@
       { "app-panel--payment-required": current_context.form.payment_url.present? }
     )
 ) do %>
-  <% if FeatureService.enabled?(:reference_numbers_enabled) && current_context.get_submission_reference.present? %>
+  <% if current_context.get_submission_reference.present? %>
     <%= t('form.submitted.your_reference') %><br>
     <strong><%= current_context.get_submission_reference %></strong>
   <% end %>

@@ -24,9 +24,7 @@ class FormSubmissionService
                                         submission_reference: @submission_reference,
                                         payment_url: @form.payment_url_with_reference(@submission_reference))
 
-    if FeatureService.enabled?(:reference_numbers_enabled)
-      @logging_context[:submission_reference] = @submission_reference
-    end
+    @logging_context[:submission_reference] = @submission_reference
   end
 
   def submit

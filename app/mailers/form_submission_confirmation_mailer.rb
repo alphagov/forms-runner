@@ -12,8 +12,7 @@ class FormSubmissionConfirmationMailer < GovukNotifyRails::Mailer
       # conditionals, so to simulate negative conditionals we add two boolean
       # flags; but they must always have opposite values!
       test: make_notify_boolean(mailer_options.preview_mode),
-      include_submission_reference: make_notify_boolean(FeatureService.enabled?(:reference_numbers_enabled)),
-      submission_reference: FeatureService.enabled?(:reference_numbers_enabled) ? mailer_options.submission_reference : "",
+      submission_reference: mailer_options.submission_reference,
       include_payment_link: make_notify_boolean(mailer_options.payment_url.present?),
       payment_link: mailer_options.payment_url || "",
     )
