@@ -12,7 +12,7 @@ module Forms
     end
 
     def error_repeat_submission
-      @current_context = Context.new(form: current_form, store: session)
+      @current_context = Flow::Context.new(form: current_form, store: session)
       render template: "errors/repeat_submission", locals: { current_form: }
     end
 
@@ -28,7 +28,7 @@ module Forms
     end
 
     def current_context
-      @current_context ||= Context.new(form: current_form, store: session)
+      @current_context ||= Flow::Context.new(form: current_form, store: session)
     end
 
     def mode
