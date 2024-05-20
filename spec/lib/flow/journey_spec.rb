@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe Flow::Journey do
   let(:store) { {} }
   let(:form_context) { Flow::FormContext.new(store) }
-  let(:step_factory) { StepFactory.new(form:) }
+  let(:step_factory) { Flow::StepFactory.new(form:) }
   let(:journey) { described_class.new(form_context:, step_factory:) }
 
   let(:form) do

@@ -1,7 +1,7 @@
 require "rails_helper"
 
-RSpec.describe StepFactory do
-  describe StepFactory::PAGE_SLUG_REGEX do
+RSpec.describe Flow::StepFactory do
+  describe Flow::StepFactory::PAGE_SLUG_REGEX do
     it "matches valid page_id values" do
       %w[1 123 0123456789 check-your-answers].each do |string|
         expect(described_class).to match string
