@@ -4,7 +4,7 @@ module Flow
 
     def initialize(form:, store:)
       @form = form
-      @form_context = FormContext.new(store)
+      @form_context = Flow::FormContext.new(store)
       @step_factory = StepFactory.new(form:)
       @journey = Journey.new(form_context: @form_context, step_factory: @step_factory)
 
