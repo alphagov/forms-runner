@@ -1,7 +1,6 @@
 require "rails_helper"
-require_relative "../../app/lib/journey"
 
-RSpec.describe Journey do
+RSpec.describe Flow::Journey do
   let(:store) { {} }
   let(:form_context) { Flow::FormContext.new(store) }
   let(:step_factory) { StepFactory.new(form:) }
