@@ -217,6 +217,37 @@ To update the version of [Alpine Linux] and Ruby used in the Dockerfile, use the
 
 [Alpine Linux]: https://www.alpinelinux.org/
 
+### Working with pipelines
+You can work with the forms-runner pipelines in different environments using Rake tasks
+
+#### Pause
+To pause the pipeline in an environment, run
+
+```shell
+rake pipeline:ENV:pause
+```
+
+where `ENV` is the name of the environment you want to work with, for example `dev` or `prod`.
+
+#### Unpause
+To unpause the pipeline in an environment, run
+
+```shell
+rake pipeline:ENV:unpause
+```
+
+where `ENV` is the name of the environment you want to work with, for example `dev` or `prod`.
+
+#### Find out if a pipeline is paused
+To find out if the pipeline in an environment is paused, run
+
+```shell
+rake pipeline:ENV:status
+```
+
+where `ENV` is the name of the environment you want to work with, for example `dev` or `prod`.
+
+
 ## Support
 
 Raise a GitHub issue if you need support.
