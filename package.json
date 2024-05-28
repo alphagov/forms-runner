@@ -20,7 +20,7 @@
     "dev": "vite dev"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.24.5",
+    "@babel/preset-env": "^7.24.6",
     "autoprefixer": "^10.4.19",
     "cssnano": "^7.0.1",
     "jest": "^29.7.0",
