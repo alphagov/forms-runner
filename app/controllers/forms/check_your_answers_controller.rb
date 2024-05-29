@@ -13,31 +13,28 @@ module Forms
       email_confirmation_input = EmailConfirmationInput.new(email_confirmation_input_params)
       requested_email_confirmation = email_confirmation_input.send_confirmation == "send_email"
 
-      if email_confirmation_input.valid?
-        if current_context.form_submitted?
-          redirect_to error_repeat_submission_path(current_form.id)
-        else
-          unless current_context.can_visit?(CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG)
-            message = "current_context.can_visit? is false, about to do incomplete or repeat submission?"
-            EventLogger.log_form_event(logging_context, "incomplete_or_repeat_submission_error")
-            Sentry.capture_message(message)
-          end
-
-          submission_reference = FormSubmissionService.call(logging_context:,
-                                                            current_context:,
-                                                            request:,
-                                                            email_confirmation_input:,
-                                                            preview_mode: mode.preview?).submit
-
-          current_context.save_submission_details(submission_reference, requested_email_confirmation)
-
-          redirect_to :form_submitted
-        end
-      else
+      unless email_confirmation_input.valid?
         setup_check_your_answers
 
-        render template: "forms/check_your_answers/show", locals: { email_confirmation_input: }, status: :unprocessable_entity
+        return render template: "forms/check_your_answers/show", locals: { email_confirmation_input: }, status: :unprocessable_entity
       end
+
+      return redirect_to error_repeat_submission_path(current_form.id) if current_context.form_submitted?
+
+      unless current_context.can_visit?(CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG)
+        EventLogger.log_form_event(logging_context, "incomplete_or_repeat_submission_error")
+        return render template: "errors/incomplete_submission", locals: { current_form:, current_context: }
+      end
+
+      submission_reference = FormSubmissionService.call(logging_context:,
+                                                        current_context:,
+                                                        request:,
+                                                        email_confirmation_input:,
+                                                        preview_mode: mode.preview?).submit
+
+      current_context.save_submission_details(submission_reference, requested_email_confirmation)
+
+      redirect_to :form_submitted
     rescue StandardError => e
       log_rescued_exception(e)
 

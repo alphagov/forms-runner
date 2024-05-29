@@ -355,6 +355,30 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       end
     end
 
+    context "when the form is incomplete" do
+      let(:store) do
+        {
+          answers: {
+            "2" => {
+              "1" => {
+                "date_year" => "2000",
+                "date_month" => "1",
+                "date_day" => "1",
+              },
+            },
+          },
+        }
+      end
+
+      before do
+        post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_input: }
+      end
+
+      it "renders the incomplete submission error page" do
+        expect(response).to render_template "errors/incomplete_submission"
+      end
+    end
+
     context "when user has not specified whether they want a confirmation email" do
       let(:email_confirmation_input) do
         {
