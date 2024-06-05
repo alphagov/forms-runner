@@ -23,5 +23,8 @@ export default defineConfig({
       ),
       '@images': path.resolve(__dirname, 'app/frontend/images')
     }
+  },
+  test: {
+    passWithNoTests: true // TODO: remove once this codebase has any javascript tests
   }
 })
