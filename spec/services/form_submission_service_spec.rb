@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe FormSubmissionService do
-  let(:service) { described_class.call(logging_context:, current_context:, request:, email_confirmation_input:, preview_mode:) }
+  let(:service) { described_class.call(logging_context:, current_context:, email_confirmation_input:, preview_mode:) }
   let(:form) do
     build(:form,
           id: 1,
@@ -244,7 +244,7 @@ RSpec.describe FormSubmissionService do
   end
 
   describe "FormSubmissionService::NotifyTemplateBodyFilter" do
-    let(:notify_template_body_filter) { FormSubmissionService::NotifyTemplateBodyFilter.new }
+    let(:notify_template_body_filter) { NotifyTemplateFormatter.new }
 
     describe "#build_question_answers_section" do
       let(:form) { OpenStruct.new(completed_steps: [step]) }

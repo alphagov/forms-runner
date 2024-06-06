@@ -1,8 +1,7 @@
 require "rails_helper"
 require "ostruct"
-require_relative "../../app/lib/form_context"
 
-RSpec.describe FormContext do
+RSpec.describe Flow::FormContext do
   let(:store) { {} }
   let(:step) { OpenStruct.new({ page_id: "5", form_id: 1 }) }
   let(:step2) { OpenStruct.new({ page_id: "1", form_id: 2 }) }

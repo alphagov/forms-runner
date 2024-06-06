@@ -7,10 +7,9 @@ class FormSubmissionService
 
   MailerOptions = Data.define(:title, :preview_mode, :timestamp, :submission_reference, :payment_url)
 
-  def initialize(logging_context:, current_context:, request:, email_confirmation_input:, preview_mode:)
+  def initialize(logging_context:, current_context:, email_confirmation_input:, preview_mode:)
     @logging_context = logging_context
     @current_context = current_context
-    @request = request
     @form = current_context.form
     @email_confirmation_input = email_confirmation_input
     @requested_email_confirmation = @email_confirmation_input.send_confirmation == "send_email"
@@ -71,63 +70,6 @@ class FormSubmissionService
     @logging_context[:notification_ids][:confirmation_email_id] = mail.govuk_notify_response.id
   end
 
-  class NotifyTemplateBodyFilter
-    def build_question_answers_section(current_context)
-      current_context.completed_steps.map { |page|
-        [prep_question_title(page.question_text),
-         prep_answer_text(page.show_answer_in_email)].join
-      }.join("\n\n---\n\n").concat("\n")
-    end
-
-    def prep_question_title(question_text)
-      "# #{question_text}\n"
-    end
-
-    def prep_answer_text(answer)
-      return "\\[This question was skipped\\]" if answer.blank?
-
-      escape(answer)
-    end
-
-    def escape(text)
-      text
-        .then { normalize_whitespace _1 }
-        .then { replace_setext_headings _1 }
-        .then { escape_markdown_text _1 }
-    end
-
-    def escape_markdown_text(text)
-      url_regex = URI::DEFAULT_PARSER.make_regexp(%w[http https])
-      a = ""
-      rest = text
-      until rest.empty?
-        head, match, rest = rest.partition(url_regex)
-        a << escape_markdown_characters(head)
-        a << match
-      end
-      a
-    end
-
-    def normalize_whitespace(text)
-      text.strip.gsub(/\r\n?/, "\n").split(/\n\n+/).map(&:strip).join("\n\n")
-    end
-
-    def escape_markdown_characters(text)
-      replaced = { "^" => "", "•" => "" }
-      escaped = %w{! " # ' ` ( ) * + - . [ ] _ \{ | \} ~}.index_with { |c| "\\#{c}" }
-
-      changes = replaced.merge(escaped)
-
-      to_change = Regexp.union(changes.keys)
-      text.gsub(to_change, changes)
-    end
-
-    def replace_setext_headings(text)
-      # replace lengths of ^===$ with --- to stop them making headings
-      text.gsub(/^(=+)$/) { "_" * Regexp.last_match(1).length }
-    end
-  end
-
 private
 
   def form_title
@@ -135,7 +77,7 @@ private
   end
 
   def email_body
-    FormSubmissionService::NotifyTemplateBodyFilter.new.build_question_answers_section(@current_context)
+    NotifyTemplateFormatter.new.build_question_answers_section(@current_context)
   end
 
   def submission_timezone
@@ -159,7 +101,7 @@ private
   def support_phone_details
     return nil if @form.support_phone.blank?
 
-    notify_body = NotifyTemplateBodyFilter.new
+    notify_body = NotifyTemplateFormatter.new
     formatted_phone_number = notify_body.normalize_whitespace(@form.support_phone)
 
     "#{formatted_phone_number}\n\n[#{I18n.t('support_details.call_charges')}](#{@current_context.support_details.call_back_url})"

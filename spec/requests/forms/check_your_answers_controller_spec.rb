@@ -82,7 +82,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       mock.get "/api/v1/forms/2#{api_url_suffix}", req_headers, form_data.to_json, 200
     end
 
-    allow(Context).to receive(:new).and_wrap_original do |original_method, *args|
+    allow(Flow::Context).to receive(:new).and_wrap_original do |original_method, *args|
       context_spy = original_method.call(form: args[0][:form], store:)
       allow(context_spy).to receive(:form_submitted?).and_return(repeat_form_submission)
       context_spy

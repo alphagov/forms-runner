@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe Forms::SubmittedController, type: :request do
-  let(:context) { Context.new(form: form_data, store:) }
+  let(:context) { Flow::Context.new(form: form_data, store:) }
 
   let(:form_data) do
     build(:form, :with_support,
@@ -63,7 +63,7 @@ RSpec.describe Forms::SubmittedController, type: :request do
         mock.get "/api/v1/forms/2/draft", req_headers, form_data.to_json, 200
       end
 
-      allow(Context).to receive(:new).and_return(context)
+      allow(Flow::Context).to receive(:new).and_return(context)
       allow(context).to receive(:clear)
 
       get form_submitted_path(mode: "preview-draft", form_id: 2, form_slug: form_data.form_slug)
