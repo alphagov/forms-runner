@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe FormSubmissionService do
-  let(:service) { described_class.call(logging_context:, current_context:, request:, email_confirmation_input:, preview_mode:) }
+  let(:service) { described_class.call(logging_context:, current_context:, email_confirmation_input:, preview_mode:) }
   let(:form) do
     build(:form,
           id: 1,
