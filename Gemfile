@@ -56,7 +56,7 @@ gem "lograge"
 
 # For AWS interactions
 gem "aws-sdk-cloudwatch"
-gem "aws-sdk-codepipeline", "~> 1.72"
+gem "aws-sdk-codepipeline", "~> 1.73"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
