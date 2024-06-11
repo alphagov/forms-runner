@@ -1,5 +1,4 @@
-features:
-  analytics_enabled: false
+features: {}
 
 forms_admin:
   # URL to form-admin
