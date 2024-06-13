@@ -19,9 +19,11 @@ describe "Settings" do
   end
 
   describe ".features" do
-    features = settings[:features]
+    it "has a default value" do
+      features = settings[:features]
 
-    include_examples expected_value_test, :analytics_enabled, features, false
+      expect(features).to eq({})
+    end
   end
 
   describe ".forms_api" do
@@ -68,6 +70,14 @@ describe "Settings" do
       cloudwatch_metrics_enabled = settings[:cloudwatch_metrics_enabled]
 
       expect(cloudwatch_metrics_enabled).to be(false)
+    end
+  end
+
+  describe "analytics_enabled" do
+    it "has a default value" do
+      analytics_enabled = settings[:analytics_enabled]
+
+      expect(analytics_enabled).to be(false)
     end
   end
 end
