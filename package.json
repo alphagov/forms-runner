@@ -23,7 +23,7 @@
     "autoprefixer": "^10.4.19",
     "cssnano": "^7.0.2",
     "postcss": "^8.4.38",
-    "sass": "^1.77.4",
+    "sass": "^1.77.5",
     "snazzy": "^9.0.0",
     "standard": "^17.1.0",
     "stylelint": "^16.6.1",
