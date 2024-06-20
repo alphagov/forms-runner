@@ -17,3 +17,44 @@ export function installAnalyticsScript (global) {
     })(global, document, 'script', 'dataLayer', GTAG_ID)
   }
 }
+
+export function deleteGoogleAnalyticsCookies () {
+  const cookies = document.cookie ? document.cookie.split('; ') : []
+  cookies.forEach(function (cookie) {
+    if (
+      cookie.indexOf('_ga') === 0 ||
+      cookie.indexOf('_gid') === 0 ||
+      cookie.indexOf('_gat') === 0
+    ) {
+      const domain = window.location.hostname
+      const cookieToDelete =
+        cookie.split('=')[0] +
+        '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' +
+        domain
+      document.cookie = cookieToDelete
+    }
+  })
+}
+
+export function setDefaultConsent (consentedToAnalyticsCookies) {
+  window.dataLayer = window.dataLayer || []
+  window.dataLayer.push([
+    'consent',
+    'default',
+    {
+      ad_storage: 'denied',
+      analytics_storage: consentedToAnalyticsCookies ? 'granted' : 'denied'
+    }
+  ])
+}
+
+export function updateCookieConsent (consentedToAnalyticsCookies) {
+  window.dataLayer = window.dataLayer || []
+  window.dataLayer.push([
+    'consent',
+    'update',
+    {
+      analytics_storage: consentedToAnalyticsCookies ? 'granted' : 'denied'
+    }
+  ])
+}
