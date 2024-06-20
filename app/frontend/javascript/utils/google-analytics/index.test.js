@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 
-import { installAnalyticsScript } from '../google-tag'
+import { installAnalyticsScript } from '.'
 import { describe, beforeEach, afterEach, it, expect } from 'vitest'
 
 describe('google_tag.mjs', () => {
