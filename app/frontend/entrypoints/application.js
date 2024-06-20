@@ -14,19 +14,18 @@ const analyticsConsentStatus = loadConsentStatus()
 
 setDefaultConsent(analyticsConsentStatus === CONSENT_STATUS.GRANTED)
 
-if (
-  document.body.dataset.googleAnalyticsEnabled === 'true' &&
-  analyticsConsentStatus === CONSENT_STATUS.GRANTED
-) {
-  installAnalyticsScript(window)
-}
+if (document.body.dataset.googleAnalyticsEnabled === 'true') {
+  if (analyticsConsentStatus === CONSENT_STATUS.GRANTED) {
+    installAnalyticsScript(window)
+  }
 
-// Initialise cookie banner
-const banners = document.querySelectorAll('[data-module="cookie-banner"]')
-banners.forEach(function (banner) {
-  new CookieBanner(banner).init({
-    showBanner: analyticsConsentStatus === CONSENT_STATUS.UNKNOWN
+  // Initialise cookie banner
+  const banners = document.querySelectorAll('[data-module="cookie-banner"]')
+  banners.forEach(function (banner) {
+    new CookieBanner(banner).init({
+      showBanner: analyticsConsentStatus === CONSENT_STATUS.UNKNOWN
+    })
   })
-})
+}
 
 initAll()
