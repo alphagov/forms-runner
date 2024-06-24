@@ -22,9 +22,9 @@ export function deleteGoogleAnalyticsCookies () {
   const cookies = document.cookie ? document.cookie.split('; ') : []
   cookies.forEach(function (cookie) {
     if (
-      cookie.indexOf('_ga') === 0 ||
-      cookie.indexOf('_gid') === 0 ||
-      cookie.indexOf('_gat') === 0
+      cookie.startsWith('_ga') ||
+      cookie.startsWith('_gid') ||
+      cookie.startsWith('_gat')
     ) {
       const domain = window.location.hostname
       const cookieToDelete =
