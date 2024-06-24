@@ -3,7 +3,7 @@
  */
 
 import { describe, beforeEach, test, expect } from 'vitest'
-import { CookieBanner } from './index.js'
+import { CookieBanner } from './cookie-banner.js'
 
 describe('CookieBanner', () => {
   let cookieBanner

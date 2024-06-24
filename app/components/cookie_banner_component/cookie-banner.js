@@ -1,10 +1,10 @@
-import { saveConsentStatus } from '../utils/cookie-consent'
+import { saveConsentStatus } from '../../frontend/javascript/utils/cookie-consent'
 
 import {
   installAnalyticsScript,
   deleteGoogleAnalyticsCookies,
   updateCookieConsent
-} from '../utils/google-analytics'
+} from '../../frontend/javascript/utils/google-analytics'
 
 export function CookieBanner ($module) {
   this.$module = $module

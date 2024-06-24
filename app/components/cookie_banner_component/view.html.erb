@@ -1,0 +1,21 @@
+<div id="cookie-banner" class="govuk-cookie-banner" hidden="true" data-nosnippet role="region" aria-label="<%= t("cookie_banner.heading") %>" data-module="cookie-banner">
+  <div class="govuk-cookie-banner__message govuk-width-container">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <h2 class="govuk-cookie-banner__heading govuk-heading-m"><%= t("cookie_banner.heading") %></h2>
+        <div class="govuk-cookie-banner__content">
+          <p class="govuk-body"><%= t("cookie_banner.content") %></p>
+        </div>
+      </div>
+    </div>
+    <div class="govuk-button-group">
+      <button type="button" class="govuk-button" data-module="govuk-button" data-function="accept-cookies">
+        <%= t("cookie_banner.accept") %>
+      </button>
+      <button type="button" class="govuk-button" data-module="govuk-button" data-function="reject-cookies">
+        <%= t("cookie_banner.reject") %>
+      </button>
+      <%= link_to t("cookie_banner.policy_link"), cookies_path, class: 'govuk-link' %>
+    </div>
+  </div>
+</div>

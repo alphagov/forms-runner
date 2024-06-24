@@ -8,7 +8,7 @@ import {
   installAnalyticsScript,
   setDefaultConsent
 } from '../javascript/utils/google-analytics'
-import { CookieBanner } from '../javascript/cookie-banner'
+import { CookieBanner } from '../../components/cookie_banner_component/cookie-banner'
 
 const analyticsConsentStatus = loadConsentStatus()
 
