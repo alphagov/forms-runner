@@ -223,9 +223,9 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
         it "returns 404" do
           travel_to timestamp_of_request do
-            get form_path(mode: "form", form_id: 2, form_slug: form_data.form_slug)
+            get check_your_answers_path(mode: "form", form_id: 2, form_slug: form_data.form_slug)
+            expect(response).to have_http_status(:not_found)
           end
-          get check_your_answers_path(mode: "form", form_id: 2, form_slug: form_data.form_slug)
         end
       end
     end
