@@ -13,7 +13,7 @@ RSpec.describe Flow::Journey do
           pages: pages_data)
   end
 
-  let(:page_1) do
+  let(:first_page_in_form) do
     build :page, :with_selections_settings,
           id: 1,
           next_page: 2,
@@ -22,22 +22,22 @@ RSpec.describe Flow::Journey do
 
   let(:validation_errors) { [] }
 
-  let(:page_2) do
+  let(:second_page_in_form) do
     build :page, :with_text_settings,
           id: 2,
           next_page: 3
   end
 
-  let(:page_3) do
+  let(:third_page_in_form) do
     build :page, :with_text_settings,
           id: 3
   end
 
-  let(:pages_data) { [page_1, page_2, page_3] }
+  let(:pages_data) { [first_page_in_form, second_page_in_form, third_page_in_form] }
 
-  let(:step_1) { step_factory.create_step(page_1.id.to_s).load_from_context(form_context) }
-  let(:step_2) { step_factory.create_step(page_2.id.to_s).load_from_context(form_context) }
-  let(:step_3) { step_factory.create_step(page_3.id.to_s).load_from_context(form_context) }
+  let(:first_step_in_journey) { step_factory.create_step(first_page_in_form.id.to_s).load_from_context(form_context) }
+  let(:second_step_in_journey) { step_factory.create_step(second_page_in_form.id.to_s).load_from_context(form_context) }
+  let(:third_step_in_journey) { step_factory.create_step(third_page_in_form.id.to_s).load_from_context(form_context) }
 
   context "when no pages have been completed" do
     it "completed_steps is empty" do
@@ -49,20 +49,20 @@ RSpec.describe Flow::Journey do
     let(:store) { { answers: { "2" => { "1" => { selection: "Option 2" }, "2" => { text: "Example text" }, "3" => { text: "More example text" } } } } }
 
     it "completed_steps includes all pages" do
-      expect(journey.completed_steps.to_json).to eq [step_1, step_2, step_3].to_json
+      expect(journey.completed_steps.to_json).to eq [first_step_in_journey, second_step_in_journey, third_step_in_journey].to_json
     end
   end
 
   context "when page has a cannot_have_goto_page_before_routing_page error" do
     let(:validation_errors) { [{ name: "cannot_have_goto_page_before_routing_page" }] }
 
-    let(:page_1) do
+    let(:first_page_in_form) do
       build :page, :with_text_settings,
             id: 1,
             next_page: 2
     end
 
-    let(:page_2) do
+    let(:second_page_in_form) do
       build :page, :with_selections_settings,
             id: 2,
             next_page: 3,
@@ -70,11 +70,11 @@ RSpec.describe Flow::Journey do
             is_optional: false
     end
 
-    let(:store) { { answers: { "2" => { "1" => { text: "Example text" }, "2" => { selection: page_2.routing_conditions.first.answer_value }, "3" => { text: "More example text" } } } } }
-    let(:pages_data) { [page_1, page_2, page_3] }
+    let(:store) { { answers: { "2" => { "1" => { text: "Example text" }, "2" => { selection: second_page_in_form.routing_conditions.first.answer_value }, "3" => { text: "More example text" } } } } }
+    let(:pages_data) { [first_page_in_form, second_page_in_form, third_page_in_form] }
 
     it "stops generating the completed_steps when it reaches the question with the error" do
-      expect(journey.completed_steps.to_json).to eq [step_1].to_json
+      expect(journey.completed_steps.to_json).to eq [first_step_in_journey].to_json
     end
   end
 end
