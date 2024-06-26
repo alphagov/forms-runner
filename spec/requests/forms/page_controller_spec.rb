@@ -16,14 +16,14 @@ RSpec.describe Forms::PageController, type: :request do
   end
   let(:live_at) { "2022-08-18 09:16:50 +0100" }
 
-  let(:page_1) do
+  let(:first_page_in_form) do
     build :page, :with_text_settings,
           id: 1,
           next_page: 2,
           is_optional: false
   end
 
-  let(:page_2) do
+  let(:second_page_in_form) do
     build :page, :with_text_settings,
           id: 2,
           is_optional:
@@ -37,7 +37,7 @@ RSpec.describe Forms::PageController, type: :request do
           is_optional: false
   end
 
-  let(:pages_data) { [page_1, page_2] }
+  let(:pages_data) { [first_page_in_form, second_page_in_form] }
 
   let(:is_optional) { false }
 
@@ -269,7 +269,7 @@ RSpec.describe Forms::PageController, type: :request do
     end
 
     context "when viewing a live form with no routing_conditions" do
-      let(:page_1) do
+      let(:first_page_in_form) do
         page_without_routing_condition = build(:page, :with_text_settings,
                                                id: 1,
                                                next_page: 2,
@@ -285,31 +285,31 @@ RSpec.describe Forms::PageController, type: :request do
     end
 
     context "when page has routing conditions" do
-      let(:page_1) do
+      let(:first_page_in_form) do
         page_with_routing
       end
 
       let(:validation_errors) { [] }
 
-      let(:page_2) do
+      let(:second_page_in_form) do
         build :page, :with_text_settings,
               id: 2,
               next_page: 3,
               is_optional:
       end
 
-      let(:page_3) do
+      let(:third_page_in_form) do
         build :page, :with_text_settings,
               id: 3,
               is_optional:
       end
 
-      let(:pages_data) { [page_3, page_1, page_2] }
+      let(:pages_data) { [third_page_in_form, first_page_in_form, second_page_in_form] }
 
       let(:api_url_suffix) { "/draft" }
 
       context "when the routing has a cannot_have_goto_page_before_routing_page error" do
-        let(:pages_data) { [page_1, page_2, page_3] }
+        let(:pages_data) { [first_page_in_form, second_page_in_form, third_page_in_form] }
         let(:validation_errors) { [{ name: "cannot_have_goto_page_before_routing_page" }] }
 
         it "returns a 422 response" do
@@ -320,7 +320,7 @@ RSpec.describe Forms::PageController, type: :request do
         it "shows the error page" do
           get form_page_path("preview-draft", 2, form_data.form_slug, 1)
           link_url = "#{Settings.forms_admin.base_url}/forms/2/pages/1/conditions/1"
-          question_number = page_1.position
+          question_number = first_page_in_form.position
           expect(response.body).to include(I18n.t("goto_page_before_routing_page.body_html", link_url:, question_number:))
         end
       end
@@ -422,21 +422,21 @@ RSpec.describe Forms::PageController, type: :request do
         end
 
         it "Logs the change_answer_page_save event" do
-          expect(EventLogger).to receive(:log_page_event).with(instance_of(Hash), page_1.question_text, "change_answer_page_save", nil)
+          expect(EventLogger).to receive(:log_page_event).with(instance_of(Hash), first_page_in_form.question_text, "change_answer_page_save", nil)
           post save_form_page_path("form", 2, form_data.form_slug, 1, params: { question: { text: "answer text" }, changing_existing_answer: true })
         end
       end
 
       context "with the first page" do
         it "Logs the first_page_save event" do
-          expect(EventLogger).to receive(:log_page_event).with(instance_of(Hash), page_1.question_text, "first_page_save", nil)
+          expect(EventLogger).to receive(:log_page_event).with(instance_of(Hash), first_page_in_form.question_text, "first_page_save", nil)
           post save_form_page_path("form", 2, form_data.form_slug, 1), params: { question: { text: "answer text" } }
         end
       end
 
       context "with a subsequent page" do
         it "Logs the page_save event" do
-          expect(EventLogger).to receive(:log_page_event).with(instance_of(Hash), page_2.question_text, "page_save", nil)
+          expect(EventLogger).to receive(:log_page_event).with(instance_of(Hash), second_page_in_form.question_text, "page_save", nil)
           post save_form_page_path("form", 2, form_data.form_slug, 2), params: { question: { text: "answer text" } }
         end
       end
@@ -453,14 +453,14 @@ RSpec.describe Forms::PageController, type: :request do
 
         context "when an optional question is completed" do
           it "Logs the optional_save event with skipped_question as true" do
-            expect(EventLogger).to receive(:log_page_event).with(instance_of(Hash), page_2.question_text, "optional_save", true)
+            expect(EventLogger).to receive(:log_page_event).with(instance_of(Hash), second_page_in_form.question_text, "optional_save", true)
             post save_form_page_path("form", 2, form_data.form_slug, 2), params: { question: { text: "" } }
           end
         end
 
         context "when an optional question is skipped" do
           it "Logs the optional_save event with skipped_question as false" do
-            expect(EventLogger).to receive(:log_page_event).with(instance_of(Hash), page_2.question_text, "optional_save", false)
+            expect(EventLogger).to receive(:log_page_event).with(instance_of(Hash), second_page_in_form.question_text, "optional_save", false)
             post save_form_page_path("form", 2, form_data.form_slug, 2), params: { question: { text: "answer text" } }
           end
         end
@@ -482,26 +482,26 @@ RSpec.describe Forms::PageController, type: :request do
     end
 
     context "when page has routing conditions" do
-      let(:page_1) do
+      let(:first_page_in_form) do
         page_with_routing
       end
 
       let(:validation_errors) { [] }
 
-      let(:page_2) do
+      let(:second_page_in_form) do
         build :page, :with_text_settings,
               id: 2,
               next_page: 3,
               is_optional:
       end
 
-      let(:page_3) do
+      let(:third_page_in_form) do
         build :page, :with_text_settings,
               id: 3,
               is_optional:
       end
 
-      let(:pages_data) { [page_1, page_2, page_3] }
+      let(:pages_data) { [first_page_in_form, second_page_in_form, third_page_in_form] }
 
       let(:api_url_suffix) { "/draft" }
 
@@ -518,7 +518,7 @@ RSpec.describe Forms::PageController, type: :request do
       end
 
       context "when the routing has a cannot_have_goto_page_before_routing_page error" do
-        let(:pages_data) { [page_1, page_2, page_3] }
+        let(:pages_data) { [first_page_in_form, second_page_in_form, third_page_in_form] }
         let(:validation_errors) { [{ name: "cannot_have_goto_page_before_routing_page" }] }
 
         it "returns a 422 response" do
@@ -529,7 +529,7 @@ RSpec.describe Forms::PageController, type: :request do
         it "shows the error page" do
           post save_form_page_path("preview-draft", 2, form_data.form_slug, 1), params: { question: { selection: "Option 2" }, changing_existing_answer: false }
           link_url = "#{Settings.forms_admin.base_url}/forms/2/pages/1/conditions/1"
-          question_number = page_1.position
+          question_number = first_page_in_form.position
           expect(response.body).to include(I18n.t("goto_page_before_routing_page.body_html", link_url:, question_number:))
         end
       end

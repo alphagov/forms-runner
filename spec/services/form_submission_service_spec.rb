@@ -223,7 +223,7 @@ RSpec.describe FormSubmissionService do
         end
       end
 
-      context "when form does not have any support details " do
+      context "when form does not have any support details" do
         let(:support_email) { nil }
         let(:support_phone) { nil }
         let(:support_url) { nil }

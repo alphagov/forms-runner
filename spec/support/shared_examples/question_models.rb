@@ -1,14 +1,14 @@
 RSpec.shared_examples "a question model" do |_parameter|
   it "responds with text to .show_answer" do
-    expect(question.show_answer).to be_kind_of(String)
+    expect(question.show_answer).to be_a(String)
   end
 
   it "responds with text to .show_answer_in_email" do
-    expect(question.show_answer_in_email).to be_kind_of(String)
+    expect(question.show_answer_in_email).to be_a(String)
   end
 
   it "responds serializable_hash with a hash" do
-    expect(question.serializable_hash).to be_kind_of(Hash)
+    expect(question.serializable_hash).to be_a(Hash)
   end
 
   it "responds to valid?" do

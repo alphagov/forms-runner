@@ -41,7 +41,7 @@ RSpec.describe ApplicationHelper, type: :helper do
       end
     end
 
-    context "when previewing in live mode " do
+    context "when previewing in live mode" do
       let(:mode) { OpenStruct.new(preview?: true, preview_draft?: false, preview_live?: true) }
 
       it "returns a visually hidden span with the mode name" do

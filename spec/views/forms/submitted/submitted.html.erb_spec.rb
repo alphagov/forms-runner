@@ -15,7 +15,7 @@ describe "forms/submitted/submitted.html.erb" do
     render template: "forms/submitted/submitted", locals: { requested_email_confirmation: }
   end
 
-  it "contains a green govuk panel with success message " do
+  it "contains a green govuk panel with success message" do
     expect(rendered).to have_css("h1.govuk-panel__title", text: "Your form has been submitted")
   end
 

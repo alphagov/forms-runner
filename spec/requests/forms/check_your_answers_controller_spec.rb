@@ -96,8 +96,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       prepend_before do
         allow(EmailConfirmationInput).to receive(:new).and_wrap_original do |original_method, *args|
           double = original_method.call(*args)
-          allow(double).to receive(:confirmation_email_reference).and_return("00000000-confirmation-email")
-          allow(double).to receive(:submission_email_reference).and_return("00000000-submission-email")
+          allow(double).to receive_messages(confirmation_email_reference: "00000000-confirmation-email", submission_email_reference: "00000000-submission-email")
           double
         end
       end
@@ -224,9 +223,9 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
         it "returns 404" do
           travel_to timestamp_of_request do
-            get form_path(mode: "form", form_id: 2, form_slug: form_data.form_slug)
+            get check_your_answers_path(mode: "form", form_id: 2, form_slug: form_data.form_slug)
+            expect(response).to have_http_status(:not_found)
           end
-          get check_your_answers_path(mode: "form", form_id: 2, form_slug: form_data.form_slug)
         end
       end
     end

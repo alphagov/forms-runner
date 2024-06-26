@@ -7,8 +7,7 @@ RSpec.describe CloudWatchService do
   let(:cloudwatch_metrics_enabled) { true }
 
   before do
-    allow(Settings).to receive(:forms_env).and_return(forms_env)
-    allow(Settings).to receive(:cloudwatch_metrics_enabled).and_return(cloudwatch_metrics_enabled)
+    allow(Settings).to receive_messages(forms_env:, cloudwatch_metrics_enabled:)
   end
 
   describe ".log_form_submission" do
