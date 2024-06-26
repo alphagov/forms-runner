@@ -96,8 +96,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       prepend_before do
         allow(EmailConfirmationInput).to receive(:new).and_wrap_original do |original_method, *args|
           double = original_method.call(*args)
-          allow(double).to receive(:confirmation_email_reference).and_return("00000000-confirmation-email")
-          allow(double).to receive(:submission_email_reference).and_return("00000000-submission-email")
+          allow(double).to receive_messages(confirmation_email_reference: "00000000-confirmation-email", submission_email_reference: "00000000-submission-email")
           double
         end
       end

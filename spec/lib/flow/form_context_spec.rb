@@ -32,7 +32,7 @@ RSpec.describe Flow::FormContext do
     it "clears the session for a form" do
       form_context.save_step(step, "test answer")
       form_context.clear(1)
-      expect(form_context.get_stored_answer(step)).to eq(nil)
+      expect(form_context.get_stored_answer(step)).to be_nil
     end
 
     it "doesn't change other forms" do
@@ -64,14 +64,14 @@ RSpec.describe Flow::FormContext do
     let(:store) { { answers: { "123" => nil } } }
 
     it "returns true when a form has been submitted and cleared" do
-      expect(form_context.form_submitted?(123)).to eq true
+      expect(form_context.form_submitted?(123)).to be true
     end
 
     context "when form answers have not been submitted and cleared" do
       let(:store) { { answers: { "123" => "This is my answer to question 1" } } }
 
       it "returns true when a form has been submitted and cleared" do
-        expect(form_context.form_submitted?(123)).to eq false
+        expect(form_context.form_submitted?(123)).to be false
       end
     end
   end
@@ -101,8 +101,8 @@ RSpec.describe Flow::FormContext do
 
       form_context.clear_submission_details(1)
 
-      expect(form_context.get_submission_reference(1)).to eq(nil)
-      expect(form_context.requested_email_confirmation?(1)).to eq(nil)
+      expect(form_context.get_submission_reference(1)).to be_nil
+      expect(form_context.requested_email_confirmation?(1)).to be_nil
     end
   end
 end

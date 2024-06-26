@@ -118,8 +118,8 @@ RSpec.describe Flow::Context do
         context.save_submission_details(reference, requested_email_confirmation)
         context.clear_submission_details
 
-        expect(context.get_submission_reference).to eq(nil)
-        expect(context.requested_email_confirmation?).to eq(nil)
+        expect(context.get_submission_reference).to be_nil
+        expect(context.requested_email_confirmation?).to be_nil
       end
     end
   end

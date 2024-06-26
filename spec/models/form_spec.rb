@@ -109,7 +109,7 @@ RSpec.describe Form, type: :model do
         form = described_class.find_with_mode(id: 1, mode: Mode.new("live"))
 
         expect(form).to have_attributes(id: 1, name: "form name")
-        expect(form.live?).to eq(true)
+        expect(form.live?).to be(true)
       end
     end
 
@@ -126,7 +126,7 @@ RSpec.describe Form, type: :model do
         form = described_class.find_with_mode(id: 1, mode: Mode.new("preview-draft"))
 
         expect(form).to have_attributes(id: 1, name: "form name")
-        expect(form.live?).to eq(false)
+        expect(form.live?).to be(false)
       end
     end
 
@@ -155,7 +155,7 @@ RSpec.describe Form, type: :model do
         form = described_class.find_with_mode(id: "Alpha123", mode: Mode.new("preview-draft"))
 
         expect(form).to have_attributes(id: "Alpha123", name: "form name")
-        expect(form.live?).to eq(false)
+        expect(form.live?).to be(false)
       end
     end
   end
