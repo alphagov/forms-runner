@@ -1,10 +1,4 @@
-import { saveConsentStatus } from '../../frontend/javascript/utils/cookie-consent'
-
-import {
-  installAnalyticsScript,
-  deleteGoogleAnalyticsCookies,
-  updateCookieConsent
-} from '../../frontend/javascript/utils/google-analytics'
+import { handleUpdateConsent } from '../../frontend/javascript/utils/cookie-consent'
 
 export function CookieBanner ($module) {
   this.$module = $module
@@ -37,17 +31,7 @@ CookieBanner.prototype.hide = function () {
   this.$module.setAttribute('hidden', 'true')
 }
 
-CookieBanner.prototype.onSubmit = consentedToAnalyticsCookies => {
-  saveConsentStatus(consentedToAnalyticsCookies)
-
-  updateCookieConsent(consentedToAnalyticsCookies)
-
-  if (consentedToAnalyticsCookies === false) {
-    deleteGoogleAnalyticsCookies()
-  } else {
-    installAnalyticsScript(window)
-  }
-}
+CookieBanner.prototype.onSubmit = handleUpdateConsent
 
 CookieBanner.prototype.onClick = function (allowAnalyticsCookies) {
   this.onSubmit(allowAnalyticsCookies)
