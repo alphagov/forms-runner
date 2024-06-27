@@ -1,15 +1,12 @@
 import { initAll } from 'govuk-frontend'
 import {
   loadConsentStatus,
-  CONSENT_STATUS,
-  saveConsentStatus
+  CONSENT_STATUS
 } from '../javascript/utils/cookie-consent'
 
 import {
   installAnalyticsScript,
-  setDefaultConsent,
-  updateCookieConsent,
-  deleteGoogleAnalyticsCookies
+  setDefaultConsent
 } from '../javascript/utils/google-analytics'
 import { CookieBanner } from '../../components/cookie_banner_component/cookie-banner'
 import { CookiePage } from '../javascript/cookie-page.js'
@@ -37,21 +34,8 @@ if (document.body.dataset.googleAnalyticsEnabled === 'true') {
   )
   if ($cookiesPage) {
     new CookiePage($cookiesPage).init({
-      allowAnalyticsCookies: analyticsConsentStatus === CONSENT_STATUS.GRANTED,
-      onSubmit: handleUpdateConsent
+      allowAnalyticsCookies: analyticsConsentStatus === CONSENT_STATUS.GRANTED
     })
-  }
-}
-
-function handleUpdateConsent (consentedToAnalyticsCookies) {
-  saveConsentStatus(consentedToAnalyticsCookies)
-
-  updateCookieConsent(consentedToAnalyticsCookies)
-
-  if (consentedToAnalyticsCookies === false) {
-    deleteGoogleAnalyticsCookies()
-  } else {
-    installAnalyticsScript(window)
   }
 }
 

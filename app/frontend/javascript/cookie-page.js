@@ -1,3 +1,5 @@
+import { handleUpdateConsent } from '../javascript/utils/cookie-consent'
+
 export function CookiePage ($module) {
   this.$module = $module
 }
@@ -11,7 +13,6 @@ CookiePage.prototype.init = function (options) {
 
   options = options || {}
   options.allowAnalyticsCookies = options.allowAnalyticsCookies || false
-  options.onSubmit = options.onSubmit || function () {}
 
   this.$cookieForm = this.$cookiePage.querySelector('.js-cookies-page-form')
   this.$cookieFormFieldsets = this.$cookieForm.querySelectorAll(
@@ -22,8 +23,6 @@ CookiePage.prototype.init = function (options) {
   this.$successNotification = this.$cookiePage.querySelector(
     '.js-cookies-page-success'
   )
-
-  this.onSubmit(options.onSubmit)
 
   this.showUserPreference(
     this.$analyticsFieldset,
@@ -38,9 +37,7 @@ CookiePage.prototype.init = function (options) {
   this.$cookieForm.addEventListener('submit', this.savePreferences.bind(this))
 }
 
-CookiePage.prototype.onSubmit = function (cb) {
-  this.onSubmitCallback = cb
-}
+CookiePage.prototype.onSubmit = handleUpdateConsent
 
 CookiePage.prototype.savePreferences = function (event) {
   event.preventDefault()
@@ -49,7 +46,7 @@ CookiePage.prototype.savePreferences = function (event) {
     'input[name=analytics]:checked'
   ).value
 
-  this.onSubmitCallback(selectedItem === 'yes')
+  this.onSubmit(selectedItem === 'yes')
   this.showSuccessNotification()
 }
 
