@@ -1,7 +1,28 @@
 <% set_page_title("Cookies") %>
 
 <div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
+  <div class="govuk-grid-column-two-thirds" data-module="app-cookies-page">
+    <div
+        class="govuk-notification-banner govuk-notification-banner--success js-cookies-page-success"
+        role="alert"
+        aria-labelledby="govuk-notification-banner-title"
+        data-module="govuk-notification-banner"
+        hidden=""
+      >
+      <div class="govuk-notification-banner__header">
+        <h2
+          class="govuk-notification-banner__title"
+          id="govuk-notification-banner-title"
+        >
+          Success
+        </h2>
+      </div>
+      <div class="govuk-notification-banner__content">
+        <p class="govuk-notification-banner__heading">
+          You’ve set your cookie preferences.
+        </p>
+      </div>
+    </div>
     <h1 class="govuk-heading-xl">Cookies</h1>
     <p>Cookies are small files saved on your phone, tablet or computer when you visit a website.</p>
 
@@ -41,5 +62,49 @@
       ["_gid", "Helps us count how many people visit GOV.UK Forms by telling us if you’ve visited before.", "24 hours"],
       ["_gat_UA-[random number]", "Helps us reduce the number of unnecessary tracking requests we send to Google Analytics.", "1 minute"],
     ]) %>
+
+    <form class="js-cookies-page-form">
+
+      <div class="govuk-form-group">
+        <fieldset
+          class="govuk-fieldset js-cookies-page-form-fieldset"
+          id="analytics"
+          hidden=""
+        >
+          <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+            Do you want to accept analytics cookies?
+          </legend>
+          <div class="govuk-radios" data-module="govuk-radios">
+            <div class="govuk-radios__item">
+              <input class="govuk-radios__input" id="radio-analytics" name="analytics" type="radio" value="yes" />
+              <label
+                class="govuk-label govuk-radios__label"
+                for="radio-analytics"
+                >
+                Yes
+              </label>
+            </div>
+            <div class="govuk-radios__item">
+              <input class="govuk-radios__input" id="radio-analytics-2" name="analytics" type="radio" value="no" />
+              <label
+                class="govuk-label govuk-radios__label"
+                for="radio-analytics-2"
+                >
+                No
+              </label>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+
+      <button
+        class="govuk-button js-cookies-form-button"
+        data-module="govuk-button"
+        hidden=""
+      >
+        Save cookie settings
+      </button>
+    </form>
+
   </div>
 </div>
