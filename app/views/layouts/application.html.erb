@@ -1,6 +1,9 @@
-
 <% content_for :skip_link do %>
   <a href="#main-content" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
+<% end %>
+
+<% content_for :cookie_banner do %>
+  <%= render CookieBannerComponent::View.new %>
 <% end %>
 
 <% content_for :header do %>
@@ -14,12 +17,12 @@
 
 <% content_for :footer do %>
 
-    <% meta_links = {t("footer.accessibility_statement") => accessibility_statement_path, t("footer.cookies") => cookies_path} %>
-    <% if @current_context.present? %>
-      <% meta_links[t("footer.privacy_policy")] = form_privacy_path(@current_context.form.id) %>
-    <% end -%>
+  <% meta_links = {t("footer.accessibility_statement") => accessibility_statement_path, t("footer.cookies") => cookies_path} %>
+  <% if @current_context.present? %>
+    <% meta_links[t("footer.privacy_policy")] = form_privacy_path(@current_context.form.id) %>
+  <% end -%>
 
-    <%= govuk_footer meta_items_title: t("footer.helpful_links"), meta_items: meta_links %>
+  <%= govuk_footer meta_items_title: t("footer.helpful_links"), meta_items: meta_links %>
 <% end %>
 
 <%= render template: "layouts/base" %>

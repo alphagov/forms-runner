@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 
-import { installAnalyticsScript } from '../google-tag'
+import { installAnalyticsScript, deleteGoogleAnalyticsCookies } from '.'
 import { describe, beforeEach, afterEach, it, expect } from 'vitest'
 
 describe('google_tag.mjs', () => {
@@ -37,6 +37,17 @@ describe('google_tag.mjs', () => {
           ).length
         ).toBe(0)
       })
+    })
+  })
+
+  describe('deleteGoogleAnalyticsCookies()', () => {
+    it('removes google cookies', function () {
+      document.cookie = '_ga=GA1.1.120966789.1687349767'
+      document.cookie = 'analytics_consent=true'
+      document.cookie = '_ga_B0CQCNQ8PH=GS1.1.1687430125.5.0.1687430125.0.0.0'
+
+      deleteGoogleAnalyticsCookies()
+      expect(document.cookie).toContain('analytics_consent=true')
     })
   })
 })

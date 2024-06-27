@@ -80,6 +80,12 @@ en:
               blank: Enter an answer
               long_text_too_long: The answer must be shorter than 5000 characters
               single_line_too_long: The answer must be shorter than 500 characters
+  cookie_banner:
+    accept: Accept analytics cookies
+    content: We’d like to use analytics cookies so we can understand how you use this website and make improvements.
+    heading: Cookies on GOV.UK Forms
+    policy_link: How we use cookies
+    reject: Reject analytics cookies
   environment_names:
     dev: Development
     local: Local
