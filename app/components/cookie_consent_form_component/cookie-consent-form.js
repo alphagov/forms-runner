@@ -15,6 +15,9 @@ CookiePage.prototype.init = function (options) {
   options.allowAnalyticsCookies = options.allowAnalyticsCookies || false
 
   this.$cookieForm = this.$cookiePage.querySelector('.js-cookies-page-form')
+  this.$noJsMessage = this.$cookiePage.querySelector(
+    '.js-cookies-page__no-js-message'
+  )
   this.$cookieFormFieldsets = this.$cookieForm.querySelectorAll(
     '.js-cookies-page-form-fieldset'
   )
@@ -28,12 +31,11 @@ CookiePage.prototype.init = function (options) {
     this.$analyticsFieldset,
     options.allowAnalyticsCookies
   )
-  this.$analyticsFieldset.removeAttribute('hidden')
 
-  // Show submit button
-  this.$cookieForm
-    .querySelector('.js-cookies-form-button')
-    .removeAttribute('hidden')
+  this.$cookieForm.removeAttribute('hidden')
+
+  this.$noJsMessage.setAttribute('hidden', true)
+
   this.$cookieForm.addEventListener('submit', this.savePreferences.bind(this))
 }
 
