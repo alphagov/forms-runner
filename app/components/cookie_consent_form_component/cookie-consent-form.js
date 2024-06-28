@@ -1,4 +1,4 @@
-import { handleUpdateConsent } from '../javascript/utils/cookie-consent'
+import { handleUpdateConsent } from '../../frontend/javascript/utils/cookie-consent'
 
 export function CookiePage ($module) {
   this.$module = $module

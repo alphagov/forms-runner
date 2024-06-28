@@ -1,0 +1,68 @@
+<div data-module="app-cookies-page">
+  <form class="js-cookies-page-form">
+
+    <div
+        class="govuk-notification-banner govuk-notification-banner--success js-cookies-page-success"
+        role="alert"
+        aria-labelledby="govuk-notification-banner-title"
+        data-module="govuk-notification-banner"
+        hidden=""
+      >
+      <div class="govuk-notification-banner__header">
+        <h2
+          class="govuk-notification-banner__title"
+          id="govuk-notification-banner-title"
+        >
+          Success
+        </h2>
+      </div>
+      <div class="govuk-notification-banner__content">
+        <p class="govuk-notification-banner__heading">
+          You’ve set your cookie preferences.
+        </p>
+      </div>
+    </div>
+
+    <%= content %>
+
+    <div class="govuk-form-group">
+      <fieldset
+          class="govuk-fieldset js-cookies-page-form-fieldset"
+          id="analytics"
+          hidden=""
+        >
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+          Do you want to accept analytics cookies?
+        </legend>
+        <div class="govuk-radios" data-module="govuk-radios">
+          <div class="govuk-radios__item">
+            <input class="govuk-radios__input" id="radio-analytics" name="analytics" type="radio" value="yes" />
+            <label
+                class="govuk-label govuk-radios__label"
+                for="radio-analytics"
+                >
+              Yes
+            </label>
+          </div>
+          <div class="govuk-radios__item">
+            <input class="govuk-radios__input" id="radio-analytics-2" name="analytics" type="radio" value="no" />
+            <label
+                class="govuk-label govuk-radios__label"
+                for="radio-analytics-2"
+                >
+              No
+            </label>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+
+    <button
+        class="govuk-button js-cookies-form-button"
+        data-module="govuk-button"
+        hidden=""
+      >
+      Save cookie settings
+    </button>
+  </form>
+</div>
