@@ -1,110 +1,48 @@
 <% set_page_title("Cookies") %>
 
 <div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds" data-module="app-cookies-page">
-    <div
-        class="govuk-notification-banner govuk-notification-banner--success js-cookies-page-success"
-        role="alert"
-        aria-labelledby="govuk-notification-banner-title"
-        data-module="govuk-notification-banner"
-        hidden=""
-      >
-      <div class="govuk-notification-banner__header">
-        <h2
-          class="govuk-notification-banner__title"
-          id="govuk-notification-banner-title"
-        >
-          Success
-        </h2>
-      </div>
-      <div class="govuk-notification-banner__content">
-        <p class="govuk-notification-banner__heading">
-          You’ve set your cookie preferences.
-        </p>
-      </div>
-    </div>
-    <h1 class="govuk-heading-xl">Cookies</h1>
-    <p>Cookies are small files saved on your phone, tablet or computer when you visit a website.</p>
+  <div class="govuk-grid-column-two-thirds">
+    <%= render(CookieConsentFormComponent::View.new) do %>
+      <h1 class="govuk-heading-xl">Cookies</h1>
+      <p>Cookies are small files saved on your phone, tablet or computer when you visit a website.</p>
 
-    <p>We use cookies to make this form work.</p>
+      <p>We use cookies to make this form work.</p>
 
-    <p>Find out <a rel="external" href="https://ico.org.uk/your-data-matters/online/cookies/">how to manage cookies</a>.</p>
+      <p>Find out <a rel="external" href="https://ico.org.uk/your-data-matters/online/cookies/">how to manage cookies</a>.</p>
 
-    <h2 class="govuk-heading-l">Essential cookies</h2>
+      <h2 class="govuk-heading-l">Essential cookies</h2>
 
-    <p>We use essential cookies to make forms work.</p>
+      <p>We use essential cookies to make forms work.</p>
 
-    <%= govuk_table(rows: [
-      ["Name", "Purpose", "Expires"],
-      ["_forms", "Used to remember your progress through the form", "When the browser is closed or after 20 hours"],
-      ["analytics_consent", "Saves your cookie consent settings", "1 year"],
-    ]) %>
+      <%= govuk_table(rows: [
+        ["Name", "Purpose", "Expires"],
+        ["_forms", "Used to remember your progress through the form", "When the browser is closed or after 20 hours"],
+        ["analytics_consent", "Saves your cookie consent settings", "1 year"],
+      ]) %>
 
-    <h2 class="govuk-heading-l">Analytics cookies (optional)</h2>
+      <h2 class="govuk-heading-l">Analytics cookies (optional)</h2>
 
-    <p>We use Google Analytics software to understand how people use GOV.UK Forms. This information helps us to improve our service.</p>
+      <p>We use Google Analytics software to understand how people use GOV.UK Forms. This information helps us to improve our service.</p>
 
-    <p>Google is not allowed to use or share our analytics data with anyone.</p>
+      <p>Google is not allowed to use or share our analytics data with anyone.</p>
 
-    <p>Google Analytics stores anonymised information about:</p>
+      <p>Google Analytics stores anonymised information about:</p>
 
-    <ul class="govuk-list govuk-list--bullet">
-      <li>the pages you visit</li>
-      <li>how long you spend on each page</li>
-      <li>how you arrived at the site</li>
-      <li>what you click on while you visit the site</li>
-      <li>the device and browser you use</li>
-    </ul>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>the pages you visit</li>
+        <li>how long you spend on each page</li>
+        <li>how you arrived at the site</li>
+        <li>what you click on while you visit the site</li>
+        <li>the device and browser you use</li>
+      </ul>
 
-    <%= govuk_table(rows: [
-      ["Name", "Purpose", "Expires"],
-      ["_ga", "Helps us count how many people visit GOV.UK Forms by telling us if you’ve visited before.", "2 years"],
-      ["_gid", "Helps us count how many people visit GOV.UK Forms by telling us if you’ve visited before.", "24 hours"],
-      ["_gat_UA-[random number]", "Helps us reduce the number of unnecessary tracking requests we send to Google Analytics.", "1 minute"],
-    ]) %>
+      <%= govuk_table(rows: [
+        ["Name", "Purpose", "Expires"],
+        ["_ga", "Helps us count how many people visit GOV.UK Forms by telling us if you’ve visited before.", "2 years"],
+        ["_gid", "Helps us count how many people visit GOV.UK Forms by telling us if you’ve visited before.", "24 hours"],
+        ["_gat_UA-[random number]", "Helps us reduce the number of unnecessary tracking requests we send to Google Analytics.", "1 minute"],
+      ]) %>
 
-    <form class="js-cookies-page-form">
-
-      <div class="govuk-form-group">
-        <fieldset
-          class="govuk-fieldset js-cookies-page-form-fieldset"
-          id="analytics"
-          hidden=""
-        >
-          <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
-            Do you want to accept analytics cookies?
-          </legend>
-          <div class="govuk-radios" data-module="govuk-radios">
-            <div class="govuk-radios__item">
-              <input class="govuk-radios__input" id="radio-analytics" name="analytics" type="radio" value="yes" />
-              <label
-                class="govuk-label govuk-radios__label"
-                for="radio-analytics"
-                >
-                Yes
-              </label>
-            </div>
-            <div class="govuk-radios__item">
-              <input class="govuk-radios__input" id="radio-analytics-2" name="analytics" type="radio" value="no" />
-              <label
-                class="govuk-label govuk-radios__label"
-                for="radio-analytics-2"
-                >
-                No
-              </label>
-            </div>
-          </div>
-        </fieldset>
-      </div>
-
-      <button
-        class="govuk-button js-cookies-form-button"
-        data-module="govuk-button"
-        hidden=""
-      >
-        Save cookie settings
-      </button>
-    </form>
-
+    <% end %>
   </div>
 </div>

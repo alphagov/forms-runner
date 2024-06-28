@@ -3,7 +3,7 @@
  */
 
 import { describe, beforeEach, test, expect } from 'vitest'
-import { CookiePage } from './cookie-page.js'
+import { CookiePage } from './cookie-consent-form.js'
 
 describe('CookiePage', () => {
   let cookiePage

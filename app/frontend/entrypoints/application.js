@@ -9,7 +9,7 @@ import {
   setDefaultConsent
 } from '../javascript/utils/google-analytics'
 import { CookieBanner } from '../../components/cookie_banner_component/cookie-banner'
-import { CookiePage } from '../javascript/cookie-page.js'
+import { CookiePage } from '../../components/cookie_consent_form_component/cookie-consent-form'
 
 const analyticsConsentStatus = loadConsentStatus()
 
