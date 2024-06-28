@@ -29,7 +29,11 @@
       document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');
     </script>
 
-    <%= yield :cookie_banner %>
+    <% if content_for?(:cookie_banner) %>
+      <%= yield :cookie_banner %>
+    <% else %>
+      <%= render CookieBannerComponent::View.new %>
+    <% end %>
 
     <%= yield :skip_link %>
 

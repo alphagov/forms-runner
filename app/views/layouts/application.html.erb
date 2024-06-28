@@ -2,10 +2,6 @@
   <a href="#main-content" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
 <% end %>
 
-<% content_for :cookie_banner do %>
-  <%= render CookieBannerComponent::View.new %>
-<% end %>
-
 <% content_for :header do %>
   <%= render(FormHeaderComponent::View.new(current_context: @current_context, mode: @mode)) %>
 <% end %>
