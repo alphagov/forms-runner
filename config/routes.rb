@@ -11,6 +11,9 @@ Rails.application.routes.draw do
   get "/help/accessibility-statement" => "application#accessibility_statement", as: :accessibility_statement
   get "/help/cookies" => "application#cookies", as: :cookies
 
+  get "/security.txt.html" => redirect("https://vdp.cabinetoffice.gov.uk/.well-known/security.txt")
+  get "/.well-known/security.txt.html" => redirect("https://vdp.cabinetoffice.gov.uk/.well-known/security.txt")
+
   scope "/:mode", mode: /preview-draft|preview-archived|preview-live|form/ do
     get "/:form_id" => "forms/base#redirect_to_friendly_url_start", as: :form_id
     scope "/:form_id/:form_slug" do
