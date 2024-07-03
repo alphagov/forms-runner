@@ -24,19 +24,6 @@ RSpec.describe Form, type: :model do
     end
   end
 
-  it "returns a simple form" do
-    expect(described_class.find(1)).to have_attributes(id: 1, name: "form name", submission_email: "user@example.com")
-  end
-
-  describe "Getting the pages for a form" do
-    it "returns the pages for a form" do
-      pages = described_class.find(1).pages
-      expect(pages.length).to eq(2)
-      expect(pages[0]).to have_attributes(id: 9, next_page: 10, answer_type: "date", question_text: "Question one")
-      expect(pages[1]).to have_attributes(id: 10, answer_type: "address", question_text: "Question two")
-    end
-  end
-
   describe "#live?" do
     context "when live_at is not set" do
       let(:response_data) { { id: 1, name: "form name", submission_email: "user@example.com", start_page: 1 }.to_json }

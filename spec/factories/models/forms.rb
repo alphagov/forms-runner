@@ -6,7 +6,6 @@ FactoryBot.define do
     has_live_version { false }
     submission_email { Faker::Internet.email(domain: "example.gov.uk") }
     privacy_policy_url { Faker::Internet.url(host: "gov.uk") }
-    org { "test-org" }
     live_at { nil }
     what_happens_next_markdown { nil }
     support_email { nil }
