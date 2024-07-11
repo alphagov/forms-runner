@@ -1,22 +1,40 @@
-class Page < ActiveResource::Base
+class Page
+  include ActiveModel::Model
+  include ActiveModel::Attributes
+
   PAGE_ID_REGEX = /\d+/
 
-  self.site = Settings.forms_api.base_url
-  self.prefix = "/api/v1/forms/:form_id/"
-  self.include_format_in_path = false
-  headers["X-API-Token"] = Settings.forms_api.auth_key
+  def initialize(attributes = {}, persisted = true)
+    attributes["answer_settings"] = AnswerSettings.new(attributes["answer_settings"]) if attributes["answer_settings"].present?
 
-  belongs_to :form
+    attributes["routing_conditions"] ||= []
+    attributes["routing_conditions"] = attributes["routing_conditions"]&.map do |rc|
+      RoutingCondition.new(rc)
+    end
 
-  def form_id
-    @prefix_options[:form_id]
+    super(attributes)
   end
+
+  attribute :id
+  attribute :question_text
+  attribute :hint_text
+  attribute :answer_type
+  attribute :next_page
+  attribute :is_optional
+  attribute :answer_settings
+  attribute :created_at
+  attribute :updated_at
+  attribute :form_id
+  attribute :position
+  attribute :page_heading
+  attribute :guidance_markdown
+  attribute :routing_conditions, default: []
 
   def has_next_page?
-    @attributes.include?("next_page") && !@attributes["next_page"].nil?
+    next_page.present?
   end
 
-  def answer_settings
-    @attributes["answer_settings"] || {}
+  def as_json(*args)
+    super.as_json["attributes"]
   end
 end
