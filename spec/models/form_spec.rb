@@ -25,60 +25,34 @@ RSpec.describe Form, type: :model, feature_direct_api_enabled: false do
   end
 
   describe "#live?" do
-    context "when live_at is not set" do
-      let(:response_data) { { id: 1, name: "form name", submission_email: "user@example.com", start_page: 1 }.to_json }
-
-      it "raises an error" do
-        expect { described_class.find(1).live? }.to raise_error(Date::Error)
-      end
+    it "when live_at is not set raises an error" do
+      expect { described_class.new({ id: 1, name: "form name", submission_email: "user@example.com", start_page: 1 }).live? }.to raise_error(Date::Error)
     end
 
-    context "when no live_at is set to empty string" do
-      let(:response_data) { { id: 1, name: "form name", live_at: "", submission_email: "user@example.com", start_page: 1 }.to_json }
-
-      it "returns false" do
-        expect(described_class.find(1).live?).to be false
-      end
+    it "when no live_at is set to empty string returns false" do
+      expect(described_class.new({ id: 1, name: "form name", live_at: "", submission_email: "user@example.com", start_page: 1 }).live?).to be false
     end
 
-    context "when live_at is a string which isn't a valid date" do
-      let(:response_data) { { id: 1, name: "form name", live_at: "not a date!", submission_email: "user@example.com", start_page: 1 }.to_json }
-
-      it "raises an error" do
-        expect { described_class.find(1).live? }.to raise_error(Date::Error)
-      end
+    it "when live_at is a string which isn't a valid date raises an error" do
+      expect {
+        described_class.new({ id: 1, name: "form name", live_at: "not a date!", submission_email: "user@example.com", start_page: 1 }).live?
+      }.to raise_error(Date::Error)
     end
 
-    context "when live_at is not a string" do
-      let(:response_data) { { id: 1, name: "form name", live_at: 1, submission_email: "user@example.com", start_page: 1 }.to_json }
-
-      it "raises an error" do
-        expect { described_class.find(1).live? }.to raise_error(Date::Error)
-      end
+    it "when live_at is not a string raises an error" do
+      expect { described_class.new({ id: 1, name: "form name", live_at: 1, submission_email: "user@example.com", start_page: 1 }).live? }.to raise_error(Date::Error)
     end
 
-    context "when live_at is a date in the future" do
-      let(:response_data) { { id: 1, name: "form name", live_at: "2022-08-18 09:16:50Z", submission_email: "user@example.com", start_page: 1 }.to_json }
-
-      it "returns false" do
-        expect(described_class.find(1).live?("2022-01-01 10:00:00Z")).to be false
-      end
+    it "when live_at is a date in the future returns false" do
+      expect(described_class.new({ id: 1, name: "form name", live_at: "2022-08-18 09:16:50Z", submission_email: "user@example.com", start_page: 1 }).live?("2022-01-01 10:00:00Z")).to be false
     end
 
-    context "when live_at is a date in the past" do
-      let(:response_data) { { id: 1, name: "form name", live_at: "2022-08-18 09:16:50Z", submission_email: "user@example.com", start_page: 1 }.to_json }
-
-      it "returns true" do
-        expect(described_class.find(1).live?("2023-01-01 10:00:00Z")).to be true
-      end
+    it "when live_at is a date in the past returns true" do
+      expect(described_class.new({ id: 1, name: "form name", live_at: "2022-08-18 09:16:50Z", submission_email: "user@example.com", start_page: 1 }).live?("2023-01-01 10:00:00Z")).to be true
     end
 
-    context "when dates are the same" do
-      let(:response_data) { { id: 1, name: "form name", live_at: "2022-08-18 09:16:50Z", submission_email: "user@example.com", start_page: 1 }.to_json }
-
-      it "returns false" do
-        expect(described_class.find(1).live?("2022-08-18 09:16:50Z")).to be false
-      end
+    it "when dates are the same returns false" do
+      expect(described_class.new({ id: 1, name: "form name", live_at: "2022-08-18 09:16:50Z", submission_email: "user@example.com", start_page: 1 }).live?("2022-08-18 09:16:50Z")).to be false
     end
   end
 
