@@ -24,7 +24,7 @@ module Forms
   private
 
     def current_form
-      @current_form ||= Form.find_with_mode(id: params.require(:form_id), mode:)
+      @current_form ||= FormService.find_with_mode(id: params.require(:form_id), mode:)
     end
 
     def current_context
@@ -46,3 +46,4 @@ module Forms
     end
   end
 end
+
