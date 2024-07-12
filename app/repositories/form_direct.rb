@@ -3,32 +3,14 @@ class FormDirect
   include ActiveModel::Attributes
   include FormRepository
 
-  def initialize(attributes = {})
-    @attributes = attributes
-
-    @attributes["pages"] = attributes["pages"].map { |page_data| Page.new(page_data) }
-  end
-
   def self.find_with_mode(id:, mode:)
     raise ActiveResource::ResourceNotFound.new(404, "Not Found") unless id.to_s =~ /^[[:alnum:]]+$/
 
-    return find_draft(id) if mode.preview_draft?
-    return find_archived(id) if mode.preview_archived?
-    return find_live(id) if mode.live?
+    form_body = find_request(id, mode)
 
-    find_live(id) if mode.preview_live?
-  end
+    form_body["pages"] = form_body["pages"]&.map { |page_data| Page.from_json(page_data) }
 
-  def self.find_live(id)
-    find_request(id, "live")
-  end
-
-  def self.find_draft(id)
-    find_request(id, "draft")
-  end
-
-  def self.find_archived(id)
-    find_request(id, "archived")
+    Form.new(form_body)
   end
 
   def self.find_request(id, mode)
@@ -37,6 +19,7 @@ class FormDirect
     # Create the HTTP GET request
     request = Net::HTTP::Get.new(url.to_s)
     request["X-API-Token"] = Settings.forms_api.auth_key
+    request["Accept"] = "application/json"
 
     # Create an HTTP session
     response = Net::HTTP.start(url.host, url.port) do |http|
@@ -47,7 +30,7 @@ class FormDirect
     case response
     when Net::HTTPSuccess
       # Parse and return the JSON response
-      FormDirect.new(JSON.parse(response.body))
+      JSON.parse(response.body)
     else
       # Handle non-successful responses
       raise "HTTP request failed with code #{response.code}: #{response.message}"
