@@ -1,19 +1,9 @@
 class Page
   include ActiveModel::Model
   include ActiveModel::Attributes
+  include ActiveModel::Serializers::JSON
 
   PAGE_ID_REGEX = /\d+/
-
-  def initialize(attributes = {}, persisted = true)
-    attributes["answer_settings"] = AnswerSettings.new(attributes["answer_settings"]) if attributes["answer_settings"].present?
-
-    attributes["routing_conditions"] ||= []
-    attributes["routing_conditions"] = attributes["routing_conditions"]&.map do |rc|
-      RoutingCondition.new(rc)
-    end
-
-    super(attributes)
-  end
 
   attribute :id
   attribute :question_text
@@ -34,7 +24,34 @@ class Page
     next_page.present?
   end
 
-  def as_json(*args)
-    super.as_json["attributes"]
+  def self.from_json(json)
+    attributes = HashWithIndifferentAccess.new(json)
+
+    extracted_attributes = {
+      id: attributes[:id],
+      question_text: attributes[:question_text],
+      hint_text: attributes[:hint_text],
+      answer_type: attributes[:answer_type],
+      next_page: attributes[:next_page],
+      is_optional: attributes[:is_optional],
+      created_at: attributes[:created_at],
+      updated_at: attributes[:updated_at],
+      form_id: attributes[:form_id],
+      position: attributes[:position],
+      page_heading: attributes[:page_heading],
+      guidance_markdown: attributes[:guidance_markdown]
+    }
+
+    if attributes[:answer_settings].present?
+      extracted_attributes[:answer_settings] = AnswerSettings.from_json(attributes[:answer_settings], attributes[:answer_type])
+    end
+
+    if attributes[:routing_conditions].present?
+      extracted_attributes[:routing_conditions] = attributes[:routing_conditions].map do |rc|
+        RoutingCondition.new(rc)
+      end
+    end
+
+    new(extracted_attributes)
   end
 end
