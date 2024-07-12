@@ -45,20 +45,18 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
   let(:pages_data) do
     [
       build(:page,
-        id: 1,
-        position: 1,
-        question_text: "Question one",
-        answer_type: "date",
-        next_page: 2,
-        is_optional: nil,
-      ),
+            id: 1,
+            position: 1,
+            question_text: "Question one",
+            answer_type: "date",
+            next_page: 2,
+            is_optional: nil),
       build(:page,
-        id: 2,
-        position: 2,
-        question_text: "Question two",
-        answer_type: "date",
-        is_optional: nil,
-      ),
+            id: 2,
+            position: 2,
+            question_text: "Question two",
+            answer_type: "date",
+            is_optional: nil),
     ]
   end
 

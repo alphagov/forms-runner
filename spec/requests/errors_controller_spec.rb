@@ -46,13 +46,13 @@ RSpec.describe ErrorsController, type: :request do
         submission_email: "submission@email.com",
         start_page: 1,
         pages: [
-          (build :page, :with_text_settings, id: 1, input_type: "single_line")
+          (build :page, :with_text_settings, id: 1, input_type: "single_line"),
         ],
       )
     end
 
     before do
-      allow(FormService).to receive(:find_with_mode).with(id: '2', mode: kind_of(Mode)).and_return(form)
+      allow(FormService).to receive(:find_with_mode).with(id: "2", mode: kind_of(Mode)).and_return(form)
 
       # setup the context in the session
       get form_page_path(mode: "form", form_id: 2, form_slug: "form-name", page_slug: 1)

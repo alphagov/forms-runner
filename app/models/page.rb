@@ -39,7 +39,7 @@ class Page
       form_id: attributes[:form_id],
       position: attributes[:position],
       page_heading: attributes[:page_heading],
-      guidance_markdown: attributes[:guidance_markdown]
+      guidance_markdown: attributes[:guidance_markdown],
     }
 
     if attributes[:answer_settings].present?

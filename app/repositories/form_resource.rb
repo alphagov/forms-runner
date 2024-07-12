@@ -14,7 +14,7 @@ class FormResource < ActiveResource::Base
 
   include FormRepository
 
-  has_many :pages, class_name: PageResource
+  has_many :pages, class_name: "PageResource"
 
   def self.find_with_mode(id:, mode:)
     Form.new(find(:one, from: "#{prefix}forms/#{id}/#{mode}").attributes)

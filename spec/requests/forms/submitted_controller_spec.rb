@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe Forms::SubmittedController, type: :request do
-  let(:context) { Flow::Context.new(form: form, store:) }
+  let(:context) { Flow::Context.new(form:, store:) }
 
   let(:form) do
     build(:form, :with_support,

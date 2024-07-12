@@ -12,7 +12,7 @@ FactoryBot.define do
   factory :page, class: "Page" do
     id { Faker::Number.number(digits: 2) }
     question_text { Faker::Lorem.question }
-    answer_type { 'email' }
+    answer_type { "email" }
     is_optional { nil }
     answer_settings { nil }
     page_heading { nil }

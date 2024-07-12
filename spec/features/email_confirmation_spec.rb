@@ -7,7 +7,7 @@ feature "Email confirmation", type: :feature do
 
   before do
     allow(FormService).to receive(:find_with_mode).with(any_args).and_raise(ActiveResource::ResourceNotFound.new(404, "Not Found"))
-    allow(FormService).to receive(:find_with_mode).with(id: '1', mode: kind_of(Mode)).and_return(form)
+    allow(FormService).to receive(:find_with_mode).with(id: "1", mode: kind_of(Mode)).and_return(form)
   end
 
   scenario "opting out of email submission returns the confirmation page without confirmation email text" do

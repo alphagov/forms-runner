@@ -16,10 +16,10 @@ class RoutingCondition
   def from_json(json)
     attributes = HashWithIndifferentAccess.new(json)
 
-    extracted_attributes = {
+    {
       validation_errors: Array(attributes["validation_errors"]).map do |ve|
         ValidationError.new(ve)
-      end
+      end,
     }
   end
 end

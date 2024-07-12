@@ -20,7 +20,7 @@ RSpec.shared_examples "a form repository" do |_parameter|
         form = described_class.find_with_mode(id: 1, mode: "live")
 
         expect(form).to have_attributes(id: 1, name: "form name")
-        expect(form.live?).to eq(true)
+        expect(form.live?).to be(true)
       end
     end
 
@@ -37,7 +37,7 @@ RSpec.shared_examples "a form repository" do |_parameter|
         form = described_class.find_with_mode(id: 1, mode: "draft")
 
         expect(form).to have_attributes(id: 1, name: "form name")
-        expect(form.live?).to eq(false)
+        expect(form.live?).to be(false)
       end
     end
   end

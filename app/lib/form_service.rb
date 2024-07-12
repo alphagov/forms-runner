@@ -5,6 +5,7 @@ class FormService
 
   def self.find_with_mode(id:, mode:)
     raise ActiveResource::ResourceNotFound.new(404, "Not Found") unless id.to_s =~ /^[[:alnum:]]+$/
+
     find_from_repository(id:, mode:)
   end
 
@@ -17,8 +18,9 @@ class FormService
   end
 
   def self.mode_string(mode)
-    return 'draft' if mode.preview_draft?
-    return 'archived' if mode.preview_archived?
-    return 'live' if mode.live? || mode.preview_live?
+    return "draft" if mode.preview_draft?
+    return "archived" if mode.preview_archived?
+
+    "live" if mode.live? || mode.preview_live?
   end
 end

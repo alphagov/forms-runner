@@ -1,5 +1,5 @@
 require "simplecov"
-require 'webmock/rspec'
+require "webmock/rspec"
 
 SimpleCov.formatters = [
   SimpleCov::Formatter::HTMLFormatter,

@@ -1,16 +1,16 @@
 require "rails_helper"
 
-RSpec.describe Form, type: :model, feature_direct_api_enabled: false do
+RSpec.describe Form, feature_direct_api_enabled: false, type: :model do
   describe "#live?" do
     let(:form) { build :form }
 
     it "when no live_at is set to empty string returns false" do
-      form.live_at = ''
+      form.live_at = ""
       expect(form.live?).to be false
     end
 
     it "when live_at is a string which isn't a valid date raises an error" do
-      form.live_at = 'invalid date'
+      form.live_at = "invalid date"
       expect { form.live? }.to raise_error(Date::Error)
     end
 
