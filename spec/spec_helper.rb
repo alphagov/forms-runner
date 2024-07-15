@@ -1,4 +1,5 @@
 require "simplecov"
+require 'webmock/rspec'
 
 SimpleCov.formatters = [
   SimpleCov::Formatter::HTMLFormatter,
@@ -9,6 +10,8 @@ SimpleCov.minimum_coverage 80
 SimpleCov.start "rails" do
   enable_coverage :branch
 end
+
+WebMock.disable_net_connect!(allow_localhost: true)
 
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate
