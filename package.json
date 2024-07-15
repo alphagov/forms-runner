@@ -34,7 +34,7 @@
     "vitest": "^2.0.2"
   },
   "dependencies": {
-    "govuk-frontend": "5.4.0"
+    "govuk-frontend": "5.4.1"
   },
   "standard": {
     "globals": [
