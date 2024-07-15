@@ -4,6 +4,7 @@ require "view_component/test_helpers"
 require "capybara/rspec"
 require "selenium/webdriver"
 require "axe-rspec"
+require "rails/generators/testing/behavior"
 
 ENV["RAILS_ENV"] ||= "test"
 require_relative "../config/environment"
@@ -65,4 +66,5 @@ RSpec.configure do |config|
   config.include ViewComponent::TestHelpers, type: :component
   config.include Capybara::RSpecMatchers, type: :component
   config.include Sentry::TestHelper
+  config.include Rails::Generators::Testing::Behavior, type: :generator
 end
