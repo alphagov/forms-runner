@@ -50,6 +50,9 @@ RSpec.describe Forms::PageController, type: :request do
 
   let(:api_url_suffix) { "/live" }
 
+  let(:output) { StringIO.new }
+  let(:logger) { ActiveSupport::Logger.new(output) }
+
   before do
     ActiveResource::HttpMock.respond_to do |mock|
       mock.get "/api/v1/forms/2#{api_url_suffix}", req_headers, form_data.to_json, 200
@@ -57,34 +60,38 @@ RSpec.describe Forms::PageController, type: :request do
   end
 
   context "when setting logging context" do
+    let(:page_id) { 101 }
     let(:form_data) do
       build(:form, :with_support,
             id: 200,
             live_at:,
-            start_page: 101,
+            start_page: page_id,
             declaration_text: "agree to the declaration",
             pages: [
               build(:page, :with_text_settings,
-                    id: 101,
+                    id: page_id,
                     position: 1,
                     is_optional: false),
             ])
     end
 
     before do
+      # Intercept the request logs so we can do assertions on them
+      allow(Lograge).to receive(:logger).and_return(logger)
+
       ActiveResource::HttpMock.respond_to do |mock|
         mock.get "/api/v1/forms/200#{api_url_suffix}", req_headers, form_data.to_json, 200
       end
 
-      get form_page_path("form", 200, form_data.form_slug, 101)
+      get form_page_path("form", 200, form_data.form_slug, page_id)
     end
 
     it "adds the page ID to the instrumentation payload" do
-      expect(logging_context).to include(page_id: "101")
+      expect(log_lines[0]["page_id"]).to eq(page_id.to_s)
     end
 
     it "adds the question_number to the instrumentation payload" do
-      expect(logging_context).to include(question_number: 1)
+      expect(log_lines[0]["question_number"]).to eq(1)
     end
   end
 
@@ -536,6 +543,10 @@ RSpec.describe Forms::PageController, type: :request do
 
       # TODO: Need to add test to check how changing an existing routing answer value would work. Better off as a feature spec which we dont have.
     end
+  end
+
+  def log_lines
+    output.string.split("\n").map { |line| JSON.parse(line) }
   end
 end
 # rubocop:enable RSpec/AnyInstance

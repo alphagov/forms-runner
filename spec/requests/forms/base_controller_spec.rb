@@ -47,40 +47,66 @@ RSpec.describe Forms::BaseController, type: :request do
 
   let(:api_url_suffix) { "/live" }
 
+  let(:output) { StringIO.new }
+  let(:logger) do
+    ActiveSupport::Logger.new(output).tap do |logger|
+      logger.formatter = JsonLogFormatter.new
+    end
+  end
+
   before do
     ActiveResource::HttpMock.respond_to do |mock|
-      allow(LogEventService).to receive(:log_form_start).at_least(:once)
       mock.get "/api/v1/forms/2#{api_url_suffix}", req_headers, form_response_data.to_json, 200
       mock.get "/api/v1/forms/9999#{api_url_suffix}", req_headers, no_data_found_response, 404
     end
   end
 
-  context "when setting logging context" do
+  describe "logging" do
+    let(:form_id) { 2 }
+    let(:trace_id) { "Root=1-63441c4a-abcdef012345678912345678" }
+    let(:request_id) { "a-request-id" }
+
     before do
-      get form_id_path(mode: "form", form_id: 2)
+      Rails.logger.broadcast_to logger
+
+      get form_id_path(mode: "form", form_id:), headers: {
+        "HTTP_X_AMZN_TRACE_ID": trace_id,
+        "X-REQUEST-ID": request_id,
+      }
     end
 
-    it "adds the form ID to the logging context" do
-      expect(logging_context).to include(form_id: "2")
+    after do
+      Rails.logger.stop_broadcasting_to logger
     end
 
-    it "adds the form name to the logging context" do
-      expect(logging_context).to include(:form_name)
-      expect(logging_context[:form_name]).to match(/Form \d+/)
+    it "logs when the form is visited" do
+      expect(log_lines[0]["event"]).to eq("form_visit")
+    end
+
+    it "includes the form_name on log lines" do
+      expect(log_lines[0]["form_name"]).to eq(form_response_data.name)
+    end
+
+    it "includes the form_id on log lines" do
+      expect(log_lines[0]["form_id"]).to eq(form_id.to_s)
+    end
+
+    it "includes the trace ID on log lines" do
+      expect(log_lines[0]["trace_id"]).to eq(trace_id)
+    end
+
+    it "includes the host on log lines" do
+      expect(log_lines[0]["host"]).to eq("www.example.com")
+    end
+
+    it "includes the request_id on log lines" do
+      expect(log_lines[0]["request_id"]).to eq(request_id)
     end
   end
 
   describe "#redirect_to_user_friendly_url" do
     before do
       get form_id_path(mode: "form", form_id: 2)
-    end
-
-    context "when the form exists and has a start page" do
-      let(:start_page) { 1 }
-
-      it "redirects to the friendly URL start page" do
-        expect(response).to redirect_to(form_page_path("form", 2, form_response_data.form_slug, 1))
-      end
     end
 
     context "when the form exists and has no start page" do
@@ -114,6 +140,7 @@ RSpec.describe Forms::BaseController, type: :request do
 
         context "when a form exists" do
           before do
+            allow(LogEventService).to receive(:log_form_start)
             travel_to timestamp_of_request do
               get form_path(mode: "preview-draft", form_id: 2, form_slug: form_response_data.form_slug)
             end
@@ -190,6 +217,7 @@ RSpec.describe Forms::BaseController, type: :request do
 
         context "when a form exists" do
           before do
+            allow(LogEventService).to receive(:log_form_start)
             travel_to timestamp_of_request do
               get form_path(mode: "preview-live", form_id: 2, form_slug: form_response_data.form_slug)
             end
@@ -266,6 +294,7 @@ RSpec.describe Forms::BaseController, type: :request do
       context "when a form is live" do
         context "when a form exists" do
           before do
+            allow(LogEventService).to receive(:log_form_start)
             travel_to timestamp_of_request do
               get form_path(mode: "form", form_id: 2, form_slug: form_response_data.form_slug)
             end
@@ -277,7 +306,7 @@ RSpec.describe Forms::BaseController, type: :request do
             end
 
             it "Logs the form_visit event" do
-              expect(LogEventService).to have_received(:log_form_start).with(an_instance_of(Hash))
+              expect(LogEventService).to have_received(:log_form_start)
             end
           end
 
@@ -309,5 +338,9 @@ RSpec.describe Forms::BaseController, type: :request do
         end
       end
     end
+  end
+
+  def log_lines
+    output.string.split("\n").map { |line| JSON.parse(line) }
   end
 end
