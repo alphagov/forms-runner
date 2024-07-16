@@ -9,6 +9,7 @@ import {
   setDefaultConsent
 } from '../javascript/utils/google-analytics'
 import { CookieBanner } from '../../components/cookie_banner_component/cookie-banner'
+import { CookiePage } from '../../components/cookie_consent_form_component/cookie-consent-form'
 
 const analyticsConsentStatus = loadConsentStatus()
 
@@ -26,6 +27,16 @@ if (document.body.dataset.googleAnalyticsEnabled === 'true') {
       showBanner: analyticsConsentStatus === CONSENT_STATUS.UNKNOWN
     })
   })
+
+  // Initialise cookie page
+  const $cookiesPage = document.querySelector(
+    '[data-module="app-cookies-page"]'
+  )
+  if ($cookiesPage) {
+    new CookiePage($cookiesPage).init({
+      allowAnalyticsCookies: analyticsConsentStatus === CONSENT_STATUS.GRANTED
+    })
+  }
 }
 
 initAll()

@@ -1,21 +1,63 @@
-<% set_page_title("Cookies") %>
+<% set_page_title("Cookies", "GOV.UK Forms") %>
+
+<%# Don't show the cookie banner on this page %>
+<% content_for :cookie_banner do %>
+  <!-- no cookie banner -->
+<% end %>
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-xl">Cookies</h1>
-    <p>Cookies are small files saved on your phone, tablet or computer when you visit a website.</p>
+    <%= render(CookieConsentFormComponent::View.new) do %>
+      <h1 class="govuk-heading-xl">Cookies</h1>
+      <p>Cookies are small files saved on your phone, tablet or computer when you visit a website.</p>
 
-    <p>We use cookies to make this form work.</p>
+      <p>We use cookies to make this form work.</p>
 
-    <p>Find out <a rel="external" href="https://ico.org.uk/your-data-matters/online/cookies/">how to manage cookies</a>.</p>
+      <p>Find out <a rel="external" href="https://ico.org.uk/your-data-matters/online/cookies/">how to manage cookies</a>.</p>
 
-    <h2 class="govuk-heading-l">Essential cookies</h2>
+      <h2 class="govuk-heading-l">Essential cookies</h2>
 
-    <p>We use essential cookies to make this form work. UK law does not require us to ask for consent for these cookies because they are essential for the service to function.</p>
+      <p>We use essential cookies to make forms work.</p>
 
-    <%= govuk_table(rows: [
-      ["Name", "Purpose", "Expires"],
-      ["_forms", "Used to remember your progress through the form", "When the browser is closed or after 20 hours"],
-    ]) %>
+      <%= govuk_table(
+        caption: "Essential cookies",
+        rows: [
+          ["Name", "Purpose", "Expires"],
+          ["_forms", "Used to remember your progress through the form", "When the browser is closed or after 20 hours"],
+          ["analytics_consent", "Saves your cookie consent settings", "1 year"],
+        ],
+        first_cell_is_header: true
+      ) %>
+
+      <% if Settings.analytics_enabled %>
+        <h2 class="govuk-heading-l">Analytics cookies (optional)</h2>
+
+        <p>We use Google Analytics software to understand how people use GOV.UK Forms. This information helps us to improve our service.</p>
+
+        <p>Google is not allowed to use or share our analytics data with anyone.</p>
+
+        <p>Google Analytics stores anonymised information about:</p>
+
+        <ul class="govuk-list govuk-list--bullet">
+          <li>the pages you visit</li>
+          <li>how long you spend on each page</li>
+          <li>how you arrived at the site</li>
+          <li>what you click on while you visit the site</li>
+          <li>the device and browser you use</li>
+        </ul>
+
+        <%= govuk_table(
+          caption: "Analytics cookies (optional)",
+          rows: [
+            ["Name", "Purpose", "Expires"],
+            ["_ga", "Helps us count how many people visit GOV.UK Forms by telling us if you’ve visited before.", "2 years"],
+            ["_gid", "Helps us count how many people visit GOV.UK Forms by telling us if you’ve visited before.", "24 hours"],
+            ["_gat_UA-[random number]", "Helps us reduce the number of unnecessary tracking requests we send to Google Analytics.", "1 minute"],
+          ],
+          first_cell_is_header: true
+        ) %>
+
+      <% end %>
+    <% end %>
   </div>
 </div>

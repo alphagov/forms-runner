@@ -1,3 +1,9 @@
+import {
+  installAnalyticsScript,
+  updateCookieConsent,
+  deleteGoogleAnalyticsCookies
+} from '../google-analytics'
+
 export const COOKIE_NAME = 'analytics_consent'
 
 export const CONSENT_STATUS = {
@@ -26,4 +32,16 @@ export function saveConsentStatus (consent, date) {
   date.setTime(date.getTime() + 365 * 24 * 60 * 60 * 1000)
   document.cookie =
     COOKIE_NAME + '=' + consent + '; expires=' + date.toGMTString() + '; path=/'
+}
+
+export function handleUpdateConsent (consentedToAnalyticsCookies) {
+  saveConsentStatus(consentedToAnalyticsCookies)
+
+  updateCookieConsent(consentedToAnalyticsCookies)
+
+  if (consentedToAnalyticsCookies === false) {
+    deleteGoogleAnalyticsCookies()
+  } else {
+    installAnalyticsScript(window)
+  }
 }
