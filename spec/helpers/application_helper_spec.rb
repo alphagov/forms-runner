@@ -2,10 +2,26 @@ require "rails_helper"
 
 RSpec.describe ApplicationHelper, type: :helper do
   describe "#page_title" do
-    it "returns the title with the GOV.UK suffix" do
-      helper.set_page_title("Test")
-      expect(view.content_for(:title)).to eq("Test")
-      expect(helper.page_title).to eq("Test – GOV.UK")
+    context "when set_page_title is supplied with a single argument" do
+      before do
+        helper.set_page_title("Test")
+      end
+
+      it "returns the title with the GOV.UK suffix" do
+        expect(view.content_for(:title)).to eq("Test")
+        expect(helper.page_title).to eq("Test – GOV.UK")
+      end
+    end
+
+    context "when set_page_title is supplied with multiple arguments" do
+      before do
+        helper.set_page_title("Test", "GOV.UK Forms")
+      end
+
+      it "returns the title with the GOV.UK suffix" do
+        expect(view.content_for(:title)).to eq("Test – GOV.UK Forms")
+        expect(helper.page_title).to eq("Test – GOV.UK Forms – GOV.UK")
+      end
     end
   end
 

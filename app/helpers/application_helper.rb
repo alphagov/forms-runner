@@ -2,12 +2,12 @@
 
 # ApplicationHelper
 module ApplicationHelper
-  def page_title(separator = " – ")
-    [content_for(:title), "GOV.UK"].compact.join(separator)
+  def page_title
+    join_title_elements([content_for(:title), "GOV.UK"])
   end
 
-  def set_page_title(title)
-    content_for(:title) { title }
+  def set_page_title(*args)
+    content_for(:title) { join_title_elements(args) }
   end
 
   def form_title(page_name:, form_name:, mode:, error: false)
@@ -48,5 +48,11 @@ module ApplicationHelper
 
   def govuk_assets_path
     "/node_modules/govuk-frontend/dist/govuk/assets"
+  end
+
+private
+
+  def join_title_elements(title_elements)
+    title_elements.compact.join(" – ")
   end
 end
