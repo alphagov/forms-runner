@@ -19,11 +19,15 @@
 
       <p>We use essential cookies to make forms work.</p>
 
-      <%= govuk_table(rows: [
-        ["Name", "Purpose", "Expires"],
-        ["_forms", "Used to remember your progress through the form", "When the browser is closed or after 20 hours"],
-        ["analytics_consent", "Saves your cookie consent settings", "1 year"],
-      ], first_cell_is_header: true) %>
+      <%= govuk_table(
+        caption: "Essential cookies",
+        rows: [
+          ["Name", "Purpose", "Expires"],
+          ["_forms", "Used to remember your progress through the form", "When the browser is closed or after 20 hours"],
+          ["analytics_consent", "Saves your cookie consent settings", "1 year"],
+        ],
+        first_cell_is_header: true
+      ) %>
 
       <% if Settings.analytics_enabled %>
         <h2 class="govuk-heading-l">Analytics cookies (optional)</h2>
@@ -42,12 +46,16 @@
           <li>the device and browser you use</li>
         </ul>
 
-        <%= govuk_table(rows: [
-          ["Name", "Purpose", "Expires"],
-          ["_ga", "Helps us count how many people visit GOV.UK Forms by telling us if you’ve visited before.", "2 years"],
-          ["_gid", "Helps us count how many people visit GOV.UK Forms by telling us if you’ve visited before.", "24 hours"],
-          ["_gat_UA-[random number]", "Helps us reduce the number of unnecessary tracking requests we send to Google Analytics.", "1 minute"],
-        ], first_cell_is_header: true) %>
+        <%= govuk_table(
+          caption: "Analytics cookies (optional)",
+          rows: [
+            ["Name", "Purpose", "Expires"],
+            ["_ga", "Helps us count how many people visit GOV.UK Forms by telling us if you’ve visited before.", "2 years"],
+            ["_gid", "Helps us count how many people visit GOV.UK Forms by telling us if you’ve visited before.", "24 hours"],
+            ["_gat_UA-[random number]", "Helps us reduce the number of unnecessary tracking requests we send to Google Analytics.", "1 minute"],
+          ],
+          first_cell_is_header: true
+        ) %>
 
       <% end %>
     <% end %>
