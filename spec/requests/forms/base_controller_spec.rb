@@ -49,7 +49,7 @@ RSpec.describe Forms::BaseController, type: :request do
 
   let(:output) { StringIO.new }
   let(:logger) do
-    ActiveSupport::Logger.new(output).tap do |logger|
+    ApplicationLogger.new(output).tap do |logger|
       logger.formatter = JsonLogFormatter.new
     end
   end

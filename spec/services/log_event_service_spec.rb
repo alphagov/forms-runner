@@ -4,7 +4,6 @@ RSpec.describe LogEventService do
   let(:request) { "request" }
   let(:current_context) { OpenStruct.new(form:) }
   let(:form) { OpenStruct.new(id: 3, start_page: 1) }
-  let(:logging_context) { { some_key: "some_value" } }
 
   describe "#log_page_save" do
     let(:changing_answers) { true }
@@ -18,11 +17,10 @@ RSpec.describe LogEventService do
 
       log_event_service = described_class.new(current_context, step, request, changing_answers, answers)
 
-      log_event_service.log_page_save(logging_context)
+      log_event_service.log_page_save
       expect(EventLogger).to have_received(:log_page_event).with(
-        logging_context,
-        "question text",
         "change_answer_optional_save",
+        "question text",
         false,
       )
     end
@@ -40,7 +38,7 @@ RSpec.describe LogEventService do
 
         log_event_service = described_class.new(current_context, step, request, changing_answers, answers)
 
-        log_event_service.log_page_save(logging_context)
+        log_event_service.log_page_save
 
         expect(CloudWatchService).to have_received(:log_form_start).with(form_id: current_context.form.id)
       end
@@ -50,7 +48,7 @@ RSpec.describe LogEventService do
 
         log_event_service = described_class.new(current_context, step, request, changing_answers, answers)
 
-        log_event_service.log_page_save(logging_context)
+        log_event_service.log_page_save
 
         expect(Sentry).not_to have_received(:capture_exception)
       end
@@ -61,7 +59,7 @@ RSpec.describe LogEventService do
 
           log_event_service = described_class.new(current_context, step, request, changing_answers, answers)
 
-          log_event_service.log_page_save(logging_context)
+          log_event_service.log_page_save
 
           expect(Sentry).to have_received(:capture_exception)
         end
@@ -77,16 +75,13 @@ RSpec.describe LogEventService do
 
     context "when in preview mode" do
       it "calls the event logger with .log_form_event" do
-        described_class.log_submit(logging_context, current_context, preview: true)
+        described_class.log_submit(current_context, preview: true)
 
-        expect(EventLogger).to have_received(:log_form_event).with(
-          logging_context,
-          "preview_submission",
-        )
+        expect(EventLogger).to have_received(:log_form_event).with("preview_submission")
       end
 
       it "does not call the cloud watch service" do
-        described_class.log_submit(current_context, request, preview: true)
+        described_class.log_submit(current_context, preview: true)
 
         expect(CloudWatchService).not_to have_received(:log_form_submission)
       end
@@ -94,25 +89,19 @@ RSpec.describe LogEventService do
 
     context "when not in preview mode" do
       it "calls the event logger with .log_form_event" do
-        described_class.log_submit(logging_context, current_context)
+        described_class.log_submit(current_context)
 
-        expect(EventLogger).to have_received(:log_form_event).with(
-          logging_context,
-          "submission",
-        )
+        expect(EventLogger).to have_received(:log_form_event).with("submission")
       end
 
       it "does not call the event logger for confirmation request" do
-        described_class.log_submit(logging_context, current_context)
+        described_class.log_submit(current_context)
 
-        expect(EventLogger).not_to have_received(:log_form_event).with(
-          logging_context,
-          "requested_email_confirmation",
-        )
+        expect(EventLogger).not_to have_received(:log_form_event).with("requested_email_confirmation")
       end
 
       it "calls the cloud watch service with .log_form_submission" do
-        described_class.log_submit(logging_context, current_context)
+        described_class.log_submit(current_context)
 
         expect(CloudWatchService).to have_received(:log_form_submission).with(form_id: current_context.form.id)
       end
@@ -122,7 +111,7 @@ RSpec.describe LogEventService do
           allow(CloudWatchService).to receive(:log_form_submission).and_raise(StandardError)
           allow(Sentry).to receive(:capture_exception)
 
-          described_class.log_submit(logging_context, current_context)
+          described_class.log_submit(current_context)
 
           expect(Sentry).to have_received(:capture_exception)
         end
@@ -130,12 +119,9 @@ RSpec.describe LogEventService do
 
       context "when email confirmation is requested" do
         it "calls the event logger with .log_form_event" do
-          described_class.log_submit(logging_context, current_context, requested_email_confirmation: true)
+          described_class.log_submit(current_context, requested_email_confirmation: true)
 
-          expect(EventLogger).to have_received(:log_form_event).with(
-            logging_context,
-            "requested_email_confirmation",
-          )
+          expect(EventLogger).to have_received(:log_form_event).with("requested_email_confirmation")
         end
       end
     end
@@ -147,10 +133,9 @@ RSpec.describe LogEventService do
     end
 
     it "calls the event logger with .log_form_event" do
-      described_class.log_form_start(logging_context)
+      described_class.log_form_start
 
       expect(EventLogger).to have_received(:log_form_event).with(
-        logging_context,
         "visit",
       )
     end

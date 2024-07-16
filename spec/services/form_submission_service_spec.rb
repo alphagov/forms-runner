@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe FormSubmissionService do
-  let(:service) { described_class.call(logging_context:, current_context:, email_confirmation_input:, preview_mode:) }
+  let(:service) { described_class.call(current_context:, email_confirmation_input:, preview_mode:) }
   let(:form) do
     build(:form,
           id: 1,
@@ -20,17 +20,31 @@ RSpec.describe FormSubmissionService do
   let(:support_url) { Faker::Internet.url(host: "gov.uk") }
   let(:support_url_text) { Faker::Lorem.sentence(word_count: 1, random_words_to_add: 4) }
   let(:current_context) { OpenStruct.new(form:, completed_steps: [step], support_details: OpenStruct.new(call_back_url: "http://gov.uk")) }
-  let(:logging_context) { { some_key: "some_value" } }
   let(:request) { OpenStruct.new({ url: "url", method: "method" }) }
   let(:step) { OpenStruct.new({ question_text: "What is the meaning of life?", show_answer_in_email: "42" }) }
   let(:preview_mode) { false }
   let(:email_confirmation_input) { build :email_confirmation_input_opted_in }
   let(:reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
   let(:payment_url) { nil }
-  let(:submission_email)  { "testing@gov.uk" }
+  let(:submission_email) { "testing@gov.uk" }
+  let(:submission_email_id) { "id-for-submission-email-notification" }
+  let(:confirmation_email_id) { "id-for-confirmation-email-notification" }
+
+  let(:output) { StringIO.new }
+  let(:logger) do
+    ApplicationLogger.new(output).tap do |logger|
+      logger.formatter = JsonLogFormatter.new
+    end
+  end
 
   before do
+    Rails.logger.broadcast_to logger
+
     allow(ReferenceNumberService).to receive(:generate).and_return(reference)
+  end
+
+  after do
+    Rails.logger.stop_broadcasting_to logger
   end
 
   describe "#submit" do
@@ -50,7 +64,7 @@ RSpec.describe FormSubmissionService do
 
     it "includes the submission reference in the logging context" do
       service.submit
-      expect(logging_context).to include({ submission_reference: reference })
+      expect(log_lines[0]["submission_reference"]).to eq(reference)
     end
   end
 
@@ -70,27 +84,12 @@ RSpec.describe FormSubmissionService do
       end
     end
 
-    it "adds the notification ID to the logging context" do
-      allow_mailer_to_return_mail_with_govuk_notify_response_with(
-        FormSubmissionMailer,
-        :email_confirmation_input,
-        id: "id-for-submission-email-notification",
-      )
-
-      service.submit_form_to_processing_team
-
-      expect(logging_context).to include(notification_ids: {
-        submission_email_id: "id-for-submission-email-notification",
-      })
-    end
-
     it "logs submission" do
       allow(LogEventService).to receive(:log_submit).once
 
       service.submit_form_to_processing_team
 
       expect(LogEventService).to have_received(:log_submit).with(
-        logging_context,
         current_context,
         requested_email_confirmation: true,
         preview: false,
@@ -140,7 +139,6 @@ RSpec.describe FormSubmissionService do
         service.submit_form_to_processing_team
 
         expect(LogEventService).to have_received(:log_submit).with(
-          logging_context,
           current_context,
           requested_email_confirmation: true,
           preview: true,
@@ -309,5 +307,9 @@ private
     email = "[#{form.support_email}](mailto:#{form.support_email})"
     online = "[#{form.support_url_text}](#{form.support_url})"
     [phone_number, email, online].compact_blank.join("\n\n")
+  end
+
+  def log_lines
+    output.string.split("\n").map { |line| JSON.parse(line) }
   end
 end

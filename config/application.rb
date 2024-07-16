@@ -15,6 +15,7 @@ require "action_cable/engine"
 require "rails/test_unit/railtie"
 require "./app/lib/hosting_environment"
 require "./app/lib/json_log_formatter"
+require "./app/lib/application_logger"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -52,22 +53,25 @@ module FormsRunner
     config.view_component.show_previews = HostingEnvironment.test_environment?
 
     #### LOGGING CONFIGURATION ####
-
-    # Use JSON log formatter for better support in Splunk. To use conventional
-    # logging use the Logger::Formatter.new.
-    config.log_formatter = JsonLogFormatter.new
+    config.log_level = :info
 
     # Lograge is used to format the standard HTTP request logging
     config.lograge.enabled = true
     config.lograge.formatter = Lograge::Formatters::Json.new
+    config.lograge.logger = ActiveSupport::Logger.new($stdout)
 
     # Lograge suppresses the default Rails request logging. Set this to true to
     # make lograge output it which includes some extra debugging
     # information.
     config.lograge.keep_original_rails_log = false
 
-    config.lograge.custom_payload do |controller|
-      controller.try(:logging_context) || { message: "There is no logging context" }
+    config.lograge.custom_options = lambda do |event|
+      CurrentLoggingAttributes.as_hash.merge(exception: event.payload[:exception]).compact
     end
+
+    # Use custom logger and formatter to log in JSON with request context fields. To use conventional
+    # logging use ActiveSupport::Logger.new($stdout) with formatter Logger::Formatter.new.
+    config.logger = ApplicationLogger.new($stdout)
+    config.logger.formatter = JsonLogFormatter.new
   end
 end

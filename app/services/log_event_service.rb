@@ -7,18 +7,18 @@ class LogEventService
     @answers = answers
   end
 
-  def self.log_form_start(logging_context)
-    EventLogger.log_form_event(logging_context, "visit") # Logging to Splunk
+  def self.log_form_start
+    EventLogger.log_form_event("visit")
   end
 
-  def self.log_submit(logging_context, context, requested_email_confirmation: false, preview: false)
+  def self.log_submit(context, requested_email_confirmation: false, preview: false)
     if preview
-      EventLogger.log_form_event(logging_context, "preview_submission")
+      EventLogger.log_form_event("preview_submission")
     else
       # Logging to Splunk
-      EventLogger.log_form_event(logging_context, "submission")
+      EventLogger.log_form_event("submission")
 
-      EventLogger.log_form_event(logging_context, "requested_email_confirmation") if requested_email_confirmation
+      EventLogger.log_form_event("requested_email_confirmation") if requested_email_confirmation
 
       # Logging to CloudWatch
       begin
@@ -29,8 +29,8 @@ class LogEventService
     end
   end
 
-  def log_page_save(logging_context)
-    EventLogger.log_page_event(logging_context, @step.question.question_text, log_event, skipped_question?)
+  def log_page_save
+    EventLogger.log_page_event(log_event, @step.question.question_text, skipped_question?)
     if is_starting_form?
       begin
         CloudWatchService.log_form_start(form_id: @current_context.form.id) # Logging to CloudWatch

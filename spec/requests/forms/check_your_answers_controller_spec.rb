@@ -222,7 +222,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         end
 
         it "Logs the form_check_answers event" do
-          expect(EventLogger).to have_received(:log_form_event).with(instance_of(Hash), "check_answers")
+          expect(EventLogger).to have_received(:log_form_event).with("check_answers")
         end
 
         include_examples "for notification references"
