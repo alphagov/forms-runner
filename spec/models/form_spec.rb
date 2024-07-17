@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Form, type: :model do
+RSpec.describe Form, type: :model, feature_direct_api_enabled: false do
   let(:response_data) { { id: 1, name: "form name", submission_email: "user@example.com", start_page: 1 }.to_json }
 
   let(:pages_data) do

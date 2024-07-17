@@ -1,4 +1,6 @@
-features: {}
+features: {
+    direct_api_enabled: false
+  }
 
 forms_admin:
   # URL to form-admin

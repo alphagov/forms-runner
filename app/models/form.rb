@@ -39,11 +39,11 @@ class Form
   end
 
   def self.find(id)
-    FormRecord.find(id)&.to_form
+    repository.find(id)&.to_form
   end
 
   def self.find_with_mode(id:, mode:)
-    FormRecord.find_with_mode(id: id, mode: mode)&.to_form
+    repository.find_with_mode(id:, mode:)&.to_form
   end
 
   attribute :created_at, :datetime
@@ -97,5 +97,9 @@ class Form
     return nil if payment_url.blank?
 
     "#{payment_url}?reference=#{reference}"
+  end
+
+  def self.repository
+    Settings.features.direct_api_enabled ? FormDirect : FormResource
   end
 end
