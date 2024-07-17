@@ -7,8 +7,7 @@ class FormSubmissionService
 
   MailerOptions = Data.define(:title, :preview_mode, :timestamp, :submission_reference, :payment_url)
 
-  def initialize(logging_context:, current_context:, email_confirmation_input:, preview_mode:)
-    @logging_context = logging_context
+  def initialize(current_context:, email_confirmation_input:, preview_mode:)
     @current_context = current_context
     @form = current_context.form
     @email_confirmation_input = email_confirmation_input
@@ -23,7 +22,7 @@ class FormSubmissionService
                                         submission_reference: @submission_reference,
                                         payment_url: @form.payment_url_with_reference(@submission_reference))
 
-    @logging_context[:submission_reference] = @submission_reference
+    CurrentLoggingAttributes.submission_reference = @submission_reference
   end
 
   def submit
@@ -47,11 +46,10 @@ class FormSubmissionService
                                 submission_email: @form.submission_email,
                                 mailer_options: @mailer_options).deliver_now
 
-      @logging_context[:notification_ids] ||= {}
-      @logging_context[:notification_ids][:submission_email_id] = mail.govuk_notify_response.id
+      CurrentLoggingAttributes.submission_email_id = mail.govuk_notify_response.id
     end
 
-    LogEventService.log_submit(@logging_context, @current_context, requested_email_confirmation: @requested_email_confirmation, preview: @preview_mode)
+    LogEventService.log_submit(@current_context, requested_email_confirmation: @requested_email_confirmation, preview: @preview_mode)
   end
 
   def submit_confirmation_email_to_user
@@ -66,8 +64,7 @@ class FormSubmissionService
       mailer_options: @mailer_options,
     ).deliver_now
 
-    @logging_context[:notification_ids] ||= {}
-    @logging_context[:notification_ids][:confirmation_email_id] = mail.govuk_notify_response.id
+    CurrentLoggingAttributes.confirmation_email_id = mail.govuk_notify_response.id
   end
 
 private

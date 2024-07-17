@@ -2,7 +2,7 @@
 
 class ApplicationController < ActionController::Base
   before_action :set_request_id
-  before_action :set_logging_context
+  before_action :set_logging_attributes
   before_action :check_maintenance_mode_is_enabled
   after_action :add_robots_header
 
@@ -24,26 +24,17 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def logging_context
-    @logging_context ||= {}
-  end
-
-  def set_logging_context
-    @logging_context = {}.tap do |h|
-      h[:host] = request.host
-      h[:request_id] = request.request_id
-      h[:form_id] = params[:form_id] if params[:form_id].present?
-      h[:page_id] = params[:page_slug] if params[:page_slug].present? && params[:page_slug].match(Page::PAGE_ID_REGEX)
-      h[:page_slug] = params[:page_slug] if params[:page_slug].present?
-      h[:session_id_hash] = session_id_hash
-      h[:trace_id] = request.env["HTTP_X_AMZN_TRACE_ID"] if request.env["HTTP_X_AMZN_TRACE_ID"].present?
-    end
+  def set_logging_attributes
+    CurrentLoggingAttributes.host = request.host
+    CurrentLoggingAttributes.request_id = request.request_id
+    CurrentLoggingAttributes.form_id = params[:form_id] if params[:form_id].present?
+    CurrentLoggingAttributes.page_id = params[:page_slug] if params[:page_slug].present? && params[:page_slug].match(Page::PAGE_ID_REGEX)
+    CurrentLoggingAttributes.page_slug = params[:page_slug] if params[:page_slug].present?
+    CurrentLoggingAttributes.session_id_hash = session_id_hash
+    CurrentLoggingAttributes.trace_id = request.env["HTTP_X_AMZN_TRACE_ID"] if request.env["HTTP_X_AMZN_TRACE_ID"].present?
   end
 
   def log_rescued_exception(exception)
-    # add exception to payload with same format used by ActiveSupport::Notifications::Instrumenter
-    logging_context[:rescued_exception] = [exception.class.name, exception.message]
-
     # log exception with the same format used by ActionDispatch::DebugExceptions
     backtrace_cleaner = request.get_header("action_dispatch.backtrace_cleaner")
     wrapper = ActionDispatch::ExceptionWrapper.new(backtrace_cleaner, exception)
@@ -63,8 +54,9 @@ class ApplicationController < ActionController::Base
     message.concat(trace)
     logger.warn message.join("\n")
 
-    # add additional info to request log
-    logging_context[:rescued_exception_trace] = message
+    # add exception to request logs with same format used by ActiveSupport::Notifications::Instrumenter
+    CurrentLoggingAttributes.rescued_exception = [exception.class.name, exception.message]
+    CurrentLoggingAttributes.rescued_exception_trace = message
 
     # send exception to Sentry
     Sentry.capture_exception(exception)

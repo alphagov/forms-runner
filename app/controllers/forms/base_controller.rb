@@ -4,7 +4,7 @@ module Forms
 
     def redirect_to_friendly_url_start
       redirect_to form_page_path(params.require(:form_id), current_form.form_slug, current_form.start_page)
-      LogEventService.log_form_start(logging_context) unless mode.preview?
+      LogEventService.log_form_start unless mode.preview?
     end
 
     rescue_from ActiveResource::ResourceNotFound, Flow::StepFactory::PageNotFoundError do
@@ -16,9 +16,9 @@ module Forms
       render template: "errors/repeat_submission", locals: { current_form: }
     end
 
-    def set_logging_context
+    def set_logging_attributes
       super
-      @logging_context[:form_name] = current_form.name
+      CurrentLoggingAttributes.form_name = current_form.name
     end
 
   private

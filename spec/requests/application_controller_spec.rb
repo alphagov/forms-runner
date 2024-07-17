@@ -3,6 +3,9 @@ require "rails_helper"
 RSpec.describe ApplicationController, type: :request do
   subject(:application_controller) { described_class.new }
 
+  let(:output) { StringIO.new }
+  let(:logger) { ActiveSupport::Logger.new(output) }
+
   describe "Accessibility statement" do
     it "returns http code 200" do
       get accessibility_statement_path
@@ -17,25 +20,31 @@ RSpec.describe ApplicationController, type: :request do
     end
   end
 
-  context "when setting logging context" do
+  describe "logging" do
+    let(:form_id) { 2 }
+    let(:trace_id) { "Root=1-63441c4a-abcdef012345678912345678" }
+    let(:request_id) { "a-request-id" }
+
     before do
-      get root_path, headers: { "HTTP_X_AMZN_TRACE_ID": "Root=1-63441c4a-abcdef012345678912345678" }
+      # Intercept the request logs so we can do assertions on them
+      allow(Lograge).to receive(:logger).and_return(logger)
+
+      get root_path, headers: {
+        "HTTP_X_AMZN_TRACE_ID": trace_id,
+        "X-REQUEST-ID": request_id,
+      }
     end
 
-    it "adds the trace ID to the logging context" do
-      expect(logging_context).to include(trace_id: "Root=1-63441c4a-abcdef012345678912345678")
+    it "includes the host on log lines" do
+      expect(log_lines[0]["host"]).to eq("www.example.com")
     end
 
-    it "adds the host to the logging context" do
-      expect(logging_context).to include(host: "www.example.com")
+    it "includes the request_id on log lines" do
+      expect(log_lines[0]["request_id"]).to eq(request_id)
     end
 
-    it "adds the request_id to the logging context" do
-      expect(logging_context).to include(:request_id)
-    end
-
-    it "adds the session_id_has to the logging context" do
-      expect(logging_context).to include(:session_id_hash)
+    it "includes the trace ID on log lines" do
+      expect(log_lines[0]["trace_id"]).to eq(trace_id)
     end
   end
 
@@ -108,5 +117,9 @@ RSpec.describe ApplicationController, type: :request do
       get rails_health_check_path
       expect(response).to have_http_status(:ok)
     end
+  end
+
+  def log_lines
+    output.string.split("\n").map { |line| JSON.parse(line) }
   end
 end

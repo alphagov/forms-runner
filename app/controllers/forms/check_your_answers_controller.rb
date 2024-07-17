@@ -1,5 +1,13 @@
 module Forms
   class CheckYourAnswersController < BaseController
+    def set_logging_attributes
+      super
+      if params[:email_confirmation_input].present?
+        CurrentLoggingAttributes.confirmation_email_reference = email_confirmation_input_params[:confirmation_email_reference] if email_confirmation_input_params[:send_confirmation] == "send_email"
+        CurrentLoggingAttributes.submission_email_reference = email_confirmation_input_params[:submission_email_reference]
+      end
+    end
+
     def show
       return redirect_to form_page_path(current_context.form.id, current_context.form.form_slug, current_context.next_page_slug) unless current_context.can_visit?(CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG)
 
@@ -22,12 +30,11 @@ module Forms
       return redirect_to error_repeat_submission_path(current_form.id) if current_context.form_submitted?
 
       unless current_context.can_visit?(CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG)
-        EventLogger.log_form_event(logging_context, "incomplete_or_repeat_submission_error")
+        EventLogger.log_form_event("incomplete_or_repeat_submission_error")
         return render template: "errors/incomplete_submission", locals: { current_form:, current_context: }
       end
 
-      submission_reference = FormSubmissionService.call(logging_context:,
-                                                        current_context:,
+      submission_reference = FormSubmissionService.call(current_context:,
                                                         email_confirmation_input:,
                                                         preview_mode: mode.preview?).submit
 
@@ -70,20 +77,10 @@ module Forms
       @form_submit_path = form_submit_answers_path
 
       unless mode.preview?
-        EventLogger.log_form_event(logging_context, "check_answers")
+        EventLogger.log_form_event("check_answers")
       end
 
       answers_need_full_width
-    end
-
-    def set_logging_context
-      super
-      if params[:email_confirmation_input].present?
-        logging_context[:notification_references] = {}.tap do |h|
-          h[:confirmation_email_reference] = email_confirmation_input_params[:confirmation_email_reference] if email_confirmation_input_params[:send_confirmation] == "send_email"
-          h[:submission_email_reference] = email_confirmation_input_params[:submission_email_reference]
-        end
-      end
     end
   end
 end

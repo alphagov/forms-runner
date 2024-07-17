@@ -50,6 +50,9 @@ RSpec.describe Forms::PageController, type: :request do
 
   let(:api_url_suffix) { "/live" }
 
+  let(:output) { StringIO.new }
+  let(:logger) { ActiveSupport::Logger.new(output) }
+
   before do
     ActiveResource::HttpMock.respond_to do |mock|
       mock.get "/api/v1/forms/2#{api_url_suffix}", req_headers, form_data.to_json, 200
@@ -57,34 +60,38 @@ RSpec.describe Forms::PageController, type: :request do
   end
 
   context "when setting logging context" do
+    let(:page_id) { 101 }
     let(:form_data) do
       build(:form, :with_support,
             id: 200,
             live_at:,
-            start_page: 101,
+            start_page: page_id,
             declaration_text: "agree to the declaration",
             pages: [
               build(:page, :with_text_settings,
-                    id: 101,
+                    id: page_id,
                     position: 1,
                     is_optional: false),
             ])
     end
 
     before do
+      # Intercept the request logs so we can do assertions on them
+      allow(Lograge).to receive(:logger).and_return(logger)
+
       ActiveResource::HttpMock.respond_to do |mock|
         mock.get "/api/v1/forms/200#{api_url_suffix}", req_headers, form_data.to_json, 200
       end
 
-      get form_page_path("form", 200, form_data.form_slug, 101)
+      get form_page_path("form", 200, form_data.form_slug, page_id)
     end
 
     it "adds the page ID to the instrumentation payload" do
-      expect(logging_context).to include(page_id: "101")
+      expect(log_lines[0]["page_id"]).to eq(page_id.to_s)
     end
 
     it "adds the question_number to the instrumentation payload" do
-      expect(logging_context).to include(question_number: 1)
+      expect(log_lines[0]["question_number"]).to eq(1)
     end
   end
 
@@ -422,21 +429,21 @@ RSpec.describe Forms::PageController, type: :request do
         end
 
         it "Logs the change_answer_page_save event" do
-          expect(EventLogger).to receive(:log_page_event).with(instance_of(Hash), first_page_in_form.question_text, "change_answer_page_save", nil)
+          expect(EventLogger).to receive(:log_page_event).with("change_answer_page_save", first_page_in_form.question_text, nil)
           post save_form_page_path("form", 2, form_data.form_slug, 1, params: { question: { text: "answer text" }, changing_existing_answer: true })
         end
       end
 
       context "with the first page" do
         it "Logs the first_page_save event" do
-          expect(EventLogger).to receive(:log_page_event).with(instance_of(Hash), first_page_in_form.question_text, "first_page_save", nil)
+          expect(EventLogger).to receive(:log_page_event).with("first_page_save", first_page_in_form.question_text, nil)
           post save_form_page_path("form", 2, form_data.form_slug, 1), params: { question: { text: "answer text" } }
         end
       end
 
       context "with a subsequent page" do
         it "Logs the page_save event" do
-          expect(EventLogger).to receive(:log_page_event).with(instance_of(Hash), second_page_in_form.question_text, "page_save", nil)
+          expect(EventLogger).to receive(:log_page_event).with("page_save", second_page_in_form.question_text, nil)
           post save_form_page_path("form", 2, form_data.form_slug, 2), params: { question: { text: "answer text" } }
         end
       end
@@ -453,14 +460,14 @@ RSpec.describe Forms::PageController, type: :request do
 
         context "when an optional question is completed" do
           it "Logs the optional_save event with skipped_question as true" do
-            expect(EventLogger).to receive(:log_page_event).with(instance_of(Hash), second_page_in_form.question_text, "optional_save", true)
+            expect(EventLogger).to receive(:log_page_event).with("optional_save", second_page_in_form.question_text, true)
             post save_form_page_path("form", 2, form_data.form_slug, 2), params: { question: { text: "" } }
           end
         end
 
         context "when an optional question is skipped" do
           it "Logs the optional_save event with skipped_question as false" do
-            expect(EventLogger).to receive(:log_page_event).with(instance_of(Hash), second_page_in_form.question_text, "optional_save", false)
+            expect(EventLogger).to receive(:log_page_event).with("optional_save", second_page_in_form.question_text, false)
             post save_form_page_path("form", 2, form_data.form_slug, 2), params: { question: { text: "answer text" } }
           end
         end
@@ -536,6 +543,10 @@ RSpec.describe Forms::PageController, type: :request do
 
       # TODO: Need to add test to check how changing an existing routing answer value would work. Better off as a feature spec which we dont have.
     end
+  end
+
+  def log_lines
+    output.string.split("\n").map { |line| JSON.parse(line) }
   end
 end
 # rubocop:enable RSpec/AnyInstance

@@ -31,17 +31,25 @@ RSpec.describe ApplicationController do
   end
 
   describe "adding exception to logging context" do
+    let(:output) { StringIO.new }
+    let(:logger) { ActiveSupport::Logger.new(output) }
+
+    before do
+      # Intercept the request logs so we can do assertions on them
+      allow(Lograge).to receive(:logger).and_return(logger)
+    end
+
     it "adds rescued exception to logging context" do
       get :raise_error
 
-      expect(controller.logging_context).to include(rescued_exception: ["RuntimeError", "oh no\nwhat happened"])
+      expect(log_lines[0]["rescued_exception"]).to eq(["RuntimeError", "oh no\nwhat happened"])
     end
 
     it "adds exception trace to logging context" do
       get :raise_error
 
-      expect(controller.logging_context).to include(:rescued_exception_trace)
-      expect(controller.logging_context[:rescued_exception_trace]).to include(
+      expect(log_lines[0].keys).to include("rescued_exception_trace")
+      expect(log_lines[0]["rescued_exception_trace"]).to include(
         "spec/controllers/application_controller_spec.rb:11:in `raise_error'",
       )
     end
@@ -49,8 +57,8 @@ RSpec.describe ApplicationController do
     it "adds exception causes to logging context" do
       get :raise_error_with_cause
 
-      expect(controller.logging_context).to include(:rescued_exception_trace)
-      expect(controller.logging_context[:rescued_exception_trace]).to include(
+      expect(log_lines[0].keys).to include("rescued_exception_trace")
+      expect(log_lines[0]["rescued_exception_trace"]).to include(
         "\nCauses:",
         "RuntimeError (inner error)",
       )
@@ -60,7 +68,7 @@ RSpec.describe ApplicationController do
   describe "logging exception" do
     let(:output) { StringIO.new }
     let(:logger) do
-      Logger.new(output).tap do |logger|
+      ApplicationLogger.new(output).tap do |logger|
         logger.formatter = JsonLogFormatter.new
       end
     end
@@ -78,7 +86,7 @@ RSpec.describe ApplicationController do
 
       expect(output.string.lines.first)
         .to include('"level":"WARN"')
-        .and include('Rescued exception:\n  \nRuntimeError (oh no\nwhat happened)')
+              .and include('Rescued exception:\n  \nRuntimeError (oh no\nwhat happened)')
     end
 
     it "logs causes of rescued exceptions" do
@@ -86,7 +94,7 @@ RSpec.describe ApplicationController do
 
       expect(output.string.lines.first)
         .to include('"level":"WARN"')
-        .and include('RuntimeError (outer error):\n\nCauses:\nRuntimeError (inner error)')
+              .and include('RuntimeError (outer error):\n\nCauses:\nRuntimeError (inner error)')
     end
   end
 
@@ -100,5 +108,9 @@ RSpec.describe ApplicationController do
 
       expect(Sentry).to have_received(:capture_exception)
     end
+  end
+
+  def log_lines
+    output.string.split("\n").map { |line| JSON.parse(line) }
   end
 end

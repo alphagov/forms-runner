@@ -17,8 +17,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
   let(:email_confirmation_input) do
     { send_confirmation: "send_email",
       confirmation_email_address: Faker::Internet.email,
-      confirmation_email_reference: "confirmation-email-ref",
-      submission_email_reference: "for-my-ref" }
+      confirmation_email_reference:,
+      submission_email_reference: }
   end
 
   let(:store) do
@@ -76,8 +76,18 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
   let(:repeat_form_submission) { false }
 
   let(:reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
+  let(:submission_email_id) { "1111" }
+  let(:confirmation_email_id) { "2222" }
+  let(:confirmation_email_reference) { "confirmation-email-ref" }
+  let(:submission_email_reference) { "for-my-ref" }
+
+  let(:output) { StringIO.new }
+  let(:logger) { ActiveSupport::Logger.new(output) }
 
   before do
+    # Intercept the request logs so we can do assertions on them
+    allow(Lograge).to receive(:logger).and_return(logger)
+
     ActiveResource::HttpMock.respond_to do |mock|
       mock.get "/api/v1/forms/2#{api_url_suffix}", req_headers, form_data.to_json, 200
     end
@@ -96,17 +106,17 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       prepend_before do
         allow(EmailConfirmationInput).to receive(:new).and_wrap_original do |original_method, *args|
           double = original_method.call(*args)
-          allow(double).to receive_messages(confirmation_email_reference: "00000000-confirmation-email", submission_email_reference: "00000000-submission-email")
+          allow(double).to receive_messages(confirmation_email_reference:, submission_email_reference:)
           double
         end
       end
 
       it "includes a notification reference for the submission email" do
-        expect(response.body).to include "00000000-submission-email"
+        expect(response.body).to include submission_email_reference
       end
 
       it "includes a notification reference for the confirmation email" do
-        expect(response.body).to include "00000000-confirmation-email"
+        expect(response.body).to include confirmation_email_reference
       end
     end
 
@@ -212,7 +222,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         end
 
         it "Logs the form_check_answers event" do
-          expect(EventLogger).to have_received(:log_form_event).with(instance_of(Hash), "check_answers")
+          expect(EventLogger).to have_received(:log_form_event).with("check_answers")
         end
 
         include_examples "for notification references"
@@ -236,21 +246,21 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       allow_mailer_to_return_mail_with_govuk_notify_response_with(
         FormSubmissionMailer,
         :email_confirmation_input,
-        id: "1111",
+        id: submission_email_id,
       )
       allow_mailer_to_return_mail_with_govuk_notify_response_with(
         FormSubmissionConfirmationMailer,
         :send_confirmation_email,
-        id: "2222",
+        id: confirmation_email_id,
       )
     end
 
     shared_examples "for notification references" do
       it "includes the notification references in the logging_context" do
-        expect(logging_context).to include(notification_references: {
-          confirmation_email_reference: email_confirmation_input[:confirmation_email_reference],
-          submission_email_reference: email_confirmation_input[:submission_email_reference],
-        }.compact)
+        expect(log_lines[0]["notification_references"]).to eq({
+          "submission_email_reference" => submission_email_reference,
+          "confirmation_email_reference" => confirmation_email_reference,
+        })
       end
     end
 
@@ -285,15 +295,14 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
         expect(mail.body.raw_source).to match(expected_personalisation.to_s)
 
-        expect(mail.govuk_notify_reference).to eq "for-my-ref"
+        expect(mail.govuk_notify_reference).to eq submission_email_reference
       end
 
-      it "includes the submission notification IDs in the logging context" do
-        expect(logging_context[:notification_ids]).to include(submission_email_id: "1111")
-      end
-
-      it "includes the confirmation notification IDs in the logging context" do
-        expect(logging_context[:notification_ids]).to include(confirmation_email_id: "2222")
+      it "includes the notification IDs in the logging context" do
+        expect(log_lines[0]["notification_ids"]).to eq({
+          "submission_email_id" => submission_email_id,
+          "confirmation_email_id" => confirmation_email_id,
+        })
       end
 
       include_examples "for notification references"
@@ -331,12 +340,11 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         expect(mail.body.raw_source).to match(expected_personalisation.to_s)
       end
 
-      it "includes the submission notification IDs in the logging context" do
-        expect(logging_context[:notification_ids]).to include(submission_email_id: "1111")
-      end
-
-      it "includes the confirmation notification IDs in the logging context" do
-        expect(logging_context[:notification_ids]).to include(confirmation_email_id: "2222")
+      it "includes the notification IDs in the logging context" do
+        expect(log_lines[0]["notification_ids"]).to eq({
+          "submission_email_id" => submission_email_id,
+          "confirmation_email_id" => confirmation_email_id,
+        })
       end
 
       include_examples "for notification references"
@@ -382,8 +390,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       let(:email_confirmation_input) do
         {
           send_confirmation: nil,
-          confirmation_email_reference: "test-ref-for-confirmation-email",
-          submission_email_reference: "test-ref-for-submission-email",
+          confirmation_email_reference:,
+          submission_email_reference:,
         }
       end
 
@@ -400,8 +408,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       end
 
       it "does not generate a new submission reference" do
-        expect(response.body).to include "test-ref-for-confirmation-email"
-        expect(response.body).to include "test-ref-for-submission-email"
+        expect(response.body).to include confirmation_email_reference
+        expect(response.body).to include submission_email_reference
       end
     end
 
@@ -410,8 +418,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         {
           send_confirmation: "send_email",
           confirmation_email_address: nil,
-          confirmation_email_reference: "test-ref-for-confirmation-email",
-          submission_email_reference: "test-ref-for-submission-email",
+          confirmation_email_reference:,
+          submission_email_reference:,
         }
       end
 
@@ -428,8 +436,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       end
 
       it "does not generate a new submission reference" do
-        expect(response.body).to include "test-ref-for-confirmation-email"
-        expect(response.body).to include "test-ref-for-submission-email"
+        expect(response.body).to include confirmation_email_reference
+        expect(response.body).to include submission_email_reference
       end
 
       include_examples "for notification references"
@@ -440,8 +448,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         {
           send_confirmation: "skip_confirmation",
           confirmation_email_address: nil,
-          confirmation_email_reference: "confirmation-email-ref",
-          submission_email_reference: "for-my-ref",
+          confirmation_email_reference:,
+          submission_email_reference:,
         }
       end
 
@@ -453,20 +461,24 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         expect(response).to redirect_to(form_submitted_path)
       end
 
-      it "includes the submission notification IDs in the logging context" do
-        expect(logging_context[:notification_ids]).to include(submission_email_id: "1111")
+      it "includes the submission_email_id in the logging context" do
+        expect(log_lines[0]["notification_ids"]).to eq({
+          "submission_email_id" => submission_email_id,
+        })
       end
 
       it "does not include the confirmation notification IDs in the logging context" do
-        expect(logging_context[:notification_ids]).not_to include(:confirmation_email_id)
+        expect(log_lines[0]["notification_ids"].keys).not_to include("confirmation_email_id")
       end
 
-      it "does include submission email reference in logging context" do
-        expect(logging_context[:notification_references]).to include(submission_email_reference: "for-my-ref")
+      it "includes submission email reference in logging context" do
+        expect(log_lines[0]["notification_references"]).to eq({
+          "submission_email_reference" => submission_email_reference,
+        })
       end
 
       it "does not include confirmation email reference in logging context" do
-        expect(logging_context[:notification_references]).not_to include(:confirmation_email_reference)
+        expect(log_lines[0]["notification_references"].keys).not_to include("confirmation_email_reference")
       end
     end
 
@@ -474,8 +486,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       let(:email_confirmation_input) do
         { send_confirmation: "send_email",
           confirmation_email_address: Faker::Internet.email,
-          confirmation_email_reference: "confirmation-email-ref",
-          submission_email_reference: "for-my-ref" }
+          confirmation_email_reference:,
+          submission_email_reference: }
       end
 
       before do
@@ -509,15 +521,14 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
         expect(mail.body.raw_source).to include(expected_personalisation.to_s)
 
-        expect(mail.govuk_notify_reference).to eq "confirmation-email-ref"
+        expect(mail.govuk_notify_reference).to eq confirmation_email_reference
       end
 
-      it "includes the submission notification IDs in the logging context" do
-        expect(logging_context[:notification_ids]).to include(submission_email_id: "1111")
-      end
-
-      it "includes the confirmation notification IDs in the logging context" do
-        expect(logging_context[:notification_ids]).to include(confirmation_email_id: "2222")
+      it "includes the notification IDs in the logging context" do
+        expect(log_lines[0]["notification_ids"]).to eq({
+          "submission_email_id" => submission_email_id,
+          "confirmation_email_id" => confirmation_email_id,
+        })
       end
 
       include_examples "for notification references"
@@ -527,8 +538,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       let(:email_confirmation_input) do
         { send_confirmation: "send_email",
           confirmation_email_address: Faker::Internet.email,
-          confirmation_email_reference: "confirmation-email-ref",
-          submission_email_reference: "for-my-ref" }
+          confirmation_email_reference:,
+          submission_email_reference: }
       end
 
       before do
@@ -563,5 +574,9 @@ private
     email = "[#{form_data.support_email}](mailto:#{form_data.support_email})"
     online = "[#{form_data.support_url_text}](#{form_data.support_url})"
     [phone_number, email, online].compact_blank.join("\n\n")
+  end
+
+  def log_lines
+    output.string.split("\n").map { |line| JSON.parse(line) }
   end
 end
