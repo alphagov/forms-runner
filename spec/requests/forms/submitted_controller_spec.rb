@@ -1,9 +1,9 @@
 require "rails_helper"
 
 RSpec.describe Forms::SubmittedController, type: :request do
-  let(:context) { Flow::Context.new(form: form_data, store:) }
+  let(:context) { Flow::Context.new(form: form, store:) }
 
-  let(:form_data) do
+  let(:form) do
     build(:form, :with_support,
           id: 2,
           start_page: 1,
@@ -50,27 +50,18 @@ RSpec.describe Forms::SubmittedController, type: :request do
     }
   end
 
-  let(:req_headers) do
-    {
-      "X-API-Token" => Settings.forms_api.auth_key,
-      "Accept" => "application/json",
-    }
-  end
-
   describe "#submitted" do
     before do
-      ActiveResource::HttpMock.respond_to do |mock|
-        mock.get "/api/v1/forms/2/draft", req_headers, form_data.to_json, 200
-      end
+      allow(FormService).to receive(:find_with_mode).with(id: form.id.to_s, mode: kind_of(Mode)).and_return(form)
 
       allow(Flow::Context).to receive(:new).and_return(context)
       allow(context).to receive(:clear)
 
-      get form_submitted_path(mode: "preview-draft", form_id: 2, form_slug: form_data.form_slug)
+      get form_submitted_path(mode: "preview-draft", form_id: 2, form_slug: form.form_slug)
     end
 
     it "renders the what happens next markdown" do
-      expect(response.body).to include(HtmlMarkdownSanitizer.new.render_scrubbed_markdown(form_data.what_happens_next_markdown))
+      expect(response.body).to include(HtmlMarkdownSanitizer.new.render_scrubbed_markdown(form.what_happens_next_markdown))
     end
 
     it "renders the submitted page template" do

@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe Forms::CheckYourAnswersController, type: :request do
   let(:timestamp_of_request) { Time.utc(2022, 12, 14, 10, 0o0, 0o0) }
 
-  let(:form_data) do
+  let(:form) do
     build(:form, :with_support,
           id: 2,
           live_at:,
@@ -44,32 +44,23 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
   let(:pages_data) do
     [
-      {
+      build(:page,
         id: 1,
         position: 1,
         question_text: "Question one",
         answer_type: "date",
         next_page: 2,
         is_optional: nil,
-      },
-      {
+      ),
+      build(:page,
         id: 2,
         position: 2,
         question_text: "Question two",
         answer_type: "date",
         is_optional: nil,
-      },
+      ),
     ]
   end
-
-  let(:req_headers) do
-    {
-      "X-API-Token" => Settings.forms_api.auth_key,
-      "Accept" => "application/json",
-    }
-  end
-
-  let(:api_url_suffix) { "/live" }
 
   let(:frozen_time) { Time.zone.local(2023, 3, 13, 9, 47, 57) }
 
@@ -88,9 +79,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
     # Intercept the request logs so we can do assertions on them
     allow(Lograge).to receive(:logger).and_return(logger)
 
-    ActiveResource::HttpMock.respond_to do |mock|
-      mock.get "/api/v1/forms/2#{api_url_suffix}", req_headers, form_data.to_json, 200
-    end
+    allow(FormService).to receive(:find_with_mode).with(id: form.id.to_s, mode: kind_of(Mode)).and_return(form)
 
     allow(Flow::Context).to receive(:new).and_wrap_original do |original_method, *args|
       context_spy = original_method.call(form: args[0][:form], store:)
@@ -121,8 +110,6 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
     end
 
     context "with preview mode on" do
-      let(:api_url_suffix) { "/draft" }
-
       context "without any questions answered" do
         let(:store) do
           {
@@ -131,16 +118,16 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         end
 
         it "redirects to first incomplete page of form" do
-          get check_your_answers_path(mode: "preview-draft", form_id: 2, form_slug: form_data.form_slug)
+          get check_your_answers_path(mode: "preview-draft", form_id: 2, form_slug: form.form_slug)
           expect(response).to have_http_status(:found)
-          expect(response.location).to eq(form_page_url(2, form_data.form_slug, 1))
+          expect(response.location).to eq(form_page_url(2, form.form_slug, 1))
         end
       end
 
       context "with all questions answered and valid" do
         before do
           allow(EventLogger).to receive(:log).at_least(:once)
-          get check_your_answers_path(mode: "preview-draft", form_id: 2, form_slug: form_data.form_slug)
+          get check_your_answers_path(mode: "preview-draft", form_id: 2, form_slug: form.form_slug)
         end
 
         it "returns 'ok' status code" do
@@ -148,7 +135,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         end
 
         it "Displays a back link to the last page of the form" do
-          expect(response.body).to include(form_page_path("preview-draft", 2, form_data.form_slug, 2))
+          expect(response.body).to include(form_page_path("preview-draft", 2, form.form_slug, 2))
         end
 
         it "Returns the correct X-Robots-Tag header" do
@@ -156,8 +143,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         end
 
         it "Contains a change link for each page" do
-          expect(response.body).to include(form_change_answer_path(2, form_data.form_slug, 1))
-          expect(response.body).to include(form_change_answer_path(2, form_data.form_slug, 2))
+          expect(response.body).to include(form_change_answer_path(2, form.form_slug, 1))
+          expect(response.body).to include(form_change_answer_path(2, form.form_slug, 2))
         end
 
         it "does not log the form_check_answers event" do
@@ -172,7 +159,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
         it "does not return 404" do
           travel_to timestamp_of_request do
-            get check_your_answers_path(mode: "preview-draft", form_id: 2, form_slug: form_data.form_slug)
+            get check_your_answers_path(mode: "preview-draft", form_id: 2, form_slug: form.form_slug)
           end
           expect(response).not_to have_http_status(:not_found)
         end
@@ -188,9 +175,9 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         end
 
         it "redirects to first incomplete page of form" do
-          get check_your_answers_path(mode: "form", form_id: 2, form_slug: form_data.form_slug)
+          get check_your_answers_path(mode: "form", form_id: 2, form_slug: form.form_slug)
           expect(response).to have_http_status(:found)
-          expect(response.location).to eq(form_page_url(2, form_data.form_slug, 1))
+          expect(response.location).to eq(form_page_url(2, form.form_slug, 1))
         end
       end
 
@@ -201,7 +188,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
           allow(EventLogger).to receive(:log_form_event).at_least(:once)
 
-          get check_your_answers_path(mode: "form", form_id: 2, form_slug: form_data.form_slug)
+          get check_your_answers_path(mode: "form", form_id: 2, form_slug: form.form_slug)
         end
 
         it "returns returns 'ok' status code" do
@@ -209,7 +196,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         end
 
         it "Displays a back link to the last page of the form" do
-          expect(response.body).to include(form_page_path("form", 2, form_data.form_slug, 2))
+          expect(response.body).to include(form_page_path("form", 2, form.form_slug, 2))
         end
 
         it "Returns the correct X-Robots-Tag header" do
@@ -217,8 +204,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         end
 
         it "Contains a change link for each page" do
-          expect(response.body).to include(form_change_answer_path(2, form_data.form_slug, 1))
-          expect(response.body).to include(form_change_answer_path(2, form_data.form_slug, 2))
+          expect(response.body).to include(form_change_answer_path(2, form.form_slug, 1))
+          expect(response.body).to include(form_change_answer_path(2, form.form_slug, 2))
         end
 
         it "Logs the form_check_answers event" do
@@ -233,9 +220,10 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
         it "returns 404" do
           travel_to timestamp_of_request do
-            get check_your_answers_path(mode: "form", form_id: 2, form_slug: form_data.form_slug)
-            expect(response).to have_http_status(:not_found)
+            get form_path(mode: "form", form_id: 2, form_slug: form.form_slug)
+            get check_your_answers_path(mode: "form", form_id: 2, form_slug: form.form_slug)
           end
+          expect(response).to have_http_status(:not_found)
         end
       end
     end
@@ -280,10 +268,10 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         expect(deliveries.length).to eq 2
 
         mail = deliveries[0]
-        expect(mail.to).to eq [form_data.submission_email]
+        expect(mail.to).to eq [form.submission_email]
 
         expected_personalisation = {
-          title: form_data.name,
+          title: form.name,
           text_input: ".*",
           submission_time: "9:47am",
           submission_date: "13 March 2023",
@@ -324,10 +312,10 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         expect(deliveries.length).to eq 2
 
         mail = deliveries[0]
-        expect(mail.to).to eq [form_data.submission_email]
+        expect(mail.to).to eq [form.submission_email]
 
         expected_personalisation = {
-          title: form_data.name,
+          title: form.name,
           text_input: ".*",
           submission_time: "9:47am",
           submission_date: "13 March 2023",
@@ -508,8 +496,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         expect(mail.to).to eq([email_confirmation_input[:confirmation_email_address]])
 
         expected_personalisation = {
-          title: form_data.name,
-          what_happens_next_text: form_data.what_happens_next_markdown,
+          title: form.name,
+          what_happens_next_text: form.what_happens_next_markdown,
           support_contact_details: contact_support_details_format,
           submission_time: "10:00am",
           submission_date: "14 December 2022",
@@ -570,9 +558,9 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 private
 
   def contact_support_details_format
-    phone_number = "#{form_data.support_phone}\n\n[#{I18n.t('support_details.call_charges')}]()"
-    email = "[#{form_data.support_email}](mailto:#{form_data.support_email})"
-    online = "[#{form_data.support_url_text}](#{form_data.support_url})"
+    phone_number = "#{form.support_phone}\n\n[#{I18n.t('support_details.call_charges')}]()"
+    email = "[#{form.support_email}](mailto:#{form.support_email})"
+    online = "[#{form.support_url_text}](#{form.support_url})"
     [phone_number, email, online].compact_blank.join("\n\n")
   end
 

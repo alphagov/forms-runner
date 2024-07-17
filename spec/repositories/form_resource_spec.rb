@@ -1,8 +1,16 @@
+require "rails_helper"
+
 describe FormResource do
   describe "#find_with_mode" do
+    let(:req_headers) do
+      {
+        "X-API-Token" => Settings.forms_api.auth_key,
+        "Accept" => "application/json",
+      }
+    end
+
     context "when mode is live" do
       let(:response_data) { { id: 1, name: "form name", live_at: "2022-08-18 09:16:50Z" }.to_json }
-
       before do
         ActiveResource::HttpMock.respond_to do |mock|
           mock.get "/api/v1/forms/1/live", req_headers, response_data, 200
@@ -10,7 +18,7 @@ describe FormResource do
       end
 
       it "returns a live form" do
-        form = described_class.find_with_mode(id: 1, mode: Mode.new("live"))
+        form = described_class.find_with_mode(id: 1, mode: 'live')
 
         expect(form).to have_attributes(id: 1, name: "form name")
         expect(form.live?).to eq(true)
@@ -27,7 +35,7 @@ describe FormResource do
       end
 
       it "returns a draft form" do
-        form = described_class.find_with_mode(id: 1, mode: Mode.new("preview-draft"))
+        form = described_class.find_with_mode(id: 1, mode: "draft")
 
         expect(form).to have_attributes(id: 1, name: "form name")
         expect(form.live?).to eq(false)

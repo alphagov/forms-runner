@@ -35,7 +35,7 @@ RSpec.describe ErrorsController, type: :request do
   end
 
   describe "Submission error" do
-    let(:form_data) do
+    let(:form) do
       build(
         :form,
         :with_support,
@@ -46,22 +46,13 @@ RSpec.describe ErrorsController, type: :request do
         submission_email: "submission@email.com",
         start_page: 1,
         pages: [
-          (build :page, id: 1, answer_type: "text", answer_settings: { input_type: "single_line" }),
+          (build :page, :with_text_settings, id: 1, input_type: "single_line")
         ],
       )
     end
 
-    let(:req_headers) do
-      {
-        "X-API-Token" => Settings.forms_api.auth_key,
-        "Accept" => "application/json",
-      }
-    end
-
     before do
-      ActiveResource::HttpMock.respond_to do |mock|
-        mock.get "/api/v1/forms/2/live", req_headers, form_data.to_json, 200
-      end
+      allow(FormService).to receive(:find_with_mode).with(id: '2', mode: kind_of(Mode)).and_return(form)
 
       # setup the context in the session
       get form_page_path(mode: "form", form_id: 2, form_slug: "form-name", page_slug: 1)

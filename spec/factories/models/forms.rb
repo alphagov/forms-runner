@@ -1,5 +1,6 @@
 FactoryBot.define do
   factory :form, class: "Form" do
+    id { Faker::Number.number(digits: 2) }
     sequence(:name) { |n| "Form #{n}" }
     sequence(:form_slug) { |n| "form-#{n}" }
     has_draft_version { true }
@@ -45,6 +46,7 @@ FactoryBot.define do
       end
 
       question_section_completed { true }
+      start_page { pages.first.id }
     end
 
     trait :with_support do

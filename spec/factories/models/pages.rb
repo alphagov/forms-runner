@@ -12,7 +12,7 @@ FactoryBot.define do
   factory :page, class: "Page" do
     id { Faker::Number.number(digits: 2) }
     question_text { Faker::Lorem.question }
-    answer_type { Page::ANSWER_TYPES.reject { |item| Page::ANSWER_TYPES_WITH_SETTINGS.include? item }.sample }
+    answer_type { 'email' }
     is_optional { nil }
     answer_settings { nil }
     page_heading { nil }
@@ -37,11 +37,11 @@ FactoryBot.define do
     trait :with_selections_settings do
       transient do
         only_one_option { "true" }
-        selection_options { [DataStruct.new(name: "Option 1"), DataStruct.new(name: "Option 2")] }
+        selection_options { [SelectionOption.new(name: "Option 1"), SelectionOption.new(name: "Option 2")] }
       end
 
       answer_type { "selection" }
-      answer_settings { DataStruct.new(only_one_option:, selection_options:) }
+      answer_settings { AnswerSettings.new(only_one_option:, selection_options:) }
     end
 
     trait :with_text_settings do
@@ -50,7 +50,7 @@ FactoryBot.define do
       end
 
       answer_type { "text" }
-      answer_settings { DataStruct.new(input_type:) }
+      answer_settings { AnswerSettings.new(input_type:) }
     end
 
     trait :with_date_settings do
@@ -59,7 +59,7 @@ FactoryBot.define do
       end
 
       answer_type { "date" }
-      answer_settings { DataStruct.new(input_type:) }
+      answer_settings { AnswerSettings.new(input_type:) }
     end
 
     trait :with_address_settings do
@@ -69,7 +69,7 @@ FactoryBot.define do
       end
 
       answer_type { "address" }
-      answer_settings { DataStruct.new(input_type: DataStruct.new(uk_address:, international_address:)) }
+      answer_settings { AnswerSettings.new(input_type: AddressInputType.new(uk_address:, international_address:)) }
     end
 
     trait :with_name_settings do
@@ -79,7 +79,7 @@ FactoryBot.define do
       end
 
       answer_type { "name" }
-      answer_settings { DataStruct.new(input_type:, title_needed:) }
+      answer_settings { AnswerSettings.new(input_type:, title_needed:) }
     end
   end
 end

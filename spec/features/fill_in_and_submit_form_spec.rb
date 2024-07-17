@@ -7,26 +7,12 @@ feature "Fill in and submit a form", type: :feature do
   let(:answer_text) { "Answer text" }
   let(:reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
 
-  let(:req_headers) do
-    {
-      "X-API-Token" => Settings.forms_api.auth_key,
-      "Accept" => "application/json",
-    }
-  end
-
-  let(:post_headers) do
-    {
-      "X-API-Token" => Settings.forms_api.auth_key,
-      "Content-Type" => "application/json",
-    }
-  end
-
   before do
-    ActiveResource::HttpMock.respond_to do |mock|
-      mock.get "/api/v1/forms/1/live", req_headers, form.to_json, 200
-    end
-
     allow(ReferenceNumberService).to receive(:generate).and_return(reference)
+    # allow(FormService).to receive(:find_with_mode).with(any_args).and_raise(ActiveResource::ResourceNotFound.new(404, "Not Found"))
+    # allow(FormService).to receive(:find_from_repository).with(id: '2', mode: kind_of(Mode)).and_return(form)
+    mock_repository = class_double(FormRepository, find_with_mode: form)
+    allow(FormService).to receive(:repository).and_return(mock_repository)
   end
 
   scenario "As a form filler" do

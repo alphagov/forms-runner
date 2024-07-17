@@ -5,23 +5,9 @@ feature "Email confirmation", type: :feature do
   let(:form) { build :form, :live?, id: 1, name: "Apply for a juggling license", pages:, start_page: 1 }
   let(:text_answer) { Faker::Lorem.sentence }
 
-  let(:req_headers) do
-    {
-      "X-API-Token" => Settings.forms_api.auth_key,
-      "Accept" => "application/json",
-    }
-  end
-  let(:post_headers) do
-    {
-      "X-API-Token" => Settings.forms_api.auth_key,
-      "Content-Type" => "application/json",
-    }
-  end
-
   before do
-    ActiveResource::HttpMock.respond_to do |mock|
-      mock.get "/api/v1/forms/1/live", req_headers, form.to_json, 200
-    end
+    allow(FormService).to receive(:find_with_mode).with(any_args).and_raise(ActiveResource::ResourceNotFound.new(404, "Not Found"))
+    allow(FormService).to receive(:find_with_mode).with(id: '1', mode: kind_of(Mode)).and_return(form)
   end
 
   scenario "opting out of email submission returns the confirmation page without confirmation email text" do
