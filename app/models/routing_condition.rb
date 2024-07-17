@@ -13,12 +13,13 @@ class RoutingCondition
   attribute :updated_at
   attribute :validation_errors
 
-  def initialize(attributes = {})
-    attributes["validation_errors"] ||= []
-    attributes["validation_errors"] = attributes["validation_errors"]&.map do |ve|
-      ValidationError.new(ve)
-    end
+  def from_json(json)
+    attributes = HashWithIndifferentAccess.new(json)
 
-    super(attributes)
+    extracted_attributes = {
+      validation_errors: Array(attributes["validation_errors"]).map do |ve|
+        ValidationError.new(ve)
+      end
+    }
   end
 end

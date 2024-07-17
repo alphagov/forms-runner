@@ -48,7 +48,7 @@ class Page
 
     if attributes[:routing_conditions].present?
       extracted_attributes[:routing_conditions] = attributes[:routing_conditions].map do |rc|
-        RoutingCondition.new(rc)
+        RoutingCondition.from_json(rc)
       end
     end
 
