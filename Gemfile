@@ -76,6 +76,8 @@ group :development, :test do
 
   # For detecting security vulnerabilities in Ruby on Rails applications via static analysis.
   gem "brakeman", "~> 6.1"
+
+  gem "webmock", "~> 3.23"
 end
 
 group :test do

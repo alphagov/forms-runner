@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe Forms::BaseController, type: :request do
   let(:timestamp_of_request) { Time.utc(2022, 12, 14, 10, 0o0, 0o0) }
 
-  let(:form_response_data) do
+  let(:form) do
     build(:form, :with_support,
           id: 2,
           live_at:,
@@ -15,12 +15,6 @@ RSpec.describe Forms::BaseController, type: :request do
   end
   let(:start_page) { 1 }
   let(:live_at) { "2022-08-18 09:16:50 +0100" }
-
-  let(:no_data_found_response) do
-    {
-      "error": "not_found",
-    }
-  end
 
   let(:pages_data) do
     [
@@ -38,13 +32,6 @@ RSpec.describe Forms::BaseController, type: :request do
     ]
   end
 
-  let(:req_headers) do
-    {
-      "X-API-Token" => Settings.forms_api.auth_key,
-      "Accept" => "application/json",
-    }
-  end
-
   let(:api_url_suffix) { "/live" }
 
   let(:output) { StringIO.new }
@@ -55,10 +42,8 @@ RSpec.describe Forms::BaseController, type: :request do
   end
 
   before do
-    ActiveResource::HttpMock.respond_to do |mock|
-      mock.get "/api/v1/forms/2#{api_url_suffix}", req_headers, form_response_data.to_json, 200
-      mock.get "/api/v1/forms/9999#{api_url_suffix}", req_headers, no_data_found_response, 404
-    end
+    allow(FormService).to receive(:find_with_mode).with(any_args).and_raise(ActiveResource::ResourceNotFound.new(404, "Not Found"))
+    allow(FormService).to receive(:find_with_mode).with(id: form.id.to_s, mode: kind_of(Mode)).and_return(form)
   end
 
   describe "logging" do
@@ -69,7 +54,7 @@ RSpec.describe Forms::BaseController, type: :request do
     before do
       Rails.logger.broadcast_to logger
 
-      get form_id_path(mode: "form", form_id:), headers: {
+      get form_id_path(mode: "form", form_id: form.id), headers: {
         "HTTP_X_AMZN_TRACE_ID": trace_id,
         "X-REQUEST-ID": request_id,
       }
@@ -84,7 +69,7 @@ RSpec.describe Forms::BaseController, type: :request do
     end
 
     it "includes the form_name on log lines" do
-      expect(log_lines[0]["form_name"]).to eq(form_response_data.name)
+      expect(log_lines[0]["form_name"]).to eq(form.name)
     end
 
     it "includes the form_id on log lines" do
@@ -109,6 +94,14 @@ RSpec.describe Forms::BaseController, type: :request do
       get form_id_path(mode: "form", form_id: 2)
     end
 
+    context "when the form exists and has a start page" do
+      let(:start_page) { 1 }
+
+      it "redirects to the friendly URL start page" do
+        expect(response).to redirect_to(form_page_path("form", 2, form.form_slug, 1))
+      end
+    end
+
     context "when the form exists and has no start page" do
       let(:start_page) { nil }
 
@@ -120,16 +113,11 @@ RSpec.describe Forms::BaseController, type: :request do
 
   describe "#error_repeat_submission" do
     before do
-      ActiveResource::HttpMock.respond_to do |mock|
-        allow(LogEventService).to receive(:log_form_start).at_least(:once)
-        mock.get "/api/v1/forms/2/live", req_headers, form_response_data.to_json, 200
-      end
-
-      get error_repeat_submission_path(mode: "form", form_id: 2, form_slug: form_response_data.form_slug)
+      get error_repeat_submission_path(mode: "form", form_id: 2, form_slug: form.form_slug)
     end
 
     it "renders the page with a link back to the form start page" do
-      expect(response.body).to include(form_page_path("form", 2, form_response_data.form_slug, 1))
+      expect(response.body).to include(form_page_path("form", 2, form.form_slug, 1))
     end
   end
 
@@ -142,13 +130,13 @@ RSpec.describe Forms::BaseController, type: :request do
           before do
             allow(LogEventService).to receive(:log_form_start)
             travel_to timestamp_of_request do
-              get form_path(mode: "preview-draft", form_id: 2, form_slug: form_response_data.form_slug)
+              get form_path(mode: "preview-draft", form_id: 2, form_slug: form.form_slug)
             end
           end
 
           context "when the form has a start page" do
             it "Redirects to the first page" do
-              expect(response).to redirect_to(form_page_path("preview-draft", 2, form_response_data.form_slug, 1))
+              expect(response).to redirect_to(form_page_path("preview-draft", 2, form.form_slug, 1))
             end
 
             it "does not log the form_visit event" do
@@ -219,13 +207,13 @@ RSpec.describe Forms::BaseController, type: :request do
           before do
             allow(LogEventService).to receive(:log_form_start)
             travel_to timestamp_of_request do
-              get form_path(mode: "preview-live", form_id: 2, form_slug: form_response_data.form_slug)
+              get form_path(mode: "preview-live", form_id: 2, form_slug: form.form_slug)
             end
           end
 
           context "when the form has a start page" do
             it "Redirects to the first page" do
-              expect(response).to redirect_to(form_page_path("preview-live", 2, form_response_data.form_slug, 1))
+              expect(response).to redirect_to(form_page_path("preview-live", 2, form.form_slug, 1))
             end
 
             it "does not log the form_visit event" do
@@ -247,12 +235,12 @@ RSpec.describe Forms::BaseController, type: :request do
 
           describe "Privacy page" do
             it "returns http code 200" do
-              get form_privacy_path(mode: "preview-live", form_id: 2, form_slug: form_response_data.form_slug)
+              get form_privacy_path(mode: "preview-live", form_id: 2, form_slug: form.form_slug)
               expect(response).to have_http_status(:ok)
             end
 
             it "contains link to data controller's privacy policy" do
-              get form_privacy_path(mode: "preview-live", form_id: 2, form_slug: form_response_data.form_slug)
+              get form_privacy_path(mode: "preview-live", form_id: 2, form_slug: form.form_slug)
               expect(response.body).to include("http://www.example.gov.uk/privacy_policy")
             end
           end
@@ -296,13 +284,13 @@ RSpec.describe Forms::BaseController, type: :request do
           before do
             allow(LogEventService).to receive(:log_form_start)
             travel_to timestamp_of_request do
-              get form_path(mode: "form", form_id: 2, form_slug: form_response_data.form_slug)
+              get form_path(mode: "form", form_id: 2, form_slug: form.form_slug)
             end
           end
 
           context "when the form has a start page" do
             it "Redirects to the first page" do
-              expect(response).to redirect_to(form_page_path("form", 2, form_response_data.form_slug, 1))
+              expect(response).to redirect_to(form_page_path("form", 2, form.form_slug, 1))
             end
 
             it "Logs the form_visit event" do

@@ -1,12 +1,12 @@
 FactoryBot.define do
   factory :form, class: "Form" do
+    id { Faker::Number.number(digits: 2) }
     sequence(:name) { |n| "Form #{n}" }
     sequence(:form_slug) { |n| "form-#{n}" }
     has_draft_version { true }
     has_live_version { false }
     submission_email { Faker::Internet.email(domain: "example.gov.uk") }
     privacy_policy_url { Faker::Internet.url(host: "gov.uk") }
-    org { "test-org" }
     live_at { nil }
     what_happens_next_markdown { nil }
     support_email { nil }
@@ -46,6 +46,7 @@ FactoryBot.define do
       end
 
       question_section_completed { true }
+      start_page { pages.first.id }
     end
 
     trait :with_support do

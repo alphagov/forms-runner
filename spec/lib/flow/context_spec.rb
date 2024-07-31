@@ -2,10 +2,6 @@ require "rails_helper"
 
 # rubocop:disable RSpec/InstanceVariable
 RSpec.describe Flow::Context do
-  before do
-    ActiveResource::HttpMock.disable_net_connection!
-  end
-
   let(:pages) do
     [
       (build :page, :with_text_settings,
