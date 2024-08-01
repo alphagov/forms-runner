@@ -2,7 +2,11 @@
  * @vitest-environment jsdom
  */
 
-import { installAnalyticsScript, deleteGoogleAnalyticsCookies } from '.'
+import {
+  installAnalyticsScript,
+  deleteGoogleAnalyticsCookies,
+  sendPageViewEvent
+} from '.'
 import { describe, beforeEach, afterEach, it, expect } from 'vitest'
 
 describe('google_tag.mjs', () => {
@@ -48,6 +52,56 @@ describe('google_tag.mjs', () => {
 
       deleteGoogleAnalyticsCookies()
       expect(document.cookie).toContain('analytics_consent=true')
+    })
+  })
+
+  describe('sendPageViewEvent()', () => {
+    describe('when the dataLayer array is not already present on the window object', () => {
+      beforeEach(() => {
+        window.dataLayer = undefined
+      })
+
+      it('creates the dataLayer array and pushes a pageView event', function () {
+        sendPageViewEvent()
+        expect(window.dataLayer).toContainEqual({
+          event: 'page_view',
+          page_view: {
+            location: window.location,
+            referrer: '',
+            schema_name: 'simple_schema',
+            status_code: 200,
+            title: ''
+          }
+        })
+      })
+    })
+    describe('when the dataLayer array is already present on the window object', () => {
+      const existingDataLayerObject = {
+        data: 'Some existing data in the dataLayer'
+      }
+
+      beforeEach(() => {
+        window.dataLayer = [existingDataLayerObject]
+      })
+
+      it('the existing dataLayer content is preserved', function () {
+        sendPageViewEvent()
+        expect(window.dataLayer).toContainEqual(existingDataLayerObject)
+      })
+
+      it('the pageView event is pushed to the dataLayer', function () {
+        sendPageViewEvent()
+        expect(window.dataLayer).toContainEqual({
+          event: 'page_view',
+          page_view: {
+            location: window.location,
+            referrer: '',
+            schema_name: 'simple_schema',
+            status_code: 200,
+            title: ''
+          }
+        })
+      })
     })
   })
 })
