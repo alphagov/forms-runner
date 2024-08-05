@@ -40,11 +40,15 @@ class FormSubmissionService
 
     unless @form.submission_email.blank? && @preview_mode
 
+      if FeatureService.enabled?("attach_csv_to_submission_email")
+        write_csv_file
+      end
+
       mail = FormSubmissionMailer
-      .email_confirmation_input(text_input: email_body,
-                                notify_response_id: @email_confirmation_input.submission_email_reference,
-                                submission_email: @form.submission_email,
-                                mailer_options: @mailer_options).deliver_now
+               .email_confirmation_input(text_input: email_body,
+                                         notify_response_id: @email_confirmation_input.submission_email_reference,
+                                         submission_email: @form.submission_email,
+                                         mailer_options: @mailer_options).deliver_now
 
       CurrentLoggingAttributes.submission_email_id = mail.govuk_notify_response.id
     end
@@ -68,6 +72,21 @@ class FormSubmissionService
   end
 
 private
+
+  def write_csv_file
+    # For now, we're just writing to a Tempfile. We will send this file using Notify.
+    file = Tempfile.new(%W[submission_#{@submission_reference}_ .csv])
+    begin
+      SubmissionCsvService.new(current_context: @current_context, submission_reference: @submission_reference, output_file_path: file.path).write
+      Rails.logger.info("Wrote submission CSV", { path: file.path })
+    ensure
+      file.close
+      # To inspect the temporary file after it's written to, comment out file.unlink locally
+      # If we don't unlink the file, it is available until the Tempfile object is garbage collected or the Ruby
+      # interpreter exits.
+      file.unlink
+    end
+  end
 
   def form_title
     @form.name
