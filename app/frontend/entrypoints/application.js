@@ -6,7 +6,9 @@ import {
 
 import {
   installAnalyticsScript,
-  setDefaultConsent
+  setDefaultConsent,
+  sendPageViewEvent,
+  attachExternalLinkTracker
 } from '../javascript/utils/google-analytics'
 import { CookieBanner } from '../../components/cookie_banner_component/cookie-banner'
 import { CookiePage } from '../../components/cookie_consent_form_component/cookie-consent-form'
@@ -37,6 +39,13 @@ if (document.body.dataset.googleAnalyticsEnabled === 'true') {
       allowAnalyticsCookies: analyticsConsentStatus === CONSENT_STATUS.GRANTED
     })
   }
+
+  // push events regardless of consent value - if consent has not been granted
+  // yet, GTM won't be loaded and no data is sent to Google analytics. Doing
+  // this  now means that if consent is granted later on this page, the event
+  // will be sent
+  sendPageViewEvent()
+  attachExternalLinkTracker()
 }
 
 initAll()
