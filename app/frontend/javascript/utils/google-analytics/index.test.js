@@ -125,7 +125,7 @@ describe('google_tag.mjs', () => {
       expect(window.dataLayer).toContainEqual(existingDataLayerObject)
     })
 
-    it('the pageView event is pushed to the dataLayer', function () {
+    it('the navigation event is pushed to the dataLayer', function () {
       attachExternalLinkTracker()
       document.querySelector('a').click()
       expect(window.dataLayer).toContainEqual({
