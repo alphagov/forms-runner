@@ -21,7 +21,7 @@
     "dev": "vite dev"
   },
   "devDependencies": {
-    "autoprefixer": "^10.4.19",
+    "autoprefixer": "^10.4.20",
     "cssnano": "^7.0.4",
     "jsdom": "^24.1.1",
     "postcss": "^8.4.40",
