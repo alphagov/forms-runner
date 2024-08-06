@@ -151,6 +151,18 @@ features:
 
 And check with `FeatureService.enabled?("some.nested_feature")`.
 
+You can also set a feature for a specific form:
+
+```yaml
+features:
+  some_feature:
+    enabled: false
+    forms:
+      "123": true
+```
+
+The `features.some_features.enabled` key sets the default for the flag, and then you can override for a form by adding a key for the form id. And then check the flag for a form with `FeatureService.enabled?(:some_feature, form)`.
+
 ### Testing with features
 
 You can also tag RSpec tests with `feature_{name}: true`. This will turn that feature on just for the duration of that test.
