@@ -8,6 +8,7 @@ module Forms
     end
 
     def show
+      redirect_to form_page_path(@step.form_id, @step.form_slug, @step.page_slug) if params[:answer_id] && !@step.repeatable?
       redirect_to form_page_path(@step.form_id, @step.form_slug, current_context.next_page_slug) unless current_context.can_visit?(@step.page_slug)
       back_link(@step.page_slug)
       setup_instance_vars_for_view
@@ -36,6 +37,7 @@ module Forms
     def prepare_step
       page_slug = params.require(:page_slug)
       @step = current_context.find_or_create(page_slug)
+      @step.answer_id = params.fetch(:answer_id, 1) if @step.repeatable?
 
       @support_details = current_context.support_details
     end

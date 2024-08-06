@@ -15,6 +15,7 @@ class Step
   end
 
   alias_attribute :id, :page_id
+  alias_attribute :answer, :question
 
   def ==(other)
     other.class == self.class && other.state == state

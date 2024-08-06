@@ -1,4 +1,4 @@
-<% set_page_title(form_title(form_name: @current_context.form.name, page_name: (@step.question.page_heading.present? ? @step.question.page_heading : @step.question.question_text), mode: @mode, error: @step.question&.errors&.any?)) %>
+<% set_page_title(form_title(form_name: @current_context.form.name, page_name: (@step.question.page_heading.present? ? @step.question.page_heading : @step.question.question_text), mode: @mode, error: @step.answer&.errors&.any?)) %>
 
 <% content_for :back_link do %>
   <% if @back_link.present? %>
@@ -10,7 +10,7 @@
   <div class="govuk-grid-column-two-thirds">
     <p><%= @step.repeatable? %></p>
     <%= form_with model: @step.question, url: save_form_page_path(@step.form_id, @step.form_slug, @step.id, :changing_existing_answer => @changing_existing_answer), scope: :question, method: :post do |form| %>
-      <% if @step.question&.errors&.any? %>
+      <% if @step.answer&.errors&.any? %>
         <%= form.govuk_error_summary %>
       <% end %>
 
