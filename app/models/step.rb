@@ -1,8 +1,9 @@
 class Step
   attr_accessor :page_id, :form_id, :form_slug, :question
-  attr_reader :next_page_slug, :page_slug, :page_number, :routing_conditions
+  attr_reader :is_repeatable, :next_page_slug, :page_slug, :page_number, :routing_conditions
 
   def initialize(question:, page:, form_id:, form_slug:, next_page_slug:, page_slug:)
+    @is_repeatable = page.is_repeatable
     @question = question
     @page_id = page.id
     @page_slug = page_slug
@@ -17,6 +18,10 @@ class Step
 
   def ==(other)
     other.class == self.class && other.state == state
+  end
+
+  def repeatable?
+    is_repeatable
   end
 
   def state

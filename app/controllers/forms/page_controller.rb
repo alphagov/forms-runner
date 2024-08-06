@@ -61,6 +61,8 @@ module Forms
     def next_page
       if @changing_existing_answer
         check_your_answers_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug)
+      elsif @step.repeatable?
+        add_another_answer_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug, page_slug: @step.page_slug)
       elsif @step.routing_conditions.any?
         calculate_page_routing
       else

@@ -25,6 +25,8 @@ Rails.application.routes.draw do
       get "/:page_slug/change" => "forms/page#show", as: :form_change_answer, defaults: { changing_existing_answer: true }
       get "/:page_slug" => "forms/page#show", constraints: { page_slug: Flow::StepFactory::PAGE_SLUG_REGEX }, as: :form_page
       post "/:page_slug" => "forms/page#save", as: :save_form_page
+      get "/:page_slug/add-another-answer" => "forms/add_another_answer#show", constraints: { page_slug: Flow::StepFactory::PAGE_SLUG_REGEX }, as: :add_another_answer
+      post "/:page_slug/add-another-answer" => "forms/add_another_answer#save", constraints: { page_slug: Flow::StepFactory::PAGE_SLUG_REGEX }, as: :save_add_another_answer
 
       get "/repeat-submission" => "forms/base#error_repeat_submission", as: :error_repeat_submission, via: :all
     end
