@@ -77,7 +77,12 @@ private
     # For now, we're just writing to a Tempfile. We will send this file using Notify.
     file = Tempfile.new(%W[submission_#{@submission_reference}_ .csv])
     begin
-      SubmissionCsvService.new(current_context: @current_context, submission_reference: @submission_reference, output_file_path: file.path).write
+      SubmissionCsvService.new(
+        current_context: @current_context,
+        submission_reference: @submission_reference,
+        timestamp: @timestamp,
+        output_file_path: file.path,
+      ).write
       Rails.logger.info("Wrote submission CSV", { path: file.path })
     ensure
       file.close
