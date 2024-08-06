@@ -19,11 +19,9 @@ describe "Settings" do
   end
 
   describe ".features" do
-    it "has a default value" do
-      features = settings[:features]
+    features = settings[:features]
 
-      expect(features).to eq({})
-    end
+    include_examples expected_value_test, :attach_csv_to_submission_email, features, false
   end
 
   describe ".forms_api" do

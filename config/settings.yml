@@ -1,4 +1,5 @@
-features: {}
+features:
+  attach_csv_to_submission_email: false
 
 forms_admin:
   # URL to form-admin

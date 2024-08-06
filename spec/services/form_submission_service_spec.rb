@@ -48,6 +48,13 @@ RSpec.describe FormSubmissionService do
   end
 
   describe "#submit" do
+    let(:submission_csv_service_spy) { instance_double(SubmissionCsvService) }
+
+    before do
+      allow(SubmissionCsvService).to receive(:new).and_return submission_csv_service_spy
+      allow(submission_csv_service_spy).to receive(:write)
+    end
+
     it "calls submit_form_to_processing_team method" do
       expect(service).to receive(:submit_form_to_processing_team).once
       service.submit
@@ -65,6 +72,20 @@ RSpec.describe FormSubmissionService do
     it "includes the submission reference in the logging context" do
       service.submit
       expect(log_lines[0]["submission_reference"]).to eq(reference)
+    end
+
+    context "when send CSV feature is enabled", :feature_attach_csv_to_submission_email do
+      it "writes CSV file" do
+        service.submit
+        expect(submission_csv_service_spy).to have_received(:write)
+      end
+    end
+
+    context "when send CSV feature is disabled", feature_attach_csv_to_submission_email: false do
+      it "does not write CSV file" do
+        service.submit
+        expect(submission_csv_service_spy).not_to have_received(:write)
+      end
     end
   end
 
