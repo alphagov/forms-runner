@@ -55,16 +55,6 @@ RSpec.describe FormSubmissionService do
       allow(submission_csv_service_spy).to receive(:write)
     end
 
-    it "calls submit_form_to_processing_team method" do
-      expect(service).to receive(:submit_form_to_processing_team).once
-      service.submit
-    end
-
-    it "calls submit_confirmation_email_to_user" do
-      expect(service).to receive(:submit_confirmation_email_to_user).once
-      service.submit
-    end
-
     it "returns the submission reference" do
       expect(service.submit).to eq reference
     end
@@ -87,63 +77,13 @@ RSpec.describe FormSubmissionService do
         expect(submission_csv_service_spy).not_to have_received(:write)
       end
     end
-  end
 
-  describe "#submit_form_to_processing_team" do
-    it "calls FormSubmissionMailer" do
-      freeze_time do
-        allow(FormSubmissionMailer).to receive(:email_confirmation_input).and_call_original
-
-        service.submit_form_to_processing_team
-
-        expect(FormSubmissionMailer).to have_received(:email_confirmation_input).with(
-          { text_input: "# What is the meaning of life?\n42\n",
-            notify_response_id: email_confirmation_input.submission_email_reference,
-            submission_email: "testing@gov.uk",
-            mailer_options: instance_of(FormSubmissionService::MailerOptions) },
-        ).once
-      end
-    end
-
-    it "logs submission" do
-      allow(LogEventService).to receive(:log_submit).once
-
-      service.submit_form_to_processing_team
-
-      expect(LogEventService).to have_received(:log_submit).with(
-        current_context,
-        requested_email_confirmation: true,
-        preview: false,
-      )
-    end
-
-    describe "validations" do
-      context "when form has no submission email" do
-        let(:submission_email) { nil }
-
-        it "raises an error" do
-          expect { service.submit_form_to_processing_team }.to raise_error("Form id(1) is missing a submission email address")
-        end
-      end
-
-      context "when current context has no completed steps (i.e questions/answers)" do
-        let(:current_context) { OpenStruct.new(form:, steps: []) }
-        let(:result) { service.submit_form_to_processing_team }
-
-        it "raises an error" do
-          expect { result }.to raise_error("Form id(1) has no completed steps i.e questions/answers to include in submission email")
-        end
-      end
-    end
-
-    context "when form being submitted is from previewed form" do
-      let(:preview_mode) { true }
-
+    describe "sending the submission email" do
       it "calls FormSubmissionMailer" do
         freeze_time do
           allow(FormSubmissionMailer).to receive(:email_confirmation_input).and_call_original
 
-          service.submit_form_to_processing_team
+          service.submit
 
           expect(FormSubmissionMailer).to have_received(:email_confirmation_input).with(
             { text_input: "# What is the meaning of life?\n42\n",
@@ -154,15 +94,15 @@ RSpec.describe FormSubmissionService do
         end
       end
 
-      it "logs preview submission" do
+      it "logs submission" do
         allow(LogEventService).to receive(:log_submit).once
 
-        service.submit_form_to_processing_team
+        service.submit
 
         expect(LogEventService).to have_received(:log_submit).with(
           current_context,
           requested_email_confirmation: true,
-          preview: true,
+          preview: false,
         )
       end
 
@@ -170,93 +110,131 @@ RSpec.describe FormSubmissionService do
         context "when form has no submission email" do
           let(:submission_email) { nil }
 
-          it "does not raise an error" do
-            expect { service.submit_form_to_processing_team }.not_to raise_error
-          end
-
-          it "does not call the FormSubmissionMailer" do
-            allow(FormSubmissionMailer).to receive(:email_confirmation_input).at_least(:once)
-
-            service.submit_form_to_processing_team
-
-            expect(FormSubmissionMailer).not_to have_received(:email_confirmation_input)
+          it "raises an error" do
+            expect { service.submit }.to raise_error("Form id(1) is missing a submission email address")
           end
         end
 
-        context "when from has no steps (i.e questions/answers)" do
+        context "when current context has no completed steps (i.e questions/answers)" do
           let(:current_context) { OpenStruct.new(form:, steps: []) }
-          let(:result) { service.submit_form_to_processing_team }
+          let(:result) { service.submit }
 
           it "raises an error" do
             expect { result }.to raise_error("Form id(1) has no completed steps i.e questions/answers to include in submission email")
           end
         end
       end
-    end
-  end
 
-  describe "#submit_confirmation_email_to_user" do
-    it "calls FormSubmissionConfirmationMailer" do
-      freeze_time do
-        allow(FormSubmissionConfirmationMailer).to receive(:send_confirmation_email).and_call_original
+      context "when form being submitted is from previewed form" do
+        let(:preview_mode) { true }
 
-        service.submit_confirmation_email_to_user
-        expect(FormSubmissionConfirmationMailer).to have_received(:send_confirmation_email).with(
-          { what_happens_next_markdown: form.what_happens_next_markdown,
-            support_contact_details: contact_support_details_format,
-            notify_response_id: email_confirmation_input.confirmation_email_reference,
-            confirmation_email_address: email_confirmation_input.confirmation_email_address,
-            mailer_options: instance_of(FormSubmissionService::MailerOptions) },
-        ).once
+        it "calls FormSubmissionMailer" do
+          freeze_time do
+            allow(FormSubmissionMailer).to receive(:email_confirmation_input).and_call_original
+
+            service.submit
+
+            expect(FormSubmissionMailer).to have_received(:email_confirmation_input).with(
+              { text_input: "# What is the meaning of life?\n42\n",
+                notify_response_id: email_confirmation_input.submission_email_reference,
+                submission_email: "testing@gov.uk",
+                mailer_options: instance_of(FormSubmissionService::MailerOptions) },
+            ).once
+          end
+        end
+
+        it "logs preview submission" do
+          allow(LogEventService).to receive(:log_submit).once
+
+          service.submit
+
+          expect(LogEventService).to have_received(:log_submit).with(
+            current_context,
+            requested_email_confirmation: true,
+            preview: true,
+          )
+        end
+
+        describe "validations" do
+          context "when form has no submission email" do
+            let(:submission_email) { nil }
+
+            it "does not raise an error" do
+              expect { service.submit }.not_to raise_error
+            end
+
+            it "does not call the FormSubmissionMailer" do
+              allow(FormSubmissionMailer).to receive(:email_confirmation_input).at_least(:once)
+
+              service.submit
+
+              expect(FormSubmissionMailer).not_to have_received(:email_confirmation_input)
+            end
+          end
+
+          context "when from has no steps (i.e questions/answers)" do
+            let(:current_context) { OpenStruct.new(form:, steps: []) }
+            let(:result) { service.submit }
+
+            it "raises an error" do
+              expect { result }.to raise_error("Form id(1) has no completed steps i.e questions/answers to include in submission email")
+            end
+          end
+        end
       end
     end
 
-    context "when user does not want a confirmation email" do
-      let(:email_confirmation_input) { build :email_confirmation_input }
+    describe "sending the confirmation email to the user" do
+      it "calls FormSubmissionConfirmationMailer" do
+        freeze_time do
+          allow(FormSubmissionConfirmationMailer).to receive(:send_confirmation_email).and_call_original
 
-      it "does not call FormSubmissionConfirmationMailer" do
-        allow(FormSubmissionConfirmationMailer).to receive(:send_confirmation_email)
-
-        service.submit_confirmation_email_to_user
-        expect(FormSubmissionConfirmationMailer).not_to have_received(:send_confirmation_email)
+          service.submit
+          expect(FormSubmissionConfirmationMailer).to have_received(:send_confirmation_email).with(
+            { what_happens_next_markdown: form.what_happens_next_markdown,
+              support_contact_details: contact_support_details_format,
+              notify_response_id: email_confirmation_input.confirmation_email_reference,
+              confirmation_email_address: email_confirmation_input.confirmation_email_address,
+              mailer_options: instance_of(FormSubmissionService::MailerOptions) },
+          ).once
+        end
       end
 
-      it "returns nil" do
-        expect(service.submit_confirmation_email_to_user).to be_nil
-      end
-    end
-
-    context "when form is draft" do
-      context "when form does not have 'what happens next details'" do
-        let(:what_happens_next_markdown) { nil }
+      context "when user does not want a confirmation email" do
+        let(:email_confirmation_input) { build :email_confirmation_input }
 
         it "does not call FormSubmissionConfirmationMailer" do
           allow(FormSubmissionConfirmationMailer).to receive(:send_confirmation_email)
 
-          service.submit_confirmation_email_to_user
+          service.submit
           expect(FormSubmissionConfirmationMailer).not_to have_received(:send_confirmation_email)
-        end
-
-        it "returns nil" do
-          expect(service.submit_confirmation_email_to_user).to be_nil
         end
       end
 
-      context "when form does not have any support details" do
-        let(:support_email) { nil }
-        let(:support_phone) { nil }
-        let(:support_url) { nil }
-        let(:support_url_text) { nil }
+      context "when form is draft" do
+        context "when form does not have 'what happens next details'" do
+          let(:what_happens_next_markdown) { nil }
 
-        it "does not call FormSubmissionConfirmationMailer" do
-          allow(FormSubmissionConfirmationMailer).to receive(:send_confirmation_email)
+          it "does not call FormSubmissionConfirmationMailer" do
+            allow(FormSubmissionConfirmationMailer).to receive(:send_confirmation_email)
 
-          service.submit_confirmation_email_to_user
-          expect(FormSubmissionConfirmationMailer).not_to have_received(:send_confirmation_email)
+            service.submit
+            expect(FormSubmissionConfirmationMailer).not_to have_received(:send_confirmation_email)
+          end
         end
 
-        it "returns nil" do
-          expect(service.submit_confirmation_email_to_user).to be_nil
+        context "when form does not have any support details" do
+          let(:support_email) { nil }
+          let(:support_phone) { nil }
+          let(:support_url) { nil }
+          let(:support_url_text) { nil }
+
+          it "does not call FormSubmissionConfirmationMailer" do
+            allow(FormSubmissionConfirmationMailer).to receive(:send_confirmation_email)
+
+            service.submit
+            expect(FormSubmissionConfirmationMailer).not_to have_received(:send_confirmation_email)
+          end
         end
       end
     end
