@@ -44,6 +44,11 @@ describe FormSubmissionMailer, type: :mailer do
       expect(mail.govuk_notify_personalisation[:not_test]).to eq("yes")
     end
 
+    it "does include an email-reply-to" do
+      Settings.govuk_notify.form_submission_email_reply_to_id = "send-this-to-me@gov.uk"
+      expect(mail.govuk_notify_email_reply_to).to eq("send-this-to-me@gov.uk")
+    end
+
     context "when a payment url is in" do
       let(:payment_url) { "https://www.gov.uk/payments/test-service/pay-for-licence?reference=#{submission_reference}" }
 
@@ -60,9 +65,52 @@ describe FormSubmissionMailer, type: :mailer do
       end
     end
 
-    it "does include an email-reply-to" do
-      Settings.govuk_notify.form_submission_email_reply_to_id = "send-this-to-me@gov.uk"
-      expect(mail.govuk_notify_email_reply_to).to eq("send-this-to-me@gov.uk")
+    context "when a CSV file is included in the arguments" do
+      let(:test_file) { Tempfile.new("csv") }
+      let(:mail) { described_class.email_confirmation_input(text_input:, notify_response_id: "for-my-ref", submission_email:, mailer_options:, csv_file: test_file) }
+      let(:mock_prepare_file_response) { "file:foo" }
+
+      before do
+        allow(Notifications).to receive(:prepare_upload).and_return(mock_prepare_file_response)
+      end
+
+      after do
+        test_file.unlink
+      end
+
+      it "calls Notify library to prepare the file upload" do
+        mail.message
+        expect(Notifications).to have_received(:prepare_upload).with(test_file, filename: "govuk_forms_submission_form_1_#{submission_reference}.csv", retention_period: "1 week")
+      end
+
+      it "includes the link_to_file in the personalisation" do
+        expect(mail.govuk_notify_personalisation[:link_to_file]).to eq(mock_prepare_file_response)
+      end
+
+      it "has csv_attached boolean set to yes in the personalisation" do
+        expect(mail.govuk_notify_personalisation[:csv_attached]).to eq("yes")
+      end
+    end
+
+    context "when a CSV file is not included in the arguments" do
+      let(:mail) { described_class.email_confirmation_input(text_input:, notify_response_id: "for-my-ref", submission_email:, mailer_options:) }
+
+      before do
+        allow(Notifications).to receive(:prepare_upload)
+      end
+
+      it "does not call the Notify library to prepare the file upload" do
+        mail.message
+        expect(Notifications).not_to have_received(:prepare_upload)
+      end
+
+      it "includes an empty string for the link_to_file in the personalisation" do
+        expect(mail.govuk_notify_personalisation[:link_to_file]).to eq("")
+      end
+
+      it "has csv_attached boolean set to no in the personalisation" do
+        expect(mail.govuk_notify_personalisation[:csv_attached]).to eq("no")
+      end
     end
 
     describe "submission date/time" do

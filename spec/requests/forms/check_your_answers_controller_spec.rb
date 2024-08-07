@@ -291,6 +291,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
           not_test: "no",
           submission_reference: reference,
           include_payment_link: "no",
+          csv_attached: "no",
+          link_to_file: "",
         }
 
         expect(mail.body.raw_source).to match(expected_personalisation.to_s)
@@ -335,6 +337,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
           not_test: "yes",
           submission_reference: reference,
           include_payment_link: "no",
+          csv_attached: "no",
+          link_to_file: "",
         }
 
         expect(mail.body.raw_source).to match(expected_personalisation.to_s)
