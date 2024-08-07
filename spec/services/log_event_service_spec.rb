@@ -91,7 +91,7 @@ RSpec.describe LogEventService do
       it "calls the event logger with .log_form_event" do
         described_class.log_submit(current_context)
 
-        expect(EventLogger).to have_received(:log_form_event).with("submission")
+        expect(EventLogger).to have_received(:log_form_event).with("submission", { csv_attached: false })
       end
 
       it "does not call the event logger for confirmation request" do

@@ -96,6 +96,7 @@ RSpec.describe FormSubmissionService do
             current_context,
             requested_email_confirmation: true,
             preview: false,
+            csv_attached: false,
           )
         end
       end
@@ -122,7 +123,7 @@ RSpec.describe FormSubmissionService do
           end
         end
 
-        it "logs submission" do
+        it "logs submission with csv_attached=true" do
           allow(LogEventService).to receive(:log_submit).once
 
           service.submit
@@ -131,6 +132,7 @@ RSpec.describe FormSubmissionService do
             current_context,
             requested_email_confirmation: true,
             preview: false,
+            csv_attached: true,
           )
         end
       end
@@ -182,6 +184,7 @@ RSpec.describe FormSubmissionService do
             current_context,
             requested_email_confirmation: true,
             preview: true,
+            csv_attached: false,
           )
         end
 

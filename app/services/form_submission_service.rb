@@ -40,8 +40,10 @@ private
       raise StandardError, "Form id(#{@form.id}) is missing a submission email address"
     end
 
+    csv_attached = false
     unless @form.submission_email.blank? && @preview_mode
       mail = if FeatureService.enabled?("attach_csv_to_submission_email", @form)
+               csv_attached = true
                deliver_submission_email_with_csv_attachment
              else
                deliver_submission_email
@@ -50,7 +52,7 @@ private
       CurrentLoggingAttributes.submission_email_id = mail.govuk_notify_response.id
     end
 
-    LogEventService.log_submit(@current_context, requested_email_confirmation: @requested_email_confirmation, preview: @preview_mode)
+    LogEventService.log_submit(@current_context, requested_email_confirmation: @requested_email_confirmation, preview: @preview_mode, csv_attached:)
   end
 
   def submit_confirmation_email_to_user
