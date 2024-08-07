@@ -42,7 +42,7 @@ private
 
     unless @form.submission_email.blank? && @preview_mode
 
-      if FeatureService.enabled?("attach_csv_to_submission_email")
+      if FeatureService.enabled?("attach_csv_to_submission_email", @form)
         write_csv_file
       end
 
