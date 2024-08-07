@@ -31,6 +31,8 @@ class FormSubmissionService
     @submission_reference
   end
 
+private
+
   def submit_form_to_processing_team
     raise StandardError, "Form id(#{@form.id}) has no completed steps i.e questions/answers to include in submission email" if @current_context.completed_steps.blank?
 
@@ -70,8 +72,6 @@ class FormSubmissionService
 
     CurrentLoggingAttributes.confirmation_email_id = mail.govuk_notify_response.id
   end
-
-private
 
   def write_csv_file
     # For now, we're just writing to a Tempfile. We will send this file using Notify.
