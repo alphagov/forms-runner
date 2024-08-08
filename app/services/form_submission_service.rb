@@ -42,7 +42,7 @@ private
 
     csv_attached = false
     unless @form.submission_email.blank? && @preview_mode
-      mail = if FeatureService.enabled?("attach_csv_to_submission_email", @form)
+      mail = if FeatureService.enabled?("csv_submission", @form)
                csv_attached = true
                deliver_submission_email_with_csv_attachment
              else
