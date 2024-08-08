@@ -40,22 +40,19 @@ private
       raise StandardError, "Form id(#{@form.id}) is missing a submission email address"
     end
 
+    csv_attached = false
     unless @form.submission_email.blank? && @preview_mode
-
-      if FeatureService.enabled?("attach_csv_to_submission_email", @form)
-        write_csv_file
-      end
-
-      mail = FormSubmissionMailer
-               .email_confirmation_input(text_input: email_body,
-                                         notify_response_id: @email_confirmation_input.submission_email_reference,
-                                         submission_email: @form.submission_email,
-                                         mailer_options: @mailer_options).deliver_now
+      mail = if FeatureService.enabled?("attach_csv_to_submission_email", @form)
+               csv_attached = true
+               deliver_submission_email_with_csv_attachment
+             else
+               deliver_submission_email
+             end
 
       CurrentLoggingAttributes.submission_email_id = mail.govuk_notify_response.id
     end
 
-    LogEventService.log_submit(@current_context, requested_email_confirmation: @requested_email_confirmation, preview: @preview_mode)
+    LogEventService.log_submit(@current_context, requested_email_confirmation: @requested_email_confirmation, preview: @preview_mode, csv_attached:)
   end
 
   def submit_confirmation_email_to_user
@@ -73,23 +70,24 @@ private
     CurrentLoggingAttributes.confirmation_email_id = mail.govuk_notify_response.id
   end
 
-  def write_csv_file
-    # For now, we're just writing to a Tempfile. We will send this file using Notify.
-    file = Tempfile.new(%W[submission_#{@submission_reference}_ .csv])
-    begin
+  def deliver_submission_email(csv_file = nil)
+    FormSubmissionMailer
+      .email_confirmation_input(text_input: email_body,
+                                notify_response_id: @email_confirmation_input.submission_email_reference,
+                                submission_email: @form.submission_email,
+                                mailer_options: @mailer_options,
+                                csv_file:).deliver_now
+  end
+
+  def deliver_submission_email_with_csv_attachment
+    Tempfile.create do |file|
       SubmissionCsvService.new(
         current_context: @current_context,
         submission_reference: @submission_reference,
         timestamp: @timestamp,
         output_file_path: file.path,
       ).write
-      Rails.logger.info("Wrote submission CSV", { path: file.path })
-    ensure
-      file.close
-      # To inspect the temporary file after it's written to, comment out file.unlink locally
-      # If we don't unlink the file, it is available until the Tempfile object is garbage collected or the Ruby
-      # interpreter exits.
-      file.unlink
+      deliver_submission_email(file)
     end
   end
 

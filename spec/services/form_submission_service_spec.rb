@@ -64,46 +64,77 @@ RSpec.describe FormSubmissionService do
       expect(log_lines[0]["submission_reference"]).to eq(reference)
     end
 
-    context "when send CSV feature is enabled", :feature_attach_csv_to_submission_email do
-      it "writes CSV file" do
-        service.submit
-        expect(submission_csv_service_spy).to have_received(:write)
-      end
-    end
-
-    context "when send CSV feature is disabled", feature_attach_csv_to_submission_email: false do
-      it "does not write CSV file" do
-        service.submit
-        expect(submission_csv_service_spy).not_to have_received(:write)
-      end
-    end
-
     describe "sending the submission email" do
-      it "calls FormSubmissionMailer" do
-        freeze_time do
-          allow(FormSubmissionMailer).to receive(:email_confirmation_input).and_call_original
+      context "when send CSV feature is disabled", feature_attach_csv_to_submission_email: false do
+        it "calls FormSubmissionMailer" do
+          freeze_time do
+            allow(FormSubmissionMailer).to receive(:email_confirmation_input).and_call_original
+
+            service.submit
+
+            expect(FormSubmissionMailer).to have_received(:email_confirmation_input).with(
+              { text_input: "# What is the meaning of life?\n42\n",
+                notify_response_id: email_confirmation_input.submission_email_reference,
+                submission_email: "testing@gov.uk",
+                mailer_options: instance_of(FormSubmissionService::MailerOptions),
+                csv_file: nil },
+            ).once
+          end
+        end
+
+        it "does not write a CSV file" do
+          service.submit
+          expect(submission_csv_service_spy).not_to have_received(:write)
+        end
+
+        it "logs submission" do
+          allow(LogEventService).to receive(:log_submit).once
 
           service.submit
 
-          expect(FormSubmissionMailer).to have_received(:email_confirmation_input).with(
-            { text_input: "# What is the meaning of life?\n42\n",
-              notify_response_id: email_confirmation_input.submission_email_reference,
-              submission_email: "testing@gov.uk",
-              mailer_options: instance_of(FormSubmissionService::MailerOptions) },
-          ).once
+          expect(LogEventService).to have_received(:log_submit).with(
+            current_context,
+            requested_email_confirmation: true,
+            preview: false,
+            csv_attached: false,
+          )
         end
       end
 
-      it "logs submission" do
-        allow(LogEventService).to receive(:log_submit).once
+      context "when send CSV feature is enabled", :feature_attach_csv_to_submission_email do
+        it "writes a CSV file" do
+          service.submit
+          expect(submission_csv_service_spy).to have_received(:write)
+        end
 
-        service.submit
+        it "calls FormSubmissionMailer passing in a CSV file" do
+          freeze_time do
+            allow(FormSubmissionMailer).to receive(:email_confirmation_input).and_call_original
 
-        expect(LogEventService).to have_received(:log_submit).with(
-          current_context,
-          requested_email_confirmation: true,
-          preview: false,
-        )
+            service.submit
+
+            expect(FormSubmissionMailer).to have_received(:email_confirmation_input).with(
+              { text_input: "# What is the meaning of life?\n42\n",
+                notify_response_id: email_confirmation_input.submission_email_reference,
+                submission_email: "testing@gov.uk",
+                mailer_options: instance_of(FormSubmissionService::MailerOptions),
+                csv_file: instance_of(File) },
+            ).once
+          end
+        end
+
+        it "logs submission with csv_attached=true" do
+          allow(LogEventService).to receive(:log_submit).once
+
+          service.submit
+
+          expect(LogEventService).to have_received(:log_submit).with(
+            current_context,
+            requested_email_confirmation: true,
+            preview: false,
+            csv_attached: true,
+          )
+        end
       end
 
       describe "validations" do
@@ -138,7 +169,8 @@ RSpec.describe FormSubmissionService do
               { text_input: "# What is the meaning of life?\n42\n",
                 notify_response_id: email_confirmation_input.submission_email_reference,
                 submission_email: "testing@gov.uk",
-                mailer_options: instance_of(FormSubmissionService::MailerOptions) },
+                mailer_options: instance_of(FormSubmissionService::MailerOptions),
+                csv_file: nil },
             ).once
           end
         end
@@ -152,6 +184,7 @@ RSpec.describe FormSubmissionService do
             current_context,
             requested_email_confirmation: true,
             preview: true,
+            csv_attached: false,
           )
         end
 

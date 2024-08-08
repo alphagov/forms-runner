@@ -1,8 +1,8 @@
 class FormSubmissionMailer < GovukNotifyRails::Mailer
-  def email_confirmation_input(text_input:, notify_response_id:, submission_email:, mailer_options:)
+  def email_confirmation_input(text_input:, notify_response_id:, submission_email:, mailer_options:, csv_file: nil)
     set_template(Settings.govuk_notify.form_submission_email_template_id)
 
-    set_personalisation(
+    set_personalisation({
       title: mailer_options.title,
       text_input:,
       submission_time: mailer_options.timestamp.strftime("%l:%M%P").strip,
@@ -14,7 +14,9 @@ class FormSubmissionMailer < GovukNotifyRails::Mailer
       not_test: make_notify_boolean(!mailer_options.preview_mode),
       submission_reference: mailer_options.submission_reference,
       include_payment_link: make_notify_boolean(mailer_options.payment_url.present?),
-    )
+      csv_attached: make_notify_boolean(csv_file.present?),
+      link_to_file: csv_file.present? ? link_to_csv_file(mailer_options, csv_file) : "",
+    })
 
     set_reference(notify_response_id)
 
@@ -27,5 +29,15 @@ private
 
   def make_notify_boolean(bool)
     bool ? "yes" : "no"
+  end
+
+  def link_to_csv_file(mailer_options, csv_file)
+    Notifications.prepare_upload(csv_file, filename: csv_filename(mailer_options), retention_period: "1 week")
+  end
+
+  def csv_filename(mailer_options)
+    title_part = mailer_options.title.parameterize(separator: "_")
+    reference = mailer_options.submission_reference
+    "govuk_forms_submission_#{title_part}_#{reference}.csv"
   end
 end
