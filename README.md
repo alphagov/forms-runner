@@ -151,17 +151,22 @@ features:
 
 And check with `FeatureService.enabled?("some.nested_feature")`.
 
-You can also set a feature for a specific form:
+#### Enabling feature flags for specific forms
+
+You can also enable a feature flag just for specific form(s) by providing a list of form IDs.
 
 ```yaml
 features:
   some_feature:
     enabled: false
-    forms:
-      "123": true
+    enabled_for_form_ids: "123,456"
 ```
 
-The `features.some_features.enabled` key sets the default for the flag, and then you can override for a form by adding a key for the form id. And then check the flag for a form with `FeatureService.enabled?(:some_feature, form)`.
+The `features.some_features.enabled` key sets the default for the flag for all forms.
+
+You can enable the feature just for specific forms by adding the form ID to the `enabled_for_form_ids` comma separated string. Then check whether the flag is enabled for a form with `FeatureService.enabled?(:some_feature, form)` in the code.
+
+The list of form IDs should only be populated by setting the environment variable `SETTINGS__FEATURES__SOME_FEATURE__ENABLED_FOR_FORM_IDS` via Terraform in forms-deploy, to avoid mistakenly enabling CSV submissions for unrelated forms in different environments.
 
 ### Testing with features
 
