@@ -133,7 +133,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         it "redirects to first incomplete page of form" do
           get check_your_answers_path(mode: "preview-draft", form_id: 2, form_slug: form_data.form_slug)
           expect(response).to have_http_status(:found)
-          expect(response.location).to eq(form_page_url(2, form_data.form_slug, 1))
+          expect(response.location).to eq(form_page_url(mode: "preview-draft", form_id: 2, form_slug: form_data.form_slug, page_slug: 1))
         end
       end
 
@@ -148,7 +148,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         end
 
         it "Displays a back link to the last page of the form" do
-          expect(response.body).to include(form_page_path("preview-draft", 2, form_data.form_slug, 2))
+          expect(response.body).to include(form_page_path(mode: "preview-draft", form_id: 2, form_slug: form_data.form_slug, page_slug: 2))
         end
 
         it "Returns the correct X-Robots-Tag header" do
@@ -190,14 +190,14 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         it "redirects to first incomplete page of form" do
           get check_your_answers_path(mode: "form", form_id: 2, form_slug: form_data.form_slug)
           expect(response).to have_http_status(:found)
-          expect(response.location).to eq(form_page_url(2, form_data.form_slug, 1))
+          expect(response.location).to eq(form_page_url(mode: "form", form_id: 2, form_slug: form_data.form_slug, page_slug: 1))
         end
       end
 
       context "with all questions answered and valid" do
         before do
-          post save_form_page_path("form", 2, "form-1", 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
-          post save_form_page_path("form", 2, "form-1", 2), params: { question: { text: "answer text" }, changing_existing_answer: false }
+          post save_form_page_path(mode: "form", form_id: 2, form_slug: "form-1", page_slug: 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
+          post save_form_page_path(mode: "form", form_id: 2, form_slug: "form-1", page_slug: 2), params: { question: { text: "answer text" }, changing_existing_answer: false }
 
           allow(EventLogger).to receive(:log_form_event).at_least(:once)
 
@@ -209,7 +209,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         end
 
         it "Displays a back link to the last page of the form" do
-          expect(response.body).to include(form_page_path("form", 2, form_data.form_slug, 2))
+          expect(response.body).to include(form_page_path(mode: "form", form_id: 2, form_slug: form_data.form_slug, page_slug: 2))
         end
 
         it "Returns the correct X-Robots-Tag header" do
