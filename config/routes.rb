@@ -22,9 +22,15 @@ Rails.application.routes.draw do
       post "/#{CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG}" => "forms/check_your_answers#submit_answers", as: :form_submit_answers
       get "/submitted" => "forms/submitted#submitted", as: :form_submitted
       get "/privacy" => "forms/privacy_page#show", as: :form_privacy
-      get "/:page_slug/change" => "forms/page#show", as: :form_change_answer, defaults: { changing_existing_answer: true }
-      get "/:page_slug" => "forms/page#show", constraints: { page_slug: Flow::StepFactory::PAGE_SLUG_REGEX }, as: :form_page
-      post "/:page_slug" => "forms/page#save", as: :save_form_page
+      get "/:page_slug/change(/:answer_id)" => "forms/page#show", as: :form_change_answer, defaults: { changing_existing_answer: true, answer_id: 1 }
+      post "/:page_slug(/:answer_id)" => "forms/page#save", as: :save_form_page, defaults: { answer_id: 1 }
+      get "/:page_slug(/:answer_id)" => "forms/page#show",
+          constraints: {
+            page_slug: Flow::StepFactory::PAGE_SLUG_REGEX,
+            answer_id: /\d+/,
+          },
+          defaults: { answer_id: 1 },
+          as: :form_page
 
       get "/repeat-submission" => "forms/base#error_repeat_submission", as: :error_repeat_submission, via: :all
     end
