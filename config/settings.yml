@@ -18,7 +18,7 @@ forms_api:
 govuk_notify:
   api_key: changeme
   form_submission_email_reply_to_id: fab9373b-fb7c-483f-ae25-5a9852bfcc04
-  form_submission_email_template_id: 427eb8bc-ce0d-40a3-bf54-d76e8c3ec916
+  form_submission_email_template_id: 9948c208-dade-4600-b75f-b052be659204
   form_filler_confirmation_email_template_id: 2d1f36dc-9799-43dd-8673-b631f9e0b4a5
 
 # Configuration for Sentry
