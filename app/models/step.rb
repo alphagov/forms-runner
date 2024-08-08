@@ -43,33 +43,21 @@ class Step
     @question.attribute_names.concat([selection: []])
   end
 
-  def valid?
-    @question.valid?
-  end
+  delegate :valid?, to: :question
 
   def clear_errors
     @question.errors.clear
   end
 
-  def show_answer
-    @question.show_answer
-  end
+  delegate :show_answer, to: :question
 
-  def show_answer_in_email
-    @question.show_answer_in_email
-  end
+  delegate :show_answer_in_email, to: :question
 
-  def question_text
-    @question.question_text
-  end
+  delegate :question_text, to: :question
 
-  def hint_text
-    @question.hint_text
-  end
+  delegate :hint_text, to: :question
 
-  def answer_settings
-    @question.answer_settings
-  end
+  delegate :answer_settings, to: :question
 
   def end_page?
     next_page_slug.nil?
