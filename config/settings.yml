@@ -1,5 +1,8 @@
 features:
-  attach_csv_to_submission_email: false
+  attach_csv_to_submission_email:
+    enabled: false
+    forms:
+      "11734": true
 
 forms_admin:
   # URL to form-admin
