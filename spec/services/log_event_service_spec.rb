@@ -77,7 +77,7 @@ RSpec.describe LogEventService do
       it "calls the event logger with .log_form_event" do
         described_class.log_submit(current_context, preview: true)
 
-        expect(EventLogger).to have_received(:log_form_event).with("preview_submission")
+        expect(EventLogger).to have_received(:log_form_event).with("preview_submission", { csv_attached: false })
       end
 
       it "does not call the cloud watch service" do
