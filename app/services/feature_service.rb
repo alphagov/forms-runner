@@ -9,11 +9,16 @@ module FeatureService
 
     return feature unless feature.is_a? Config::Options
 
-    if feature.forms.present?
+    return true if feature.enabled
+
+    if feature.enabled_for_form_ids.present?
       raise FormRequiredError, "Feature #{feature_name} requires form to be provided" if form.blank?
 
-      form_key = form.id.to_s.underscore.to_sym
-      return feature.forms[form_key] if feature.forms.key?(form_key)
+      return feature.enabled_for_form_ids == form.id if feature.enabled_for_form_ids.is_a?(Integer)
+
+      form_ids = feature.enabled_for_form_ids.split(",").collect(&:strip)
+
+      return form_ids.include?(form.id.to_s)
     end
 
     feature.enabled

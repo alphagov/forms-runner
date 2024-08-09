@@ -13,7 +13,7 @@ class LogEventService
 
   def self.log_submit(context, requested_email_confirmation: false, preview: false, csv_attached: false)
     if preview
-      EventLogger.log_form_event("preview_submission")
+      EventLogger.log_form_event("preview_submission", { csv_attached: })
     else
       # Logging to Splunk
       EventLogger.log_form_event("submission", { csv_attached: })

@@ -59,6 +59,22 @@ describe FeatureService do
         it "is enabled" do
           expect(feature_service).to be_enabled(:some_feature, form)
         end
+
+        context "and the feature is enabled for a specific form" do
+          before do
+            Settings.features[:some_feature] = Config::Options.new(enabled: true, enabled_for_form_ids: "123")
+          end
+
+          it "is enabled for the specific form" do
+            expect(feature_service).to be_enabled(:some_feature, form)
+          end
+
+          it "is enabled for other forms" do
+            other_form = build :form, id: 1234
+
+            expect(feature_service).to be_enabled(:some_feature, other_form)
+          end
+        end
       end
 
       context "when the enabled key exists and is set to false" do
@@ -68,6 +84,45 @@ describe FeatureService do
 
         it "is not enabled" do
           expect(feature_service).not_to be_enabled(:some_feature, form)
+        end
+
+        context "and the feature is enabled for this specific form" do
+          before do
+            Settings.features[:some_feature] = Config::Options.new(enabled: false, enabled_for_form_ids: 123)
+          end
+
+          it "is enabled" do
+            expect(feature_service).to be_enabled(:some_feature, form)
+          end
+
+          context "but the form has not been provided to the service" do
+            it "raises an error" do
+              expect { feature_service.enabled?(:some_feature) }.to raise_error described_class::FormRequiredError
+            end
+          end
+        end
+
+        context "and the feature is enabled for a different form" do
+          before do
+            Settings.features[:some_feature] = Config::Options.new(enabled: false, enabled_for_form_ids: 122)
+          end
+
+          it "returns the value of the enabled flag" do
+            expect(feature_service).not_to be_enabled(:some_feature, form)
+          end
+        end
+
+        context "and the feature is enabled for multiple forms" do
+          before do
+            Settings.features[:some_feature] = Config::Options.new(enabled: false, enabled_for_form_ids: "122, 123")
+          end
+
+          it "returns the value of the enabled flag" do
+            other_form = build :form, id: 122
+
+            expect(feature_service).to be_enabled(:some_feature, other_form)
+            expect(feature_service).to be_enabled(:some_feature, form)
+          end
         end
       end
 
@@ -81,49 +136,9 @@ describe FeatureService do
         end
       end
 
-      context "when a key exists for the form overriding the feature to be enabled" do
+      context "when the enabled_for_form_ids array is empty" do
         before do
-          Settings.features[:some_feature] = Config::Options.new(enabled: false, forms: { "123": true })
-        end
-
-        it "is enabled" do
-          expect(feature_service).to be_enabled(:some_feature, form)
-        end
-      end
-
-      context "when a key exists for the form overriding the feature to be disabled" do
-        before do
-          Settings.features[:some_feature] = Config::Options.new(enabled: true, forms: { "123": false })
-        end
-
-        it "is not enabled" do
-          expect(feature_service).not_to be_enabled(:some_feature, form)
-        end
-      end
-
-      context "when a key exists for the form overriding the feature and the form has not been provided to the service" do
-        before do
-          Settings.features[:some_feature] = Config::Options.new(enabled: false, forms: { "123": true })
-        end
-
-        it "raises an error" do
-          expect { feature_service.enabled?(:some_feature) }.to raise_error described_class::FormRequiredError
-        end
-      end
-
-      context "when a key exists for a different form" do
-        before do
-          Settings.features[:some_feature] = Config::Options.new(enabled: false, forms: { "another_form": true })
-        end
-
-        it "returns the value of the enabled flag" do
-          expect(feature_service).not_to be_enabled(:some_feature, form)
-        end
-      end
-
-      context "when the forms object is empty" do
-        before do
-          Settings.features[:some_feature] = Config::Options.new(enabled: true, forms: {})
+          Settings.features[:some_feature] = Config::Options.new(enabled: true, enabled_for_form_ids: "")
         end
 
         it "returns the value of the enabled flag" do
@@ -134,7 +149,7 @@ describe FeatureService do
       context "when the form does not have a form id set" do
         before do
           form.id = nil
-          Settings.features[:some_feature] = Config::Options.new(enabled: false, forms: { "123": true })
+          Settings.features[:some_feature] = Config::Options.new(enabled: false, enabled_for_form_ids: "123")
         end
 
         it "returns the value of the enabled flag" do
