@@ -21,7 +21,14 @@ describe "Settings" do
   describe ".features" do
     features = settings[:features]
 
-    include_examples expected_value_test, :attach_csv_to_submission_email, features, false
+    it "csv_submission has a default value" do
+      expect(features["csv_submission"]).to eq(
+        {
+          "enabled" => false,
+          "enabled_for_form_ids" => "",
+        },
+      )
+    end
   end
 
   describe ".forms_api" do
