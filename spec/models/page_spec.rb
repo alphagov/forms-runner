@@ -18,6 +18,23 @@ RSpec.describe Page, type: :model do
     end
   end
 
+  describe "repeatable?" do
+    it "when attribute does not exist" do
+      page = build :page
+      expect(page.repeatable?).to be false
+    end
+
+    it "when attribute is false" do
+      page = build :page, is_repeatable: false
+      expect(page.repeatable?).to be false
+    end
+
+    it "when attribute is true" do
+      page = build :page, is_repeatable: true
+      expect(page.repeatable?).to be true
+    end
+  end
+
   describe "API call" do
     let(:response_data) do
       {
