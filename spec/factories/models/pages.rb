@@ -10,6 +10,8 @@ end
 
 FactoryBot.define do
   factory :page, class: "Page" do
+    initialize_with { new(**attributes) }
+
     id { Faker::Number.number(digits: 2) }
     question_text { Faker::Lorem.question }
     answer_type { Page::ANSWER_TYPES.reject { |item| Page::ANSWER_TYPES_WITH_SETTINGS.include? item }.sample }
