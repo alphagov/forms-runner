@@ -18,18 +18,18 @@ RSpec.describe Page, type: :model do
     end
   end
 
-  describe "repeatable?" do
-    it "when attribute does not exist" do
+  describe "#repeatable?" do
+    it "returns false when attribute does not exist" do
       page = build :page
       expect(page.repeatable?).to be false
     end
 
-    it "when attribute is false" do
+    it "returns false when attribute is false" do
       page = build :page, is_repeatable: false
       expect(page.repeatable?).to be false
     end
 
-    it "when attribute is true" do
+    it "returns true when attribute is true" do
       page = build :page, is_repeatable: true
       expect(page.repeatable?).to be true
     end
