@@ -1,6 +1,11 @@
 require "rails_helper"
 
 RSpec.describe Page, type: :model do
+  it "has a valid factory" do
+    page = build :page
+    expect(page).to be_valid
+  end
+
   describe "API call" do
     let(:response_data) do
       {
