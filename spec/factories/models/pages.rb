@@ -14,7 +14,7 @@ FactoryBot.define do
 
     id { Faker::Number.number(digits: 2) }
     question_text { Faker::Lorem.question }
-    answer_type { Page::ANSWER_TYPES.reject { |item| Page::ANSWER_TYPES_WITH_SETTINGS.include? item }.sample }
+    answer_type { "number" }
     is_optional { nil }
     answer_settings { nil }
     page_heading { nil }
