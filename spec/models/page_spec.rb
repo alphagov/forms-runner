@@ -6,6 +6,18 @@ RSpec.describe Page, type: :model do
     expect(page).to be_valid
   end
 
+  describe "#answer_settings" do
+    it "returns an empty object for answer_settings when it's not present" do
+      page = build :page
+      expect(page).to have_attributes(answer_settings: {})
+    end
+
+    it "returns an answer settings object for answer_settings when present" do
+      page = build :page, answer_settings: { only_one_option: "true" }
+      expect(page.answer_settings.attributes).to eq({ "only_one_option" => "true" })
+    end
+  end
+
   describe "API call" do
     let(:response_data) do
       {
@@ -30,27 +42,6 @@ RSpec.describe Page, type: :model do
 
     it "returns the page for a form" do
       expect(described_class.find(1, params: { form_id: 2 })).to have_attributes(id: 1, question_text: "Question text", answer_type: "date")
-    end
-
-    context "when answer_settings is not present" do
-      it "returns an empty object for answer_settings" do
-        expect(described_class.find(1, params: { form_id: 2 })).to have_attributes(answer_settings: {})
-      end
-    end
-
-    context "when answer_settings is present" do
-      let(:response_data) do
-        {
-          id: 1,
-          question_text: "Question text",
-          answer_type: "selection",
-          answer_settings: { only_one_option: "true" },
-        }.to_json
-      end
-
-      it "returns an answer settings object for answer_settings" do
-        expect(described_class.find(1, params: { form_id: 2 }).answer_settings.attributes).to eq({ "only_one_option" => "true" })
-      end
     end
   end
 end
