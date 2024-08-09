@@ -16,7 +16,6 @@ FactoryBot.define do
     question_text { Faker::Lorem.question }
     answer_type { "number" }
     is_optional { nil }
-    answer_settings { nil }
     page_heading { nil }
     guidance_markdown { nil }
     hint_text { nil }
