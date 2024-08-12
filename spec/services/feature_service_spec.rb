@@ -156,6 +156,19 @@ describe FeatureService do
           expect(feature_service).not_to be_enabled(:some_feature, form)
         end
       end
+
+      # This test is to account for the form ID being a string when we are using form external IDs instead. It can
+      # be removed once the migration to using external IDs is completed.
+      context "when the form id is a string" do
+        before do
+          form.id = "123"
+          Settings.features[:some_feature] = Config::Options.new(enabled: false, enabled_for_form_ids: "123")
+        end
+
+        it "returns the value of the enabled flag" do
+          expect(feature_service).to be_enabled(:some_feature, form)
+        end
+      end
     end
   end
 end
