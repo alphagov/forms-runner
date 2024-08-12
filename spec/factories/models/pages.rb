@@ -83,4 +83,8 @@ FactoryBot.define do
       answer_settings { DataStruct.new(input_type:, title_needed:) }
     end
   end
+
+  trait :with_repeatable do
+    is_repeatable { true }
+  end
 end

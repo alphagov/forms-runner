@@ -42,6 +42,21 @@ RSpec.describe Flow::StepFactory do
       end
     end
 
+    context "when creating a repeating step" do
+      let(:page) { build :page, :with_repeatable, page_slug: "page-1" }
+      let(:question) { instance_double(Question) }
+
+      before do
+        allow(form.pages).to receive(:find).and_return(page)
+        allow(Flow::QuestionRegister).to receive(:from_page).with(page).and_return(question)
+      end
+
+      it "a RepeatingStep is created" do
+        step = factory.create_step(page.page_slug)
+        expect(step).to be_a(RepeatableStep)
+      end
+    end
+
     context "when page is not found" do
       it "raises a PageNotFoundError" do
         expect { factory.create_step("non-existent-page") }.to raise_error(Flow::StepFactory::PageNotFoundError)

@@ -27,11 +27,17 @@ module Flow
       next_page_slug = page.has_next_page? ? page.next_page.to_s : CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG
       question = QuestionRegister.from_page(page)
 
-      Step.new(question:, page:, form_id: @form.id, form_slug: @form.form_slug, next_page_slug:, page_slug:)
+      step_class(page).new(question:, page:, form_id: @form.id, form_slug: @form.form_slug, next_page_slug:, page_slug:)
     end
 
     def start_step
       create_step(START_PAGE)
+    end
+
+  private
+
+    def step_class(page)
+      page.repeatable? ? RepeatableStep : Step
     end
   end
 end
