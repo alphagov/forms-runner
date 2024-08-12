@@ -1,0 +1,2 @@
+class RepeatableStep < Step
+end
