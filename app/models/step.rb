@@ -24,29 +24,29 @@ class Step
   end
 
   def save_to_context(form_context)
-    form_context.save_step(self, @question.serializable_hash)
+    form_context.save_step(self, question.serializable_hash)
     self
   end
 
   def load_from_context(form_context)
     attrs = form_context.get_stored_answer(self)
-    @question.assign_attributes(attrs || {})
+    question.assign_attributes(attrs || {})
     self
   end
 
   def update!(params)
-    @question.assign_attributes(params)
-    @question.valid?
+    question.assign_attributes(params)
+    question.valid?
   end
 
   def params
-    @question.attribute_names.concat([selection: []])
+    question.attribute_names.concat([selection: []])
   end
 
   delegate :valid?, to: :question
 
   def clear_errors
-    @question.errors.clear
+    question.errors.clear
   end
 
   delegate :show_answer, to: :question
@@ -64,7 +64,7 @@ class Step
   end
 
   def next_page_slug_after_routing
-    if routing_conditions.any? && routing_conditions.first.answer_value == @question.selection
+    if routing_conditions.any? && routing_conditions.first.answer_value == question.selection
       goto_page_slug
     else
       next_page_slug
