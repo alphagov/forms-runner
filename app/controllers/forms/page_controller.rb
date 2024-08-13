@@ -37,6 +37,10 @@ module Forms
       page_slug = params.require(:page_slug)
       @step = current_context.find_or_create(page_slug)
 
+      if @step.respond_to?(:answer_id)
+        @step.answer_id = answer_id
+      end
+
       @support_details = current_context.support_details
     end
 
