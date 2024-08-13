@@ -131,11 +131,10 @@ RSpec.describe Forms::PageController, type: :request do
 
       context "with a page that has a previous page" do
         it "Displays a link to the previous page" do
-          allow_any_instance_of(Flow::Context).to receive(:can_visit?)
-                                              .and_return(true)
-          allow_any_instance_of(Flow::Context).to receive(:previous_step).and_return(1)
-          get form_page_path(mode: "preview-draft", form_id: 2, form_slug: form_data.form_slug, page_slug: 2)
-          expect(response.body).to include(form_page_path(mode: "preview-draft", form_id: 2, form_slug: form_data.form_slug, page_slug: 1))
+          allow_any_instance_of(Flow::Context).to receive(:can_visit?).and_return(true)
+          allow_any_instance_of(Flow::Context).to receive(:previous_step).and_return(OpenStruct.new(page_id: 1))
+          get form_page_path("preview-draft", 2, form_data.form_slug, 2)
+          expect(response.body).to include(form_page_path(2, form_data.form_slug, 1))
         end
       end
 
@@ -231,7 +230,7 @@ RSpec.describe Forms::PageController, type: :request do
         it "Displays a link to the previous page" do
           allow_any_instance_of(Flow::Context).to receive(:can_visit?)
                                               .and_return(true)
-          allow_any_instance_of(Flow::Context).to receive(:previous_step).and_return(1)
+          allow_any_instance_of(Flow::Context).to receive(:previous_step).and_return(OpenStruct.new(page_id: 1))
           get form_page_path(mode: "form", form_id: 2, form_slug: form_data.form_slug, page_slug: 2)
           expect(response.body).to include(form_page_path(mode: "form", form_id: 2, form_slug: form_data.form_slug, page_slug: 1))
         end
