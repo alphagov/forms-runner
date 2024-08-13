@@ -1,0 +1,28 @@
+<% set_page_title(form_title(form_name: @current_context.form.name, page_name: (@step.question.page_heading.present? ? @step.question.page_heading : @step.question.question_text), mode: @mode, error: @step.question&.errors&.any?)) %>
+
+<% content_for :back_link do %>
+  <% if @back_link.present? %>
+    <%= link_to t("forms.back"), @back_link, class: "govuk-back-link" %>
+  <% end %>
+<% end %>
+
+<%= form_with(model: @add_another_answer_input , method: :post, url: add_another_answer_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug, changing_existing_answer: @changing_existing_answer)) do |f| %>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <% if @add_another_answer_input&.errors.any? %>
+        <%= f.govuk_error_summary %>
+      <% end %>
+
+      <h1 class="govuk-heading-l"><%= t('.heading', count: @rows.count) %></h1>
+
+      <%= govuk_summary_list(classes: "add-another-answer", rows: @rows) %>
+
+      <%= f.govuk_collection_radio_buttons :add_another_answer,
+        @add_another_answer_input.values, ->(option) { option }, ->(option) { t('helpers.label.add_another_answer_input.options.' + "#{option}") },
+        legend: { text: t('.radios_legend'), size: 'm' },
+        inline: true %>
+
+      <%= f.govuk_submit %>
+    </div>
+  </div>
+<% end %>

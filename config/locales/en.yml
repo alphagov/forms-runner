@@ -3,6 +3,10 @@ en:
   activemodel:
     errors:
       models:
+        add_another_answer_input:
+          attributes:
+            add_another_answer:
+              blank: You must select an option
         email_confirmation_input:
           attributes:
             confirmation_email_address:
@@ -110,11 +114,26 @@ en:
       title: Your form has been submitted
       what_happens_next: What happens next
       your_reference: 'Your form reference number is:'
+  forms:
+    add_another_answer:
+      rows:
+        change: Change
+      show:
+        heading:
+          one: You have added one answer
+          other: You have added %{count} answers
+          zero: You have added no answers
+        radios_legend: Do you need to add another answer?
+    back: Back
   helpers:
     hint:
       email_confirmation_input:
         send_confirmation: We’ll only use the email address you provide here to send a confirmation that your form’s been successfully submitted. It will not contain a copy of your answers.
     label:
+      add_another_answer_input:
+        options:
+          'no': 'No'
+          'yes': 'Yes'
       email_confirmation_input:
         confirmation_email_address: What email address do you want us to send your confirmation to?
         send_confirmation_options:
