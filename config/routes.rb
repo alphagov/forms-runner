@@ -23,6 +23,10 @@ Rails.application.routes.draw do
       get "/submitted" => "forms/submitted#submitted", as: :form_submitted
       get "/privacy" => "forms/privacy_page#show", as: :form_privacy
       get "/:page_slug/change(/:answer_id)" => "forms/page#show", as: :form_change_answer, defaults: { changing_existing_answer: true, answer_id: 1 }
+
+      get "/:page_slug/add-another-answer" => "forms/add_another_answer#show", constraints: { page_slug: Flow::StepFactory::PAGE_SLUG_REGEX }, as: :add_another_answer
+      post "/:page_slug/add-another-answer" => "forms/add_another_answer#save", constraints: { page_slug: Flow::StepFactory::PAGE_SLUG_REGEX }, as: :save_add_another_answer
+
       post "/:page_slug(/:answer_id)" => "forms/page#save", as: :save_form_page, defaults: { answer_id: 1 }
       get "/:page_slug(/:answer_id)" => "forms/page#show",
           constraints: {
