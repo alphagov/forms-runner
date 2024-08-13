@@ -19,4 +19,8 @@ class Page < ActiveResource::Base
   def answer_settings
     @attributes["answer_settings"] || {}
   end
+
+  def repeatable?
+    @attributes["is_repeatable"] || false
+  end
 end
