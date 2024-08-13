@@ -77,4 +77,8 @@ class Step
     condition = routing_conditions.first
     condition.goto_page_id.nil? && condition.skip_to_end ? CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG : condition.goto_page_id.to_s
   end
+
+  def repeatable?
+    false
+  end
 end
