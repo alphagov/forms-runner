@@ -50,11 +50,17 @@ module Forms
   private
 
     def page_to_row(page)
+      change_link = if page.repeatable?
+                      change_add_another_answer_path(page.form_id, page.form_slug, page.page_id)
+                    else
+                      form_change_answer_path(page.form_id, page.form_slug, page.page_id)
+                    end
+
       question_name = helpers.question_text_with_optional_suffix_inc_mode(page, @mode)
       {
         key: { text: question_name },
         value: { text: page.show_answer },
-        actions: [{ href: form_change_answer_path(page.form_id, page.form_slug, page.page_id), visually_hidden_text: question_name }],
+        actions: [{ href: change_link, visually_hidden_text: question_name }],
       }
     end
 
