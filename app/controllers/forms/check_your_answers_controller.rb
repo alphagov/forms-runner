@@ -77,8 +77,7 @@ module Forms
     end
 
     def setup_check_your_answers
-      previous_step = current_context.previous_step("check_your_answers")
-      @back_link = form_page_path(current_context.form.id, current_context.form.form_slug, previous_step)
+      @back_link = back_link
       @rows = check_your_answers_rows
       @form_submit_path = form_submit_answers_path
 
@@ -87,6 +86,14 @@ module Forms
       end
 
       answers_need_full_width
+    end
+
+    def back_link
+      previous_step = current_context.previous_step(CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG)
+
+      if previous_step.present?
+        previous_step.repeatable? ? add_another_answer_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug, page_slug: previous_step.page_slug) : form_page_path(current_context.form.id, current_context.form.form_slug, previous_step.page_id)
+      end
     end
   end
 end
