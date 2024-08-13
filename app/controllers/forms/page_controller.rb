@@ -60,10 +60,12 @@ module Forms
 
     def back_link(page_slug)
       previous_step = current_context.previous_step(page_slug)
+
       if @changing_existing_answer
         @back_link = check_your_answers_path(form_id: current_context.form.id)
       elsif previous_step
-        @back_link = form_page_path(@step.form_id, @step.form_slug, previous_step)
+
+        @back_link = previous_step.repeatable? ? add_another_answer_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug, page_slug: previous_step.page_slug) : form_page_path(@step.form_id, @step.form_slug, previous_step.page_id)
       end
     end
 
