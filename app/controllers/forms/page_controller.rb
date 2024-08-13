@@ -40,6 +40,10 @@ module Forms
       @support_details = current_context.support_details
     end
 
+    def answer_id
+      params.fetch(:answer_id, 1).to_i
+    end
+
     def setup_instance_vars_for_view
       @is_question = true
       @question_edit_link = "#{Settings.forms_admin.base_url}/forms/#{@step.form_id}/pages/#{@step.page_slug}/edit/question"
