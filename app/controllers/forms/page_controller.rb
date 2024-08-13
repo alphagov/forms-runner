@@ -70,10 +70,16 @@ module Forms
     end
 
     def next_page
-      if @changing_existing_answer
-        check_your_answers_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug)
+      if changing_existing_answer
+        if @step.repeatable? && repeating?
+          change_add_another_answer_path(@step.form_id, @step.form_slug, @step.page_id)
+        else
+          check_your_answers_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug)
+        end
       elsif @step.routing_conditions.any?
         calculate_page_routing
+      elsif @step.repeatable? && repeating?
+        add_another_answer_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug, page_slug: @step.page_slug)
       else
         form_page_path(@step.form_id, @step.form_slug, @step.next_page_slug)
       end
@@ -96,6 +102,10 @@ module Forms
 
     def is_first_page?
       current_context.form.start_page == @step.id
+    end
+
+    def repeating?
+      true
     end
 
     def save_url

@@ -146,7 +146,7 @@ RSpec.describe Forms::PageController, type: :request do
 
         it "Passes the changing answers parameter in its submit request" do
           get form_change_answer_path("preview-draft", 2, form_data.form_slug, 1)
-          expect(response.body).to include(save_form_page_path(mode: "preview-draft", form_id: 2, form_slug: form_data.form_slug, page_slug: 1, changing_existing_answer: true))
+          expect(response.body).to include(save_form_page_path(mode: "preview-draft", form_id: 2, form_slug: form_data.form_slug, page_slug: 1, changing_existing_answer: true, answer_id: 1))
         end
       end
 
@@ -243,7 +243,7 @@ RSpec.describe Forms::PageController, type: :request do
 
         it "Passes the changing answers parameter in its submit request" do
           get form_change_answer_path("form", 2, form_data.form_slug, 1)
-          expect(response.body).to include(save_form_page_path(mode: "form", form_id: 2, form_slug: form_data.form_slug, page_slug: 1, changing_existing_answer: true))
+          expect(response.body).to include(save_form_page_path(mode: "form", form_id: 2, form_slug: form_data.form_slug, page_slug: 1, changing_existing_answer: true, answer_id: 1))
         end
       end
 
