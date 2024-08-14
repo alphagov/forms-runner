@@ -1,5 +1,7 @@
 module Forms
   class AddAnotherAnswerController < PageController
+    before_action :redirect_if_not_repeating
+
     def show
       @rows = rows
       back_link(@step.page_slug)
@@ -48,6 +50,16 @@ module Forms
 
     def add_another_input_params
       params.require(:add_another_answer_input).permit(:add_another_answer)
+    end
+
+    def redirect_if_not_repeating
+      unless @step.is_a?(RepeatableStep)
+        if changing_existing_answer
+          redirect_to form_change_answer_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug)
+        else
+          redirect_to form_page_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug)
+        end
+      end
     end
   end
 end

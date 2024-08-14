@@ -25,6 +25,10 @@ class RepeatableStep < Step
 
   def load_from_context(form_context)
     question_attrs = form_context.get_stored_answer(self)
+    unless question_attrs.is_a?(Array)
+      raise ArgumentError
+    end
+
     @questions = question_attrs.map do |attrs|
       q = parent_question.dup
       q.assign_attributes(attrs || {})
