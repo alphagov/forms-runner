@@ -11,7 +11,7 @@ To run the project, you will need to install:
 
 We recommend using a version manager to install and manage these, such as:
 
-- [RVM](https://rvm.io/) or [rbenv](https://github.com/rbenv/rbenv) for Ruby
+- [rbenv](https://github.com/rbenv/rbenv) or [RVM](https://rvm.io/) for Ruby
 - [nvm](https://github.com/nvm-sh/nvm) for Node.js
 - [asdf](https://github.com/asdf-vm/asdf) for both
 
