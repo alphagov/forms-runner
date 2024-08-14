@@ -25,6 +25,7 @@ class RepeatableStep < Step
 
   def load_from_context(form_context)
     question_attrs = form_context.get_stored_answer(self)
+
     unless question_attrs.is_a?(Array)
       raise ArgumentError
     end
@@ -54,11 +55,6 @@ class RepeatableStep < Step
     questions.first
   end
 
-  def add_blank_answer
-    questions << parent_question.dup
-    questions[answer_id - 1]
-  end
-
   def next_answer_id
     questions.length + 1
   end
@@ -66,10 +62,17 @@ class RepeatableStep < Step
   def show_answer
     if questions.present?
       safe_join(
-        questions.map.with_index do |question, index|
-          content_tag(:p, sanitize("#{index + 1}. #{question.show_answer}"))
+        questions.map.with_index(1) do |question, index|
+          content_tag(:p, sanitize("#{index}. #{question.show_answer}"))
         end,
       )
     end
+  end
+
+private
+
+  def add_blank_answer
+    questions << parent_question.dup
+    questions[answer_id - 1]
   end
 end
