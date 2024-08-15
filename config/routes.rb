@@ -22,19 +22,34 @@ Rails.application.routes.draw do
       post "/#{CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG}" => "forms/check_your_answers#submit_answers", as: :form_submit_answers
       get "/submitted" => "forms/submitted#submitted", as: :form_submitted
       get "/privacy" => "forms/privacy_page#show", as: :form_privacy
-      get "/:page_slug/change(/:answer_id)" => "forms/page#show", as: :form_change_answer, defaults: { changing_existing_answer: true, answer_id: 1 }
 
-      get "/:page_slug/add-another-answer" => "forms/add_another_answer#show", constraints: { page_slug: Flow::StepFactory::PAGE_SLUG_REGEX }, as: :add_another_answer
-      post "/:page_slug/add-another-answer" => "forms/add_another_answer#save", constraints: { page_slug: Flow::StepFactory::PAGE_SLUG_REGEX }, as: :save_add_another_answer
-      get "/:page_slug/change-add-another-answer" => "forms/add_another_answer#show", constraints: { page_slug: Flow::StepFactory::PAGE_SLUG_REGEX }, as: :change_add_another_answer, defaults: { changing_existing_answer: true }
-      post "/:page_slug(/:answer_id)" => "forms/page#save", as: :save_form_page, defaults: { answer_id: 1 }
+      page_constraints = { page_slug: Flow::StepFactory::PAGE_SLUG_REGEX }
+      answer_constraints = { answer_id: /\d+/ }
+      page_answer_defaults = { answer_id: 1 }
+
+      get "/:page_slug/add-another-answer/change" => "forms/add_another_answer#show",
+          as: :change_add_another_answer,
+          constraints: page_constraints,
+          defaults: { changing_existing_answer: true }
+      get "/:page_slug/add-another-answer" => "forms/add_another_answer#show",
+          as: :add_another_answer,
+          constraints: page_constraints
+      post "/:page_slug/add-another-answer" => "forms/add_another_answer#save",
+           as: :save_add_another_answer,
+           constraints: page_constraints
+
+      get "/:page_slug/(/:answer_id)/change" => "forms/page#show",
+          as: :form_change_answer,
+          defaults: page_answer_defaults.merge(changing_existing_answer: true),
+          constraints: page_constraints.merge(answer_constraints)
       get "/:page_slug(/:answer_id)" => "forms/page#show",
-          constraints: {
-            page_slug: Flow::StepFactory::PAGE_SLUG_REGEX,
-            answer_id: /\d+/,
-          },
-          defaults: { answer_id: 1 },
-          as: :form_page
+          as: :form_page,
+          constraints: page_constraints.merge(answer_constraints),
+          defaults: page_answer_defaults
+      post "/:page_slug(/:answer_id)" => "forms/page#save",
+           as: :save_form_page,
+           constraints: page_constraints,
+           defaults: page_answer_defaults
 
       get "/repeat-submission" => "forms/base#error_repeat_submission", as: :error_repeat_submission, via: :all
     end

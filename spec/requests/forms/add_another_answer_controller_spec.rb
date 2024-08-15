@@ -99,7 +99,7 @@ RSpec.describe Forms::AddAnotherAnswerController, type: :request do
       end
 
       it "redirects to form_change_answer_path when changing existing answer" do
-        get "/preview-draft/#{form.id}/#{form.form_slug}/#{second_page_in_form.id}/change-add-another-answer"
+        get "/preview-draft/#{form.id}/#{form.form_slug}/#{second_page_in_form.id}/add-another-answer/change"
         expect(response).to redirect_to("/preview-draft/#{form.id}/#{form.form_slug}/#{second_page_in_form.id}/change")
       end
     end
