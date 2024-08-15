@@ -49,15 +49,7 @@ class Step
     question.errors.clear
   end
 
-  delegate :show_answer, to: :question
-
-  delegate :show_answer_in_email, to: :question
-
-  delegate :question_text, to: :question
-
-  delegate :hint_text, to: :question
-
-  delegate :answer_settings, to: :question
+  delegate :show_answer, :show_answer_in_email, :question_text, :hint_text, :answer_settings, to: :question
 
   def end_page?
     next_page_slug.nil?
