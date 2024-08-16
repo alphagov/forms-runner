@@ -65,6 +65,14 @@ class RepeatableStep < Step
     end
   end
 
+  def show_answer_in_email
+    if questions.present?
+      questions.map.with_index(1) { |question, index|
+        "#{index}. #{question.show_answer_in_email}"
+      }.join("\n\n")
+    end
+  end
+
 private
 
   def add_blank_answer
