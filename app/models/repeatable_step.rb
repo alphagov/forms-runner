@@ -3,19 +3,17 @@ class RepeatableStep < Step
   include ActionView::Helpers::TagHelper
   include ActionView::Helpers::OutputSafetyHelper
 
-  attr_accessor :answer_id, :questions
+  class AnswerIndexError < IndexError; end
+
+  attr_accessor :answer_index, :questions
 
   def initialize(...)
     super
-    @questions = []
+    @questions = [@question.dup]
   end
 
   def repeatable?
     true
-  end
-
-  def parent_question
-    Step.instance_method(:question).bind(self).call
   end
 
   def save_to_context(form_context)
@@ -31,7 +29,7 @@ class RepeatableStep < Step
     end
 
     @questions = question_attrs.map do |attrs|
-      q = parent_question.dup
+      q = @question.dup
       q.assign_attributes(attrs || {})
       q
     end
@@ -40,22 +38,18 @@ class RepeatableStep < Step
   end
 
   def question
-    if questions.blank?
-      add_blank_answer
-    end
+    return questions.first if answer_index.blank?
 
-    if next_answer_id == answer_id
+    if questions.length + 1 == answer_index
       return add_blank_answer
     end
 
-    if answer_id && answer_id <= @questions.count
-      return questions[answer_id - 1]
-    end
-
-    questions.first
+    questions.fetch(answer_index - 1)
+  rescue IndexError
+    raise AnswerIndexError
   end
 
-  def next_answer_id
+  def next_answer_index
     questions.length + 1
   end
 
@@ -74,7 +68,7 @@ class RepeatableStep < Step
 private
 
   def add_blank_answer
-    questions << parent_question.dup
-    questions[answer_id - 1]
+    questions << @question.dup
+    questions[answer_index - 1]
   end
 end

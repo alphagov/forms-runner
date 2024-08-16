@@ -28,18 +28,18 @@ module Forms
 
     def add_another_path
       if changing_existing_answer
-        form_change_answer_path(@step.form_id, @step.form_slug, @step.page_slug, answer_id: @step.next_answer_id)
+        form_change_answer_path(@step.form_id, @step.form_slug, @step.page_slug, answer_index: @step.next_answer_index)
       else
-        form_page_path(@step.form_id, @step.form_slug, @step.page_slug, answer_id: @step.next_answer_id)
+        form_page_path(@step.form_id, @step.form_slug, @step.page_slug, answer_index: @step.next_answer_index)
       end
     end
 
     def rows
-      @step.questions.map.with_index(1) do |question, answer_id|
+      @step.questions.map.with_index(1) do |question, answer_index|
         {
-          key: { text: answer_id },
+          key: { text: answer_index },
           value: { text: question.show_answer },
-          actions: [{ text: t("forms.add_another_answer.rows.change"), href: form_change_answer_path(@step.form_id, @step.form_slug, @step.page_slug, answer_id:), visually_hidden_text: "" }],
+          actions: [{ text: t("forms.add_another_answer.rows.change"), href: form_change_answer_path(@step.form_id, @step.form_slug, @step.page_slug, answer_index:), visually_hidden_text: "" }],
         }
       end
     end

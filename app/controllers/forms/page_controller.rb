@@ -37,15 +37,15 @@ module Forms
       page_slug = params.require(:page_slug)
       @step = current_context.find_or_create(page_slug)
 
-      if @step.respond_to?(:answer_id)
-        @step.answer_id = answer_id
+      if @step.respond_to?(:answer_index)
+        @step.answer_index = answer_index
       end
 
       @support_details = current_context.support_details
     end
 
-    def answer_id
-      params.fetch(:answer_id, 1).to_i
+    def answer_index
+      params.fetch(:answer_index, 1).to_i
     end
 
     def setup_instance_vars_for_view
@@ -109,7 +109,7 @@ module Forms
     end
 
     def save_url
-      save_form_page_path(@step.form_id, @step.form_slug, @step.id, changing_existing_answer: @changing_existing_answer, answer_id:)
+      save_form_page_path(@step.form_id, @step.form_slug, @step.id, changing_existing_answer: @changing_existing_answer, answer_index:)
     end
   end
 end
