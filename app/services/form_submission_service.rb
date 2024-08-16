@@ -31,7 +31,7 @@ class FormSubmissionService
     @submission_reference
   end
 
-private
+  private
 
   def submit_form_to_processing_team
     raise StandardError, "Form id(#{@form.id}) has no completed steps i.e questions/answers to include in submission email" if @current_context.completed_steps.blank?
@@ -41,15 +41,17 @@ private
     end
 
     csv_attached = false
-    unless @form.submission_email.blank? && @preview_mode
-      if FeatureService.enabled?("csv_submission", @form)
-        csv_attached = true
-        deliver_submission_email_with_csv_attachment
-      else
-        #  deliver_submission_email
-        deliver_submission_email_ses
-      end
-    end
+    mail = unless @form.submission_email.blank? && @preview_mode
+             if FeatureService.enabled?("csv_submission", @form)
+               csv_attached = true
+               deliver_submission_email_with_csv_attachment
+             else
+               #  deliver_submission_email
+               deliver_submission_email_ses
+             end
+           end
+
+    CurrentLoggingAttributes.submission_email_id = mail.message_id
 
     LogEventService.log_submit(@current_context, requested_email_confirmation: @requested_email_confirmation, preview: @preview_mode, csv_attached:)
   end
