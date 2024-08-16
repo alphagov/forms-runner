@@ -1,0 +1,31 @@
+<p>
+  This is a completed "<%= @mailer_options.title %>" form.
+</p>
+<p>
+  This form was submitted at <%= @mailer_options.timestamp.strftime("%l:%M%P").strip %>
+  on <%= @mailer_options.timestamp.strftime("%-d %B %Y") %>
+</p>
+<p>
+  GOV.​UK Forms reference number: <%= @mailer_options.submission_reference %><br>
+</p>
+
+<%= render partial: "hrule" %>
+
+<%= @answer_content.html_safe %>
+
+<%= render partial: "hrule" %>
+
+<blockquote
+  style="Margin: 0 0 20px 0; border-left: 10px solid #B1B4B6;
+    padding: 15px 0 0.1px 15px; font-size: 19px; line-height: 25px;"
+>
+  <h2>You cannot reply to this email</h2>
+  <p>
+    If you need to contact the person who completed this form, you’ll need to contact them directly.
+  </p>
+  <p>
+    If you’re experiencing a technical issue with this form,
+    <a href="https://www.forms.service.gov.uk/support">contact the GOV.​UK Forms team</a> with details of the issue and
+    the form it relates to.
+  </p>
+</blockquote>

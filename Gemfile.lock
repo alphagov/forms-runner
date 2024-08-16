@@ -107,6 +107,9 @@ GEM
       aws-partitions (~> 1, >= 1.651.0)
       aws-sigv4 (~> 1.8)
       jmespath (~> 1, >= 1.6.1)
+    aws-sdk-sesv2 (1.43.0)
+      aws-sdk-core (~> 3, >= 3.188.0)
+      aws-sigv4 (~> 1.1)
     aws-sigv4 (1.9.1)
       aws-eventstream (~> 1, >= 1.0.2)
     axe-core-api (4.9.1)
@@ -440,6 +443,7 @@ DEPENDENCIES
   activeresource
   aws-sdk-cloudwatch
   aws-sdk-codepipeline (~> 1.78)
+  aws-sdk-sesv2
   axe-core-rspec
   bootsnap
   brakeman (~> 6.1)
