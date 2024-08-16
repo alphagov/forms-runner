@@ -42,14 +42,13 @@ private
 
     csv_attached = false
     unless @form.submission_email.blank? && @preview_mode
-      mail = if FeatureService.enabled?("csv_submission", @form)
-               csv_attached = true
-               deliver_submission_email_with_csv_attachment
-             else
-               deliver_submission_email
-             end
-
-      CurrentLoggingAttributes.submission_email_id = mail.govuk_notify_response.id
+      if FeatureService.enabled?("csv_submission", @form)
+        csv_attached = true
+        deliver_submission_email_with_csv_attachment
+      else
+        #  deliver_submission_email
+        deliver_submission_email_ses
+      end
     end
 
     LogEventService.log_submit(@current_context, requested_email_confirmation: @requested_email_confirmation, preview: @preview_mode, csv_attached:)
@@ -79,6 +78,14 @@ private
                                 csv_file:).deliver_now
   end
 
+  def deliver_submission_email_ses(csv_file = nil)
+    AwsSesMailer
+      .submission_with_csv_email(answer_content: email_body_ses,
+                                 submission_email: @form.submission_email,
+                                 mailer_options: @mailer_options,
+                                 csv_file:).deliver_now
+  end
+
   def deliver_submission_email_with_csv_attachment
     Tempfile.create do |file|
       SubmissionCsvService.new(
@@ -87,7 +94,8 @@ private
         timestamp: @timestamp,
         output_file_path: file.path,
       ).write
-      deliver_submission_email(file)
+      # deliver_submission_email(file)
+      deliver_submission_email_ses(file)
     end
   end
 
@@ -97,6 +105,10 @@ private
 
   def email_body
     NotifyTemplateFormatter.new.build_question_answers_section(@current_context)
+  end
+
+  def email_body_ses
+    SesTemplateFormatter.new.build_question_answers_section(@current_context)
   end
 
   def submission_timezone
