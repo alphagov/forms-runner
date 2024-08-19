@@ -44,3 +44,7 @@ show_browser_during_tests: false
 cloudwatch_metrics_enabled: false
 
 analytics_enabled: false
+
+aws_s3_submissions:
+  iam_role_arn: changeme
+  bucket_name: changeme

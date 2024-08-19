@@ -88,6 +88,8 @@ private
         output_file_path: file.path,
       ).write
       deliver_submission_email(file)
+      Rails.logger.info("Attempting to upload submission to S3")
+      SubmissionS3Service.new.upload_file_to_s3(file.path, @form.name, @submission_reference)
     end
   end
 
