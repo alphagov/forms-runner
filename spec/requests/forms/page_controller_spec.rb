@@ -330,6 +330,20 @@ RSpec.describe Forms::PageController, type: :request do
         end
       end
     end
+
+    context "when page is repeatable" do
+      let(:first_page_in_form) { build :page, :with_repeatable, id: 1, next_page: second_page_in_form.id }
+
+      it "shows the page as normal when there are no stored answers" do
+        get form_page_path(mode: "form", form_id: form_data.id, form_slug: form_data.form_slug, page_slug: first_page_in_form.id, answer_index: 1)
+        expect(response).to have_http_status(:ok)
+      end
+
+      it "returns 404 when given an invalid answer_index" do
+        get form_page_path(mode: "form", form_id: form_data.id, form_slug: form_data.form_slug, page_slug: first_page_in_form.id, answer_index: 12)
+        expect(response).to have_http_status(:not_found)
+      end
+    end
   end
 
   describe "#save" do
@@ -540,6 +554,20 @@ RSpec.describe Forms::PageController, type: :request do
       end
 
       # TODO: Need to add test to check how changing an existing routing answer value would work. Better off as a feature spec which we dont have.
+    end
+
+    context "when page is repeatable" do
+      let(:first_page_in_form) { build :page, :with_repeatable, id: 1, next_page: second_page_in_form.id }
+
+      it "redirects to the add another answer page when given valid answer" do
+        post save_form_page_path(mode: "form", form_id: form_data.id, form_slug: form_data.form_slug, page_slug: first_page_in_form.id, params: { question: { number: 12 } })
+        expect(response).to redirect_to(add_another_answer_path(mode: "form", form_id: form_data.id, form_slug: form_data.form_slug, page_slug: first_page_in_form.id))
+      end
+
+      it "shows 404 if an invalid answer_index is given" do
+        post save_form_page_path(mode: "form", form_id: form_data.id, form_slug: form_data.form_slug, page_slug: first_page_in_form.id, answer_index: 3, params: { question: { number: 12 } })
+        expect(response).to have_http_status(:not_found)
+      end
     end
   end
 
