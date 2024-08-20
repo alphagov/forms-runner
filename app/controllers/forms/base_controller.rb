@@ -7,7 +7,7 @@ module Forms
       LogEventService.log_form_start unless mode.preview?
     end
 
-    rescue_from ActiveResource::ResourceNotFound, Flow::StepFactory::PageNotFoundError do
+    rescue_from ActiveResource::ResourceNotFound, Flow::StepFactory::PageNotFoundError, RepeatableStep::AnswerIndexError do
       render template: "errors/not_found", status: :not_found
     end
 

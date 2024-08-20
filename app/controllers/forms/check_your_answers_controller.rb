@@ -9,7 +9,7 @@ module Forms
     end
 
     def show
-      return redirect_to form_page_path(current_context.form.id, current_context.form.form_slug, current_context.next_page_slug) unless current_context.can_visit?(CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG)
+      return redirect_to form_page_path(current_context.form.id, current_context.form.form_slug, current_context.next_page_slug, nil) unless current_context.can_visit?(CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG)
 
       setup_check_your_answers
       email_confirmation_input = EmailConfirmationInput.new
@@ -50,11 +50,17 @@ module Forms
   private
 
     def page_to_row(page)
+      change_link = if page.repeatable?
+                      change_add_another_answer_path(page.form_id, page.form_slug, page.page_id)
+                    else
+                      form_change_answer_path(page.form_id, page.form_slug, page.page_id)
+                    end
+
       question_name = helpers.question_text_with_optional_suffix_inc_mode(page, @mode)
       {
         key: { text: question_name },
         value: { text: page.show_answer },
-        actions: [{ href: form_change_answer_path(page.form_id, page.form_slug, page.page_id), visually_hidden_text: question_name }],
+        actions: [{ href: change_link, visually_hidden_text: question_name }],
       }
     end
 
@@ -71,8 +77,7 @@ module Forms
     end
 
     def setup_check_your_answers
-      previous_step = current_context.previous_step("check_your_answers")
-      @back_link = form_page_path(current_context.form.id, current_context.form.form_slug, previous_step)
+      @back_link = back_link
       @rows = check_your_answers_rows
       @form_submit_path = form_submit_answers_path
 
@@ -81,6 +86,14 @@ module Forms
       end
 
       answers_need_full_width
+    end
+
+    def back_link
+      previous_step = current_context.previous_step(CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG)
+
+      if previous_step.present?
+        previous_step.repeatable? ? add_another_answer_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug, page_slug: previous_step.page_slug) : form_page_path(current_context.form.id, current_context.form.form_slug, previous_step.page_id)
+      end
     end
   end
 end

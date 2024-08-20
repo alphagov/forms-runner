@@ -24,59 +24,39 @@ class Step
   end
 
   def save_to_context(form_context)
-    form_context.save_step(self, @question.serializable_hash)
+    form_context.save_step(self, question.serializable_hash)
     self
   end
 
   def load_from_context(form_context)
     attrs = form_context.get_stored_answer(self)
-    @question.assign_attributes(attrs || {})
+    question.assign_attributes(attrs || {})
     self
   end
 
   def update!(params)
-    @question.assign_attributes(params)
-    @question.valid?
+    question.assign_attributes(params)
+    question.valid?
   end
 
   def params
-    @question.attribute_names.concat([selection: []])
+    question.attribute_names.concat([selection: []])
   end
 
-  def valid?
-    @question.valid?
-  end
+  delegate :valid?, to: :question
 
   def clear_errors
-    @question.errors.clear
+    question.errors.clear
   end
 
-  def show_answer
-    @question.show_answer
-  end
-
-  def show_answer_in_email
-    @question.show_answer_in_email
-  end
-
-  def question_text
-    @question.question_text
-  end
-
-  def hint_text
-    @question.hint_text
-  end
-
-  def answer_settings
-    @question.answer_settings
-  end
+  delegate :show_answer, :show_answer_in_email, :question_text, :hint_text, :answer_settings, to: :question
 
   def end_page?
     next_page_slug.nil?
   end
 
   def next_page_slug_after_routing
-    if routing_conditions.any? && routing_conditions.first.answer_value == @question.selection
+    if routing_conditions.any? && routing_conditions.first.answer_value == question.selection
       goto_page_slug
     else
       next_page_slug
@@ -88,5 +68,9 @@ class Step
 
     condition = routing_conditions.first
     condition.goto_page_id.nil? && condition.skip_to_end ? CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG : condition.goto_page_id.to_s
+  end
+
+  def repeatable?
+    false
   end
 end

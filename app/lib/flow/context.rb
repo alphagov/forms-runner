@@ -32,9 +32,9 @@ module Flow
       index = completed_steps.find_index { |step| step.page_slug == page_slug }
       return nil if completed_steps.empty? || index&.zero?
 
-      return completed_steps.last.page_id if index.nil?
+      return completed_steps.last if index.nil?
 
-      completed_steps[index - 1].page_id
+      completed_steps[index - 1]
     end
 
     def next_page_slug

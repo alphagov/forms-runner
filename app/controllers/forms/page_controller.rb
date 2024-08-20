@@ -37,12 +37,21 @@ module Forms
       page_slug = params.require(:page_slug)
       @step = current_context.find_or_create(page_slug)
 
+      if @step.respond_to?(:answer_index)
+        @step.answer_index = answer_index
+      end
+
       @support_details = current_context.support_details
+    end
+
+    def answer_index
+      params.fetch(:answer_index, 1).to_i
     end
 
     def setup_instance_vars_for_view
       @is_question = true
       @question_edit_link = "#{Settings.forms_admin.base_url}/forms/#{@step.form_id}/pages/#{@step.page_slug}/edit/question"
+      @save_url = save_url
     end
 
     def changing_existing_answer
@@ -51,18 +60,26 @@ module Forms
 
     def back_link(page_slug)
       previous_step = current_context.previous_step(page_slug)
+
       if @changing_existing_answer
         @back_link = check_your_answers_path(form_id: current_context.form.id)
       elsif previous_step
-        @back_link = form_page_path(@step.form_id, @step.form_slug, previous_step)
+
+        @back_link = previous_step.repeatable? ? add_another_answer_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug, page_slug: previous_step.page_slug) : form_page_path(@step.form_id, @step.form_slug, previous_step.page_id)
       end
     end
 
     def next_page
-      if @changing_existing_answer
-        check_your_answers_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug)
+      if changing_existing_answer
+        if @step.repeatable? && repeating?
+          change_add_another_answer_path(@step.form_id, @step.form_slug, @step.page_id)
+        else
+          check_your_answers_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug)
+        end
       elsif @step.routing_conditions.any?
         calculate_page_routing
+      elsif @step.repeatable? && repeating?
+        add_another_answer_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug, page_slug: @step.page_slug)
       else
         form_page_path(@step.form_id, @step.form_slug, @step.next_page_slug)
       end
@@ -85,6 +102,14 @@ module Forms
 
     def is_first_page?
       current_context.form.start_page == @step.id
+    end
+
+    def repeating?
+      true
+    end
+
+    def save_url
+      save_form_page_path(@step.form_id, @step.form_slug, @step.id, changing_existing_answer: @changing_existing_answer, answer_index:)
     end
   end
 end

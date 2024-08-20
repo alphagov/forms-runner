@@ -131,11 +131,10 @@ RSpec.describe Forms::PageController, type: :request do
 
       context "with a page that has a previous page" do
         it "Displays a link to the previous page" do
-          allow_any_instance_of(Flow::Context).to receive(:can_visit?)
-                                              .and_return(true)
-          allow_any_instance_of(Flow::Context).to receive(:previous_step).and_return(1)
-          get form_page_path(mode: "preview-draft", form_id: 2, form_slug: form_data.form_slug, page_slug: 2)
-          expect(response.body).to include(form_page_path(mode: "preview-draft", form_id: 2, form_slug: form_data.form_slug, page_slug: 1))
+          allow_any_instance_of(Flow::Context).to receive(:can_visit?).and_return(true)
+          allow_any_instance_of(Flow::Context).to receive(:previous_step).and_return(OpenStruct.new(page_id: 1))
+          get form_page_path("preview-draft", 2, form_data.form_slug, 2)
+          expect(response.body).to include(form_page_path(2, form_data.form_slug, 1))
         end
       end
 
@@ -147,7 +146,7 @@ RSpec.describe Forms::PageController, type: :request do
 
         it "Passes the changing answers parameter in its submit request" do
           get form_change_answer_path("preview-draft", 2, form_data.form_slug, 1)
-          expect(response.body).to include(save_form_page_path(mode: "preview-draft", form_id: 2, form_slug: form_data.form_slug, page_slug: 1, changing_existing_answer: true))
+          expect(response.body).to include(save_form_page_path(mode: "preview-draft", form_id: 2, form_slug: form_data.form_slug, page_slug: 1, changing_existing_answer: true, answer_index: 1))
         end
       end
 
@@ -171,7 +170,6 @@ RSpec.describe Forms::PageController, type: :request do
         "/form/2/1/leading_check_your_answers",
         "/form/2/1/1/check_your_answers",
         "/form/2/1/1/ChEck_YouR_aNswers",
-        "/form/2/1/1/0",
         "/form/2/1/1/%20123",
         "/form/2/1/__",
         "/form/2/1/debug.cgi",
@@ -231,7 +229,7 @@ RSpec.describe Forms::PageController, type: :request do
         it "Displays a link to the previous page" do
           allow_any_instance_of(Flow::Context).to receive(:can_visit?)
                                               .and_return(true)
-          allow_any_instance_of(Flow::Context).to receive(:previous_step).and_return(1)
+          allow_any_instance_of(Flow::Context).to receive(:previous_step).and_return(OpenStruct.new(page_id: 1))
           get form_page_path(mode: "form", form_id: 2, form_slug: form_data.form_slug, page_slug: 2)
           expect(response.body).to include(form_page_path(mode: "form", form_id: 2, form_slug: form_data.form_slug, page_slug: 1))
         end
@@ -245,7 +243,7 @@ RSpec.describe Forms::PageController, type: :request do
 
         it "Passes the changing answers parameter in its submit request" do
           get form_change_answer_path("form", 2, form_data.form_slug, 1)
-          expect(response.body).to include(save_form_page_path(mode: "form", form_id: 2, form_slug: form_data.form_slug, page_slug: 1, changing_existing_answer: true))
+          expect(response.body).to include(save_form_page_path(mode: "form", form_id: 2, form_slug: form_data.form_slug, page_slug: 1, changing_existing_answer: true, answer_index: 1))
         end
       end
 
@@ -330,6 +328,20 @@ RSpec.describe Forms::PageController, type: :request do
           question_number = first_page_in_form.position
           expect(response.body).to include(I18n.t("goto_page_before_routing_page.body_html", link_url:, question_number:))
         end
+      end
+    end
+
+    context "when page is repeatable" do
+      let(:first_page_in_form) { build :page, :with_repeatable, id: 1, next_page: second_page_in_form.id }
+
+      it "shows the page as normal when there are no stored answers" do
+        get form_page_path(mode: "form", form_id: form_data.id, form_slug: form_data.form_slug, page_slug: first_page_in_form.id, answer_index: 1)
+        expect(response).to have_http_status(:ok)
+      end
+
+      it "returns 404 when given an invalid answer_index" do
+        get form_page_path(mode: "form", form_id: form_data.id, form_slug: form_data.form_slug, page_slug: first_page_in_form.id, answer_index: 12)
+        expect(response).to have_http_status(:not_found)
       end
     end
   end
@@ -542,6 +554,20 @@ RSpec.describe Forms::PageController, type: :request do
       end
 
       # TODO: Need to add test to check how changing an existing routing answer value would work. Better off as a feature spec which we dont have.
+    end
+
+    context "when page is repeatable" do
+      let(:first_page_in_form) { build :page, :with_repeatable, id: 1, next_page: second_page_in_form.id }
+
+      it "redirects to the add another answer page when given valid answer" do
+        post save_form_page_path(mode: "form", form_id: form_data.id, form_slug: form_data.form_slug, page_slug: first_page_in_form.id, params: { question: { number: 12 } })
+        expect(response).to redirect_to(add_another_answer_path(mode: "form", form_id: form_data.id, form_slug: form_data.form_slug, page_slug: first_page_in_form.id))
+      end
+
+      it "shows 404 if an invalid answer_index is given" do
+        post save_form_page_path(mode: "form", form_id: form_data.id, form_slug: form_data.form_slug, page_slug: first_page_in_form.id, answer_index: 3, params: { question: { number: 12 } })
+        expect(response).to have_http_status(:not_found)
+      end
     end
   end
 
