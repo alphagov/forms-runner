@@ -7,6 +7,7 @@ en:
           attributes:
             add_another_answer:
               blank: You must select an option
+              max_answers_reached: You cannot add another answer
         email_confirmation_input:
           attributes:
             confirmation_email_address:
@@ -123,8 +124,8 @@ en:
           one: You have added one answer
           other: You have added %{count} answers
           zero: You have added no answers
+        max_answers: You cannot add another answer to this question as you’ve entered the maximum of %{max_answers}
         radios_legend: Do you need to add another answer?
-        max_answers: You cannot add another answer to this question as you've entered the maximum of %{max_answers}
     back: Back
   helpers:
     hint:

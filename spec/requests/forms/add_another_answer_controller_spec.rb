@@ -89,6 +89,16 @@ RSpec.describe Forms::AddAnotherAnswerController, type: :request do
         expect(assigns(:rows).count).to be_present
       end
     end
+
+    context "with the maximum number of answers" do
+      let(:stored_answers) { Array.new(RepeatableStep::MAX_ANSWERS) { |i| { text: i.to_s } } }
+
+      it "renders the show template with an error" do
+        post "/preview-draft/#{form.id}/#{form.form_slug}/#{first_page_in_form.id}/add-another-answer", params: { add_another_answer_input: { add_another_answer: "yes" } }
+        expect(response).to render_template(:show)
+        expect(response.body).to include("You cannot add another answer")
+      end
+    end
   end
 
   describe "redirect_if_not_repeating" do

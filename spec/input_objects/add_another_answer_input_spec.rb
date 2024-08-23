@@ -1,34 +1,33 @@
 require "rails_helper"
 
 RSpec.describe AddAnotherAnswerInput do
-  let(:valid_attributes) { { add_another_answer: "yes" } }
+  let(:input) { described_class.new({ add_another_answer: "yes", max_answers: false }) }
 
   describe "validations" do
     it "is valid with valid attributes" do
-      input = described_class.new(valid_attributes)
       expect(input).to be_valid
     end
 
     it "is not valid without an add_another_answer" do
-      input = described_class.new(add_another_answer: nil)
+      input.add_another_answer = nil
       expect(input).not_to be_valid
       expect(input.errors[:add_another_answer]).to include(I18n.t("activemodel.errors.models.add_another_answer_input.attributes.add_another_answer.blank"))
     end
 
     it "is not valid with an invalid add_another_answer" do
-      input = described_class.new(add_another_answer: "invalid")
+      input.add_another_answer = "invalid"
       expect(input).not_to be_valid
       expect(input.errors[:add_another_answer]).to include("is not included in the list")
     end
 
-    it 'is valid with "yes" as add_another_answer' do
-      input = described_class.new(add_another_answer: "yes")
+    it 'is valid with "no" as add_another_answer' do
+      input.add_another_answer = "no"
       expect(input).to be_valid
     end
 
-    it 'is valid with "no" as add_another_answer' do
-      input = described_class.new(add_another_answer: "no")
-      expect(input).to be_valid
+    it "is not valid when max_answers is true" do
+      input.max_answers = true
+      expect(input).not_to be_valid
     end
   end
 
