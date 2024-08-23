@@ -17,12 +17,20 @@
 
       <%= govuk_summary_list(classes: "add-another-answer", rows: @rows) %>
 
-      <%= f.govuk_collection_radio_buttons :add_another_answer,
-        @add_another_answer_input.values, ->(option) { option }, ->(option) { t('helpers.label.add_another_answer_input.options.' + "#{option}") },
-        legend: { text: t('.radios_legend'), size: 'm' },
-        inline: true %>
+      <% unless @step.max_answers? %>
+        <%= f.govuk_collection_radio_buttons :add_another_answer,
+          @add_another_answer_input.values, ->(option) { option }, ->(option) { t('helpers.label.add_another_answer_input.options.' + "#{option}") },
+          legend: { text: t('.radios_legend'), size: 'm' },
+          inline: true %>
 
-      <%= f.govuk_submit %>
+        <%= f.govuk_submit %>
+      <% else %>
+        <div class="govuk-inset-text">
+          <%= t('.max_answers', max_answers: RepeatableStep::MAX_ANSWERS) %>
+        </div>
+        <%= f.hidden_field :add_another_answer, value: "no" %>
+        <%= f.govuk_submit %>
+      <% end %>
     </div>
   </div>
 <% end %>

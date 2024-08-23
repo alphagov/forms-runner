@@ -124,6 +124,7 @@ en:
           other: You have added %{count} answers
           zero: You have added no answers
         radios_legend: Do you need to add another answer?
+        max_answers: You cannot add another answer to this question as you've entered the maximum of %{max_answers}
     back: Back
   helpers:
     hint:
