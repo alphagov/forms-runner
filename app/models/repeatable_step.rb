@@ -5,6 +5,8 @@ class RepeatableStep < Step
 
   class AnswerIndexError < IndexError; end
 
+  MAX_ANSWERS = 10
+
   attr_accessor :answer_index, :questions
 
   def initialize(...)
@@ -51,6 +53,10 @@ class RepeatableStep < Step
 
   def next_answer_index
     questions.length + 1
+  end
+
+  def max_answers?
+    questions.length >= MAX_ANSWERS
   end
 
   def show_answer
