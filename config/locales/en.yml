@@ -119,6 +119,7 @@ en:
     add_another_answer:
       rows:
         change: Change
+        remove: Remove
       show:
         heading:
           one: You have added one answer
@@ -127,6 +128,9 @@ en:
         max_answers: You cannot add another answer to this question as you’ve entered the maximum of %{max_answers}
         radios_legend: Do you need to add another answer?
     back: Back
+    remove_answer:
+      show:
+        radios_legend: Remove answer
   helpers:
     hint:
       email_confirmation_input:
@@ -141,6 +145,10 @@ en:
         send_confirmation_options:
           send_email: 'Yes'
           skip_confirmation: 'No'
+      remove_answer_input:
+        options:
+          'no': 'No'
+          'yes': 'Yes'
     legend:
       email_confirmation_input:
         send_confirmation: Do you want to get an email confirming your form has been submitted?

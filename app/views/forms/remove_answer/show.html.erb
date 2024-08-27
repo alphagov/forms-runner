@@ -1,0 +1,18 @@
+<%= form_with(model: @remove_answer_input , method: :post, url: delete_form_remove_answer_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug, answer_index: @step.answer_index, changing_existing_answer: @changing_existing_answer)) do |f| %>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <% if @remove_answer_input&.errors.any? %>
+        <%= f.govuk_error_summary %>
+      <% end %>
+
+      <h1 class="govuk-heading-l">Remove answer!</h1>
+
+      <%= f.govuk_collection_radio_buttons :remove_answer,
+        @remove_answer_input.values, ->(option) { option }, ->(option) { t('helpers.label.remove_answer_input.options.' + "#{option}") },
+        legend: { text: t('.radios_legend'), size: 'm' },
+        inline: true %>
+
+      <%= f.govuk_submit %>
+    </div>
+  </div>
+<% end %>
