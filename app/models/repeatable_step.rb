@@ -81,6 +81,13 @@ class RepeatableStep < Step
     end
   end
 
+  def remove_answer(answer_index)
+    questions.delete_at(answer_index - 1)
+    if questions.empty?
+      add_blank_answer
+    end
+  end
+
 private
 
   def add_blank_answer
