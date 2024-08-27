@@ -61,36 +61,47 @@ module Forms
     def back_link(page_slug)
       previous_step = current_context.previous_step(page_slug)
 
-      if @changing_existing_answer
+      if changing_existing_answer
         @back_link = check_your_answers_path(form_id: current_context.form.id)
       elsif previous_step
-
         @back_link = previous_step.repeatable? ? add_another_answer_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug, page_slug: previous_step.page_slug) : form_page_path(@step.form_id, @step.form_slug, previous_step.page_id)
       end
     end
 
     def next_page
       if changing_existing_answer
-        if @step.repeatable? && repeating?
-          change_add_another_answer_path(@step.form_id, @step.form_slug, @step.page_id)
-        else
-          check_your_answers_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug)
-        end
-      elsif @step.routing_conditions.any?
-        calculate_page_routing
-      elsif @step.repeatable? && repeating?
-        add_another_answer_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug, page_slug: @step.page_slug)
-      else
-        form_page_path(@step.form_id, @step.form_slug, @step.next_page_slug)
+        return next_step_changing
       end
+
+      next_step_path
     end
 
-    def calculate_page_routing
-      if @step.question.show_answer == @step.routing_conditions.first.answer_value
-        form_page_path(@step.form_id, @step.form_slug, @step.goto_page_slug)
-      else
-        form_page_path(@step.form_id, @step.form_slug, @step.next_page_slug)
+    def next_step_path
+      if should_show_add_another?(@step)
+        return add_another_answer_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug)
       end
+
+      next_step_in_form_path
+    end
+
+    def next_step_changing
+      if should_show_add_another?(@step)
+        return change_add_another_answer_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug)
+      end
+
+      check_answers_path
+    end
+
+    def next_step_in_form_path
+      form_page_path(@step.form_id, @step.form_slug, @step.next_page_slug_after_routing)
+    end
+
+    def check_answers_path
+      check_your_answers_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug)
+    end
+
+    def should_show_add_another?(step)
+      step.repeatable? && !step.skipped?
     end
 
     def check_goto_page_before_routing_page
@@ -102,10 +113,6 @@ module Forms
 
     def is_first_page?
       current_context.form.start_page == @step.id
-    end
-
-    def repeating?
-      true
     end
 
     def save_url

@@ -517,6 +517,15 @@ RSpec.describe Forms::PageController, type: :request do
         post save_form_page_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug: first_page_in_form.id, answer_index: 3, params: { question: { number: 12 } })
         expect(response).to have_http_status(:not_found)
       end
+
+      context "and is optional" do
+        let(:first_page_in_form) { build :page, :with_repeatable, is_optional: true, id: 1, next_page: second_page_in_form.id }
+
+        it "redirects to the next page when not given an answer" do
+          post save_form_page_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug: first_page_in_form.id, params: { question: { number: nil } })
+          expect(response).to redirect_to(form_page_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug: second_page_in_form.id))
+        end
+      end
     end
   end
 
