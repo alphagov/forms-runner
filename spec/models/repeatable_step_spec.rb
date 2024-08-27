@@ -103,6 +103,26 @@ RSpec.describe RepeatableStep, type: :model do
     end
   end
 
+  describe "#max_answers?" do
+    before { repeatable_step.questions = questions }
+
+    context "with 9 or fewer questions" do
+      let(:questions) { [1, 2, 3, 4, 5, 6, 7, 8, 9] }
+
+      it "returns false" do
+        expect(repeatable_step.max_answers?).to be(false)
+      end
+    end
+
+    context "with 10 questions" do
+      let(:questions) { [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] }
+
+      it "returns true" do
+        expect(repeatable_step.max_answers?).to be(true)
+      end
+    end
+  end
+
   describe "#show_answer" do
     let(:questions) { [first_question, second_question] }
     let(:first_question) { OpenStruct.new({ show_answer: "first answer" }) }
