@@ -9,7 +9,7 @@ module Forms
     end
 
     def save
-      @add_another_answer_input = AddAnotherAnswerInput.new(add_another_input_params)
+      @add_another_answer_input = AddAnotherAnswerInput.new(add_another_input_params.merge(max_answers: @step.max_answers?))
 
       if @add_another_answer_input.invalid?
         @rows = rows
