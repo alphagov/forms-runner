@@ -3,10 +3,11 @@ require "rails_helper"
 RSpec.describe Question::Name, type: :model do
   subject(:question) { described_class.new({}, options) }
 
-  let(:options) { { is_optional:, answer_settings: } }
+  let(:options) { { is_optional:, answer_settings:, question_text: } }
   let(:answer_settings) { OpenStruct.new({ input_type:, title_needed: }) }
   let(:input_type) { "full_name" }
   let(:title_needed) { "false" }
+  let(:question_text) { "What is your name?" }
   let(:is_optional) { false }
 
   it_behaves_like "a question model"
@@ -26,6 +27,10 @@ RSpec.describe Question::Name, type: :model do
 
       it "returns \"\" for show_answer" do
         expect(question.show_answer).to eq ""
+      end
+
+      it "returns an empty hash for show_answer_in_csv" do
+        expect(question.show_answer_in_csv).to eq({})
       end
     end
 
@@ -47,6 +52,10 @@ RSpec.describe Question::Name, type: :model do
 
       it "returns the labelled individual parts in show_answer_for_email" do
         expect(question.show_answer_in_email).to eq("Full name: #{name}")
+      end
+
+      it "returns a hash with the full name for show_answer_in_csv" do
+        expect(question.show_answer_in_csv).to eq({ "#{question_text} - Full name" => name })
       end
     end
   end
@@ -72,6 +81,10 @@ RSpec.describe Question::Name, type: :model do
       it "returns \"\" for show_answer" do
         expect(question.show_answer).to eq ""
       end
+
+      it "returns an empty hash for show_answer_in_csv" do
+        expect(question.show_answer_in_csv).to eq({})
+      end
     end
 
     context "when the question is optional" do
@@ -90,6 +103,10 @@ RSpec.describe Question::Name, type: :model do
         question.last_name = ""
         expect(question).not_to be_valid
         expect(question.errors[:last_name]).to include(I18n.t("activemodel.errors.models.question/name.attributes.last_name.blank"))
+      end
+
+      it "returns an empty hash for show_answer_in_csv" do
+        expect(question.show_answer_in_csv).to eq({})
       end
     end
 
@@ -116,6 +133,13 @@ RSpec.describe Question::Name, type: :model do
       it "returns the labelled individual parts in show_answer_for_email" do
         expect(question.show_answer_in_email).to eq("First name: #{first_name}\n\nLast name: #{last_name}")
       end
+
+      it "returns a hash with the first and last name for show_answer_in_csv" do
+        expect(question.show_answer_in_csv).to eq({
+          "#{question_text} - First name" => first_name,
+          "#{question_text} - Last name" => last_name,
+        })
+      end
     end
   end
 
@@ -139,6 +163,10 @@ RSpec.describe Question::Name, type: :model do
 
       it "returns \"\" for show_answer" do
         expect(question.show_answer).to eq ""
+      end
+
+      it "returns an empty hash for show_answer_in_csv" do
+        expect(question.show_answer_in_csv).to eq({})
       end
     end
 
@@ -168,6 +196,14 @@ RSpec.describe Question::Name, type: :model do
       it "returns the labelled individual parts in show_answer_for_email" do
         expect(question.show_answer_in_email).to eq("First name: #{first_name}\n\nMiddle names: #{middle_name}\n\nLast name: #{last_name}")
       end
+
+      it "returns a hash with the first, middle and last name for show_answer_in_csv" do
+        expect(question.show_answer_in_csv).to eq({
+          "#{question_text} - First name" => first_name,
+          "#{question_text} - Middle names" => middle_name,
+          "#{question_text} - Last name" => last_name,
+        })
+      end
     end
   end
 
@@ -194,6 +230,10 @@ RSpec.describe Question::Name, type: :model do
         it "returns the labelled individual parts in show_answer_for_email" do
           expect(question.show_answer_in_email).to eq("Full name: #{name}")
         end
+
+        it "returns a hash with the full name for show_answer_in_csv" do
+          expect(question.show_answer_in_csv).to eq({ "#{question_text} - Full name" => name })
+        end
       end
 
       context "when title is set" do
@@ -210,6 +250,13 @@ RSpec.describe Question::Name, type: :model do
 
         it "returns the labelled individual parts in show_answer_for_email" do
           expect(question.show_answer_in_email).to eq("Title: #{title}\n\nFull name: #{name}")
+        end
+
+        it "returns a hash with the full name and title for show_answer_in_csv" do
+          expect(question.show_answer_in_csv).to eq({
+            "#{question_text} - Full name" => name,
+            "#{question_text} - Title" => title,
+          })
         end
       end
     end
@@ -239,6 +286,13 @@ RSpec.describe Question::Name, type: :model do
         it "returns the labelled individual parts in show_answer_for_email" do
           expect(question.show_answer_in_email).to eq("First name: #{first_name}\n\nLast name: #{last_name}")
         end
+
+        it "returns a hash with the first and last name for show_answer_in_csv" do
+          expect(question.show_answer_in_csv).to eq({
+            "#{question_text} - First name" => first_name,
+            "#{question_text} - Last name" => last_name,
+          })
+        end
       end
 
       context "when title is set" do
@@ -256,6 +310,14 @@ RSpec.describe Question::Name, type: :model do
 
         it "returns the labelled individual parts in show_answer_for_email" do
           expect(question.show_answer_in_email).to eq("Title: #{title}\n\nFirst name: #{first_name}\n\nLast name: #{last_name}")
+        end
+
+        it "returns a hash with the first and last name for show_answer_in_csv" do
+          expect(question.show_answer_in_csv).to eq({
+            "#{question_text} - First name" => first_name,
+            "#{question_text} - Last name" => last_name,
+            "#{question_text} - Title" => title,
+          })
         end
       end
     end
@@ -287,6 +349,14 @@ RSpec.describe Question::Name, type: :model do
         it "returns the labelled individual parts in show_answer_for_email" do
           expect(question.show_answer_in_email).to eq("First name: #{first_name}\n\nMiddle names: #{middle_name}\n\nLast name: #{last_name}")
         end
+
+        it "returns a hash with the first, middle and last name for show_answer_in_csv" do
+          expect(question.show_answer_in_csv).to eq({
+            "#{question_text} - First name" => first_name,
+            "#{question_text} - Middle names" => middle_name,
+            "#{question_text} - Last name" => last_name,
+          })
+        end
       end
 
       context "when title is set" do
@@ -305,6 +375,15 @@ RSpec.describe Question::Name, type: :model do
 
         it "returns the labelled individual parts in show_answer_for_email" do
           expect(question.show_answer_in_email).to eq("Title: #{title}\n\nFirst name: #{first_name}\n\nMiddle names: #{middle_name}\n\nLast name: #{last_name}")
+        end
+
+        it "returns a hash with the first, middle and last name for show_answer_in_csv" do
+          expect(question.show_answer_in_csv).to eq({
+            "#{question_text} - First name" => first_name,
+            "#{question_text} - Middle names" => middle_name,
+            "#{question_text} - Last name" => last_name,
+            "#{question_text} - Title" => title,
+          })
         end
       end
     end
