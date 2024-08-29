@@ -3,7 +3,17 @@ require "rails_helper"
 RSpec.describe Question::Selection, type: :model do
   subject(:question) { described_class.new({}, options) }
 
-  let(:options) { { is_optional:, answer_settings: OpenStruct.new({ only_one_option:, selection_options: [OpenStruct.new({ name: "option 1" }), OpenStruct.new({ name: "option 2" })] }) } }
+  let(:options) do
+    {
+      is_optional:,
+      answer_settings: OpenStruct.new({
+        only_one_option:,
+        selection_options: [OpenStruct.new({ name: "option 1" }), OpenStruct.new({ name: "option 2" })],
+      }),
+      question_text:,
+    }
+  end
+  let(:question_text) { Faker::Lorem.question }
 
   context "when the selection question is a checkbox" do
     let(:only_one_option) { "false" }
@@ -15,10 +25,37 @@ RSpec.describe Question::Selection, type: :model do
 
     it_behaves_like "a question model"
 
-    it "returns invalid with blank selection" do
-      question.selection = [""]
-      expect(question).not_to be_valid
-      expect(question.errors[:selection]).to include(I18n.t("activemodel.errors.models.question/selection.attributes.selection.checkbox_blank"))
+    context "when selection is blank" do
+      before do
+        question.selection = [""]
+      end
+
+      it "returns invalid" do
+        expect(question).not_to be_valid
+        expect(question.errors[:selection]).to include(I18n.t("activemodel.errors.models.question/selection.attributes.selection.checkbox_blank"))
+      end
+
+      it "shows as a blank string" do
+        expect(question.show_answer).to eq ""
+      end
+
+      it "returns an empty hash for show_answer_in_csv" do
+        expect(question.show_answer_in_csv).to eq({})
+      end
+    end
+
+    context "when selection has a value" do
+      before do
+        question.selection = %w[something]
+      end
+
+      it "shows the answer" do
+        expect(question.show_answer).to eq("something")
+      end
+
+      it "shows the answer in show_answer_in_csv" do
+        expect(question.show_answer_in_csv).to eq(Hash[question_text, "something"])
+      end
     end
 
     it "returns invalid when selection is not one of the options" do
@@ -46,6 +83,25 @@ RSpec.describe Question::Selection, type: :model do
     context "when question is optional" do
       let(:is_optional) { true }
 
+      context "when selection is blank" do
+        before do
+          question.selection = [""]
+        end
+
+        it "returns invalid with blank selection" do
+          expect(question).not_to be_valid
+          expect(question.errors[:selection]).to include(I18n.t("activemodel.errors.models.question/selection.attributes.selection.both_none_and_value_selected"))
+        end
+
+        it "shows as a blank string" do
+          expect(question.show_answer).to eq ""
+        end
+
+        it "returns an empty hash for show_answer_in_csv" do
+          expect(question.show_answer_in_csv).to eq({})
+        end
+      end
+
       it "returns valid with none of the above selected" do
         question.selection = [:none_of_the_above.to_s]
         expect(question).to be_valid
@@ -61,6 +117,20 @@ RSpec.describe Question::Selection, type: :model do
       it "does not include '(optional)' in the question text" do
         expect(question.question_text_with_optional_suffix).to eq(question.question_text)
       end
+
+      context "when selection has a value" do
+        before do
+          question.selection = %w[something]
+        end
+
+        it "shows the answer" do
+          expect(question.show_answer).to eq("something")
+        end
+
+        it "shows the answer in show_answer_in_csv" do
+          expect(question.show_answer_in_csv).to eq(Hash[question_text, "something"])
+        end
+      end
     end
   end
 
@@ -74,10 +144,37 @@ RSpec.describe Question::Selection, type: :model do
 
     it_behaves_like "a question model"
 
-    it "returns invalid with blank selection" do
-      question.selection = ""
-      expect(question).not_to be_valid
-      expect(question.errors[:selection]).to include(I18n.t("activemodel.errors.models.question/selection.attributes.selection.blank"))
+    context "when selection is blank" do
+      before do
+        question.selection = ""
+      end
+
+      it "returns invalid" do
+        expect(question).not_to be_valid
+        expect(question.errors[:selection]).to include(I18n.t("activemodel.errors.models.question/selection.attributes.selection.blank"))
+      end
+
+      it "shows as a blank string" do
+        expect(question.show_answer).to eq ""
+      end
+
+      it "returns an empty hash for show_answer_in_csv" do
+        expect(question.show_answer_in_csv).to eq({})
+      end
+    end
+
+    context "when selection has a value" do
+      before do
+        question.selection = %w[something]
+      end
+
+      it "shows the answer" do
+        expect(question.show_answer).to eq(%w[something])
+      end
+
+      it "shows the answer in show_answer_in_csv" do
+        expect(question.show_answer_in_csv).to eq(Hash[question_text, %w[something]])
+      end
     end
 
     it "returns invalid when selection is not one of the options" do
@@ -103,6 +200,39 @@ RSpec.describe Question::Selection, type: :model do
         question.selection = :none_of_the_above.to_s
         expect(question).to be_valid
         expect(question.errors[:selection]).to be_empty
+      end
+
+      context "when selection is blank" do
+        before do
+          question.selection = ""
+        end
+
+        it "returns invalid" do
+          expect(question).not_to be_valid
+          expect(question.errors[:selection]).to include(I18n.t("activemodel.errors.models.question/selection.attributes.selection.blank"))
+        end
+
+        it "shows as a blank string" do
+          expect(question.show_answer).to eq ""
+        end
+
+        it "returns an empty hash for show_answer_in_csv" do
+          expect(question.show_answer_in_csv).to eq({})
+        end
+      end
+
+      context "when selection has a value" do
+        before do
+          question.selection = %w[something]
+        end
+
+        it "shows the answer" do
+          expect(question.show_answer).to eq(%w[something])
+        end
+
+        it "shows the answer in show_answer_in_csv" do
+          expect(question.show_answer_in_csv).to eq(Hash[question_text, %w[something]])
+        end
       end
     end
   end
