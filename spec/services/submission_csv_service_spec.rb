@@ -4,8 +4,8 @@ RSpec.describe SubmissionCsvService do
   subject(:service) { described_class.new(current_context:, submission_reference:, timestamp:, output_file_path: test_file.path) }
 
   let(:form) { build(:form, id: 1) }
-  let(:first_step) { OpenStruct.new({ question_text: "What is the meaning of life?", show_answer: "42" }) }
-  let(:second_step) { OpenStruct.new({ question_text: "What is your email address?", show_answer: "someone@example.com" }) }
+  let(:first_step) { OpenStruct.new({ show_answer_in_csv: { "What is the meaning of life?": "42" } }) }
+  let(:second_step) { OpenStruct.new({ show_answer_in_csv: { "What is your email address?": "someone@example.com" } }) }
   let(:current_context) { OpenStruct.new(form:, completed_steps: [first_step, second_step], support_details: OpenStruct.new(call_back_url: "http://gov.uk")) }
   let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
   let(:timestamp) do

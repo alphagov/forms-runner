@@ -13,8 +13,8 @@ class SubmissionCsvService
     headers = ["Reference", "Submitted at"]
     values = [@submission_reference, @timestamp.iso8601]
     @current_context.completed_steps.map do |page|
-      headers << page.question_text
-      values << page.show_answer
+      headers.push(*page.show_answer_in_csv.keys)
+      values.push(*page.show_answer_in_csv.values)
     end
 
     CSV.open(@output_file_path, "w") do |csv|

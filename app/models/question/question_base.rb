@@ -29,6 +29,12 @@ module Question
       show_answer
     end
 
+    def show_answer_in_csv
+      return {} if show_answer.blank?
+
+      Hash[question_text, show_answer]
+    end
+
     def is_optional?
       @is_optional == true
     end
