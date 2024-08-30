@@ -25,6 +25,7 @@ export default defineConfig({
     }
   },
   test: {
-    passWithNoTests: true // TODO: remove once this codebase has any javascript tests
+    globals: true,
+    setupFiles: ['test/setup.js']
   }
 })
