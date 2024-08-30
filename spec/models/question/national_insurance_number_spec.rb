@@ -1,7 +1,12 @@
 require "rails_helper"
 
 RSpec.describe Question::NationalInsuranceNumber, type: :model do
-  let(:question) { described_class.new }
+  subject(:question) { described_class.new({}, options) }
+
+  let(:options) { { is_optional:, question_text: } }
+
+  let(:is_optional) { false }
+  let(:question_text) { Faker::Lorem.question }
 
   it_behaves_like "a question model"
 
@@ -20,6 +25,10 @@ RSpec.describe Question::NationalInsuranceNumber, type: :model do
     it "shows an answer if blank" do
       expect(question.show_answer).to eq ""
     end
+
+    it "returns an empty hash for show_answer_in_csv" do
+      expect(question.show_answer_in_csv).to eq({})
+    end
   end
 
   context "when given a correct number" do
@@ -33,6 +42,10 @@ RSpec.describe Question::NationalInsuranceNumber, type: :model do
 
     it "shows answer in correct format" do
       expect(question.show_answer).to eq "JG 12 34 56 C"
+    end
+
+    it "returns the answer in show_answer_in_csv" do
+      expect(question.show_answer_in_csv).to eq(Hash[question_text, "JG 12 34 56 C"])
     end
 
     it "ignores case" do
@@ -54,7 +67,7 @@ RSpec.describe Question::NationalInsuranceNumber, type: :model do
   end
 
   context "when question is optional" do
-    let(:question) { described_class.new({}, { is_optional: true }) }
+    let(:is_optional) { true }
 
     context "when given an empty string or nil" do
       it "returns invalid with blank ni number" do
@@ -71,6 +84,10 @@ RSpec.describe Question::NationalInsuranceNumber, type: :model do
       it "shows an answer if blank" do
         expect(question.show_answer).to eq ""
       end
+
+      it "returns an empty hash for show_answer_in_csv" do
+        expect(question.show_answer_in_csv).to eq({})
+      end
     end
 
     context "when given a correct number" do
@@ -84,6 +101,10 @@ RSpec.describe Question::NationalInsuranceNumber, type: :model do
 
       it "shows answer in correct format" do
         expect(question.show_answer).to eq "JG 12 34 56 C"
+      end
+
+      it "returns the answer in show_answer_in_csv" do
+        expect(question.show_answer_in_csv).to eq(Hash[question_text, "JG 12 34 56 C"])
       end
 
       it "ignores case" do

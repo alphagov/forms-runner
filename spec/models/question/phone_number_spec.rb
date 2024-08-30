@@ -1,7 +1,12 @@
 require "rails_helper"
 
 RSpec.describe Question::PhoneNumber, type: :model do
-  let(:question) { described_class.new }
+  subject(:question) { described_class.new({}, options) }
+
+  let(:options) { { is_optional:, question_text: } }
+
+  let(:is_optional) { false }
+  let(:question_text) { Faker::Lorem.question }
 
   let(:valid_phone_numbers) do
     [
@@ -46,6 +51,14 @@ RSpec.describe Question::PhoneNumber, type: :model do
       expect(question).not_to be_valid
       expect(question.errors[:phone_number]).to include(I18n.t("activemodel.errors.models.question/phone_number.attributes.phone_number.blank"))
     end
+
+    it "shows as a blank string" do
+      expect(question.show_answer).to eq ""
+    end
+
+    it "returns an empty hash for show_answer_in_csv" do
+      expect(question.show_answer_in_csv).to eq({})
+    end
   end
 
   context "when a phone number is valid" do
@@ -54,6 +67,16 @@ RSpec.describe Question::PhoneNumber, type: :model do
         question.phone_number = number
         expect(question).to be_valid
       end
+    end
+
+    it "shows the answer" do
+      question.phone_number = "07123123123"
+      expect(question.show_answer).to eq "07123123123"
+    end
+
+    it "shows the answer in show_answer_in_csv" do
+      question.phone_number = "07123123123"
+      expect(question.show_answer_in_csv).to eq(Hash[question_text, "07123123123"])
     end
   end
 
@@ -76,7 +99,7 @@ RSpec.describe Question::PhoneNumber, type: :model do
   end
 
   context "when question is optional" do
-    let(:question) { described_class.new({}, { is_optional: true }) }
+    let(:is_optional) { true }
 
     context "when a phone number is empty or blank" do
       it "returns valid with blank phone number" do
@@ -89,6 +112,14 @@ RSpec.describe Question::PhoneNumber, type: :model do
         expect(question).to be_valid
         expect(question.errors[:phone_number]).not_to include(I18n.t("activemodel.errors.models.question/phone_number.attributes.phone_number.blank"))
       end
+
+      it "shows as a blank string" do
+        expect(question.show_answer).to eq ""
+      end
+
+      it "returns an empty hash for show_answer_in_csv" do
+        expect(question.show_answer_in_csv).to eq({})
+      end
     end
 
     context "when a phone number is valid" do
@@ -97,6 +128,16 @@ RSpec.describe Question::PhoneNumber, type: :model do
           question.phone_number = number
           expect(question).to be_valid
         end
+      end
+
+      it "shows the answer" do
+        question.phone_number = "07123123123"
+        expect(question.show_answer).to eq "07123123123"
+      end
+
+      it "shows the answer in show_answer_in_csv" do
+        question.phone_number = "07123123123"
+        expect(question.show_answer_in_csv).to eq(Hash[question_text, "07123123123"])
       end
     end
 

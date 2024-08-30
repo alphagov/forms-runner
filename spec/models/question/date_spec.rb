@@ -3,7 +3,10 @@ require "rails_helper"
 RSpec.describe Question::Date, type: :model do
   subject(:question) { described_class.new({}, options) }
 
-  let(:options) { {} }
+  let(:options) { { is_optional:, question_text: } }
+
+  let(:is_optional) { false }
+  let(:question_text) { Faker::Lorem.question }
 
   it_behaves_like "a question model"
 
@@ -21,6 +24,10 @@ RSpec.describe Question::Date, type: :model do
 
     it "shows as a blank string" do
       expect(question.show_answer).to eq ""
+    end
+
+    it "returns an empty hash for show_answer_in_csv" do
+      expect(question.show_answer_in_csv).to eq({})
     end
   end
 
@@ -52,6 +59,10 @@ RSpec.describe Question::Date, type: :model do
     it "is valid" do
       expect(question).to be_valid
     end
+
+    it "returns the whole date as one item in show_answer_in_csv" do
+      expect(question.show_answer_in_csv).to eq(Hash[question_text, "31/12/2021"])
+    end
   end
 
   context "when a date has a day, month or year but it's not a real date" do
@@ -62,6 +73,10 @@ RSpec.describe Question::Date, type: :model do
     it "isn't valid" do
       expect(question).not_to be_valid
       expect(question.errors[:date]).to include(I18n.t("activemodel.errors.models.question/date.attributes.date.invalid_date"))
+    end
+
+    it "returns an empty hash for show_answer_in_csv" do
+      expect(question.show_answer_in_csv).to eq({})
     end
   end
 
@@ -151,7 +166,7 @@ RSpec.describe Question::Date, type: :model do
   end
 
   context "when question is optional" do
-    let(:options) { { is_optional: true } }
+    let(:is_optional) { true }
 
     it "returns valid with blank date" do
       expect(question).to be_valid
@@ -191,6 +206,10 @@ RSpec.describe Question::Date, type: :model do
 
       it "is valid" do
         expect(question).to be_valid
+      end
+
+      it "returns the whole date as one item in show_answer_in_csv" do
+        expect(question.show_answer_in_csv).to eq(Hash[question_text, "31/12/2021"])
       end
     end
 

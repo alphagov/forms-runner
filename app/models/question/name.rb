@@ -50,7 +50,11 @@ module Question
     end
 
     def show_answer_in_email
-      attribute_names.reject { |attribute| has_blank_values?(attribute) }.map { |attribute| generate_string_for_processing_email(attribute) }&.join("\n\n")
+      attributes_with_values.map { |attribute| generate_string_for_processing_email(attribute) }&.join("\n\n")
+    end
+
+    def show_answer_in_csv
+      attributes_with_values.to_h { |attribute| ["#{question_text} - #{friendly_name_for_attribute(attribute)}", send(attribute)] }
     end
 
     def has_blank_values?(attribute)
@@ -63,6 +67,12 @@ module Question
 
     def friendly_name_for_attribute(attribute)
       I18n.t("question/name.label.#{attribute}")
+    end
+
+  private
+
+    def attributes_with_values
+      attribute_names.reject { |attribute| has_blank_values?(attribute) }
     end
   end
 end

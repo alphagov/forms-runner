@@ -1,7 +1,12 @@
 require "rails_helper"
 
 RSpec.describe Question::Number, type: :model do
-  let(:question) { described_class.new }
+  subject(:question) { described_class.new({}, options) }
+
+  let(:options) { { is_optional:, question_text: } }
+
+  let(:is_optional) { false }
+  let(:question_text) { Faker::Lorem.question }
 
   it_behaves_like "a question model"
 
@@ -20,19 +25,45 @@ RSpec.describe Question::Number, type: :model do
     it "shows as a blank string" do
       expect(question.show_answer).to eq ""
     end
+
+    it "returns an empty hash for show_answer_in_csv" do
+      expect(question.show_answer_in_csv).to eq({})
+    end
   end
 
   context "when given a whole number" do
-    it "validates without errors" do
+    before do
       question.number = "299792458"
+    end
+
+    it "validates without errors" do
       expect(question).to be_valid
+    end
+
+    it "shows the answer" do
+      expect(question.show_answer).to eq "299792458"
+    end
+
+    it "shows the answer in show_answer_in_csv" do
+      expect(question.show_answer_in_csv).to eq(Hash[question_text, "299792458"])
     end
   end
 
   context "when given a decimal number" do
-    it "validates without errors" do
+    before do
       question.number = "8.5"
+    end
+
+    it "validates without errors" do
       expect(question).to be_valid
+    end
+
+    it "shows the answer" do
+      expect(question.show_answer).to eq "8.5"
+    end
+
+    it "shows the answer in show_answer_in_csv" do
+      expect(question.show_answer_in_csv).to eq(Hash[question_text, "8.5"])
     end
   end
 
@@ -53,7 +84,7 @@ RSpec.describe Question::Number, type: :model do
   end
 
   context "when question is optional" do
-    let(:question) { described_class.new({}, { is_optional: true }) }
+    let(:is_optional) { true }
 
     context "when given an empty string or nil" do
       it "returns invalid with blank message" do
@@ -70,19 +101,45 @@ RSpec.describe Question::Number, type: :model do
       it "shows as a blank string" do
         expect(question.show_answer).to eq ""
       end
+
+      it "returns an empty hash for show_answer_in_csv" do
+        expect(question.show_answer_in_csv).to eq({})
+      end
     end
 
     context "when given a whole number" do
-      it "validates without errors" do
+      before do
         question.number = "299792458"
+      end
+
+      it "validates without errors" do
         expect(question).to be_valid
+      end
+
+      it "shows the answer" do
+        expect(question.show_answer).to eq "299792458"
+      end
+
+      it "shows the answer in show_answer_in_csv" do
+        expect(question.show_answer_in_csv).to eq(Hash[question_text, "299792458"])
       end
     end
 
     context "when given a decimal number" do
-      it "validates without errors" do
+      before do
         question.number = "8.5"
+      end
+
+      it "validates without errors" do
         expect(question).to be_valid
+      end
+
+      it "shows the answer" do
+        expect(question.show_answer).to eq "8.5"
+      end
+
+      it "shows the answer in show_answer_in_csv" do
+        expect(question.show_answer_in_csv).to eq(Hash[question_text, "8.5"])
       end
     end
 

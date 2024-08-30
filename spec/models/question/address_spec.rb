@@ -3,12 +3,13 @@ require "rails_helper"
 RSpec.describe Question::Address, type: :model do
   subject(:question) { described_class.new({}, options) }
 
-  let(:options) { { is_optional:, answer_settings: } }
+  let(:options) { { is_optional:, answer_settings:, question_text: } }
   let(:answer_settings) { OpenStruct.new({ input_type: }) }
   let(:input_type) { OpenStruct.new({ international_address:, uk_address: }) }
   let(:is_optional) { false }
   let(:international_address) { "false" }
   let(:uk_address) { "true" }
+  let(:question_text) { Faker::Lorem.question }
 
   it_behaves_like "a question model"
 
@@ -32,6 +33,10 @@ RSpec.describe Question::Address, type: :model do
       it "returns \"\" for show_answer" do
         expect(question.show_answer).to eq ""
       end
+
+      it "returns an empty hash for show_answer_in_csv" do
+        expect(question.show_answer_in_csv).to eq({})
+      end
     end
 
     context "when an address has all mandatory fields filled" do
@@ -49,6 +54,10 @@ RSpec.describe Question::Address, type: :model do
 
       it "prints correct details" do
         expect(question.show_answer).to eq "The mews, Leeds, LS1 1AF"
+      end
+
+      it "returns the whole address as one item in show_answer_in_csv" do
+        expect(question.show_answer_in_csv).to eq(Hash[question_text, "The mews, Leeds, LS1 1AF"])
       end
     end
 
@@ -94,6 +103,10 @@ RSpec.describe Question::Address, type: :model do
         it "returns \"\" for show_answer" do
           expect(question.show_answer).to eq ""
         end
+
+        it "returns an empty hash for show_answer_in_csv" do
+          expect(question.show_answer_in_csv).to eq({})
+        end
       end
 
       context "when an address has all mandatory fields filled" do
@@ -111,6 +124,10 @@ RSpec.describe Question::Address, type: :model do
 
         it "prints correct details" do
           expect(question.show_answer).to eq "The mews, Leeds, LS1 1AF"
+        end
+
+        it "returns the whole address as one item in show_answer_in_csv" do
+          expect(question.show_answer_in_csv).to eq(Hash[question_text, "The mews, Leeds, LS1 1AF"])
         end
       end
 
@@ -145,6 +162,10 @@ RSpec.describe Question::Address, type: :model do
       it "returns \"\" for show_answer" do
         expect(question.show_answer).to eq ""
       end
+
+      it "returns an empty hash for show_answer_in_csv" do
+        expect(question.show_answer_in_csv).to eq({})
+      end
     end
 
     context "when an address has all mandatory fields filled" do
@@ -159,6 +180,10 @@ RSpec.describe Question::Address, type: :model do
 
       it "prints correct details" do
         expect(question.show_answer).to eq "Laskerstraße 5, 10245 Berlin, Germany"
+      end
+
+      it "returns the whole address as one item in show_answer_in_csv" do
+        expect(question.show_answer_in_csv).to eq(Hash[question_text, "Laskerstraße 5, 10245 Berlin, Germany"])
       end
     end
 
@@ -188,6 +213,10 @@ RSpec.describe Question::Address, type: :model do
         it "returns \"\" for show_answer" do
           expect(question.show_answer).to eq ""
         end
+
+        it "returns an empty hash for show_answer_in_csv" do
+          expect(question.show_answer_in_csv).to eq({})
+        end
       end
 
       context "when an address has all mandatory fields filled" do
@@ -202,6 +231,10 @@ RSpec.describe Question::Address, type: :model do
 
         it "prints correct details" do
           expect(question.show_answer).to eq "Laskerstraße 5, 10245 Berlin, Germany"
+        end
+
+        it "returns the whole address as one item in show_answer_in_csv" do
+          expect(question.show_answer_in_csv).to eq(Hash[question_text, "Laskerstraße 5, 10245 Berlin, Germany"])
         end
       end
     end

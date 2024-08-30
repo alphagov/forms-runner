@@ -1,7 +1,12 @@
 require "rails_helper"
 
 RSpec.describe Question::Email, type: :model do
-  let(:question) { described_class.new }
+  subject(:question) { described_class.new({}, options) }
+
+  let(:options) { { is_optional:, question_text: } }
+
+  let(:is_optional) { false }
+  let(:question_text) { Faker::Lorem.question }
 
   it_behaves_like "a question model"
 
@@ -21,12 +26,27 @@ RSpec.describe Question::Email, type: :model do
     it "shows as a blank string" do
       expect(question.show_answer).to eq ""
     end
+
+    it "returns an empty hash for show_answer_in_csv" do
+      expect(question.show_answer_in_csv).to eq({})
+    end
   end
 
   context "when given a string with an @ symbol in" do
-    it "validates" do
+    before do
       question.email = " @ "
+    end
+
+    it "validates" do
       expect(question).to be_valid
+    end
+
+    it "is included in show_answer" do
+      expect(question.show_answer).to eq " @ "
+    end
+
+    it "returns the email address in show_answer_in_csv" do
+      expect(question.show_answer_in_csv).to eq(Hash[question_text, " @ "])
     end
   end
 
@@ -39,7 +59,7 @@ RSpec.describe Question::Email, type: :model do
   end
 
   context "when question is optional" do
-    let(:question) { described_class.new({}, { is_optional: true }) }
+    let(:is_optional) { true }
 
     it "returns valid with blank email" do
       expect(question).to be_valid
@@ -57,10 +77,25 @@ RSpec.describe Question::Email, type: :model do
       expect(question.show_answer).to eq ""
     end
 
+    it "returns an empty hash for show_answer_in_csv" do
+      expect(question.show_answer_in_csv).to eq({})
+    end
+
     context "when given a string with an @ symbol in" do
-      it "validates" do
+      before do
         question.email = " @ "
+      end
+
+      it "validates" do
         expect(question).to be_valid
+      end
+
+      it "is included in show_answer" do
+        expect(question.show_answer).to eq " @ "
+      end
+
+      it "returns the email address in show_answer_in_csv" do
+        expect(question.show_answer_in_csv).to eq(Hash[question_text, " @ "])
       end
     end
 
