@@ -130,7 +130,15 @@ en:
     back: Back
     remove_answer:
       show:
-        radios_legend: Remove answer
+        address_heading: Remove an address
+        address_radios_legend: Are you sure you want to remove this address?
+        long_answer_heading: Remove an answer
+        long_radios_legend: Are you sure you want to remove this answer?
+        national_insurance_number_heading: Remove National Insurance number
+        national_insurance_number_radios_legend: Are you sure you want to remove this National Inusrance number
+        phone_number_heading: Remove phone number
+        phone_number_radios_legend: Are you sure you want to remove this phone number?
+        short_answer_legend: Are you sure you want to remove ‘%{answer_text}‘?
   helpers:
     hint:
       email_confirmation_input:
