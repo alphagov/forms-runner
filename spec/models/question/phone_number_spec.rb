@@ -8,13 +8,21 @@ RSpec.describe Question::PhoneNumber, type: :model do
   let(:is_optional) { false }
   let(:question_text) { Faker::Lorem.question }
 
-  let(:valid_phone_numbers) do
+  let(:valid_numeric_phone_numbers) do
+    %w[
+      07123123123
+      457123123123
+      07123123
+      071231231231231
+    ]
+  end
+
+  let(:valid_non_numeric_phone_numbers) do
     [
       "+447123 123 123",
       "+407123 123 123",
       "+1 7123 123 123",
       "+447123123123",
-      "07123123123",
       "01234 123 123 --()+ ",
       "01234 123 123 ext 123",
       "01234 123 123 x123",
@@ -36,6 +44,10 @@ RSpec.describe Question::PhoneNumber, type: :model do
       "1234 123 1234  ext 123",
       "+44(0)123 12 12345",
     ]
+  end
+
+  let(:valid_phone_numbers) do
+    valid_numeric_phone_numbers.concat(valid_non_numeric_phone_numbers)
   end
 
   it_behaves_like "a question model"
@@ -74,9 +86,34 @@ RSpec.describe Question::PhoneNumber, type: :model do
       expect(question.show_answer).to eq "07123123123"
     end
 
-    it "shows the answer in show_answer_in_csv" do
-      question.phone_number = "07123123123"
-      expect(question.show_answer_in_csv).to eq(Hash[question_text, "07123123123"])
+    context "when the phone number has only numeric characters and begins with 0" do
+      it "show_answer_in_csv adds a space after the 5th digit" do
+        question.phone_number = "07123123123"
+        expect(question.show_answer_in_csv).to eq(Hash[question_text, "07123 123123"])
+      end
+    end
+
+    context "when the phone number has only numeric characters and does not begin with 0" do
+      it "show_answer_in_csv adds a space after the 5th digit" do
+        question.phone_number = "457123123123"
+        expect(question.show_answer_in_csv).to eq(Hash[question_text, "457123123123"])
+      end
+    end
+
+    context "when the phone number already has a space before the 5th digit" do
+      it "show_answer_in_csv does not add an extra space" do
+        question.phone_number = "0712 3123123"
+        expect(question.show_answer_in_csv).to eq(Hash[question_text, "0712 3123123"])
+      end
+    end
+
+    context "when the phone number has at least one non-numeric character" do
+      it "show_answer_in_csv returns the number as it was entered" do
+        valid_non_numeric_phone_numbers.each do |phone_number|
+          question.phone_number = phone_number
+          expect(question.show_answer_in_csv).to eq(Hash[question_text, phone_number])
+        end
+      end
     end
   end
 
@@ -135,9 +172,34 @@ RSpec.describe Question::PhoneNumber, type: :model do
         expect(question.show_answer).to eq "07123123123"
       end
 
-      it "shows the answer in show_answer_in_csv" do
-        question.phone_number = "07123123123"
-        expect(question.show_answer_in_csv).to eq(Hash[question_text, "07123123123"])
+      context "when the phone number has only numeric characters and begins with 0" do
+        it "show_answer_in_csv adds a space after the 5th digit" do
+          question.phone_number = "07123123123"
+          expect(question.show_answer_in_csv).to eq(Hash[question_text, "07123 123123"])
+        end
+      end
+
+      context "when the phone number has only numeric characters and does not begin with 0" do
+        it "show_answer_in_csv adds a space after the 5th digit" do
+          question.phone_number = "457123123123"
+          expect(question.show_answer_in_csv).to eq(Hash[question_text, "457123123123"])
+        end
+      end
+
+      context "when the phone number already has a space before the 5th digit" do
+        it "show_answer_in_csv does not add an extra space" do
+          question.phone_number = "0712 3123123"
+          expect(question.show_answer_in_csv).to eq(Hash[question_text, "0712 3123123"])
+        end
+      end
+
+      context "when the phone number has at least one non-numeric character" do
+        it "show_answer_in_csv returns the number as it was entered" do
+          valid_non_numeric_phone_numbers.each do |phone_number|
+            question.phone_number = phone_number
+            expect(question.show_answer_in_csv).to eq(Hash[question_text, phone_number])
+          end
+        end
       end
     end
 
