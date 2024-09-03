@@ -3,6 +3,10 @@ en:
   activemodel:
     errors:
       models:
+        remove_answer_input:
+          attributes:
+            remove_answer:
+              blank: You must select an option
         add_another_answer_input:
           attributes:
             add_another_answer:
