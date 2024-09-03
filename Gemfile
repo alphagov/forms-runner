@@ -61,6 +61,8 @@ gem "aws-sdk-codepipeline", "~> 1.78"
 # For sending submissions as CSV
 gem "csv"
 
+gem "net-sftp"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[mri mingw x64_mingw]

@@ -87,7 +87,10 @@ private
         timestamp: @timestamp,
         output_file_path: file.path,
       ).write
-      deliver_submission_email(file)
+      mail = deliver_submission_email(file)
+      Rails.logger.info("Attempting to upload submission to S3")
+      SftpService.new.upload(file.path, @form.id, @timestamp, @submission_reference)
+      mail
     end
   end
 
