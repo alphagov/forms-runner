@@ -4,11 +4,11 @@ module Forms
       @remove_answer_input = RemoveAnswerInput.new
     end
 
-    def create
+    def delete
       @remove_answer_input = RemoveAnswerInput.new(remove_answer_input_params)
 
       if @remove_answer_input.invalid?
-        return render :show
+        return render :show, status: :unprocessable_entity
       end
 
       if @remove_answer_input.remove_answer?
