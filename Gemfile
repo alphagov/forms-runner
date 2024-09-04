@@ -62,6 +62,8 @@ gem "aws-sdk-codepipeline", "~> 1.78"
 gem "csv"
 
 gem "net-sftp"
+gem "ed25519"
+gem "bcrypt_pbkdf"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
