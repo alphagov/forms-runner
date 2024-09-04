@@ -102,6 +102,7 @@ private
 
   def add_blank_answer
     questions << @question.dup
+
     questions[answer_index - 1]
   end
 end

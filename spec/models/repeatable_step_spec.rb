@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe RepeatableStep, type: :model do
   subject(:repeatable_step) { described_class.new(question:, page:, form_id: 1, form_slug: "form-slug", next_page_slug: 2, page_slug: page.id) }
 
-  let(:question) { build :name }
+  let(:question) { build :name, is_optional: false }
   let(:page) { build :page }
 
   describe "#repeatable?" do
@@ -152,6 +152,83 @@ RSpec.describe RepeatableStep, type: :model do
 
     it "returns an ordered list of answers" do
       expect(repeatable_step.show_answer_in_email).to eq("1. first answer\n\n2. second answer")
+    end
+  end
+
+  describe "#remove_answer" do
+    let(:questions) { [first_question, second_question] }
+    let(:first_question) { OpenStruct.new({ show_answer_in_email: "first answer" }) }
+    let(:second_question) { OpenStruct.new({ show_answer_in_email: "second answer" }) }
+
+    before { repeatable_step.questions = questions }
+
+    it "removes a question at the given answer index - 1" do
+      repeatable_step.remove_answer(2)
+      expect(repeatable_step.questions).to eq([first_question])
+    end
+
+    context "when removing an answer leaves questions empty" do
+      let(:questions) { [first_question] }
+
+      before { repeatable_step.answer_index = 1 }
+
+      it "adds a blank answer" do
+        repeatable_step.remove_answer(1)
+        expect(repeatable_step.questions.first.question_text).to eq(question.question_text)
+      end
+    end
+  end
+
+  describe "#valid?" do
+    let(:questions) { [first_question, second_question] }
+    let(:first_question) { OpenStruct.new({ valid?: true }) }
+    let(:second_question) { OpenStruct.new({ valid?: true }) }
+
+    before { repeatable_step.questions = questions }
+
+    context "when all questions are valid" do
+      it "returns true" do
+        expect(repeatable_step).to be_valid
+      end
+    end
+
+    context "when a questions is not valid" do
+      let(:second_question) { OpenStruct.new({ valid?: false }) }
+
+      it "returns true" do
+        expect(repeatable_step).not_to be_valid
+      end
+    end
+  end
+
+  describe "#min_answers?" do
+    before { repeatable_step.questions = questions }
+
+    context "when there is one value in questions" do
+      let(:questions) { [first_question] }
+      let(:first_question) { OpenStruct.new }
+
+      it "returns true" do
+        expect(repeatable_step).to be_min_answers
+      end
+
+      context "when the question is optional" do
+        let(:question) { build :name, is_optional: true }
+
+        it "returns false" do
+          expect(repeatable_step).not_to be_min_answers
+        end
+      end
+    end
+
+    context "when there are at least two values in questions" do
+      let(:questions) { [first_question, second_question] }
+      let(:first_question) { OpenStruct.new }
+      let(:second_question) { OpenStruct.new }
+
+      it "returns true" do
+        expect(repeatable_step).not_to be_min_answers
+      end
     end
   end
 end
