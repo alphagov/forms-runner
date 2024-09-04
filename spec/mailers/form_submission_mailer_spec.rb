@@ -80,7 +80,27 @@ describe FormSubmissionMailer, type: :mailer do
 
       it "calls Notify library to prepare the file upload" do
         mail.message
-        expect(Notifications).to have_received(:prepare_upload).with(test_file, filename: "govuk_forms_submission_form_1_#{submission_reference}.csv", retention_period: "1 week")
+        expect(Notifications).to have_received(:prepare_upload).with(test_file, filename: "govuk_forms_form_1_#{submission_reference}.csv", retention_period: "1 week")
+      end
+
+      context "when there is a long form name that would cause the filename to be longer than 100 characters" do
+        let(:title) { "A form name that will cause the filename to be truncated to obey the limittt" }
+
+        it "truncates the form name in the filename" do
+          mail.message
+          expected_filename = "govuk_forms_a_form_name_that_will_cause_the_filename_to_be_truncated_to_obey_the_#{submission_reference}.csv"
+          expect(Notifications).to have_received(:prepare_upload).with(test_file, filename: expected_filename, retention_period: "1 week")
+        end
+      end
+
+      context "when the form name would cause the filename to be exactly 100 characters long" do
+        let(:title) { "A form name that will cause the filename to be 100 characters long exactlyy" }
+
+        it "does not truncate the form name in the filename" do
+          mail.message
+          expected_filename = "govuk_forms_a_form_name_that_will_cause_the_filename_to_be_100_characters_long_exactlyy_#{submission_reference}.csv"
+          expect(Notifications).to have_received(:prepare_upload).with(test_file, filename: expected_filename, retention_period: "1 week")
+        end
       end
 
       it "includes the link_to_file in the personalisation" do
