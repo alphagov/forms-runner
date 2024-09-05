@@ -1,4 +1,8 @@
 class FormSubmissionMailer < GovukNotifyRails::Mailer
+  NOTIFY_MAX_FILENAME_LENGTH = 100
+  CSV_EXTENSION = ".csv".freeze
+  CSV_FILENAME_PREFIX = "govuk_forms_".freeze
+
   def email_confirmation_input(text_input:, notify_response_id:, submission_email:, mailer_options:, csv_file: nil)
     set_template(Settings.govuk_notify.form_submission_email_template_id)
 
@@ -36,8 +40,13 @@ private
   end
 
   def csv_filename(mailer_options)
-    title_part = mailer_options.title.parameterize(separator: "_")
-    reference = mailer_options.submission_reference
-    "govuk_forms_submission_#{title_part}_#{reference}.csv"
+    reference_part = "_#{mailer_options.submission_reference}"
+
+    title_part_max_length = NOTIFY_MAX_FILENAME_LENGTH - CSV_EXTENSION.length - CSV_FILENAME_PREFIX.length - reference_part.length
+
+    title_part = mailer_options.title
+                               .parameterize(separator: "_")
+                               .truncate(title_part_max_length, separator: "_", omission: "")
+    "#{CSV_FILENAME_PREFIX}#{title_part}#{reference_part}#{CSV_EXTENSION}"
   end
 end
