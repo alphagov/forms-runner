@@ -3,10 +3,6 @@ en:
   activemodel:
     errors:
       models:
-        remove_answer_input:
-          attributes:
-            remove_answer:
-              blank: You must select an option
         add_another_answer_input:
           attributes:
             add_another_answer:
@@ -89,6 +85,10 @@ en:
               blank: Enter an answer
               long_text_too_long: The answer must be shorter than 5000 characters
               single_line_too_long: The answer must be shorter than 500 characters
+        remove_answer_input:
+          attributes:
+            remove_answer:
+              blank: You must select an option
   cookie_banner:
     accept: Accept analytics cookies
     content: We’d like to use analytics cookies so we can understand how you use this website and make improvements.

@@ -55,6 +55,12 @@ RSpec.describe Forms::AddAnotherAnswerController, type: :request do
       expect(assigns(:rows).count).to eq 2
     end
 
+    it "adds the change and remove links to each row" do
+      get "/preview-draft/#{form.id}/#{form.form_slug}/#{first_page_in_form.id}/add-another-answer"
+      expect(assigns(:rows).first[:actions].first[:text]).to eq("Change")
+      expect(assigns(:rows).first[:actions].second[:text]).to eq("Remove")
+    end
+
     it "initializes @add_another_answer_input" do
       get "/preview-draft/#{form.id}/#{form.form_slug}/#{first_page_in_form.id}/add-another-answer"
       expect(assigns(:add_another_answer_input)).to be_a(AddAnotherAnswerInput)
