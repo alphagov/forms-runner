@@ -40,19 +40,13 @@ private
       raise StandardError, "Form id(#{@form.id}) is missing a submission email address"
     end
 
-    csv_attached = false
     unless @form.submission_email.blank? && @preview_mode
-      mail = if FeatureService.enabled?("csv_submission", @form)
-               csv_attached = true
-               deliver_submission_email_with_csv_attachment
-             else
-               deliver_submission_email
-             end
-
-      CurrentLoggingAttributes.submission_email_id = mail.govuk_notify_response.id
+      if FeatureService.enabled?("csv_submission", @form)
+        deliver_submission_email_with_csv_attachment_with_fallback
+      else
+        deliver_submission_email
+      end
     end
-
-    LogEventService.log_submit(@current_context, requested_email_confirmation: @requested_email_confirmation, preview: @preview_mode, csv_attached:)
   end
 
   def submit_confirmation_email_to_user
@@ -71,12 +65,28 @@ private
   end
 
   def deliver_submission_email(csv_file = nil)
-    FormSubmissionMailer
-      .email_confirmation_input(text_input: email_body,
-                                notify_response_id: @email_confirmation_input.submission_email_reference,
-                                submission_email: @form.submission_email,
-                                mailer_options: @mailer_options,
-                                csv_file:).deliver_now
+    mail = FormSubmissionMailer
+             .email_confirmation_input(text_input: email_body,
+                                       notify_response_id: @email_confirmation_input.submission_email_reference,
+                                       submission_email: @form.submission_email,
+                                       mailer_options: @mailer_options,
+                                       csv_file:).deliver_now
+
+    CurrentLoggingAttributes.submission_email_id = mail.govuk_notify_response.id
+    LogEventService.log_submit(@current_context,
+                               requested_email_confirmation: @requested_email_confirmation,
+                               preview: @preview_mode,
+                               csv_attached: csv_file.present?)
+  end
+
+  def deliver_submission_email_with_csv_attachment_with_fallback
+    deliver_submission_email_with_csv_attachment
+  rescue Notifications::Client::BadRequestError => e
+    Sentry.capture_exception(e)
+    Rails.logger.error("Error when attempting to send submission email with CSV attachment, retrying without attachment", {
+      rescued_exception: [e.class.name, e.message],
+    })
+    deliver_submission_email
   end
 
   def deliver_submission_email_with_csv_attachment

@@ -135,6 +135,54 @@ RSpec.describe FormSubmissionService do
             csv_attached: true,
           )
         end
+
+        context "when Notify returns a bad request response when CSV file is attached" do
+          let(:notify_exception) { Notifications::Client::BadRequestError.new(OpenStruct.new(code: 400, body: "Bad file")) }
+
+          before do
+            delivery = double
+
+            allow(delivery).to receive(:deliver_now).with(no_args).and_raise(notify_exception)
+
+            allow(FormSubmissionMailer).to receive(:email_confirmation_input).with(hash_including(csv_file: instance_of(File))).and_return delivery
+            allow(FormSubmissionMailer).to receive(:email_confirmation_input).with(hash_including(csv_file: nil)).and_call_original
+
+            allow(Sentry).to receive(:capture_exception)
+            allow(Rails.logger).to receive(:error)
+            allow(LogEventService).to receive(:log_submit).once
+
+            service.submit
+          end
+
+          it "tries to send the email again without attaching a file" do
+            expect(FormSubmissionMailer).to have_received(:email_confirmation_input).with(
+              hash_including(csv_file: instance_of(File)),
+            ).once
+            expect(FormSubmissionMailer).to have_received(:email_confirmation_input).with(
+              hash_including(csv_file: nil),
+            ).once
+          end
+
+          it "sends the exception to Sentry" do
+            expect(Sentry).to have_received(:capture_exception).with(notify_exception)
+          end
+
+          it "logs the error" do
+            expect(Rails.logger).to have_received(:error).with(
+              "Error when attempting to send submission email with CSV attachment, retrying without attachment",
+              rescued_exception: ["Notifications::Client::BadRequestError", "Bad file"],
+            )
+          end
+
+          it "logs submission with csv_attached: false" do
+            expect(LogEventService).to have_received(:log_submit).with(
+              current_context,
+              requested_email_confirmation: true,
+              preview: false,
+              csv_attached: false,
+            )
+          end
+        end
       end
 
       describe "validations" do
