@@ -196,9 +196,6 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
       context "with all questions answered and valid" do
         before do
-          post save_form_page_path(mode: "form", form_id: 2, form_slug: "form-1", page_slug: 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
-          post save_form_page_path(mode: "form", form_id: 2, form_slug: "form-1", page_slug: 2), params: { question: { text: "answer text" }, changing_existing_answer: false }
-
           allow(EventLogger).to receive(:log_form_event).at_least(:once)
 
           get check_your_answers_path(mode: "form", form_id: 2, form_slug: form_data.form_slug)
