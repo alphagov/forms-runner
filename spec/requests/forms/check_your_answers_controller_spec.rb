@@ -121,10 +121,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       end
     end
 
-    context "with preview mode on" do
-      let(:api_url_suffix) { "/draft" }
-      let(:mode) { "preview-draft" }
-
+    shared_examples "for redirecting if the form is incomplete" do
       context "without any questions answered" do
         let(:store) do
           {
@@ -138,6 +135,13 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
           expect(response.location).to eq(form_page_url(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1))
         end
       end
+    end
+
+    context "with preview mode on" do
+      let(:api_url_suffix) { "/draft" }
+      let(:mode) { "preview-draft" }
+
+      include_examples "for redirecting if the form is incomplete"
 
       context "with all questions answered and valid" do
         before do
@@ -185,19 +189,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       let(:api_url_suffix) { "/live" }
       let(:mode) { "form" }
 
-      context "without any questions answered" do
-        let(:store) do
-          {
-            answers: {},
-          }
-        end
-
-        it "redirects to first incomplete page of form" do
-          get check_your_answers_path(mode:, form_id: 2, form_slug: form_data.form_slug)
-          expect(response).to have_http_status(:found)
-          expect(response.location).to eq(form_page_url(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1))
-        end
-      end
+      include_examples "for redirecting if the form is incomplete"
 
       context "with all questions answered and valid" do
         before do
