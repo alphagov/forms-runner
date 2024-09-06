@@ -276,6 +276,11 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
             expect(response.body)
               .to include "Not completed"
           end
+
+          it "contains a change link to the question page" do
+            expect(response.body)
+              .to include(form_change_answer_path(2, form_data.form_slug, 3))
+          end
         end
       end
     end
