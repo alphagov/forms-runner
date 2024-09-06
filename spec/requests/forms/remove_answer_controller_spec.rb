@@ -59,10 +59,10 @@ RSpec.describe Forms::RemoveAnswerController, type: :request do
     end
   end
 
-  describe "POST #delete" do
+  describe "DELETE #delete" do
     context "with valid params" do
       it "redirects to add another answer" do
-        post "/preview-draft/#{form.id}/#{form.form_slug}/#{first_page_in_form.id}/1/remove", params: { remove_answer_input: { remove_answer: } }
+        delete "/preview-draft/#{form.id}/#{form.form_slug}/#{first_page_in_form.id}/1/remove", params: { remove_answer_input: { remove_answer: } }
         expect(response).to redirect_to("/preview-draft/#{form.id}/#{form.form_slug}/#{first_page_in_form.id}/add-another-answer")
       end
 
@@ -70,7 +70,7 @@ RSpec.describe Forms::RemoveAnswerController, type: :request do
         let(:remove_answer) { "no" }
 
         it "redirects to add another answer" do
-          post "/preview-draft/#{form.id}/#{form.form_slug}/#{first_page_in_form.id}/1/remove", params: { remove_answer_input: { remove_answer: } }
+          delete "/preview-draft/#{form.id}/#{form.form_slug}/#{first_page_in_form.id}/1/remove", params: { remove_answer_input: { remove_answer: } }
           expect(response).to redirect_to("/preview-draft/#{form.id}/#{form.form_slug}/#{first_page_in_form.id}/add-another-answer")
         end
       end
@@ -80,7 +80,7 @@ RSpec.describe Forms::RemoveAnswerController, type: :request do
       let(:remove_answer) { "invalid" }
 
       it "renders the show template" do
-        post "/preview-draft/#{form.id}/#{form.form_slug}/#{first_page_in_form.id}/1/remove", params: { remove_answer_input: { remove_answer: } }
+        delete "/preview-draft/#{form.id}/#{form.form_slug}/#{first_page_in_form.id}/1/remove", params: { remove_answer_input: { remove_answer: } }
         expect(response).to render_template(:show)
         expect(response).to have_http_status(:unprocessable_entity)
       end
@@ -91,7 +91,7 @@ RSpec.describe Forms::RemoveAnswerController, type: :request do
       let(:is_optional) { true }
 
       it "redirects to the next question page" do
-        post "/preview-draft/#{form.id}/#{form.form_slug}/#{first_page_in_form.id}/1/remove", params: { remove_answer_input: { remove_answer: } }
+        delete "/preview-draft/#{form.id}/#{form.form_slug}/#{first_page_in_form.id}/1/remove", params: { remove_answer_input: { remove_answer: } }
         expect(response).to redirect_to("/preview-draft/#{form.id}/#{form.form_slug}/#{first_page_in_form.id}")
       end
     end

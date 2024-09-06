@@ -54,9 +54,9 @@ Rails.application.routes.draw do
       get "/:page_slug/:answer_index/remove" => "forms/remove_answer#show",
           as: :form_remove_answer,
           constraints: page_constraints.merge(answer_constraints)
-      post "/:page_slug/:answer_index/remove" => "forms/remove_answer#delete",
-           as: :delete_form_remove_answer,
-           constraints: page_constraints.merge(answer_constraints)
+      delete "/:page_slug/:answer_index/remove" => "forms/remove_answer#delete",
+             as: :delete_form_remove_answer,
+             constraints: page_constraints.merge(answer_constraints)
 
       get "/repeat-submission" => "forms/base#error_repeat_submission", as: :error_repeat_submission, via: :all
     end
