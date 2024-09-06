@@ -154,6 +154,68 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         expect(response.body).to include(form_change_answer_path(2, form_data.form_slug, 1))
         expect(response.body).to include(form_change_answer_path(2, form_data.form_slug, 2))
       end
+
+      context "when the form has a question that can be answered more than once" do
+        let(:pages_data) do
+          [
+            {
+              id: 1,
+              position: 1,
+              question_text: "Question one",
+              answer_type: "date",
+              next_page: 2,
+              is_optional: nil,
+            },
+            {
+              id: 2,
+              position: 2,
+              question_text: "Question two",
+              answer_type: "date",
+              next_page: 3,
+              is_optional: nil,
+            },
+            {
+              id: 3,
+              position: 3,
+              question_text: "Question three",
+              answer_type: "date",
+              is_optional: nil,
+              is_repeatable: true,
+            },
+          ]
+        end
+
+        let(:store) do
+          {
+            answers: {
+              "2" => {
+                "1" => {
+                  "date_year" => "2000",
+                  "date_month" => "1",
+                  "date_day" => "1",
+                },
+                "2" => {
+                  "date_year" => "2023",
+                  "date_month" => "6",
+                  "date_day" => "9",
+                },
+                "3" => [
+                  {
+                    "date_year" => "2024",
+                    "date_month" => "9",
+                    "date_day" => "6",
+                  },
+                ],
+              },
+            },
+          }
+        end
+
+        it "contains a change link to the add another answer page" do
+          expect(response.body)
+            .to include(change_add_another_answer_path(2, form_data.form_slug, 3))
+        end
+      end
     end
 
     context "with preview mode on" do
