@@ -137,6 +137,25 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       end
     end
 
+    shared_examples "check your answers page" do
+      it "returns 'ok' status code" do
+        expect(response).to have_http_status(:ok)
+      end
+
+      it "Displays a back link to the last page of the form" do
+        expect(response.body).to include(form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2))
+      end
+
+      it "Returns the correct X-Robots-Tag header" do
+        expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
+      end
+
+      it "Contains a change link for each page" do
+        expect(response.body).to include(form_change_answer_path(2, form_data.form_slug, 1))
+        expect(response.body).to include(form_change_answer_path(2, form_data.form_slug, 2))
+      end
+    end
+
     context "with preview mode on" do
       let(:api_url_suffix) { "/draft" }
       let(:mode) { "preview-draft" }
@@ -149,22 +168,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
           get check_your_answers_path(mode:, form_id: 2, form_slug: form_data.form_slug)
         end
 
-        it "returns 'ok' status code" do
-          expect(response).to have_http_status(:ok)
-        end
-
-        it "Displays a back link to the last page of the form" do
-          expect(response.body).to include(form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2))
-        end
-
-        it "Returns the correct X-Robots-Tag header" do
-          expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
-        end
-
-        it "Contains a change link for each page" do
-          expect(response.body).to include(form_change_answer_path(2, form_data.form_slug, 1))
-          expect(response.body).to include(form_change_answer_path(2, form_data.form_slug, 2))
-        end
+        it_behaves_like "check your answers page"
 
         it "does not log the form_check_answers event" do
           expect(EventLogger).not_to have_received(:log)
@@ -197,22 +201,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
           get check_your_answers_path(mode:, form_id: 2, form_slug: form_data.form_slug)
         end
 
-        it "returns 'ok' status code" do
-          expect(response).to have_http_status(:ok)
-        end
-
-        it "Displays a back link to the last page of the form" do
-          expect(response.body).to include(form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2))
-        end
-
-        it "Returns the correct X-Robots-Tag header" do
-          expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
-        end
-
-        it "Contains a change link for each page" do
-          expect(response.body).to include(form_change_answer_path(2, form_data.form_slug, 1))
-          expect(response.body).to include(form_change_answer_path(2, form_data.form_slug, 2))
-        end
+        it_behaves_like "check your answers page"
 
         it "Logs the form_check_answers event" do
           expect(EventLogger).to have_received(:log_form_event).with("check_answers")
