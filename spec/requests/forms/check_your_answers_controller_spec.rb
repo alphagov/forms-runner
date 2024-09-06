@@ -201,7 +201,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
           get check_your_answers_path(mode: "form", form_id: 2, form_slug: form_data.form_slug)
         end
 
-        it "returns returns 'ok' status code" do
+        it "returns 'ok' status code" do
           expect(response).to have_http_status(:ok)
         end
 
