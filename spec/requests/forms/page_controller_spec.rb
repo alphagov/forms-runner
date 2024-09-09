@@ -383,7 +383,7 @@ RSpec.describe Forms::PageController, type: :request do
       end
 
       context "with the first page" do
-        it "Logs the first_page_save event" do
+        it "does not log the first_page_save event" do
           expect(EventLogger).not_to receive(:log)
           post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: { text: "answer text" } }
         end
@@ -395,7 +395,7 @@ RSpec.describe Forms::PageController, type: :request do
       end
 
       context "with a subsequent page" do
-        it "Logs the page_save event" do
+        it "does not log the page_save event" do
           expect(EventLogger).not_to receive(:log)
           post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2), params: { question: { text: "answer text" } }
         end
