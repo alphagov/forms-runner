@@ -314,6 +314,21 @@ RSpec.describe Forms::PageController, type: :request do
       allow_any_instance_of(Flow::Context).to receive(:clear_submission_details)
     end
 
+    shared_examples "for validating answer" do
+      context "when the form is invalid" do
+        before do
+          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: { text: "" }, changing_existing_answer: false }
+        end
+
+        it "renders the show page template" do
+          expect(response).to render_template("forms/page/show")
+        end
+
+        it "returns 422" do
+          expect(response).to have_http_status(:unprocessable_entity)
+        end
+      end
+    end
 
     shared_examples "for redirecting after saving answer" do
       it "Redirects to the next page" do
@@ -340,6 +355,7 @@ RSpec.describe Forms::PageController, type: :request do
       let(:api_url_suffix) { "/draft" }
       let(:mode) { "preview-draft" }
 
+      include_examples "for validating answer"
       include_examples "for redirecting after saving answer"
 
       context "when changing an existing answer" do
@@ -383,26 +399,13 @@ RSpec.describe Forms::PageController, type: :request do
           expect(response).not_to have_http_status(:not_found)
         end
       end
-
-      context "when the form is invalid" do
-        before do
-          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: { text: "" }, changing_existing_answer: false }
-        end
-
-        it "renders the show page template" do
-          expect(response).to render_template("forms/page/show")
-        end
-
-        it "returns 422" do
-          expect(response).to have_http_status(:unprocessable_entity)
-        end
-      end
     end
 
     context "with preview mode off" do
       let(:api_url_suffix) { "/live" }
       let(:mode) { "form" }
 
+      include_examples "for validating answer"
       include_examples "for redirecting after saving answer"
 
       context "when changing an existing answer" do
@@ -441,20 +444,6 @@ RSpec.describe Forms::PageController, type: :request do
             expect(EventLogger).to receive(:log_page_event).with("optional_save", second_page_in_form.question_text, false)
             post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2), params: { question: { text: "answer text" } }
           end
-        end
-      end
-
-      context "when the form is invalid" do
-        before do
-          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: { text: "" }, changing_existing_answer: false }
-        end
-
-        it "renders the show page template" do
-          expect(response).to render_template("forms/page/show")
-        end
-
-        it "returns 422" do
-          expect(response).to have_http_status(:unprocessable_entity)
         end
       end
     end
