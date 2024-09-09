@@ -36,7 +36,7 @@ module Forms
 
     def rows
       @step.questions.map.with_index(1) do |question, answer_index|
-        actions = [{ text: t("forms.add_another_answer.rows.change"), href: form_change_answer_path(@step.form_id, @step.form_slug, @step.page_slug, answer_index:), visually_hidden_text: "" }]
+        actions = [{ text: t("forms.add_another_answer.rows.change"), href: form_change_answer_path(@step.form_id, @step.form_slug, @step.page_slug, answer_index:), visually_hidden_text: "answer #{answer_index}" }]
 
         unless @step.min_answers?
           actions << { text: t("forms.add_another_answer.rows.remove"), href: form_remove_answer_path(@step.form_id, @step.form_slug, @step.page_slug, answer_index:), visually_hidden_text: "answer #{answer_index}" }
