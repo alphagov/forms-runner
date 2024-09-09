@@ -314,10 +314,8 @@ RSpec.describe Forms::PageController, type: :request do
       allow_any_instance_of(Flow::Context).to receive(:clear_submission_details)
     end
 
-    context "with preview mode on" do
-      let(:api_url_suffix) { "/draft" }
-      let(:mode) { "preview-draft" }
 
+    shared_examples "for redirecting after saving answer" do
       it "Redirects to the next page" do
         post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
         expect(response).to redirect_to(form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2))
@@ -328,7 +326,23 @@ RSpec.describe Forms::PageController, type: :request do
           post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1, params: { question: { text: "answer text" }, changing_existing_answer: true })
           expect(response).to redirect_to(check_your_answers_path(2, form_data.form_slug, mode:))
         end
+      end
 
+      context "with the final page" do
+        it "Redirects to the check your answers page" do
+          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2), params: { question: { text: "answer text" } }
+          expect(response).to redirect_to(check_your_answers_path(2, form_data.form_slug, mode:))
+        end
+      end
+    end
+
+    context "with preview mode on" do
+      let(:api_url_suffix) { "/draft" }
+      let(:mode) { "preview-draft" }
+
+      include_examples "for redirecting after saving answer"
+
+      context "when changing an existing answer" do
         it "does not log the change_answer_page_save event" do
           expect(EventLogger).not_to receive(:log)
           post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1, params: { question: { text: "answer text" }, changing_existing_answer: true })
@@ -356,13 +370,6 @@ RSpec.describe Forms::PageController, type: :request do
         it "does not clear the submission reference from the session" do
           expect_any_instance_of(Flow::Context).not_to receive(:clear_submission_details)
           post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2), params: { question: { text: "answer text" } }
-        end
-      end
-
-      context "with the final page" do
-        it "Redirects to the check your answers page" do
-          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2), params: { question: { text: "answer text" } }
-          expect(response).to redirect_to(check_your_answers_path("preview-draft", 2, form_data.form_slug))
         end
       end
 
@@ -396,17 +403,9 @@ RSpec.describe Forms::PageController, type: :request do
       let(:api_url_suffix) { "/live" }
       let(:mode) { "form" }
 
-      it "Redirects to the next page" do
-        post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
-        expect(response).to redirect_to(form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2))
-      end
+      include_examples "for redirecting after saving answer"
 
       context "when changing an existing answer" do
-        it "Redirects to the check your answers page" do
-          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1, params: { question: { text: "answer text" }, changing_existing_answer: true })
-          expect(response).to redirect_to(check_your_answers_path(2, form_data.form_slug, mode:))
-        end
-
         it "Logs the change_answer_page_save event" do
           expect(EventLogger).to receive(:log_page_event).with("change_answer_page_save", first_page_in_form.question_text, nil)
           post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1, params: { question: { text: "answer text" }, changing_existing_answer: true })
@@ -424,13 +423,6 @@ RSpec.describe Forms::PageController, type: :request do
         it "Logs the page_save event" do
           expect(EventLogger).to receive(:log_page_event).with("page_save", second_page_in_form.question_text, nil)
           post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2), params: { question: { text: "answer text" } }
-        end
-      end
-
-      context "with the final page" do
-        it "Redirects to the check your answers page" do
-          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2), params: { question: { text: "answer text" } }
-          expect(response).to redirect_to(check_your_answers_path(2, form_data.form_slug, mode:))
         end
       end
 
