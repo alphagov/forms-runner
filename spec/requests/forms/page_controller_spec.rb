@@ -120,58 +120,62 @@ RSpec.describe Forms::PageController, type: :request do
     end
   end
 
+  shared_examples "question page" do
+    it "Returns a 200" do
+      get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "Returns the correct X-Robots-Tag header" do
+      get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
+      expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
+    end
+
+    it "Displays the question text on the page" do
+      get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
+      expect(response.body).to include(form_data.pages.first.question_text)
+    end
+
+    context "with a page that has a previous page" do
+      it "Displays a link to the previous page" do
+        allow_any_instance_of(Flow::Context).to receive(:can_visit?).and_return(true)
+        allow_any_instance_of(Flow::Context).to receive(:previous_step).and_return(OpenStruct.new(page_id: 1))
+        get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2)
+        expect(response.body).to include(form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1))
+      end
+    end
+
+    context "with a change answers page" do
+      it "Displays a back link to the check your answers page" do
+        get form_change_answer_path(2, form_data.form_slug, 1, mode:)
+        expect(response.body).to include(check_your_answers_path(2, form_data.form_slug, mode:))
+      end
+
+      it "Passes the changing answers parameter in its submit request" do
+        get form_change_answer_path(2, form_data.form_slug, 1, mode:)
+        expect(response.body).to include(save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1, changing_existing_answer: true, answer_index: 1))
+      end
+    end
+
+    context "with no questions answered" do
+      it "redirects if a later page is requested" do
+        get check_your_answers_path(2, form_data.form_slug, mode:)
+        expect(response).to have_http_status(:found)
+        expect(response.location).to eq(form_page_url(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1))
+      end
+    end
+  end
+
   describe "#show" do
     context "with preview mode on" do
       let(:api_url_suffix) { "/draft" }
       let(:mode) { "preview-draft" }
 
-      it "Returns a 200" do
-        get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
-        expect(response).to have_http_status(:ok)
-      end
-
       it_behaves_like "ordered steps"
-
-      it "Displays the question text on the page" do
-        get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
-        expect(response.body).to include(form_data.pages.first.question_text)
-      end
 
       it_behaves_like "page with footer"
 
-      context "with a page that has a previous page" do
-        it "Displays a link to the previous page" do
-          allow_any_instance_of(Flow::Context).to receive(:can_visit?).and_return(true)
-          allow_any_instance_of(Flow::Context).to receive(:previous_step).and_return(OpenStruct.new(page_id: 1))
-          get form_page_path(2, form_data.form_slug, 2, mode:)
-          expect(response.body).to include(form_page_path(2, form_data.form_slug, 1))
-        end
-      end
-
-      context "with a change answers page" do
-        it "Displays a back link to the check your answers page" do
-          get form_change_answer_path(2, form_data.form_slug, 1, mode:)
-          expect(response.body).to include(check_your_answers_path(2, form_data.form_slug, mode:))
-        end
-
-        it "Passes the changing answers parameter in its submit request" do
-          get form_change_answer_path(2, form_data.form_slug, 1, mode:)
-          expect(response.body).to include(save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1, changing_existing_answer: true, answer_index: 1))
-        end
-      end
-
-      it "Returns the correct X-Robots-Tag header" do
-        get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
-        expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
-      end
-
-      context "with no questions answered" do
-        it "redirects if a later page is requested" do
-          get check_your_answers_path(2, form_data.form_slug, mode:)
-          expect(response).to have_http_status(:found)
-          expect(response.location).to eq(form_page_url(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1))
-        end
-      end
+      it_behaves_like "question page"
     end
 
     context "with preview mode off" do
@@ -208,54 +212,11 @@ RSpec.describe Forms::PageController, type: :request do
         end
       end
 
-      it "Returns a 200" do
-        get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
-        expect(response).to have_http_status(:ok)
-      end
-
       it_behaves_like "ordered steps"
-
-      it "Displays the question text on the page" do
-        get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
-        expect(response.body).to include(form_data.pages.first.question_text)
-      end
 
       it_behaves_like "page with footer"
 
-      context "with a page that has a previous page" do
-        it "Displays a link to the previous page" do
-          allow_any_instance_of(Flow::Context).to receive(:can_visit?)
-                                              .and_return(true)
-          allow_any_instance_of(Flow::Context).to receive(:previous_step).and_return(OpenStruct.new(page_id: 1))
-          get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2)
-          expect(response.body).to include(form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1))
-        end
-      end
-
-      context "with a change answers page" do
-        it "Displays a back link to the check your answers page" do
-          get form_change_answer_path(2, form_data.form_slug, 1, mode:)
-          expect(response.body).to include(check_your_answers_path(2, form_data.form_slug, mode:))
-        end
-
-        it "Passes the changing answers parameter in its submit request" do
-          get form_change_answer_path(2, form_data.form_slug, 1, mode:)
-          expect(response.body).to include(save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1, changing_existing_answer: true, answer_index: 1))
-        end
-      end
-
-      it "Returns the correct X-Robots-Tag header" do
-        get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
-        expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
-      end
-
-      context "with no questions answered" do
-        it "redirects if a later page is requested" do
-          get check_your_answers_path(2, form_data.form_slug, mode:)
-          expect(response).to have_http_status(:found)
-          expect(response.location).to eq(form_page_url(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1))
-        end
-      end
+      it_behaves_like "question page"
 
       context "and a form has a live_at value in the future" do
         let(:live_at) { "2023-01-01 09:00:00 +0100" }
