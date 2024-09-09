@@ -96,6 +96,13 @@ RSpec.describe Forms::PageController, type: :request do
     end
   end
 
+  shared_examples "ordered steps" do
+    it "redirects to first page if second request before first complete" do
+      get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2)
+      expect(response).to redirect_to(form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1))
+    end
+  end
+
   shared_examples "page with footer" do
     it "Displays the privacy policy link on the page" do
       get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
@@ -123,10 +130,7 @@ RSpec.describe Forms::PageController, type: :request do
         expect(response).to have_http_status(:ok)
       end
 
-      it "redirects to first page if second request before first complete" do
-        get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2)
-        expect(response).to redirect_to(form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1))
-      end
+      it_behaves_like "ordered steps"
 
       it "Displays the question text on the page" do
         get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
@@ -209,10 +213,7 @@ RSpec.describe Forms::PageController, type: :request do
         expect(response).to have_http_status(:ok)
       end
 
-      it "redirects to first page if second request before first complete" do
-        get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2)
-        expect(response).to redirect_to(form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1))
-      end
+      it_behaves_like "ordered steps"
 
       it "Displays the question text on the page" do
         get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
