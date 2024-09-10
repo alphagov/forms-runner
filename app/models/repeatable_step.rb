@@ -60,11 +60,13 @@ class RepeatableStep < Step
   end
 
   def show_answer
-    if questions.present?
+    answers = questions.map(&:show_answer).compact_blank
+
+    if answers.present?
       content_tag(:ol, class: "govuk-list govuk-list--number") do
         safe_join(
-          questions.map do |question|
-            content_tag(:li, sanitize(question.show_answer))
+          answers.map do |answer|
+            content_tag(:li, sanitize(answer))
           end,
         )
       end

@@ -44,7 +44,7 @@ module Forms
       end
     end
 
-    def repeating?
+    def should_show_add_another?(_step)
       false
     end
 

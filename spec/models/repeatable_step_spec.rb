@@ -133,6 +133,14 @@ RSpec.describe RepeatableStep, type: :model do
     it "returns an ordered list of answers" do
       expect(repeatable_step.show_answer).to eq('<ol class="govuk-list govuk-list--number"><li>first answer</li><li>second answer</li></ol>')
     end
+
+    context "when the question is optional and has been skipped" do
+      let(:questions) { [OpenStruct.new({ show_answer: "" })] }
+
+      it "returns blank" do
+        expect(repeatable_step.show_answer).to be_blank
+      end
+    end
   end
 
   describe "#show_answer_in_email" do

@@ -50,7 +50,7 @@ module Forms
   private
 
     def page_to_row(page)
-      change_link = if page.repeatable?
+      change_link = if page.repeatable? && page.show_answer.present?
                       change_add_another_answer_path(page.form_id, page.form_slug, page.page_id)
                     else
                       form_change_answer_path(page.form_id, page.form_slug, page.page_id)

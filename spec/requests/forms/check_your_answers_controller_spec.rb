@@ -70,6 +70,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
   end
 
   let(:api_url_suffix) { "/live" }
+  let(:mode) { "form" }
 
   let(:frozen_time) { Time.zone.local(2023, 3, 13, 9, 47, 57) }
 
@@ -120,9 +121,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       end
     end
 
-    context "with preview mode on" do
-      let(:api_url_suffix) { "/draft" }
-
+    shared_examples "for redirecting if the form is incomplete" do
       context "without any questions answered" do
         let(:store) do
           {
@@ -131,34 +130,174 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         end
 
         it "redirects to first incomplete page of form" do
-          get check_your_answers_path(mode: "preview-draft", form_id: 2, form_slug: form_data.form_slug)
+          get check_your_answers_path(mode:, form_id: 2, form_slug: form_data.form_slug)
           expect(response).to have_http_status(:found)
-          expect(response.location).to eq(form_page_url(mode: "preview-draft", form_id: 2, form_slug: form_data.form_slug, page_slug: 1))
+          expect(response.location).to eq(form_page_url(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1))
         end
       end
+    end
+
+    shared_examples "check your answers page" do
+      it "returns 'ok' status code" do
+        expect(response).to have_http_status(:ok)
+      end
+
+      it "Displays a back link to the last page of the form" do
+        expect(response.body).to include(form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2))
+      end
+
+      it "Returns the correct X-Robots-Tag header" do
+        expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
+      end
+
+      it "Contains a change link for each page" do
+        expect(response.body).to include(form_change_answer_path(2, form_data.form_slug, 1))
+        expect(response.body).to include(form_change_answer_path(2, form_data.form_slug, 2))
+      end
+
+      context "when the form has a question that can be answered more than once" do
+        let(:pages_data) do
+          [
+            {
+              id: 1,
+              position: 1,
+              question_text: "Question one",
+              answer_type: "date",
+              next_page: 2,
+              is_optional: nil,
+            },
+            {
+              id: 2,
+              position: 2,
+              question_text: "Question two",
+              answer_type: "date",
+              next_page: 3,
+              is_optional: nil,
+            },
+            {
+              id: 3,
+              position: 3,
+              question_text: "Question three",
+              answer_type: "date",
+              is_optional: nil,
+              is_repeatable: true,
+            },
+          ]
+        end
+
+        let(:store) do
+          {
+            answers: {
+              "2" => {
+                "1" => {
+                  "date_year" => "2000",
+                  "date_month" => "1",
+                  "date_day" => "1",
+                },
+                "2" => {
+                  "date_year" => "2023",
+                  "date_month" => "6",
+                  "date_day" => "9",
+                },
+                "3" => [
+                  {
+                    "date_year" => "2024",
+                    "date_month" => "9",
+                    "date_day" => "6",
+                  },
+                ],
+              },
+            },
+          }
+        end
+
+        it "contains a change link to the add another answer page" do
+          expect(response.body)
+            .to include(change_add_another_answer_path(2, form_data.form_slug, 3))
+        end
+
+        context "and that question is optional and has been skipped" do
+          let(:pages_data) do
+            [
+              {
+                id: 1,
+                position: 1,
+                question_text: "Question one",
+                answer_type: "date",
+                next_page: 2,
+                is_optional: nil,
+              },
+              {
+                id: 2,
+                position: 2,
+                question_text: "Question two",
+                answer_type: "date",
+                next_page: 3,
+                is_optional: nil,
+              },
+              {
+                id: 3,
+                position: 3,
+                question_text: "Question three",
+                answer_type: "date",
+                is_optional: true,
+                is_repeatable: true,
+              },
+            ]
+          end
+
+          let(:store) do
+            {
+              answers: {
+                "2" => {
+                  "1" => {
+                    "date_year" => "2000",
+                    "date_month" => "1",
+                    "date_day" => "1",
+                  },
+                  "2" => {
+                    "date_year" => "2023",
+                    "date_month" => "6",
+                    "date_day" => "9",
+                  },
+                  "3" => [
+                    {
+                      "date_year" => "",
+                      "date_month" => "",
+                      "date_day" => "",
+                    },
+                  ],
+                },
+              },
+            }
+          end
+
+          it "shows the question as not completed" do
+            expect(response.body)
+              .to include "Not completed"
+          end
+
+          it "contains a change link to the question page" do
+            expect(response.body)
+              .to include(form_change_answer_path(2, form_data.form_slug, 3))
+          end
+        end
+      end
+    end
+
+    context "with preview mode on" do
+      let(:api_url_suffix) { "/draft" }
+      let(:mode) { "preview-draft" }
+
+      include_examples "for redirecting if the form is incomplete"
 
       context "with all questions answered and valid" do
         before do
           allow(EventLogger).to receive(:log).at_least(:once)
-          get check_your_answers_path(mode: "preview-draft", form_id: 2, form_slug: form_data.form_slug)
+          get check_your_answers_path(mode:, form_id: 2, form_slug: form_data.form_slug)
         end
 
-        it "returns 'ok' status code" do
-          expect(response).to have_http_status(:ok)
-        end
-
-        it "Displays a back link to the last page of the form" do
-          expect(response.body).to include(form_page_path(mode: "preview-draft", form_id: 2, form_slug: form_data.form_slug, page_slug: 2))
-        end
-
-        it "Returns the correct X-Robots-Tag header" do
-          expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
-        end
-
-        it "Contains a change link for each page" do
-          expect(response.body).to include(form_change_answer_path(2, form_data.form_slug, 1))
-          expect(response.body).to include(form_change_answer_path(2, form_data.form_slug, 2))
-        end
+        it_behaves_like "check your answers page"
 
         it "does not log the form_check_answers event" do
           expect(EventLogger).not_to have_received(:log)
@@ -180,46 +319,18 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
     end
 
     context "with preview mode off" do
-      context "without any questions answered" do
-        let(:store) do
-          {
-            answers: {},
-          }
-        end
+      let(:api_url_suffix) { "/live" }
+      let(:mode) { "form" }
 
-        it "redirects to first incomplete page of form" do
-          get check_your_answers_path(mode: "form", form_id: 2, form_slug: form_data.form_slug)
-          expect(response).to have_http_status(:found)
-          expect(response.location).to eq(form_page_url(mode: "form", form_id: 2, form_slug: form_data.form_slug, page_slug: 1))
-        end
-      end
+      include_examples "for redirecting if the form is incomplete"
 
       context "with all questions answered and valid" do
         before do
-          post save_form_page_path(mode: "form", form_id: 2, form_slug: "form-1", page_slug: 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
-          post save_form_page_path(mode: "form", form_id: 2, form_slug: "form-1", page_slug: 2), params: { question: { text: "answer text" }, changing_existing_answer: false }
-
           allow(EventLogger).to receive(:log_form_event).at_least(:once)
-
-          get check_your_answers_path(mode: "form", form_id: 2, form_slug: form_data.form_slug)
+          get check_your_answers_path(mode:, form_id: 2, form_slug: form_data.form_slug)
         end
 
-        it "returns returns 'ok' status code" do
-          expect(response).to have_http_status(:ok)
-        end
-
-        it "Displays a back link to the last page of the form" do
-          expect(response.body).to include(form_page_path(mode: "form", form_id: 2, form_slug: form_data.form_slug, page_slug: 2))
-        end
-
-        it "Returns the correct X-Robots-Tag header" do
-          expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
-        end
-
-        it "Contains a change link for each page" do
-          expect(response.body).to include(form_change_answer_path(2, form_data.form_slug, 1))
-          expect(response.body).to include(form_change_answer_path(2, form_data.form_slug, 2))
-        end
+        it_behaves_like "check your answers page"
 
         it "Logs the form_check_answers event" do
           expect(EventLogger).to have_received(:log_form_event).with("check_answers")
@@ -233,7 +344,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
         it "returns 404" do
           travel_to timestamp_of_request do
-            get check_your_answers_path(mode: "form", form_id: 2, form_slug: form_data.form_slug)
+            get check_your_answers_path(mode:, form_id: 2, form_slug: form_data.form_slug)
             expect(response).to have_http_status(:not_found)
           end
         end
@@ -265,9 +376,11 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
     end
 
     context "with preview mode on" do
+      let(:mode) { "preview-live" }
+
       before do
         travel_to frozen_time do
-          post form_submit_answers_path("preview-live", 2, "form-name", 1), params: { email_confirmation_input: }
+          post form_submit_answers_path(2, "form-name", 1, mode:), params: { email_confirmation_input: }
         end
       end
 
@@ -311,9 +424,11 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
     end
 
     context "with preview mode off" do
+      let(:mode) { "form" }
+
       before do
         travel_to frozen_time do
-          post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_input: }
+          post form_submit_answers_path(2, "form-name", 1, mode:), params: { email_confirmation_input: }
         end
       end
 
@@ -358,7 +473,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       let(:repeat_form_submission) { true }
 
       before do
-        post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_input: }
+        post form_submit_answers_path(2, "form-name", 1, mode:), params: { email_confirmation_input: }
       end
 
       it "redirects to repeat submission error page" do
@@ -382,7 +497,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       end
 
       before do
-        post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_input: }
+        post form_submit_answers_path(2, "form-name", 1, mode:), params: { email_confirmation_input: }
       end
 
       it "renders the incomplete submission error page" do
@@ -400,7 +515,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       end
 
       before do
-        post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_input: }
+        post form_submit_answers_path(2, "form-name", 1, mode:), params: { email_confirmation_input: }
       end
 
       it "return 422 error code" do
@@ -428,7 +543,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       end
 
       before do
-        post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_input: }
+        post form_submit_answers_path(2, "form-name", 1, mode:), params: { email_confirmation_input: }
       end
 
       it "return 422 error code" do
@@ -458,7 +573,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       end
 
       before do
-        post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_input: }
+        post form_submit_answers_path(2, "form-name", 1, mode:), params: { email_confirmation_input: }
       end
 
       it "redirects to confirmation page" do
@@ -496,7 +611,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
       before do
         travel_to timestamp_of_request do
-          post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_input: }
+          post form_submit_answers_path(2, "form-name", 1, mode:), params: { email_confirmation_input: }
         end
       end
 
@@ -551,7 +666,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         allow(Sentry).to receive(:capture_exception)
 
         travel_to timestamp_of_request do
-          post form_submit_answers_path("form", 2, "form-name", 1), params: { email_confirmation_input: }
+          post form_submit_answers_path(2, "form-name", 1, mode:), params: { email_confirmation_input: }
         end
       end
 

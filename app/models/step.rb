@@ -73,4 +73,8 @@ class Step
   def repeatable?
     false
   end
+
+  def skipped?
+    question.is_optional? && question.show_answer.blank?
+  end
 end
