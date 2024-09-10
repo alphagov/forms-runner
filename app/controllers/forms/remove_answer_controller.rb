@@ -31,9 +31,9 @@ module Forms
 
     def next_page_after_removing
       if @step.question.is_optional? && @step.show_answer.blank?
-        form_page_path(@step.form_id, @step.form_slug, @step.page_slug)
+        form_page_path(@step.form_id, @step.form_slug, @step.page_slug, changing_existing_answer:)
       else
-        add_another_answer_path(@step.form_id, @step.form_slug, @step.page_slug)
+        add_another_answer_path(@step.form_id, @step.form_slug, @step.page_slug, changing_existing_answer:)
       end
     end
   end

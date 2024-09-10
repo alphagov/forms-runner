@@ -59,6 +59,7 @@ RSpec.describe Forms::AddAnotherAnswerController, type: :request do
       get "/preview-draft/#{form.id}/#{form.form_slug}/#{first_page_in_form.id}/add-another-answer"
       expect(assigns(:rows).first[:actions].first[:text]).to eq("Change")
       expect(assigns(:rows).first[:actions].second[:text]).to eq("Remove")
+      expect(response.body).to include(form_remove_answer_path(form.id, form.form_slug, first_page_in_form.id, answer_index: 1, changing_existing_answer: nil))
     end
 
     it "initializes @add_another_answer_input" do
