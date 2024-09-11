@@ -59,6 +59,10 @@ class RepeatableStep < Step
     questions.length >= MAX_ANSWERS
   end
 
+  def valid?
+    questions.all?(&:valid?)
+  end
+
   def show_answer
     answers = questions.map(&:show_answer).compact_blank
 
@@ -81,10 +85,24 @@ class RepeatableStep < Step
     end
   end
 
+  def remove_answer(answer_index)
+    questions.delete_at(answer_index - 1)
+    if questions.empty?
+      add_blank_answer
+    end
+  end
+
+  def min_answers?
+    min_answers = @question.is_optional? ? 0 : 1
+
+    questions.length <= min_answers
+  end
+
 private
 
   def add_blank_answer
     questions << @question.dup
+
     questions[answer_index - 1]
   end
 end
