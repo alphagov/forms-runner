@@ -6,7 +6,7 @@ en:
         add_another_answer_input:
           attributes:
             add_another_answer:
-              blank: You must select an option
+              blank: Select yes if you need to add another answer
               max_answers_reached: You cannot add another answer
         email_confirmation_input:
           attributes:
