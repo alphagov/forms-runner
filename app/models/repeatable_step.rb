@@ -5,7 +5,7 @@ class RepeatableStep < Step
 
   class AnswerIndexError < IndexError; end
 
-  MAX_ANSWERS = 10
+  MAX_ANSWERS = 50
 
   attr_accessor :answer_index, :questions
 

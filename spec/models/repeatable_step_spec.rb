@@ -106,16 +106,16 @@ RSpec.describe RepeatableStep, type: :model do
   describe "#max_answers?" do
     before { repeatable_step.questions = questions }
 
-    context "with 9 or fewer questions" do
-      let(:questions) { [1, 2, 3, 4, 5, 6, 7, 8, 9] }
+    context "with 49 or fewer questions" do
+      let(:questions) { Array.new(49, :a_default_value) }
 
       it "returns false" do
         expect(repeatable_step.max_answers?).to be(false)
       end
     end
 
-    context "with 10 questions" do
-      let(:questions) { [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] }
+    context "with 50 questions" do
+      let(:questions) { Array.new(50, :a_default_value) }
 
       it "returns true" do
         expect(repeatable_step.max_answers?).to be(true)
