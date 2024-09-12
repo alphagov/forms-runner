@@ -65,7 +65,7 @@ describe "forms/add_another_answer/show.html.erb" do
     let(:max_answers) { true }
 
     it "renders the max answers text" do
-      expect(rendered).to have_content("You cannot add another answer to this question as you’ve entered the maximum of 10")
+      expect(rendered).to have_content("You cannot add another answer to this question as you’ve entered the maximum of 50")
     end
   end
 end
