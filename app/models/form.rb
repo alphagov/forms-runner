@@ -6,6 +6,17 @@ class Form < ActiveResource::Base
 
   has_many :pages
 
+  def self.deprecator
+    Rails.application.deprecators[:forms_api]
+  end
+
+  def self.find(scope, **options)
+    if options[:from].blank?
+      deprecator.warn "the /forms/:id endpoint will not return form documents in API v2"
+    end
+    super
+  end
+
   def self.find_with_mode(id:, mode:)
     raise ActiveResource::ResourceNotFound.new(404, "Not Found") unless id.to_s =~ /^[[:alnum:]]+$/
 

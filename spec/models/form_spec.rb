@@ -25,6 +25,14 @@ RSpec.describe Form, type: :model do
     end
   end
 
+  describe "getting a form without a mode" do
+    it "raises a deprecation warning" do
+      expect {
+        form
+      }.to raise_error(ActiveSupport::DeprecationException)
+    end
+  end
+
   shared_examples "form snapshot" do
     it "returns a simple form" do
       expect(form).to have_attributes(id: 1, name: "form name", submission_email: "user@example.com")
