@@ -37,7 +37,7 @@ RSpec.describe ErrorsController, type: :request do
   describe "Submission error" do
     let(:form_data) do
       build(
-        :form,
+        :v2_form_document,
         :with_support,
         id: 2,
         name: "Form name",
@@ -45,8 +45,8 @@ RSpec.describe ErrorsController, type: :request do
         live_at: "2022-08-18 09:16:50 +0100",
         submission_email: "submission@email.com",
         start_page: 1,
-        pages: [
-          (build :page, id: 1, answer_type: "text", answer_settings: { input_type: "single_line" }),
+        steps: [
+          (build :v2_question_page_step, id: 1, answer_type: "text", answer_settings: { input_type: "single_line" }),
         ],
       )
     end
@@ -60,7 +60,7 @@ RSpec.describe ErrorsController, type: :request do
 
     before do
       ActiveResource::HttpMock.respond_to do |mock|
-        mock.get "/api/v1/forms/2/live", req_headers, form_data.to_json, 200
+        mock.get "/api/v2/forms/2/live", req_headers, form_data.to_json, 200
       end
 
       # setup the context in the session

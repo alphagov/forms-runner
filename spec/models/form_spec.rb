@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Form, type: :model do
+RSpec.describe Form, feature_api_v2: false, type: :model do
   let(:form) { described_class.find(1) }
   let(:response_data) { { id: 1, name: "form name", submission_email: "user@example.com", start_page: 1 } }
 

@@ -1,8 +1,8 @@
 require "rails_helper"
 
 feature "Email confirmation", type: :feature do
-  let(:pages) { [(build :page, :with_text_settings, id: 1, form_id: 1, routing_conditions: [], question_text:)] }
-  let(:form) { build :form, :live?, id: 1, name: "Apply for a juggling license", pages:, start_page: 1 }
+  let(:steps) { [build(:v2_question_page_step, :with_text_settings, id: 1, routing_conditions: [], question_text:)] }
+  let(:form) { build :v2_form_document, :live?, id: 1, name: "Apply for a juggling license", steps:, start_page: 1 }
   let(:question_text) { Faker::Lorem.question }
   let(:text_answer) { Faker::Lorem.sentence }
 
@@ -21,8 +21,7 @@ feature "Email confirmation", type: :feature do
 
   before do
     ActiveResource::HttpMock.respond_to do |mock|
-      mock.get "/api/v1/forms/1", req_headers, form.to_json, 200
-      mock.get "/api/v1/forms/1/live", req_headers, form.to_json(include: [:pages]), 200
+      mock.get "/api/v2/forms/1/live", req_headers, form.to_json, 200
     end
   end
 

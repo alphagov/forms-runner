@@ -5,39 +5,39 @@ RSpec.describe Forms::PageController, type: :request do
   let(:timestamp_of_request) { Time.utc(2022, 12, 14, 10, 0o0, 0o0) }
 
   let(:form_data) do
-    build(:form, :with_support,
+    build(:v2_form_document, :with_support,
           id: 2,
           live_at:,
           start_page: 1,
           privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
           what_happens_next_markdown: "Good things come to those that wait",
           declaration_text: "agree to the declaration",
-          pages: pages_data)
+          steps: steps_data)
   end
   let(:live_at) { "2022-08-18 09:16:50 +0100" }
 
-  let(:first_page_in_form) do
-    build :page, :with_text_settings,
+  let(:first_step_in_form) do
+    build :v2_question_page_step, :with_text_settings,
           id: 1,
-          next_page: 2,
+          next_step_id: 2,
           is_optional: false
   end
 
-  let(:second_page_in_form) do
-    build :page, :with_text_settings,
+  let(:second_step_in_form) do
+    build :v2_question_page_step, :with_text_settings,
           id: 2,
           is_optional:
   end
 
   let(:page_with_routing) do
-    build :page, :with_selections_settings,
+    build :v2_question_page_step, :with_selections_settings,
           id: 1,
-          next_page: 2,
+          next_step_id: 2,
           routing_conditions: [DataStruct.new(id: 1, routing_page_id: 1, check_page_id: 1, goto_page_id: 3, answer_value: "Option 1", validation_errors:)],
           is_optional: false
   end
 
-  let(:pages_data) { [first_page_in_form, second_page_in_form] }
+  let(:steps_data) { [first_step_in_form, second_step_in_form] }
 
   let(:is_optional) { false }
 
@@ -56,7 +56,7 @@ RSpec.describe Forms::PageController, type: :request do
 
   before do
     ActiveResource::HttpMock.respond_to do |mock|
-      mock.get "/api/v1/forms/2#{api_url_suffix}", req_headers, form_data.to_json, 200
+      mock.get "/api/v2/forms/2#{api_url_suffix}", req_headers, form_data.to_json, 200
     end
   end
 
@@ -68,8 +68,8 @@ RSpec.describe Forms::PageController, type: :request do
             live_at:,
             start_page: page_id,
             declaration_text: "agree to the declaration",
-            pages: [
-              build(:page, :with_text_settings,
+            steps: [
+              build(:v2_question_page_step, :with_text_settings,
                     id: page_id,
                     position: 1,
                     is_optional: false),
@@ -81,7 +81,7 @@ RSpec.describe Forms::PageController, type: :request do
       allow(Lograge).to receive(:logger).and_return(logger)
 
       ActiveResource::HttpMock.respond_to do |mock|
-        mock.get "/api/v1/forms/200#{api_url_suffix}", req_headers, form_data.to_json, 200
+        mock.get "/api/v2/forms/200#{api_url_suffix}", req_headers, form_data.to_json, 200
       end
 
       get form_page_path(200, form_data.form_slug, page_id, mode:)
@@ -133,7 +133,7 @@ RSpec.describe Forms::PageController, type: :request do
 
     it "Displays the question text on the page" do
       get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
-      expect(response.body).to include(form_data.pages.first.question_text)
+      expect(response.body).to include(form_data.steps.first.data.question_text)
     end
 
     context "with a page that has a previous page" do
@@ -234,13 +234,13 @@ RSpec.describe Forms::PageController, type: :request do
     context "when viewing a live form with no routing_conditions" do
       let(:mode) { "preview-live" }
 
-      let(:first_page_in_form) do
-        page_without_routing_conditions = attributes_for(:page, :with_text_settings,
+      let(:first_step_in_form) do
+        step_without_routing_conditions = attributes_for(:v2_question_page_step, :with_text_settings,
                                                          id: 1,
-                                                         next_page: 2,
+                                                         next_step_id: 2,
                                                          is_optional: false).except(:routing_conditions)
 
-        DataStruct.new(page_without_routing_conditions)
+        DataStruct.new(step_without_routing_conditions)
       end
 
       it "Returns a 200" do
@@ -250,32 +250,32 @@ RSpec.describe Forms::PageController, type: :request do
     end
 
     context "when page has routing conditions" do
-      let(:first_page_in_form) do
+      let(:first_step_in_form) do
         page_with_routing
       end
 
       let(:validation_errors) { [] }
 
-      let(:second_page_in_form) do
+      let(:second_step_in_form) do
         build :page, :with_text_settings,
               id: 2,
-              next_page: 3,
+              next_step_id: 3,
               is_optional:
       end
 
-      let(:third_page_in_form) do
+      let(:third_step_in_form) do
         build :page, :with_text_settings,
               id: 3,
               is_optional:
       end
 
-      let(:pages_data) { [third_page_in_form, first_page_in_form, second_page_in_form] }
+      let(:pages_data) { [third_step_in_form, first_step_in_form, second_step_in_form] }
 
       let(:api_url_suffix) { "/draft" }
       let(:mode) { "preview-draft" }
 
       context "when the routing has a cannot_have_goto_page_before_routing_page error" do
-        let(:pages_data) { [first_page_in_form, second_page_in_form, third_page_in_form] }
+        let(:pages_data) { [first_step_in_form, second_step_in_form, third_step_in_form] }
         let(:validation_errors) { [{ name: "cannot_have_goto_page_before_routing_page" }] }
 
         it "returns a 422 response" do
@@ -286,7 +286,7 @@ RSpec.describe Forms::PageController, type: :request do
         it "shows the error page" do
           get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
           link_url = "#{Settings.forms_admin.base_url}/forms/2/pages/1/conditions/1"
-          question_number = first_page_in_form.position
+          question_number = first_step_in_form.position
           expect(response.body).to include(I18n.t("goto_page_before_routing_page.body_html", link_url:, question_number:))
         end
       end
@@ -295,15 +295,15 @@ RSpec.describe Forms::PageController, type: :request do
     context "when page is repeatable" do
       let(:mode) { "form" }
 
-      let(:first_page_in_form) { build :page, :with_repeatable, id: 1, next_page: second_page_in_form.id }
+      let(:first_step_in_form) { build :v2_question_page_step, :with_repeatable, id: 1, next_step_id: second_step_in_form.id }
 
       it "shows the page as normal when there are no stored answers" do
-        get form_page_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug: first_page_in_form.id, answer_index: 1)
+        get form_page_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug: first_step_in_form.id, answer_index: 1)
         expect(response).to have_http_status(:ok)
       end
 
       it "returns 404 when given an invalid answer_index" do
-        get form_page_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug: first_page_in_form.id, answer_index: 12)
+        get form_page_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug: first_step_in_form.id, answer_index: 12)
         expect(response).to have_http_status(:not_found)
       end
     end
@@ -410,21 +410,21 @@ RSpec.describe Forms::PageController, type: :request do
 
       context "when changing an existing answer" do
         it "Logs the change_answer_page_save event" do
-          expect(EventLogger).to receive(:log_page_event).with("change_answer_page_save", first_page_in_form.question_text, nil)
+          expect(EventLogger).to receive(:log_page_event).with("change_answer_page_save", first_step_in_form.data.question_text, nil)
           post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1, params: { question: { text: "answer text" }, changing_existing_answer: true })
         end
       end
 
       context "with the first page" do
         it "Logs the first_page_save event" do
-          expect(EventLogger).to receive(:log_page_event).with("first_page_save", first_page_in_form.question_text, nil)
+          expect(EventLogger).to receive(:log_page_event).with("first_page_save", first_step_in_form.data.question_text, nil)
           post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: { text: "answer text" } }
         end
       end
 
       context "with a subsequent page" do
         it "Logs the page_save event" do
-          expect(EventLogger).to receive(:log_page_event).with("page_save", second_page_in_form.question_text, nil)
+          expect(EventLogger).to receive(:log_page_event).with("page_save", second_step_in_form.data.question_text, nil)
           post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2), params: { question: { text: "answer text" } }
         end
       end
@@ -434,14 +434,14 @@ RSpec.describe Forms::PageController, type: :request do
 
         context "when an optional question is completed" do
           it "Logs the optional_save event with skipped_question as true" do
-            expect(EventLogger).to receive(:log_page_event).with("optional_save", second_page_in_form.question_text, true)
+            expect(EventLogger).to receive(:log_page_event).with("optional_save", second_step_in_form.data.question_text, true)
             post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2), params: { question: { text: "" } }
           end
         end
 
         context "when an optional question is skipped" do
           it "Logs the optional_save event with skipped_question as false" do
-            expect(EventLogger).to receive(:log_page_event).with("optional_save", second_page_in_form.question_text, false)
+            expect(EventLogger).to receive(:log_page_event).with("optional_save", second_step_in_form.data.question_text, false)
             post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2), params: { question: { text: "answer text" } }
           end
         end
@@ -449,26 +449,26 @@ RSpec.describe Forms::PageController, type: :request do
     end
 
     context "when page has routing conditions" do
-      let(:first_page_in_form) do
+      let(:first_step_in_form) do
         page_with_routing
       end
 
       let(:validation_errors) { [] }
 
-      let(:second_page_in_form) do
+      let(:second_step_in_form) do
         build :page, :with_text_settings,
               id: 2,
-              next_page: 3,
+              next_step_id: 3,
               is_optional:
       end
 
-      let(:third_page_in_form) do
+      let(:third_step_in_form) do
         build :page, :with_text_settings,
               id: 3,
               is_optional:
       end
 
-      let(:pages_data) { [first_page_in_form, second_page_in_form, third_page_in_form] }
+      let(:pages_data) { [first_step_in_form, second_step_in_form, third_step_in_form] }
 
       let(:api_url_suffix) { "/draft" }
       let(:mode) { "preview-draft" }
@@ -486,7 +486,7 @@ RSpec.describe Forms::PageController, type: :request do
       end
 
       context "when the routing has a cannot_have_goto_page_before_routing_page error" do
-        let(:pages_data) { [first_page_in_form, second_page_in_form, third_page_in_form] }
+        let(:pages_data) { [first_step_in_form, second_step_in_form, third_step_in_form] }
         let(:validation_errors) { [{ name: "cannot_have_goto_page_before_routing_page" }] }
 
         it "returns a 422 response" do
@@ -497,7 +497,7 @@ RSpec.describe Forms::PageController, type: :request do
         it "shows the error page" do
           post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: { selection: "Option 2" }, changing_existing_answer: false }
           link_url = "#{Settings.forms_admin.base_url}/forms/2/pages/1/conditions/1"
-          question_number = first_page_in_form.position
+          question_number = first_step_in_form.position
           expect(response.body).to include(I18n.t("goto_page_before_routing_page.body_html", link_url:, question_number:))
         end
       end
@@ -506,24 +506,24 @@ RSpec.describe Forms::PageController, type: :request do
     end
 
     context "when page is repeatable" do
-      let(:first_page_in_form) { build :page, :with_repeatable, id: 1, next_page: second_page_in_form.id }
+      let(:first_step_in_form) { build :v2_question_page_step, :with_repeatable, id: 1, next_step_id: second_step_in_form.id }
 
       it "redirects to the add another answer page when given valid answer" do
-        post save_form_page_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug: first_page_in_form.id, params: { question: { number: 12 } })
-        expect(response).to redirect_to(add_another_answer_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug: first_page_in_form.id))
+        post save_form_page_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug: first_step_in_form.id, params: { question: { number: 12 } })
+        expect(response).to redirect_to(add_another_answer_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug: first_step_in_form.id))
       end
 
       it "shows 404 if an invalid answer_index is given" do
-        post save_form_page_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug: first_page_in_form.id, answer_index: 3, params: { question: { number: 12 } })
+        post save_form_page_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug: first_step_in_form.id, answer_index: 3, params: { question: { number: 12 } })
         expect(response).to have_http_status(:not_found)
       end
 
       context "and is optional" do
-        let(:first_page_in_form) { build :page, :with_repeatable, is_optional: true, id: 1, next_page: second_page_in_form.id }
+        let(:first_step_in_form) { build :v2_question_page_step, :with_repeatable, is_optional: true, id: 1, next_step_id: second_step_in_form.id }
 
         it "redirects to the next page when not given an answer" do
-          post save_form_page_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug: first_page_in_form.id, params: { question: { number: nil } })
-          expect(response).to redirect_to(form_page_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug: second_page_in_form.id))
+          post save_form_page_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug: first_step_in_form.id, params: { question: { number: nil } })
+          expect(response).to redirect_to(form_page_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug: second_step_in_form.id))
         end
       end
     end
