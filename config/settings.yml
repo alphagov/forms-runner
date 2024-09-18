@@ -4,6 +4,7 @@ features:
     # this list of form IDs should only be populated via Terraform in forms-deploy, to avoid mistakenly
     # enabling CSV submissions for unrelated forms in different environments
     enabled_for_form_ids: ""
+  api_v2: false
 
 forms_admin:
   # URL to form-admin
