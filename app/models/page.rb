@@ -8,6 +8,15 @@ class Page < ActiveResource::Base
 
   belongs_to :form
 
+  def self.deprecator
+    Rails.application.deprecators[:forms_api]
+  end
+
+  def self.find(...)
+    deprecator.warn "the /forms/:id/pages endpoints are deprecated and will be removed in API v2"
+    super
+  end
+
   def form_id
     @prefix_options[:form_id]
   end
