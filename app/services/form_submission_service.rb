@@ -41,7 +41,7 @@ private
     end
 
     unless @form.submission_email.blank? && @preview_mode
-      if FeatureService.enabled?("csv_submission", @form)
+      if @form.submission_type == "email_with_csv"
         deliver_submission_email_with_csv_attachment_with_fallback
       else
         deliver_submission_email
