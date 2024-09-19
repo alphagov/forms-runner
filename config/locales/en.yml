@@ -14,7 +14,7 @@ en:
               blank: Enter an email address
               invalid_email: Enter an email address in the correct format, like name@example.com
             send_confirmation:
-              blank: Select ‘Yes’ if you want to get an email confirming your form has been submitted
+              blank: Select yes if you want to get an email confirming your form has been submitted
         question/address:
           attributes:
             address1:
