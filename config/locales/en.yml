@@ -6,7 +6,7 @@ en:
         add_another_answer_input:
           attributes:
             add_another_answer:
-              blank: You must select an option
+              blank: Select yes if you need to add another answer
               max_answers_reached: You cannot add another answer
         email_confirmation_input:
           attributes:
@@ -14,7 +14,7 @@ en:
               blank: Enter an email address
               invalid_email: Enter an email address in the correct format, like name@example.com
             send_confirmation:
-              blank: Select ‘Yes’ if you want to get an email confirming your form has been submitted
+              blank: Select yes if you want to get an email confirming your form has been submitted
         question/address:
           attributes:
             address1:
@@ -131,6 +131,7 @@ en:
           zero: You have added no answers
         max_answers: You cannot add another answer to this question as you’ve entered the maximum of %{max_answers}
         radios_legend: Do you need to add another answer?
+        title: Add or remove answer to %{page_title}
     back: Back
     remove_answer:
       show:

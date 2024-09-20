@@ -3,7 +3,7 @@ require "rails_helper"
 describe "forms/add_another_answer/show.html.erb" do
   let(:form) { build :form, id: 1 }
   let(:mode) { OpenStruct.new(preview_draft?: false, preview_archived?: false, preview_live?: false) }
-  let(:step) { OpenStruct.new({ form_id: 1, form_slug: "form-1", page_slug: "1", mode:, questions:, question: OpenStruct.new({}), max_answers?: max_answers }) }
+  let(:step) { OpenStruct.new({ form_id: 1, form_slug: "form-1", page_slug: "1", mode:, questions:, question: OpenStruct.new({ question_text: "Question text" }), max_answers?: max_answers }) }
   let(:add_another_answer_input) { AddAnotherAnswerInput.new }
   let(:back_link) { "/back" }
   let(:questions) { [] }
@@ -27,6 +27,10 @@ describe "forms/add_another_answer/show.html.erb" do
     end
 
     render
+  end
+
+  it "has the correct page title" do
+    expect(view.content_for(:title)).to eq "Add or remove answer to Question text - #{form.name}"
   end
 
   it "has a back link" do
