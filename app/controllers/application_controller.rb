@@ -70,7 +70,7 @@ private
 
   def set_request_id
     if Rails.env.production?
-      [Form, Page].each do |active_resource_model|
+      [Api::V2::FormDocumentResource, Form, Page].each do |active_resource_model|
         active_resource_model.headers["X-Request-ID"] = request.request_id
       end
     end
