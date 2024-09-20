@@ -11,7 +11,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
           privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
           what_happens_next_markdown: "Good things come to those that wait",
           declaration_text: "agree to the declaration",
-          pages: pages_data)
+          pages: pages_data,
+          submission_email:)
   end
 
   let(:email_confirmation_input) do
@@ -20,6 +21,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       confirmation_email_reference:,
       submission_email_reference: }
   end
+
+  let(:submission_email) { Faker::Internet.email(domain: "example.gov.uk") }
 
   let(:store) do
     {
@@ -393,7 +396,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         expect(deliveries.length).to eq 2
 
         mail = deliveries[0]
-        expect(mail.to).to eq [form_data.submission_email]
+        expect(mail.to).to eq [submission_email]
 
         expected_personalisation = {
           title: form_data.name,
@@ -441,7 +444,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         expect(deliveries.length).to eq 2
 
         mail = deliveries[0]
-        expect(mail.to).to eq [form_data.submission_email]
+        expect(mail.to).to eq [submission_email]
 
         expected_personalisation = {
           title: form_data.name,

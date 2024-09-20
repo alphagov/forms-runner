@@ -235,12 +235,12 @@ RSpec.describe Forms::PageController, type: :request do
       let(:mode) { "preview-live" }
 
       let(:first_page_in_form) do
-        page_without_routing_condition = build(:page, :with_text_settings,
-                                               id: 1,
-                                               next_page: 2,
-                                               is_optional: false)
+        page_without_routing_conditions = attributes_for(:page, :with_text_settings,
+                                                         id: 1,
+                                                         next_page: 2,
+                                                         is_optional: false).except(:routing_conditions)
 
-        Page.new(page_without_routing_condition.attributes.except(:routing_conditions))
+        DataStruct.new(page_without_routing_conditions)
       end
 
       it "Returns a 200" do

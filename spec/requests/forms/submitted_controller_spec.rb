@@ -1,8 +1,6 @@
 require "rails_helper"
 
 RSpec.describe Forms::SubmittedController, type: :request do
-  let(:context) { Flow::Context.new(form: form_data, store:) }
-
   let(:form_data) do
     build(:form, :with_support,
           id: 2,
@@ -63,8 +61,11 @@ RSpec.describe Forms::SubmittedController, type: :request do
         mock.get "/api/v1/forms/2/draft", req_headers, form_data.to_json, 200
       end
 
-      allow(Flow::Context).to receive(:new).and_return(context)
-      allow(context).to receive(:clear)
+      post save_form_page_path(mode: "preview-draft", form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: store[:answers]["2"]["1"] }
+      post save_form_page_path(mode: "preview-draft", form_id: 2, form_slug: form_data.form_slug, page_slug: 2), params: { question: store[:answers]["2"]["2"] }
+
+      # assert that we've set up the test correctly
+      expect(controller.session[:answers].to_h).to match({ "2" => { "1" => a_hash_including(**store[:answers]["2"]["1"]), "2" => a_hash_including(**store[:answers]["2"]["2"]) } }) # rubocop: disable RSpec/ExpectInHook
 
       get form_submitted_path(mode: "preview-draft", form_id: 2, form_slug: form_data.form_slug)
     end
@@ -82,7 +83,7 @@ RSpec.describe Forms::SubmittedController, type: :request do
     end
 
     it "clears the context" do
-      expect(context).to have_received(:clear)
+      expect(controller.session[:answers]["2"]).to be_nil
     end
   end
 end

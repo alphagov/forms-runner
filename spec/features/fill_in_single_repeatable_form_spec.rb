@@ -1,10 +1,10 @@
 require "rails_helper"
 
 feature "Fill in and submit a form with a single repeatable question", type: :feature do
-  let(:pages) { [(build :page, :with_repeatable, answer_type: "number")] }
+  let(:pages) { [(build :page, :with_repeatable, answer_type: "number", question_text:)] }
   let(:form) { build :form, :live?, id: 42, name: "Form with repeating question", pages:, start_page: pages.first.id }
 
-  let(:question_text) { pages[0].question_text }
+  let(:question_text) { Faker::Lorem.question }
   let(:first_answer_text) { "99" }
   let(:second_answer_text) { "7" }
   let(:reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
