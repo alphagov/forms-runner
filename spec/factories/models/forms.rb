@@ -18,6 +18,8 @@ FactoryBot.define do
     declaration_text { nil }
     declaration_section_completed { false }
 
+    submission_type { :email }
+
     trait :new_form do
       submission_email { nil }
       privacy_policy_url { nil }

@@ -65,7 +65,11 @@ RSpec.describe FormSubmissionService do
     end
 
     describe "sending the submission email" do
-      context "when send CSV feature is disabled", feature_csv_submission: false do
+      context "when the submission type is email" do
+        before do
+          form.submission_type = "email"
+        end
+
         it "calls FormSubmissionMailer" do
           freeze_time do
             allow(FormSubmissionMailer).to receive(:email_confirmation_input).and_call_original
@@ -101,7 +105,11 @@ RSpec.describe FormSubmissionService do
         end
       end
 
-      context "when send CSV feature is enabled", :feature_csv_submission do
+      context "when the submission type is email_with_csv" do
+        before do
+          form.submission_type = "email_with_csv"
+        end
+
         it "writes a CSV file" do
           service.submit
           expect(submission_csv_service_spy).to have_received(:write)
