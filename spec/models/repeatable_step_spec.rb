@@ -155,6 +155,44 @@ RSpec.describe RepeatableStep, type: :model do
     end
   end
 
+  describe "#show_answer_in_csv" do
+    let(:first_question) { build :first_middle_last_name_question, question_text: "What is your name?" }
+    let(:second_question) { build :first_middle_last_name_question, question_text: "What is your name?" }
+
+    context "when the question has multiple attributes" do
+      before do
+        repeatable_step.questions = [first_question, second_question]
+      end
+
+      it "returns a hash of all answers with keys containing the answer numbers" do
+        # we convert to an array to test the ordering of the hash
+        expect(repeatable_step.show_answer_in_csv.to_a).to eq({
+          "What is your name? - First name - Answer 1" => first_question.first_name,
+          "What is your name? - Last name - Answer 1" => first_question.last_name,
+          "What is your name? - First name - Answer 2" => second_question.first_name,
+          "What is your name? - Last name - Answer 2" => second_question.last_name,
+        }.to_a)
+      end
+    end
+
+    context "when the question has a single attribute" do
+      let(:first_question) { build :text, :with_answer, question_text: "What is the meaning of life?" }
+      let(:second_question) { build :text, :with_answer, question_text: "What is the meaning of life?" }
+
+      before do
+        repeatable_step.questions = [first_question, second_question]
+      end
+
+      it "returns a hash of all answers with keys containing the answer numbers" do
+        # we convert to an array to test the ordering of the hash
+        expect(repeatable_step.show_answer_in_csv.to_a).to eq({
+          "What is the meaning of life? - Answer 1" => first_question.text,
+          "What is the meaning of life? - Answer 2" => second_question.text,
+        }.to_a)
+      end
+    end
+  end
+
   describe "#remove_answer" do
     let(:questions) { [first_question, second_question] }
     let(:first_question) { OpenStruct.new({ show_answer_in_email: "first answer" }) }
