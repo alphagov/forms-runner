@@ -3,9 +3,12 @@ require "rails_helper"
 RSpec.describe SubmissionCsvService do
   subject(:service) { described_class.new(current_context:, submission_reference:, timestamp:, output_file_path: test_file.path) }
 
-  let(:form) { build(:form, id: 1) }
-  let(:first_step) { OpenStruct.new({ show_answer_in_csv: { "What is the meaning of life?": "42" } }) }
-  let(:second_step) { OpenStruct.new({ show_answer_in_csv: { "What is your email address?": "someone@example.com" } }) }
+  let(:form) { build :form, id: 1 }
+  let(:page) { build :page }
+  let(:text_question) { build :text, :with_answer, question_text: "What is the meaning of life?" }
+  let(:name_question) { build :first_middle_last_name_question, question_text: "What is your name?" }
+  let(:first_step) { build :step, question: text_question }
+  let(:second_step) { build :step, question: name_question }
   let(:current_context) { OpenStruct.new(form:, completed_steps: [first_step, second_step], support_details: OpenStruct.new(call_back_url: "http://gov.uk")) }
   let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
   let(:timestamp) do
@@ -19,14 +22,47 @@ RSpec.describe SubmissionCsvService do
   end
 
   describe "#write" do
-    it "writes submission to CSV file" do
+    before do
       service.write
+    end
+
+    it "writes submission to CSV file" do
       expect(CSV.open(test_file.path).readlines).to eq(
         [
-          ["Reference", "Submitted at", "What is the meaning of life?", "What is your email address?"],
-          [submission_reference, "2022-09-14T08:00:00+01:00", "42", "someone@example.com"],
+          ["Reference", "Submitted at", "What is the meaning of life?", "What is your name? - First name", "What is your name? - Last name"],
+          [submission_reference, "2022-09-14T08:00:00+01:00", text_question.text, name_question.first_name, name_question.last_name],
         ],
       )
+    end
+
+    context "when there are repeated steps" do
+      let(:name_question_repeated) { build :first_middle_last_name_question, question_text: "What is your name?" }
+      let(:second_step) { build :repeatable_step, questions: [name_question, name_question_repeated] }
+
+      it "writes submission to CSV file with headers containing suffixes for the repeated steps" do
+        expect(CSV.open(test_file.path).readlines).to eq(
+          [
+            [
+              "Reference",
+              "Submitted at",
+              "What is the meaning of life?",
+              "What is your name? - First name - Answer 1",
+              "What is your name? - Last name - Answer 1",
+              "What is your name? - First name - Answer 2",
+              "What is your name? - Last name - Answer 2",
+            ],
+            [
+              submission_reference,
+              "2022-09-14T08:00:00+01:00",
+              text_question.text,
+              name_question.first_name,
+              name_question.last_name,
+              name_question_repeated.first_name,
+              name_question_repeated.last_name,
+            ],
+          ],
+        )
+      end
     end
   end
 end

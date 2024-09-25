@@ -85,6 +85,18 @@ class RepeatableStep < Step
     end
   end
 
+  def show_answer_in_csv
+    if questions.present?
+      header_values_hash = {}
+      questions.each.with_index(1) do |question, index|
+        question.show_answer_in_csv.each do |header, value|
+          header_values_hash["#{header} - Answer #{index}"] = value
+        end
+      end
+      header_values_hash
+    end
+  end
+
   def remove_answer(answer_index)
     questions.delete_at(answer_index - 1)
     if questions.empty?
