@@ -35,6 +35,19 @@ RSpec.describe SubmissionCsvService do
       )
     end
 
+    context "when a question is optional and answer is not provided" do
+      let(:text_question) { build :text, question_text: "What is the meaning of life?", is_optional: true, text: nil }
+
+      it "writes submission to CSV file including blank column for unanswered optional question" do
+        expect(CSV.open(test_file.path).readlines).to eq(
+          [
+            ["Reference", "Submitted at", "What is the meaning of life?", "What is your name? - First name", "What is your name? - Last name"],
+            [submission_reference, "2022-09-14T08:00:00+01:00", "", name_question.first_name, name_question.last_name],
+          ],
+        )
+      end
+    end
+
     context "when there are repeated steps" do
       let(:name_question_repeated) { build :first_middle_last_name_question, question_text: "What is your name?" }
       let(:second_step) { build :repeatable_step, questions: [name_question, name_question_repeated] }

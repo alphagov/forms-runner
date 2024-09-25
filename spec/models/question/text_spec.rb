@@ -30,8 +30,8 @@ RSpec.describe Question::Text, type: :model do
         expect(question.show_answer).to eq ""
       end
 
-      it "returns an empty hash for show_answer_in_csv" do
-        expect(question.show_answer_in_csv).to eq({})
+      it "returns a hash with an blank value for show_answer_in_csv" do
+        expect(question.show_answer_in_csv).to eq(Hash[question_text, ""])
       end
     end
 
@@ -83,8 +83,8 @@ RSpec.describe Question::Text, type: :model do
         expect(question.show_answer).to eq ""
       end
 
-      it "returns an empty hash for show_answer_in_csv" do
-        expect(question.show_answer_in_csv).to eq({})
+      it "returns a hash with an blank value for show_answer_in_csv" do
+        expect(question.show_answer_in_csv).to eq(Hash[question_text, ""])
       end
     end
 
