@@ -11,7 +11,7 @@ class Form < ActiveResource::Base
   end
 
   def self.find(scope, **options)
-    if options[:from].blank?
+    if FeatureService.enabled?(:api_v2) || options[:from].blank?
       deprecator.warn "the /forms/:id endpoint will not return form documents in API v2"
     end
     super
