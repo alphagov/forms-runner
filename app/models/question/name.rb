@@ -54,7 +54,22 @@ module Question
     end
 
     def show_answer_in_csv
-      attributes_with_values.to_h { |attribute| ["#{question_text} - #{friendly_name_for_attribute(attribute)}", send(attribute)] }
+      header_values_hash = {}
+      if needs_title?
+        add_attribute_to_hash(:title, header_values_hash)
+      end
+
+      if is_full_name?
+        add_attribute_to_hash(:full_name, header_values_hash)
+      else
+        add_attribute_to_hash(:first_name, header_values_hash)
+        if include_middle_name?
+          add_attribute_to_hash(:middle_names, header_values_hash)
+        end
+        add_attribute_to_hash(:last_name, header_values_hash)
+      end
+
+      header_values_hash
     end
 
     def has_blank_values?(attribute)
@@ -73,6 +88,14 @@ module Question
 
     def attributes_with_values
       attribute_names.reject { |attribute| has_blank_values?(attribute) }
+    end
+
+    def add_attribute_to_hash(attribute, hash)
+      hash[csv_header_name_for_attribute(attribute)] = send(attribute).to_s
+    end
+
+    def csv_header_name_for_attribute(attribute)
+      "#{question_text} - #{friendly_name_for_attribute(attribute)}"
     end
   end
 end
