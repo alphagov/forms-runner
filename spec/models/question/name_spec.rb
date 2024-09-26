@@ -29,8 +29,8 @@ RSpec.describe Question::Name, type: :model do
         expect(question.show_answer).to eq ""
       end
 
-      it "returns an empty hash for show_answer_in_csv" do
-        expect(question.show_answer_in_csv).to eq({})
+      it "returns a hash containing a blank value for the full name field" do
+        expect(question.show_answer_in_csv).to eq({ "What is your name? - Full name" => "" })
       end
     end
 
@@ -82,8 +82,11 @@ RSpec.describe Question::Name, type: :model do
         expect(question.show_answer).to eq ""
       end
 
-      it "returns an empty hash for show_answer_in_csv" do
-        expect(question.show_answer_in_csv).to eq({})
+      it "returns a hash containing a blank value for the first and last name fields" do
+        expect(question.show_answer_in_csv).to eq({
+          "What is your name? - First name" => "",
+          "What is your name? - Last name" => "",
+        })
       end
     end
 
@@ -105,8 +108,11 @@ RSpec.describe Question::Name, type: :model do
         expect(question.errors[:last_name]).to include(I18n.t("activemodel.errors.models.question/name.attributes.last_name.blank"))
       end
 
-      it "returns an empty hash for show_answer_in_csv" do
-        expect(question.show_answer_in_csv).to eq({})
+      it "returns a hash with blank fields for show_answer_in_csv" do
+        expect(question.show_answer_in_csv).to eq({
+          "What is your name? - First name" => "",
+          "What is your name? - Last name" => "",
+        })
       end
     end
 
@@ -165,8 +171,12 @@ RSpec.describe Question::Name, type: :model do
         expect(question.show_answer).to eq ""
       end
 
-      it "returns an empty hash for show_answer_in_csv" do
-        expect(question.show_answer_in_csv).to eq({})
+      it "returns a hash containing a blank value for the first, middle and last name fields" do
+        expect(question.show_answer_in_csv).to eq({
+          "What is your name? - First name" => "",
+          "What is your name? - Middle names" => "",
+          "What is your name? - Last name" => "",
+        })
       end
     end
 
@@ -231,8 +241,11 @@ RSpec.describe Question::Name, type: :model do
           expect(question.show_answer_in_email).to eq("Full name: #{name}")
         end
 
-        it "returns a hash with the full name for show_answer_in_csv" do
-          expect(question.show_answer_in_csv).to eq({ "#{question_text} - Full name" => name })
+        it "returns a hash with a blank value for the title and the full name for show_answer_in_csv" do
+          expect(question.show_answer_in_csv).to eq({
+            "#{question_text} - Title" => "",
+            "#{question_text} - Full name" => name,
+          })
         end
       end
 
@@ -289,6 +302,7 @@ RSpec.describe Question::Name, type: :model do
 
         it "returns a hash with the first and last name for show_answer_in_csv" do
           expect(question.show_answer_in_csv).to eq({
+            "#{question_text} - Title" => "",
             "#{question_text} - First name" => first_name,
             "#{question_text} - Last name" => last_name,
           })
@@ -323,7 +337,7 @@ RSpec.describe Question::Name, type: :model do
     end
 
     context "when the name question is in first, middle and last name format" do
-      let(:input_type) { "first_and_last_name" }
+      let(:input_type) { "first_middle_and_last_name" }
       let(:first_name) { Faker::Name.first_name }
       let(:middle_name) { "#{Faker::Name.middle_name} #{Faker::Name.middle_name}" }
       let(:last_name) { Faker::Name.last_name }
@@ -352,6 +366,7 @@ RSpec.describe Question::Name, type: :model do
 
         it "returns a hash with the first, middle and last name for show_answer_in_csv" do
           expect(question.show_answer_in_csv).to eq({
+            "#{question_text} - Title" => "",
             "#{question_text} - First name" => first_name,
             "#{question_text} - Middle names" => middle_name,
             "#{question_text} - Last name" => last_name,

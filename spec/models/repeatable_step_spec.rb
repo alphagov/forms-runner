@@ -191,6 +191,16 @@ RSpec.describe RepeatableStep, type: :model do
         }.to_a)
       end
     end
+
+    context "when the question is optional and has no answers" do
+      let(:question) { build :text, is_optional: false }
+
+      it "returns a hash containing a key for the first answer with a blank value" do
+        expect(repeatable_step.show_answer_in_csv).to eq({
+          "#{question.question_text} - Answer 1" => "",
+        })
+      end
+    end
   end
 
   describe "#remove_answer" do
