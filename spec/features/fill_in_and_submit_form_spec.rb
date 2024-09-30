@@ -1,9 +1,9 @@
 require "rails_helper"
 
 feature "Fill in and submit a form", type: :feature do
-  let(:pages) { [(build :page, :with_text_settings, id: 1, form_id: 1, routing_conditions: [])] }
-  let(:form) { build :form, :live?, id: 1, name: "Fill in this form", pages:, start_page: 1 }
-  let(:question_text) { pages[0].question_text }
+  let(:steps) { [(build :v2_question_page_step, :with_text_settings, id: 1, routing_conditions: [], question_text:)] }
+  let(:form) { build :v2_form_document, :live?, id: 1, name: "Fill in this form", steps:, start_page: 1 }
+  let(:question_text) { Faker::Lorem.question }
   let(:answer_text) { "Answer text" }
   let(:reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
 
@@ -23,8 +23,7 @@ feature "Fill in and submit a form", type: :feature do
 
   before do
     ActiveResource::HttpMock.respond_to do |mock|
-      mock.get "/api/v1/forms/1", req_headers, form.to_json, 200
-      mock.get "/api/v1/forms/1/live", req_headers, form.to_json(include: [:pages]), 200
+      mock.get "/api/v2/forms/1/live", req_headers, form.to_json, 200
     end
 
     allow(ReferenceNumberService).to receive(:generate).and_return(reference)

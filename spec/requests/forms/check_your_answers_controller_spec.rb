@@ -4,14 +4,15 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
   let(:timestamp_of_request) { Time.utc(2022, 12, 14, 10, 0o0, 0o0) }
 
   let(:form_data) do
-    build(:form, :with_support,
+    build(:v2_form_document, :with_support,
           id: 2,
           live_at:,
           start_page: 1,
           privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
           what_happens_next_markdown: "Good things come to those that wait",
           declaration_text: "agree to the declaration",
-          pages: pages_data)
+          steps: steps_data,
+          submission_email:)
   end
 
   let(:email_confirmation_input) do
@@ -20,6 +21,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       confirmation_email_reference:,
       submission_email_reference: }
   end
+
+  let(:submission_email) { Faker::Internet.email(domain: "example.gov.uk") }
 
   let(:store) do
     {
@@ -42,22 +45,28 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
   let(:live_at) { "2022-08-18 09:16:50 +0100" }
 
-  let(:pages_data) do
+  let(:steps_data) do
     [
       {
         id: 1,
         position: 1,
-        question_text: "Question one",
-        answer_type: "date",
-        next_page: 2,
-        is_optional: nil,
+        next_step_id: 2,
+        type: "question_page",
+        data: {
+          answer_type: "date",
+          is_optional: nil,
+          question_text: "Question one",
+        },
       },
       {
         id: 2,
         position: 2,
-        question_text: "Question two",
-        answer_type: "date",
-        is_optional: nil,
+        type: "question_page",
+        data: {
+          answer_type: "date",
+          is_optional: nil,
+          question_text: "Question two",
+        },
       },
     ]
   end
@@ -90,7 +99,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
     allow(Lograge).to receive(:logger).and_return(logger)
 
     ActiveResource::HttpMock.respond_to do |mock|
-      mock.get "/api/v1/forms/2#{api_url_suffix}", req_headers, form_data.to_json, 200
+      mock.get "/api/v2/forms/2#{api_url_suffix}", req_headers, form_data.to_json, 200
     end
 
     allow(Flow::Context).to receive(:new).and_wrap_original do |original_method, *args|
@@ -156,31 +165,40 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       end
 
       context "when the form has a question that can be answered more than once" do
-        let(:pages_data) do
+        let(:steps_data) do
           [
             {
               id: 1,
               position: 1,
-              question_text: "Question one",
-              answer_type: "date",
-              next_page: 2,
-              is_optional: nil,
+              next_step_id: 2,
+              type: "question_page",
+              data: {
+                answer_type: "date",
+                is_optional: nil,
+                question_text: "Question one",
+              },
             },
             {
               id: 2,
               position: 2,
-              question_text: "Question two",
-              answer_type: "date",
-              next_page: 3,
-              is_optional: nil,
+              next_step_id: 3,
+              type: "question_page",
+              data: {
+                answer_type: "date",
+                is_optional: nil,
+                question_text: "Question two",
+              },
             },
             {
               id: 3,
               position: 3,
-              question_text: "Question three",
-              answer_type: "date",
-              is_optional: nil,
-              is_repeatable: true,
+              type: "question_page",
+              data: {
+                answer_type: "date",
+                is_optional: nil,
+                is_repeatable: true,
+                question_text: "Question three",
+              },
             },
           ]
         end
@@ -217,31 +235,40 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         end
 
         context "and that question is optional and has been skipped" do
-          let(:pages_data) do
+          let(:steps_data) do
             [
               {
                 id: 1,
                 position: 1,
-                question_text: "Question one",
-                answer_type: "date",
-                next_page: 2,
-                is_optional: nil,
+                next_step_id: 2,
+                type: "question_page",
+                data: {
+                  answer_type: "date",
+                  is_optional: nil,
+                  question_text: "Question one",
+                },
               },
               {
                 id: 2,
                 position: 2,
-                question_text: "Question two",
-                answer_type: "date",
-                next_page: 3,
-                is_optional: nil,
+                next_step_id: 3,
+                type: "question_page",
+                data: {
+                  answer_type: "date",
+                  is_optional: nil,
+                  question_text: "Question two",
+                },
               },
               {
                 id: 3,
                 position: 3,
-                question_text: "Question three",
-                answer_type: "date",
-                is_optional: true,
-                is_repeatable: true,
+                type: "question_page",
+                data: {
+                  answer_type: "date",
+                  is_optional: true,
+                  is_repeatable: true,
+                  question_text: "Question three",
+                },
               },
             ]
           end
@@ -393,7 +420,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         expect(deliveries.length).to eq 2
 
         mail = deliveries[0]
-        expect(mail.to).to eq [form_data.submission_email]
+        expect(mail.to).to eq [submission_email]
 
         expected_personalisation = {
           title: form_data.name,
@@ -441,7 +468,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         expect(deliveries.length).to eq 2
 
         mail = deliveries[0]
-        expect(mail.to).to eq [form_data.submission_email]
+        expect(mail.to).to eq [submission_email]
 
         expected_personalisation = {
           title: form_data.name,

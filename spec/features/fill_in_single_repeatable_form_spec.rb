@@ -1,10 +1,10 @@
 require "rails_helper"
 
 feature "Fill in and submit a form with a single repeatable question", type: :feature do
-  let(:pages) { [(build :page, :with_repeatable, answer_type: "number")] }
-  let(:form) { build :form, :live?, id: 42, name: "Form with repeating question", pages:, start_page: pages.first.id }
+  let(:steps) { [(build :v2_question_page_step, :with_repeatable, answer_type: "number", question_text:)] }
+  let(:form) { build :v2_form_document, :live?, id: 42, name: "Form with repeating question", steps:, start_page: steps.first.id }
 
-  let(:question_text) { pages[0].question_text }
+  let(:question_text) { Faker::Lorem.question }
   let(:first_answer_text) { "99" }
   let(:second_answer_text) { "7" }
   let(:reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
@@ -25,8 +25,7 @@ feature "Fill in and submit a form with a single repeatable question", type: :fe
 
   before do
     ActiveResource::HttpMock.respond_to do |mock|
-      mock.get "/api/v1/forms/42", req_headers, form.to_json, 200
-      mock.get "/api/v1/forms/42/live", req_headers, form.to_json(include: [:pages]), 200
+      mock.get "/api/v2/forms/42/live", req_headers, form.to_json, 200
     end
 
     allow(ReferenceNumberService).to receive(:generate).and_return(reference)

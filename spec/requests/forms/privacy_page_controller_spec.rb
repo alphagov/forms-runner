@@ -2,31 +2,37 @@ require "rails_helper"
 
 RSpec.describe Forms::PrivacyPageController, type: :request do
   let(:form_data) do
-    build(:form, :with_support,
+    build(:v2_form_document, :with_support,
           id: 2,
           start_page: 1,
           privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
           what_happens_next_markdown: "Good things come to those that wait",
           declaration_text: "agree to the declaration",
-          pages: pages_data)
+          steps: steps_data)
   end
 
-  let(:pages_data) do
+  let(:steps_data) do
     [
       {
         id: 1,
         position: 1,
-        question_text: "Question one",
-        answer_type: "date",
-        next_page: 2,
-        is_optional: nil,
+        next_step_id: 2,
+        type: "question_page",
+        data: {
+          answer_type: "date",
+          is_optional: nil,
+          question_text: "Question one",
+        },
       },
       {
         id: 2,
         position: 2,
-        question_text: "Question two",
-        answer_type: "date",
-        is_optional: nil,
+        type: "question_page",
+        data: {
+          answer_type: "date",
+          is_optional: nil,
+          question_text: "Question two",
+        },
       },
     ]
   end
@@ -41,7 +47,7 @@ RSpec.describe Forms::PrivacyPageController, type: :request do
   describe "#show" do
     before do
       ActiveResource::HttpMock.respond_to do |mock|
-        mock.get "/api/v1/forms/2/draft", req_headers, form_data.to_json, 200
+        mock.get "/api/v2/forms/2/draft", req_headers, form_data.to_json, 200
       end
 
       get form_privacy_path(mode: "preview-draft", form_id: 2, form_slug: form_data.form_slug)

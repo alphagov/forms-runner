@@ -1,28 +1,26 @@
 require "rails_helper"
 
 RSpec.describe Forms::SubmittedController, type: :request do
-  let(:context) { Flow::Context.new(form: form_data, store:) }
-
   let(:form_data) do
-    build(:form, :with_support,
+    build(:v2_form_document, :with_support,
           id: 2,
           start_page: 1,
           privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
           what_happens_next_markdown: "Your application will be processed within a few days.\n\nContact us if you need to:\n\n-change the details of your application\n-cancel your application",
           declaration_text: "agree to the declaration",
-          pages: pages_data)
+          steps: steps_data)
   end
 
-  let(:pages_data) do
+  let(:steps_data) do
     [
-      build(:page,
+      build(:v2_question_page_step,
             id: 1,
             position: 1,
             question_text: "Question one",
             answer_type: "date",
-            next_page: 2,
+            next_step_id: 2,
             is_optional: nil),
-      build(:page,
+      build(:v2_question_page_step,
             id: 2,
             position: 2,
             question_text: "Question two",
@@ -60,11 +58,14 @@ RSpec.describe Forms::SubmittedController, type: :request do
   describe "#submitted" do
     before do
       ActiveResource::HttpMock.respond_to do |mock|
-        mock.get "/api/v1/forms/2/draft", req_headers, form_data.to_json, 200
+        mock.get "/api/v2/forms/2/draft", req_headers, form_data.to_json, 200
       end
 
-      allow(Flow::Context).to receive(:new).and_return(context)
-      allow(context).to receive(:clear)
+      post save_form_page_path(mode: "preview-draft", form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: store[:answers]["2"]["1"] }
+      post save_form_page_path(mode: "preview-draft", form_id: 2, form_slug: form_data.form_slug, page_slug: 2), params: { question: store[:answers]["2"]["2"] }
+
+      # assert that we've set up the test correctly
+      expect(controller.session[:answers].to_h).to match({ "2" => { "1" => a_hash_including(**store[:answers]["2"]["1"]), "2" => a_hash_including(**store[:answers]["2"]["2"]) } }) # rubocop: disable RSpec/ExpectInHook
 
       get form_submitted_path(mode: "preview-draft", form_id: 2, form_slug: form_data.form_slug)
     end
@@ -82,7 +83,7 @@ RSpec.describe Forms::SubmittedController, type: :request do
     end
 
     it "clears the context" do
-      expect(context).to have_received(:clear)
+      expect(controller.session[:answers]["2"]).to be_nil
     end
   end
 end

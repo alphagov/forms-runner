@@ -4,14 +4,17 @@ RSpec.describe Forms::BaseController, type: :request do
   let(:timestamp_of_request) { Time.utc(2022, 12, 14, 10, 0o0, 0o0) }
 
   let(:form_response_data) do
-    build(:form, :with_support,
-          id: 2,
-          live_at:,
-          start_page:,
-          privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
-          what_happens_next_markdown: "Good things come to those that wait",
-          declaration_text: "agree to the declaration",
-          pages: pages_data)
+    build(
+      :v2_form_document,
+      :with_support,
+      id: 2,
+      live_at:,
+      start_page:,
+      privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
+      what_happens_next_markdown: "Good things come to those that wait",
+      declaration_text: "agree to the declaration",
+      steps: steps_data,
+    )
   end
   let(:start_page) { 1 }
   let(:live_at) { "2022-08-18 09:16:50 +0100" }
@@ -22,18 +25,18 @@ RSpec.describe Forms::BaseController, type: :request do
     }
   end
 
-  let(:pages_data) do
+  let(:steps_data) do
     [
-      (build :page,
-             id: 1,
-             next_page: 2,
-             answer_type: "text",
-             answer_settings: { input_type: "single_line" }
+      (attributes_for :v2_question_page_step,
+                      id: 1,
+                      next_page: 2,
+                      answer_type: "text",
+                      answer_settings: { input_type: "single_line" }
       ),
-      (build :page,
-             id: 2,
-             answer_type: "text",
-             answer_settings: { input_type: "single_line" }
+      (attributes_for :v2_question_page_step,
+                      id: 2,
+                      answer_type: "text",
+                      answer_settings: { input_type: "single_line" }
       ),
     ]
   end
@@ -56,8 +59,8 @@ RSpec.describe Forms::BaseController, type: :request do
 
   before do
     ActiveResource::HttpMock.respond_to do |mock|
-      mock.get "/api/v1/forms/2#{api_url_suffix}", req_headers, form_response_data.to_json, 200
-      mock.get "/api/v1/forms/9999#{api_url_suffix}", req_headers, no_data_found_response, 404
+      mock.get "/api/v2/forms/2#{api_url_suffix}", req_headers, form_response_data.to_json, 200
+      mock.get "/api/v2/forms/9999#{api_url_suffix}", req_headers, no_data_found_response, 404
     end
   end
 
@@ -122,7 +125,7 @@ RSpec.describe Forms::BaseController, type: :request do
     before do
       ActiveResource::HttpMock.respond_to do |mock|
         allow(LogEventService).to receive(:log_form_start).at_least(:once)
-        mock.get "/api/v1/forms/2/live", req_headers, form_response_data.to_json, 200
+        mock.get "/api/v2/forms/2/live", req_headers, form_response_data.to_json, 200
       end
 
       get error_repeat_submission_path(mode: "form", form_id: 2, form_slug: form_response_data.form_slug)

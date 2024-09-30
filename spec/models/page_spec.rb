@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Page, type: :model do
+RSpec.describe Page, feature_api_v2: false, type: :model do
   it "has a valid factory" do
     page = build :page
     expect(page).to be_valid
