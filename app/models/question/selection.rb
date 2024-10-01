@@ -11,7 +11,7 @@ module Question
 
     def show_answer
       answer = if allow_multiple_answers?
-                 selection_without_blanks.join(", ")
+                 selection_without_blanks&.join(", ")
                else
                  selection
                end
@@ -50,7 +50,7 @@ module Question
     end
 
     def selection_without_blanks
-      selection.reject(&:blank?)
+      selection&.reject(&:blank?)
     end
 
     def validate_radio
