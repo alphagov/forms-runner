@@ -18,8 +18,7 @@ module Flow
     end
 
     def find_or_create(page_slug)
-      step = completed_steps.find { |s| s.page_slug == page_slug }
-      step || @step_factory.create_step(page_slug)
+      @step_factory.create_step(page_slug).load_from_context(@form_context)
     end
 
     def save_step(step)
