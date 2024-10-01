@@ -65,7 +65,8 @@ module Forms
     end
 
     def check_your_answers_rows
-      current_context.completed_steps.map { |page| page_to_row(page) }
+      preview_journey = Flow::PreviewJourney.new(form_context: Flow::FormContext.new(session), step_factory: Flow::StepFactory.new(form: current_form))
+      preview_journey.completed_steps.map { |page| page_to_row(page) }
     end
 
     def answers_need_full_width
