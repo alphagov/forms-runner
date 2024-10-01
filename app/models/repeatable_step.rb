@@ -26,6 +26,8 @@ class RepeatableStep < Step
   def load_from_context(form_context)
     question_attrs = form_context.get_stored_answer(self)
 
+    return self if question_attrs.nil?
+
     unless question_attrs.is_a?(Array)
       raise ArgumentError
     end
