@@ -53,6 +53,10 @@ RSpec.describe Flow::Journey do
       it "includes only the pages that have been completed" do
         expect(journey.completed_steps.to_json).to eq [first_step_in_journey, second_step_in_journey].to_json
       end
+
+      it "includes the answer data in the question pages" do
+        expect(journey.completed_steps.map(&:question)).to all be_answered
+      end
     end
 
     context "when there is a gap in the pages that have been completed" do
@@ -68,6 +72,10 @@ RSpec.describe Flow::Journey do
 
       it "includes all pages" do
         expect(journey.completed_steps.to_json).to eq [first_step_in_journey, second_step_in_journey, third_step_in_journey].to_json
+      end
+
+      it "includes the answer data in the question pages" do
+        expect(journey.completed_steps.map(&:question)).to all be_answered
       end
     end
 
@@ -119,6 +127,10 @@ RSpec.describe Flow::Journey do
           expect(journey.completed_steps.to_json).to eq [first_step_in_journey, second_step_in_journey, third_step_in_journey].to_json
         end
 
+        it "includes the answer data in the question pages" do
+          expect(journey.completed_steps.map(&:question)).to all be_answered
+        end
+
         context "and the repeatable question has been answered more than once" do
           let(:store) { { answers: { "2" => { "1" => { selection: "Option 2" }, "2" => [{ text: "Example text" }, { text: "Different example text" }], "3" => { text: "More example text" } } } } }
 
@@ -145,6 +157,10 @@ RSpec.describe Flow::Journey do
           expect(journey.completed_steps.to_json).to eq [first_step_in_journey, third_step_in_journey].to_json
         end
 
+        it "includes the answer data in the question pages" do
+          expect(journey.completed_steps.map(&:question)).to all be_answered
+        end
+
         context "when there are answers to questions not in the matched route" do
           let(:store) { { answers: { "2" => { "1" => { selection: "Option 1" }, "2" => { text: "Example text" }, "3" => { text: "More example text" } } } } }
 
@@ -160,6 +176,10 @@ RSpec.describe Flow::Journey do
 
       it "includes only pages before the answer with the wrong type" do
         expect(journey.completed_steps.to_json).to eq [first_step_in_journey, second_step_in_journey].to_json
+      end
+
+      it "includes the answer data in the question pages" do
+        expect(journey.completed_steps.map(&:question)).to all be_answered
       end
     end
 

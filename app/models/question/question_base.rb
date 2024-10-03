@@ -21,6 +21,10 @@ module Question
       attribute_names.index_with { |_k| nil }
     end
 
+    def answered?
+      @attributes.to_hash.any? { |_key, value| !value.nil? }
+    end
+
     def show_answer
       attribute_names.map { |attribute| send(attribute) }.reject(&:blank?)&.join(", ")
     end
