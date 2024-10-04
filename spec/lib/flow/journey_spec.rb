@@ -47,11 +47,119 @@ RSpec.describe Flow::Journey do
       end
     end
 
+    context "when some of the pages have been completed" do
+      let(:store) { { answers: { "2" => { "1" => { selection: "Option 2" }, "2" => { text: "Example text" } } } } }
+
+      it "includes only the pages that have been completed" do
+        expect(journey.completed_steps.to_json).to eq [first_step_in_journey, second_step_in_journey].to_json
+      end
+    end
+
+    context "when there is a gap in the pages that have been completed" do
+      let(:store) { { answers: { "2" => { "1" => { selection: "Option 2" }, "3" => { text: "More example text" } } } } }
+
+      it "includes only the pages that have been completed before the gap" do
+        expect(journey.completed_steps.to_json).to eq [first_step_in_journey].to_json
+      end
+    end
+
     context "when all pages have been completed" do
       let(:store) { { answers: { "2" => { "1" => { selection: "Option 2" }, "2" => { text: "Example text" }, "3" => { text: "More example text" } } } } }
 
       it "includes all pages" do
         expect(journey.completed_steps.to_json).to eq [first_step_in_journey, second_step_in_journey, third_step_in_journey].to_json
+      end
+    end
+
+    context "when a question is optional" do
+      let(:second_page_in_form) do
+        build :page, :with_text_settings,
+              is_optional: true,
+              id: 2,
+              next_page: 3
+      end
+
+      context "and all questions have been answered" do
+        let(:store) { { answers: { "2" => { "1" => { selection: "Option 2" }, "2" => { text: "Example text" }, "3" => { text: "More example text" } } } } }
+
+        it "includes all pages" do
+          expect(journey.completed_steps.to_json).to eq [first_step_in_journey, second_step_in_journey, third_step_in_journey].to_json
+        end
+      end
+
+      context "and the optional question has not been visited" do
+        let(:store) { { answers: { "2" => { "1" => { selection: "Option 2" }, "3" => { text: "More example text" } } } } }
+
+        it "includes only pages that have been completed before the optional question" do
+          expect(journey.completed_steps.to_json).to eq [first_step_in_journey].to_json
+        end
+      end
+
+      context "and the optional question has a blank answer" do
+        let(:store) { { answers: { "2" => { "1" => { selection: "Option 2" }, "2" => { text: "" }, "3" => { text: "More example text" } } } } }
+
+        it "includes all pages" do
+          expect(journey.completed_steps.to_json).to eq [first_step_in_journey, second_step_in_journey, third_step_in_journey].to_json
+        end
+      end
+    end
+
+    context "when a page is repeatable" do
+      let(:second_page_in_form) do
+        build :page, :with_text_settings,
+              is_repeatable: true,
+              id: 2,
+              next_page: 3
+      end
+
+      context "when all pages have been completed" do
+        let(:store) { { answers: { "2" => { "1" => { selection: "Option 2" }, "2" => [{ text: "Example text" }], "3" => { text: "More example text" } } } } }
+
+        it "includes all pages" do
+          expect(journey.completed_steps.to_json).to eq [first_step_in_journey, second_step_in_journey, third_step_in_journey].to_json
+        end
+
+        context "and the repeatable question has been answered more than once" do
+          let(:store) { { answers: { "2" => { "1" => { selection: "Option 2" }, "2" => [{ text: "Example text" }, { text: "Different example text" }], "3" => { text: "More example text" } } } } }
+
+          it "includes all pages once each" do
+            expect(journey.completed_steps.to_json).to eq [first_step_in_journey, second_step_in_journey, third_step_in_journey].to_json
+          end
+        end
+
+        context "but the answer store does not have data in the format expected for the repeatable question" do
+          let(:store) { { answers: { "2" => { "1" => { selection: "Option 2" }, "2" => { text: "Example text" }, "3" => { text: "More example text" } } } } }
+
+          it "includes only pages before the repeatable question" do
+            expect(journey.completed_steps.to_json).to eq [first_step_in_journey].to_json
+          end
+        end
+      end
+    end
+
+    context "when a page has a routing condition" do
+      context "and the page answer matches the routing condition" do
+        let(:store) { { answers: { "2" => { "1" => { selection: "Option 1" }, "3" => { text: "More example text" } } } } }
+
+        it "includes only pages in the matched route" do
+          expect(journey.completed_steps.to_json).to eq [first_step_in_journey, third_step_in_journey].to_json
+        end
+
+        context "when there are answers to questions not in the matched route" do
+          let(:store) { { answers: { "2" => { "1" => { selection: "Option 1" }, "2" => { text: "Example text" }, "3" => { text: "More example text" } } } } }
+
+          it "includes only pages in the matched route" do
+            expect(journey.completed_steps.to_json).to eq [first_step_in_journey, third_step_in_journey].to_json
+          end
+        end
+      end
+    end
+
+    context "when the answer store has data that does not match the type expected by the question" do
+      let(:store) { { answers: { "2" => { "1" => { selection: "Option 2" }, "2" => { text: "Example text" }, "3" => { selection: "Option 1" } } } } }
+
+      it "includes only pages before the answer with the wrong type" do
+        expect(journey.completed_steps.to_json).to eq [first_step_in_journey, second_step_in_journey].to_json
       end
     end
 
