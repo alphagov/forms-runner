@@ -22,37 +22,58 @@ module Flow
     def initialize(form_context:, step_factory:)
       @form_context = form_context
       @step_factory = step_factory
-      generate_completed_steps
+      @completed_steps = generate_completed_steps
     end
 
   private
 
-    def find_completed_step(page_slug)
-      step = @step_factory.create_step(page_slug)
-
+    def step_is_completed?(question_page_step)
       # A step has been completed if it is a question page that has been answered.
-      # We also need to load the answer into the step for next_page_with_routing to give the correct result.
-      step.load_from_context(@form_context) unless @form_context.get_stored_answer(step).nil?
-    rescue ActiveModel::UnknownAttributeError, ArgumentError
-      @form_context.clear_stored_answer(step)
-      nil
+      question_page_step.question.answered?
     end
 
     def generate_completed_steps
-      @completed_steps = []
-      current_step = find_completed_step(:_start)
+      each_step_with_routing.take_while do |step|
+        step_is_completed?(step)
+      end
+    end
 
-      while current_step
-        next_page_slug = current_step.next_page_slug_after_routing
+    def each_step_with_routing
+      current_step = @step_factory.create_step(:_start)
+      visited_page_slugs = []
 
-        # Prevent infinite loop if a route goes back on itself
-        break if @completed_steps.map(&:page_slug).include?(next_page_slug)
+      Enumerator.new do |yielder|
+        loop do
+          break if current_step.nil?
+          break if current_step.is_a? CheckYourAnswersStep # CheckYourAnswers step signals end of steps
 
-        @completed_steps << current_step
+          # We need to load the answer into the step for next_page_with_routing to give the correct result.
+          current_step = safe_load_from_context(current_step)
 
-        break if next_page_slug.nil?
+          next_page_slug = current_step.next_page_slug_after_routing
 
-        current_step = find_completed_step(next_page_slug)
+          # Prevent infinite loop if a route goes back on itself
+          break if visited_page_slugs.include?(next_page_slug)
+
+          yielder << current_step
+          visited_page_slugs << current_step.page_slug
+
+          break if next_page_slug.nil?
+
+          current_step = @step_factory.create_step(next_page_slug)
+        end
+      end
+    end
+
+    def safe_load_from_context(step)
+      return step unless step.respond_to? :load_from_context # step may be a CheckYourAnswersStep without load_from_context method
+
+      original_step = step.deep_dup # load_from_context method for RepeatableStep can fail with data half loaded
+
+      begin
+        step.load_from_context(@form_context)
+      rescue ActiveModel::UnknownAttributeError, ArgumentError
+        original_step
       end
     end
   end
