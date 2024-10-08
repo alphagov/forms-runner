@@ -17,8 +17,6 @@ module Flow
   # array will be empty.
 
   class Journey
-    include Enumerable
-
     attr_reader :completed_steps
 
     def initialize(form_context:, step_factory:)
