@@ -56,7 +56,7 @@ gem "lograge"
 
 # For AWS interactions
 gem "aws-sdk-cloudwatch"
-gem "aws-sdk-codepipeline", "~> 1.86"
+gem "aws-sdk-codepipeline", "~> 1.87"
 
 # For sending submissions as CSV
 gem "csv"
