@@ -1,5 +1,4 @@
-features:
-  api_v2: false
+features: {}
 
 forms_admin:
   # URL to form-admin
