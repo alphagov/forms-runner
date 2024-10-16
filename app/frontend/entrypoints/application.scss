@@ -3,5 +3,6 @@ $govuk-fonts-path: "@govuk/assets/fonts/";
 $govuk-global-styles: true;
 
 @import "@govuk/all";
+@import "dfe-autocomplete/src/dfe-autocomplete";
 @import "../../components/form_header_component/";
 @import "../styles/app-panel";
