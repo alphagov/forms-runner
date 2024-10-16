@@ -1,4 +1,5 @@
 import { initAll } from 'govuk-frontend'
+import dfeAutocomplete from 'dfe-autocomplete'
 import {
   loadConsentStatus,
   CONSENT_STATUS
@@ -49,3 +50,5 @@ if (document.body.dataset.googleAnalyticsEnabled === 'true') {
 }
 
 initAll()
+
+window.dfeAutocomplete = dfeAutocomplete
