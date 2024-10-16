@@ -15,60 +15,123 @@ RSpec.describe Question::SelectionComponent::View, type: :component do
   end
 
   describe "when component is select one from a list field" do
-    let(:question) { build :single_selection_question, is_optional: }
+    context "when there are 30 or fewer options" do
+      let(:question) { build :single_selection_question, is_optional:, selection_options: }
 
-    it "renders the question text as a heading" do
-      expect(page.find("legend h1")).to have_text(question.question_text)
-    end
+      let(:selection_options) do
+        Array.new(30).map { |_index| OpenStruct.new(name: Faker::Lorem.sentence) }
+      end
 
-    it "contains the options" do
-      expect(page).to have_css("input[type='radio'] + label", text: "Option 1")
-      expect(page).to have_css("input[type='radio'] + label", text: "Option 2")
-    end
+      it "renders the question text as a heading" do
+        expect(page.find("legend h1")).to have_text(question.question_text)
+      end
 
-    context "when the question has hint text" do
-      let(:question) { build :single_selection_question, :with_hints }
+      it "renders the options as radio buttons" do
+        expect(page).not_to have_select
 
-      it "outputs the hint text" do
-        expect(page.find(".govuk-hint")).to have_text(question.hint_text)
+        selection_options.each do |option|
+          expect(page).to have_field(type: "radio", with: option.name)
+        end
+      end
+
+      context "when the question has hint text" do
+        let(:question) { build :single_selection_question, :with_hints, selection_options: }
+
+        it "outputs the hint text" do
+          expect(page.find(".govuk-hint")).to have_text(question.hint_text)
+        end
+      end
+
+      context "when there is extra suffix to be added to heading" do
+        let(:extra_question_text_suffix) { "Some extra text to add to the question text" }
+
+        it "renders the question text and extra suffix as a heading" do
+          expect(page.find("legend h1")).to have_text("#{question.question_text} #{extra_question_text_suffix}")
+        end
+      end
+
+      context "with unsafe question text" do
+        let(:question) { build :single_selection_question, question_text: "What is your name? <script>alert(\"Hi\")</script>", selection_options: }
+        let(:extra_question_text_suffix) { "<span>Some trusted html</span>" }
+
+        it "returns the escaped title with the optional suffix" do
+          expected_output = "What is your name? &lt;script&gt;alert(\"Hi\")&lt;/script&gt; <span>Some trusted html</span>"
+          expect(page.find("h1").native.inner_html).to eq(expected_output)
+        end
+      end
+
+      context "when question is optional" do
+        let(:is_optional) { true }
+
+        it "does a legend with only the question text in and not suffixed with '(optional)'" do
+          expect(page.find("h1")).to have_text(question.question_text)
+        end
+
+        it "contains the 'None of the above' option" do
+          expect(page).to have_css("input[type='radio'] + label", text: "None of the above")
+        end
+      end
+
+      context "when question has guidance" do
+        let(:question) { build :single_selection_question, :with_guidance, selection_options: }
+
+        it "renders the question text as a legend" do
+          expect(page.find("legend.govuk-fieldset__legend--m")).to have_text(question.question_text)
+        end
       end
     end
 
-    context "when there is extra suffix to be added to heading" do
-      let(:extra_question_text_suffix) { "Some extra text to add to the question text" }
+    context "when there are more than 30 options" do
+      let(:question) { build :single_selection_question, selection_options: }
 
-      it "renders the question text and extra suffix as a heading" do
-        expect(page.find("legend h1")).to have_text("#{question.question_text} #{extra_question_text_suffix}")
+      let(:selection_options) do
+        Array.new(31).map { |_index| OpenStruct.new(name: Faker::Lorem.sentence) }
       end
-    end
 
-    context "with unsafe question text" do
-      let(:question) { build :single_selection_question, question_text: "What is your name? <script>alert(\"Hi\")</script>" }
-      let(:extra_question_text_suffix) { "<span>Some trusted html</span>" }
+      it "renders the question as a select field with all of the options" do
+        expect(page).to have_select
 
-      it "returns the escaped title with the optional suffix" do
-        expected_output = "What is your name? &lt;script&gt;alert(\"Hi\")&lt;/script&gt; <span>Some trusted html</span>"
-        expect(page.find("h1").native.inner_html).to eq(expected_output)
+        selection_options.each do
+          expect(page).not_to have_field(type: "radio")
+        end
       end
-    end
 
-    context "when question is optional" do
-      let(:is_optional) { true }
-
-      it "does a legend with only the question text in and not suffixed with '(optional)'" do
+      it "renders the question text as a heading" do
         expect(page.find("h1")).to have_text(question.question_text)
       end
 
-      it "contains the 'None of the above' option" do
-        expect(page).to have_css("input[type='radio'] + label", text: "None of the above")
+      context "when the question has hint text" do
+        let(:question) { build :single_selection_question, :with_hints, selection_options: }
+
+        it "outputs the hint text" do
+          expect(page.find(".govuk-hint")).to have_text(question.hint_text)
+        end
       end
-    end
 
-    context "when question has guidance" do
-      let(:question) { build :single_selection_question, :with_guidance }
+      context "when there is extra suffix to be added to heading" do
+        let(:extra_question_text_suffix) { "Some extra text to add to the question text" }
 
-      it "renders the question text as a legend" do
-        expect(page.find("legend.govuk-fieldset__legend--m")).to have_text(question.question_text)
+        it "renders the question text and extra suffix as a heading" do
+          expect(page.find("h1")).to have_text("#{question.question_text} #{extra_question_text_suffix}")
+        end
+      end
+
+      context "with unsafe question text" do
+        let(:question) { build :single_selection_question, question_text: "What is your name? <script>alert(\"Hi\")</script>", selection_options: }
+        let(:extra_question_text_suffix) { "<span>Some trusted html</span>" }
+
+        it "returns the escaped title with the optional suffix" do
+          expected_output = "<label for=\"form-selection-field\" class=\"govuk-label govuk-label--l\">What is your name? &lt;script&gt;alert(\"Hi\")&lt;/script&gt; <span>Some trusted html</span></label>"
+          expect(page.find("h1").native.inner_html).to eq(expected_output)
+        end
+      end
+
+      context "when question has guidance" do
+        let(:question) { build :single_selection_question, :with_guidance, selection_options: }
+
+        it "renders the question text as a legend" do
+          expect(page.find("label")).to have_text(question.question_text)
+        end
       end
     end
   end
