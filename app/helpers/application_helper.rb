@@ -50,7 +50,7 @@ module ApplicationHelper
     "/node_modules/govuk-frontend/dist/govuk/assets"
   end
 
-  def init_autocomplete_script(show_all_values: false, raw_attribute: false, source: false)
+  def init_autocomplete_script(show_all_values: false, raw_attribute: false, source: false, auto_select: false)
     content_for(:body_end) do
       javascript_tag defer: true do
         "
@@ -59,7 +59,8 @@ module ApplicationHelper
           dfeAutocomplete({
             showAllValues: #{show_all_values},
             rawAttribute: #{raw_attribute},
-            source: #{source}
+            source: #{source},
+            autoselect: #{auto_select},
           })
         }
       });
