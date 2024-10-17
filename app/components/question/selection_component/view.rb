@@ -9,6 +9,14 @@ module Question
 
     private
 
+      def autocomplete_options
+        options = question.answer_settings.selection_options
+
+        options.push(OpenStruct.new({ name: "None of the above" })) if question.is_optional?
+
+        options
+      end
+
       def allow_multiple_answers?
         question.answer_settings.only_one_option != "true"
       end

@@ -3,7 +3,7 @@
   form_builder,
   attribute_name: :selection,
   form_field: form_builder.govuk_collection_select(:selection,
-                                        question.answer_settings.selection_options,
+                                        autocomplete_options,
                                         :name,
                                         :name,
                                         options: { prompt: 'Select an answer' },
