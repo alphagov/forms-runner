@@ -36,15 +36,19 @@ private
   def submit_form_to_processing_team
     raise StandardError, "Form id(#{@form.id}) has no completed steps i.e questions/answers to include in submission email" if @current_context.completed_steps.blank?
 
-    if !@preview_mode && @form.submission_email.blank?
-      raise StandardError, "Form id(#{@form.id}) is missing a submission email address"
-    end
+    if @form.submission_type == "s3"
+      upload_submission_csv_to_s3
+    else
+      if !@preview_mode && @form.submission_email.blank?
+        raise StandardError, "Form id(#{@form.id}) is missing a submission email address"
+      end
 
-    unless @form.submission_email.blank? && @preview_mode
-      if @form.submission_type == "email_with_csv"
-        deliver_submission_email_with_csv_attachment_with_fallback
-      else
-        deliver_submission_email
+      unless @form.submission_email.blank? && @preview_mode
+        if @form.submission_type == "email_with_csv"
+          deliver_submission_email_with_csv_attachment_with_fallback
+        else
+          deliver_submission_email
+        end
       end
     end
   end
@@ -66,11 +70,11 @@ private
 
   def deliver_submission_email(csv_file = nil)
     mail = FormSubmissionMailer
-             .email_confirmation_input(text_input: email_body,
-                                       notify_response_id: @email_confirmation_input.submission_email_reference,
-                                       submission_email: @form.submission_email,
-                                       mailer_options: @mailer_options,
-                                       csv_file:).deliver_now
+      .email_confirmation_input(text_input: email_body,
+                                notify_response_id: @email_confirmation_input.submission_email_reference,
+                                submission_email: @form.submission_email,
+                                mailer_options: @mailer_options,
+                                csv_file:).deliver_now
 
     CurrentLoggingAttributes.submission_email_id = mail.govuk_notify_response.id
     LogEventService.log_submit(@current_context,
@@ -91,14 +95,32 @@ private
 
   def deliver_submission_email_with_csv_attachment
     Tempfile.create do |file|
-      CsvSubmissionService.new(
-        current_context: @current_context,
-        submission_reference: @submission_reference,
-        timestamp: @timestamp,
-        output_file_path: file.path,
-      ).write
+      write_submission_csv(file)
       deliver_submission_email(file)
     end
+  end
+
+  def upload_submission_csv_to_s3
+    Tempfile.create do |file|
+      write_submission_csv(file)
+      S3SubmissionService.new(
+        file_path: file.path,
+        form_id: @form.id,
+        s3_bucket_name: @form.s3_bucket_name,
+        s3_bucket_aws_account_id: @form.s3_bucket_aws_account_id,
+        timestamp: @timestamp,
+        submission_reference: @submission_reference,
+      ).upload_file_to_s3
+    end
+  end
+
+  def write_submission_csv(file)
+    CsvSubmissionService.new(
+      current_context: @current_context,
+      submission_reference: @submission_reference,
+      timestamp: @timestamp,
+      output_file_path: file.path,
+    ).write
   end
 
   def form_title

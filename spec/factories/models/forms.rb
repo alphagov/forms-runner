@@ -20,6 +20,9 @@ FactoryBot.define do
 
     submission_type { :email }
 
+    s3_bucket_name { nil }
+    s3_bucket_aws_account_id { nil }
+
     trait :new_form do
       submission_email { nil }
       privacy_policy_url { nil }
