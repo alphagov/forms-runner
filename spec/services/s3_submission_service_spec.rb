@@ -25,6 +25,28 @@ RSpec.describe S3SubmissionService do
     test_file.unlink
   end
 
+  describe "initialize" do
+    context "when s3_bucket_name is nil" do
+      it "raises an ArgumentException" do
+        expect {
+          described_class.new(file_path: test_file.path, form_id:, s3_bucket_name: nil,
+                              s3_bucket_aws_account_id:, timestamp:, submission_reference:)
+        }
+          .to raise_error(ArgumentError, "s3_bucket_name cannot be nil")
+      end
+    end
+
+    context "when s3_bucket_aws_account_id is nil" do
+      it "raises an ArgumentException" do
+        expect {
+          described_class.new(file_path: test_file.path, form_id:, s3_bucket_name:,
+                              s3_bucket_aws_account_id: nil, timestamp:, submission_reference:)
+        }
+          .to raise_error(ArgumentError, "s3_bucket_aws_account_id cannot be nil")
+      end
+    end
+  end
+
   describe "#upload_file_to_s3" do
     let(:mock_credentials) { { foo: "bar" } }
     let(:mock_sts_client) { Aws::STS::Client.new(stub_responses: true) }

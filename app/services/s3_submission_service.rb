@@ -5,6 +5,9 @@ class S3SubmissionService
                  s3_bucket_aws_account_id:,
                  timestamp:,
                  submission_reference:)
+    raise ArgumentError, "s3_bucket_name cannot be nil" if s3_bucket_name.nil?
+    raise ArgumentError, "s3_bucket_aws_account_id cannot be nil" if s3_bucket_aws_account_id.nil?
+
     @file_path = file_path
     @form_id = form_id
     @bucket = s3_bucket_name
