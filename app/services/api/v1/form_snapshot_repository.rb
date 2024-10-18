@@ -1,11 +1,7 @@
 class Api::V1::FormSnapshotRepository
   class << self
     def find_with_mode(id:, mode:)
-      if FeatureService.enabled? :api_v2
-        v2_find_with_mode(id:, mode:)
-      else
-        Form.find_with_mode(id:, mode:)
-      end
+      v2_find_with_mode(id:, mode:)
     end
 
   private
