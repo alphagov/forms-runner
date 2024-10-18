@@ -1,7 +1,7 @@
 require "csv"
 require "tempfile"
 
-class SubmissionCsvService
+class CsvSubmissionService
   def initialize(current_context:, submission_reference:, timestamp:, output_file_path:)
     @current_context = current_context
     @submission_reference = submission_reference

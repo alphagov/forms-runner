@@ -91,7 +91,7 @@ private
 
   def deliver_submission_email_with_csv_attachment
     Tempfile.create do |file|
-      SubmissionCsvService.new(
+      CsvSubmissionService.new(
         current_context: @current_context,
         submission_reference: @submission_reference,
         timestamp: @timestamp,

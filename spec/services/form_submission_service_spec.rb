@@ -48,11 +48,11 @@ RSpec.describe FormSubmissionService do
   end
 
   describe "#submit" do
-    let(:submission_csv_service_spy) { instance_double(SubmissionCsvService) }
+    let(:csv_submission_service_spy) { instance_double(CsvSubmissionService) }
 
     before do
-      allow(SubmissionCsvService).to receive(:new).and_return submission_csv_service_spy
-      allow(submission_csv_service_spy).to receive(:write)
+      allow(CsvSubmissionService).to receive(:new).and_return csv_submission_service_spy
+      allow(csv_submission_service_spy).to receive(:write)
     end
 
     it "returns the submission reference" do
@@ -88,7 +88,7 @@ RSpec.describe FormSubmissionService do
 
         it "does not write a CSV file" do
           service.submit
-          expect(submission_csv_service_spy).not_to have_received(:write)
+          expect(csv_submission_service_spy).not_to have_received(:write)
         end
 
         it "logs submission" do
@@ -112,7 +112,7 @@ RSpec.describe FormSubmissionService do
 
         it "writes a CSV file" do
           service.submit
-          expect(submission_csv_service_spy).to have_received(:write)
+          expect(csv_submission_service_spy).to have_received(:write)
         end
 
         it "calls FormSubmissionMailer passing in a CSV file" do
