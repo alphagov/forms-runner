@@ -5,8 +5,7 @@ RSpec.describe Step do
     described_class.new(
       question:,
       page:,
-      form_id: 3,
-      form_slug: "test-form",
+      form:,
       next_page_slug: "next-page",
       page_slug: "current-page",
     )
@@ -15,6 +14,7 @@ RSpec.describe Step do
   let(:question) { instance_double(Question::Text, serializable_hash: {}, attribute_names: %w[name], valid?: true) }
   let(:page) { build(:page, id: 2, position: 1, routing_conditions: []) }
   let(:form_context) { instance_double(Flow::FormContext) }
+  let(:form) { build(:form, id: 3, form_slug: "test-form", pages: [page]) }
 
   describe "#initialize" do
     it "sets the attributes correctly" do
@@ -34,8 +34,7 @@ RSpec.describe Step do
       other_step = described_class.new(
         question:,
         page:,
-        form_id: 3,
-        form_slug: "test-form",
+        form:,
         next_page_slug: "next-page",
         page_slug: "current-page",
       )
@@ -43,11 +42,11 @@ RSpec.describe Step do
     end
 
     it "returns false for steps with different states" do
+      form = build :form, id: 4, form_slug: "other-form"
       other_step = described_class.new(
         question:,
         page:,
-        form_id: 4,
-        form_slug: "other-form",
+        form:,
         next_page_slug: "other-page",
         page_slug: "other-current-page",
       )
@@ -58,14 +57,11 @@ RSpec.describe Step do
   describe "#state" do
     it "returns an array of instance variable values" do
       expected_state = [
+        step.form,
+        step.page,
         step.question,
-        step.page_id,
-        step.page_slug,
-        step.form_id,
-        step.form_slug,
         step.next_page_slug,
-        step.page_number,
-        step.routing_conditions,
+        step.page_slug,
       ]
 
       expect(step.state).to match_array(expected_state)
@@ -73,7 +69,7 @@ RSpec.describe Step do
 
     it "changes when an instance variable is modified" do
       original_state = step.state.dup
-      step.form_id = "new_form_id"
+      step.form = build :form, pages: [step.page]
       expect(step.state).not_to eq(original_state)
     end
   end
@@ -120,7 +116,7 @@ RSpec.describe Step do
   describe "#end_page?" do
     context "when next_page_slug is nil" do
       subject(:step) do
-        described_class.new(question:, page:, form_id: 3, form_slug: "test-form", next_page_slug: nil, page_slug: "current-page")
+        described_class.new(question:, page:, form:, next_page_slug: nil, page_slug: "current-page")
       end
 
       it { is_expected.to be_end_page }

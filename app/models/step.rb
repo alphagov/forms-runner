@@ -1,19 +1,37 @@
 class Step
-  attr_accessor :page_id, :form_id, :form_slug, :question
-  attr_reader :next_page_slug, :page_slug, :page_number, :routing_conditions
+  attr_accessor :page, :form, :question
+  attr_reader :next_page_slug, :page_slug
 
-  def initialize(question:, page:, form_id:, form_slug:, next_page_slug:, page_slug:)
+  def initialize(form:, page:, question:, next_page_slug:, page_slug:)
+    @form = form
+    @page = page
     @question = question
-    @page_id = page.id
-    @page_slug = page_slug
-    @form_id = form_id
-    @form_slug = form_slug
+
     @next_page_slug = next_page_slug
-    @page_number = page.position
-    @routing_conditions = page.respond_to?(:routing_conditions) ? page.routing_conditions : []
+    @page_slug = page_slug
   end
 
   alias_attribute :id, :page_id
+
+  def form_id
+    form&.id
+  end
+
+  def form_slug
+    form&.form_slug
+  end
+
+  def page_id
+    page&.id
+  end
+
+  def page_number
+    page&.position
+  end
+
+  def routing_conditions
+    page.respond_to?(:routing_conditions) ? page.routing_conditions : []
+  end
 
   def ==(other)
     other.class == self.class && other.state == state
