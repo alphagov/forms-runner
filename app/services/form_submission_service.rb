@@ -120,7 +120,7 @@ private
   end
 
   def write_submission_csv(file)
-    CsvSubmissionService.new(
+    CsvGenerator.new(
       current_context: @current_context,
       submission_reference: @submission_reference,
       timestamp: @timestamp,
