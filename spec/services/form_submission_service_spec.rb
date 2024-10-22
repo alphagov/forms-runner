@@ -48,11 +48,11 @@ RSpec.describe FormSubmissionService do
   end
 
   describe "#submit" do
-    let(:submission_csv_service_spy) { instance_double(SubmissionCsvService) }
+    let(:csv_submission_service_spy) { instance_double(CsvSubmissionService) }
 
     before do
-      allow(SubmissionCsvService).to receive(:new).and_return submission_csv_service_spy
-      allow(submission_csv_service_spy).to receive(:write)
+      allow(CsvSubmissionService).to receive(:new).and_return csv_submission_service_spy
+      allow(csv_submission_service_spy).to receive(:write)
     end
 
     it "returns the submission reference" do
@@ -64,7 +64,7 @@ RSpec.describe FormSubmissionService do
       expect(log_lines[0]["submission_reference"]).to eq(reference)
     end
 
-    describe "sending the submission email" do
+    describe "submitting the form to the processing team" do
       context "when the submission type is email" do
         before do
           form.submission_type = "email"
@@ -88,7 +88,7 @@ RSpec.describe FormSubmissionService do
 
         it "does not write a CSV file" do
           service.submit
-          expect(submission_csv_service_spy).not_to have_received(:write)
+          expect(csv_submission_service_spy).not_to have_received(:write)
         end
 
         it "logs submission" do
@@ -112,7 +112,7 @@ RSpec.describe FormSubmissionService do
 
         it "writes a CSV file" do
           service.submit
-          expect(submission_csv_service_spy).to have_received(:write)
+          expect(csv_submission_service_spy).to have_received(:write)
         end
 
         it "calls FormSubmissionMailer passing in a CSV file" do
@@ -190,6 +190,45 @@ RSpec.describe FormSubmissionService do
               csv_attached: false,
             )
           end
+        end
+      end
+
+      context "when the submission type is s3" do
+        let(:s3_submission_service_spy) { instance_double(S3SubmissionService) }
+
+        before do
+          form.submission_type = "s3"
+          form.s3_bucket_name = "a-bucket"
+          form.s3_bucket_aws_account_id = "123456789"
+          form.submission_email = nil
+
+          allow(S3SubmissionService).to receive(:new).and_return(s3_submission_service_spy)
+          allow(s3_submission_service_spy).to receive("upload_file_to_s3")
+        end
+
+        it "writes a CSV file" do
+          service.submit
+          expect(csv_submission_service_spy).to have_received(:write)
+        end
+
+        it "creates a S3SubmissionService instance passing in a CSV file" do
+          freeze_time do
+            service.submit
+
+            expect(S3SubmissionService).to have_received(:new).with(
+              file_path: an_instance_of(String),
+              form_id: form.id,
+              s3_bucket_name: form.s3_bucket_name,
+              s3_bucket_aws_account_id: form.s3_bucket_aws_account_id,
+              timestamp: Time.zone.now,
+              submission_reference: reference,
+            ).once
+          end
+        end
+
+        it "calls upload_file_to_s3" do
+          service.submit
+          expect(s3_submission_service_spy).to have_received(:upload_file_to_s3)
         end
       end
 
