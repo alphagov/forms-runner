@@ -39,16 +39,20 @@ private
     if @form.submission_type == "s3"
       upload_submission_csv_to_s3
     else
-      if !@preview_mode && @form.submission_email.blank?
-        raise StandardError, "Form id(#{@form.id}) is missing a submission email address"
-      end
+      submit_form_with_email_submission_type
+    end
+  end
 
-      unless @form.submission_email.blank? && @preview_mode
-        if @form.submission_type == "email_with_csv"
-          deliver_submission_email_with_csv_attachment_with_fallback
-        else
-          deliver_submission_email
-        end
+  def submit_form_with_email_submission_type
+    if !@preview_mode && @form.submission_email.blank?
+      raise StandardError, "Form id(#{@form.id}) is missing a submission email address"
+    end
+
+    unless @form.submission_email.blank? && @preview_mode
+      if @form.submission_type == "email_with_csv"
+        deliver_submission_email_with_csv_attachment_with_fallback
+      else
+        deliver_submission_email
       end
     end
   end
