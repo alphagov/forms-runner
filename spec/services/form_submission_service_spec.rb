@@ -48,10 +48,10 @@ RSpec.describe FormSubmissionService do
   end
 
   describe "#submit" do
-    let(:csv_submission_service_spy) { instance_double(CsvSubmissionService) }
+    let(:csv_submission_service_spy) { instance_double(CsvGenerator) }
 
     before do
-      allow(CsvSubmissionService).to receive(:new).and_return csv_submission_service_spy
+      allow(CsvGenerator).to receive(:new).and_return csv_submission_service_spy
       allow(csv_submission_service_spy).to receive(:write)
     end
 

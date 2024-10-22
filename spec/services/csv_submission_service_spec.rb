@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe CsvSubmissionService do
+RSpec.describe CsvGenerator do
   subject(:service) { described_class.new(current_context:, submission_reference:, timestamp:, output_file_path: test_file.path) }
 
   let(:form) { build :form, id: 1 }
