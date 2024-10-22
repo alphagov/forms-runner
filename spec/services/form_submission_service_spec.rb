@@ -48,11 +48,8 @@ RSpec.describe FormSubmissionService do
   end
 
   describe "#submit" do
-    let(:csv_submission_service_spy) { instance_double(CsvGenerator) }
-
     before do
-      allow(CsvGenerator).to receive(:new).and_return csv_submission_service_spy
-      allow(csv_submission_service_spy).to receive(:write)
+      allow(CsvGenerator).to receive(:write_submission)
     end
 
     it "returns the submission reference" do
@@ -88,7 +85,7 @@ RSpec.describe FormSubmissionService do
 
         it "does not write a CSV file" do
           service.submit
-          expect(csv_submission_service_spy).not_to have_received(:write)
+          expect(CsvGenerator).not_to have_received(:write_submission)
         end
 
         it "logs submission" do
@@ -111,9 +108,16 @@ RSpec.describe FormSubmissionService do
         end
 
         it "writes a CSV file" do
-          service.submit
-          expect(csv_submission_service_spy).to have_received(:write)
+          freeze_time do
+            service.submit
+            expect(CsvGenerator).to have_received(:write_submission)
+              .with(current_context:,
+                submission_reference: reference,
+                timestamp: Time.zone.now,
+                output_file_path: an_instance_of(String))
+          end
         end
+
 
         it "calls FormSubmissionMailer passing in a CSV file" do
           freeze_time do
@@ -208,8 +212,14 @@ RSpec.describe FormSubmissionService do
         end
 
         it "writes a CSV file" do
-          service.submit
-          expect(csv_submission_service_spy).to have_received(:write)
+          freeze_time do
+            service.submit
+            expect(CsvGenerator).to have_received(:write_submission)
+              .with(current_context:,
+                    submission_reference: reference,
+                    timestamp: Time.zone.now,
+                    output_file_path: an_instance_of(String))
+          end
         end
 
         it "creates a S3SubmissionService instance passing in a CSV file" do

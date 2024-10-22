@@ -1,8 +1,6 @@
 require "rails_helper"
 
 RSpec.describe CsvGenerator do
-  subject(:service) { described_class.new(current_context:, submission_reference:, timestamp:, output_file_path: test_file.path) }
-
   let(:form) { build :form, id: 1 }
   let(:page) { build :page }
   let(:text_question) { build :text, :with_answer, question_text: "What is the meaning of life?" }
@@ -23,7 +21,7 @@ RSpec.describe CsvGenerator do
 
   describe "#write" do
     before do
-      service.write
+      described_class.write_submission(current_context:, submission_reference:, timestamp:, output_file_path: test_file.path)
     end
 
     it "writes submission to CSV file" do
