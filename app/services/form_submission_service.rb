@@ -120,12 +120,12 @@ private
   end
 
   def write_submission_csv(file)
-    CsvGenerator.new(
+    CsvGenerator.write_submission(
       current_context: @current_context,
       submission_reference: @submission_reference,
       timestamp: @timestamp,
       output_file_path: file.path,
-    ).write
+    )
   end
 
   def form_title
