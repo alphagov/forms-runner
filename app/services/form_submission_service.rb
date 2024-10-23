@@ -84,7 +84,7 @@ private
     LogEventService.log_submit(@current_context,
                                requested_email_confirmation: @requested_email_confirmation,
                                preview: @preview_mode,
-                               csv_attached: csv_file.present?)
+                               submission_type: @form.submission_type)
   end
 
   def deliver_submission_email_with_csv_attachment_with_fallback

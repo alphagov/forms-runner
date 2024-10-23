@@ -68,42 +68,52 @@ RSpec.describe LogEventService do
   end
 
   describe ".log_form_submit" do
+    let(:preview) { false }
+    let(:requested_email_confirmation) { false }
+
     before do
       allow(EventLogger).to receive(:log_form_event).and_return(true)
       allow(CloudWatchService).to receive(:log_form_submission).and_return(true)
+      described_class.log_submit(current_context, requested_email_confirmation:, preview:, submission_type: "email")
     end
 
     context "when in preview mode" do
-      it "calls the event logger with .log_form_event" do
-        described_class.log_submit(current_context, preview: true)
+      let(:preview) { true }
 
-        expect(EventLogger).to have_received(:log_form_event).with("preview_submission", { csv_attached: false })
+      it "calls the event logger with .log_form_event" do
+        expect(EventLogger).to have_received(:log_form_event).with("preview_submission", { submission_type: "email" })
       end
 
       it "does not call the cloud watch service" do
-        described_class.log_submit(current_context, preview: true)
-
         expect(CloudWatchService).not_to have_received(:log_form_submission)
       end
     end
 
     context "when not in preview mode" do
+      let(:preview) { false }
+
       it "calls the event logger with .log_form_event" do
-        described_class.log_submit(current_context)
-
-        expect(EventLogger).to have_received(:log_form_event).with("submission", { csv_attached: false })
-      end
-
-      it "does not call the event logger for confirmation request" do
-        described_class.log_submit(current_context)
-
-        expect(EventLogger).not_to have_received(:log_form_event).with("requested_email_confirmation")
+        expect(EventLogger).to have_received(:log_form_event).with("submission", { submission_type: "email" })
       end
 
       it "calls the cloud watch service with .log_form_submission" do
-        described_class.log_submit(current_context)
-
         expect(CloudWatchService).to have_received(:log_form_submission).with(form_id: current_context.form.id)
+      end
+
+      context "when email confirmation is requested" do
+        let(:requested_email_confirmation) { true }
+
+        it "calls the event logger with .log_form_event" do
+          expect(EventLogger).to have_received(:log_form_event).with("requested_email_confirmation")
+        end
+      end
+
+      context "when email confirmation is not requested" do
+        let(:requested_email_confirmation) { false }
+
+        it "does not call the event logger for confirmation request" do
+          expect(EventLogger).not_to have_received(:log_form_event).with("requested_email_confirmation")
+        end
       end
 
       context "when CloudWatchService returns an error" do
@@ -111,17 +121,8 @@ RSpec.describe LogEventService do
           allow(CloudWatchService).to receive(:log_form_submission).and_raise(StandardError)
           allow(Sentry).to receive(:capture_exception)
 
-          described_class.log_submit(current_context)
-
+          described_class.log_submit(current_context, requested_email_confirmation:, preview:, submission_type: "email")
           expect(Sentry).to have_received(:capture_exception)
-        end
-      end
-
-      context "when email confirmation is requested" do
-        it "calls the event logger with .log_form_event" do
-          described_class.log_submit(current_context, requested_email_confirmation: true)
-
-          expect(EventLogger).to have_received(:log_form_event).with("requested_email_confirmation")
         end
       end
     end
