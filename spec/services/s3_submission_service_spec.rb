@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe S3SubmissionService do
   subject(:service) do
     described_class.new(file_path: test_file.path, form_id:, s3_bucket_name:,
-                        s3_bucket_aws_account_id:, timestamp:, submission_reference:)
+                        s3_bucket_aws_account_id:, s3_bucket_region:, timestamp:, submission_reference:)
   end
 
   let(:test_file) do
@@ -16,6 +16,7 @@ RSpec.describe S3SubmissionService do
   let(:form_id) { 42 }
   let(:s3_bucket_name) { "a-bucket" }
   let(:s3_bucket_aws_account_id) { "23423423423423" }
+  let(:s3_bucket_region) { "eu-west-1" }
   let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
   let(:timestamp) do
     Time.use_zone("London") { Time.zone.local(2022, 9, 14, 8, 0o0, 0o0) }
@@ -30,7 +31,7 @@ RSpec.describe S3SubmissionService do
       it "raises an ArgumentException" do
         expect {
           described_class.new(file_path: test_file.path, form_id:, s3_bucket_name: nil,
-                              s3_bucket_aws_account_id:, timestamp:, submission_reference:)
+                              s3_bucket_aws_account_id:, s3_bucket_region:, timestamp:, submission_reference:)
         }
           .to raise_error(ArgumentError, "s3_bucket_name cannot be nil")
       end
@@ -40,9 +41,19 @@ RSpec.describe S3SubmissionService do
       it "raises an ArgumentException" do
         expect {
           described_class.new(file_path: test_file.path, form_id:, s3_bucket_name:,
-                              s3_bucket_aws_account_id: nil, timestamp:, submission_reference:)
+                              s3_bucket_aws_account_id: nil, s3_bucket_region:, timestamp:, submission_reference:)
         }
           .to raise_error(ArgumentError, "s3_bucket_aws_account_id cannot be nil")
+      end
+    end
+
+    context "when s3_bucket_region is nil" do
+      it "raises an ArgumentException" do
+        expect {
+          described_class.new(file_path: test_file.path, form_id:, s3_bucket_name:,
+                              s3_bucket_aws_account_id:, s3_bucket_region: nil, timestamp:, submission_reference:)
+        }
+          .to raise_error(ArgumentError, "s3_bucket_region cannot be nil")
       end
     end
   end
@@ -70,7 +81,7 @@ RSpec.describe S3SubmissionService do
     end
 
     it "creates an S3 client with the credentials for the assumed role" do
-      expect(Aws::S3::Client).to have_received(:new).with(credentials: mock_credentials)
+      expect(Aws::S3::Client).to have_received(:new).with(region: s3_bucket_region, credentials: mock_credentials)
     end
 
     it "calls put_object" do

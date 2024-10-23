@@ -200,6 +200,7 @@ RSpec.describe FormSubmissionService do
           form.submission_type = "s3"
           form.s3_bucket_name = "a-bucket"
           form.s3_bucket_aws_account_id = "123456789"
+          form.s3_bucket_region = "eu-west-1"
           form.submission_email = nil
 
           allow(S3SubmissionService).to receive(:new).and_return(s3_submission_service_spy)
@@ -220,6 +221,7 @@ RSpec.describe FormSubmissionService do
               form_id: form.id,
               s3_bucket_name: form.s3_bucket_name,
               s3_bucket_aws_account_id: form.s3_bucket_aws_account_id,
+              s3_bucket_region: form.s3_bucket_region,
               timestamp: Time.zone.now,
               submission_reference: reference,
             ).once

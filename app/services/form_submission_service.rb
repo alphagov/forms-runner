@@ -112,6 +112,7 @@ private
         form_id: @form.id,
         s3_bucket_name: @form.s3_bucket_name,
         s3_bucket_aws_account_id: @form.s3_bucket_aws_account_id,
+        s3_bucket_region: @form.s3_bucket_region,
         timestamp: @timestamp,
         submission_reference: @submission_reference,
       ).upload_file_to_s3
