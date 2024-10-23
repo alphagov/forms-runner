@@ -97,7 +97,7 @@ RSpec.describe FormSubmissionService do
             current_context,
             requested_email_confirmation: true,
             preview: false,
-            csv_attached: false,
+            submission_type: "email",
           )
         end
       end
@@ -112,12 +112,11 @@ RSpec.describe FormSubmissionService do
             service.submit
             expect(CsvGenerator).to have_received(:write_submission)
               .with(current_context:,
-                submission_reference: reference,
-                timestamp: Time.zone.now,
-                output_file_path: an_instance_of(String))
+                    submission_reference: reference,
+                    timestamp: Time.zone.now,
+                    output_file_path: an_instance_of(String))
           end
         end
-
 
         it "calls FormSubmissionMailer passing in a CSV file" do
           freeze_time do
@@ -135,7 +134,7 @@ RSpec.describe FormSubmissionService do
           end
         end
 
-        it "logs submission with csv_attached=true" do
+        it "logs submission" do
           allow(LogEventService).to receive(:log_submit).once
 
           service.submit
@@ -144,7 +143,7 @@ RSpec.describe FormSubmissionService do
             current_context,
             requested_email_confirmation: true,
             preview: false,
-            csv_attached: true,
+            submission_type: "email_with_csv",
           )
         end
 
@@ -186,12 +185,12 @@ RSpec.describe FormSubmissionService do
             )
           end
 
-          it "logs submission with csv_attached: false" do
+          it "logs submission" do
             expect(LogEventService).to have_received(:log_submit).with(
               current_context,
               requested_email_confirmation: true,
               preview: false,
-              csv_attached: false,
+              submission_type: "email_with_csv",
             )
           end
         end
@@ -291,7 +290,7 @@ RSpec.describe FormSubmissionService do
             current_context,
             requested_email_confirmation: true,
             preview: true,
-            csv_attached: false,
+            submission_type: "email",
           )
         end
 
