@@ -11,7 +11,10 @@ class NotifySubmissionService
       raise StandardError, "Form id(#{@form.id}) is missing a submission email address"
     end
 
-    return if @form.submission_email.blank? && @mailer_options.preview_mode
+    if @form.submission_email.blank? && @mailer_options.preview_mode
+      Rails.logger.info "Skipping sending submission email for preview submission, as the submission email address has not been set"
+      return
+    end
 
     if @form.submission_type == "email_with_csv"
       deliver_submission_email_with_csv_attachment_with_fallback
