@@ -74,11 +74,15 @@ class Step
   end
 
   def next_page_slug_after_routing
-    if routing_conditions.any? && routing_conditions.first.answer_value == question.selection
-      goto_condition_page_slug(routing_conditions.first)
-    else
-      next_page_slug
+    if first_condition_default?
+      return goto_condition_page_slug(routing_conditions.first)
     end
+
+    if first_condition_matches?
+      return goto_condition_page_slug(routing_conditions.first)
+    end
+
+    next_page_slug
   end
 
   def repeatable?
@@ -97,5 +101,15 @@ private
     else
       condition.goto_page_id.to_s
     end
+  end
+
+  def first_condition_matches?
+    return unless question.respond_to?(:selection)
+
+    routing_conditions.any? && (routing_conditions.first.answer_value == question.selection)
+  end
+
+  def first_condition_default?
+    routing_conditions.any? && routing_conditions.first.answer_value.blank?
   end
 end
