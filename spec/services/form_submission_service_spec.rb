@@ -12,8 +12,10 @@ RSpec.describe FormSubmissionService do
           support_url:,
           support_url_text:,
           submission_email:,
-          payment_url:)
+          payment_url:,
+          submission_type:)
   end
+  let(:submission_type) { "email" }
   let(:what_happens_next_markdown) { "We usually respond to applications within 10 working days." }
   let(:support_email) { Faker::Internet.email(domain: "example.gov.uk") }
   let(:support_phone) { Faker::Lorem.paragraph(sentence_count: 2, supplemental: true, random_sentences_to_add: 4) }
@@ -48,8 +50,11 @@ RSpec.describe FormSubmissionService do
   end
 
   describe "#submit" do
+    let(:notify_submission_service_spy) { instance_double(NotifySubmissionService) }
+
     before do
-      allow(CsvGenerator).to receive(:write_submission)
+      allow(NotifySubmissionService).to receive(:new).and_return(notify_submission_service_spy)
+      allow(notify_submission_service_spy).to receive(:submit)
     end
 
     it "returns the submission reference" do
@@ -61,263 +66,89 @@ RSpec.describe FormSubmissionService do
       expect(log_lines[0]["submission_reference"]).to eq(reference)
     end
 
+    shared_examples "logging" do
+      it "logs submission" do
+        allow(LogEventService).to receive(:log_submit).once
+
+        service.submit
+
+        expect(LogEventService).to have_received(:log_submit).with(
+          current_context,
+          requested_email_confirmation: true,
+          preview: preview_mode,
+          submission_type:,
+        )
+      end
+    end
+
     describe "submitting the form to the processing team" do
       context "when the submission type is email" do
-        before do
-          form.submission_type = "email"
-        end
+        let(:submission_type) { "email" }
 
-        it "calls FormSubmissionMailer" do
-          freeze_time do
-            allow(FormSubmissionMailer).to receive(:email_confirmation_input).and_call_original
-
-            service.submit
-
-            expect(FormSubmissionMailer).to have_received(:email_confirmation_input).with(
-              { text_input: "# What is the meaning of life?\n42\n",
-                notify_response_id: email_confirmation_input.submission_email_reference,
-                submission_email: "testing@gov.uk",
-                mailer_options: instance_of(FormSubmissionService::MailerOptions),
-                csv_file: nil },
-            ).once
-          end
-        end
-
-        it "does not write a CSV file" do
+        it "calls NotifySubmissionService to submit the form" do
           service.submit
-          expect(CsvGenerator).not_to have_received(:write_submission)
-        end
-
-        it "logs submission" do
-          allow(LogEventService).to receive(:log_submit).once
-
-          service.submit
-
-          expect(LogEventService).to have_received(:log_submit).with(
-            current_context,
-            requested_email_confirmation: true,
-            preview: false,
-            submission_type: "email",
-          )
+          expect(notify_submission_service_spy).to have_received(:submit)
         end
       end
 
       context "when the submission type is email_with_csv" do
-        before do
-          form.submission_type = "email_with_csv"
-        end
+        let(:submission_type) { "email_with_csv" }
 
-        it "writes a CSV file" do
-          freeze_time do
-            service.submit
-            expect(CsvGenerator).to have_received(:write_submission)
-              .with(current_context:,
-                    submission_reference: reference,
-                    timestamp: Time.zone.now,
-                    output_file_path: an_instance_of(String))
-          end
-        end
-
-        it "calls FormSubmissionMailer passing in a CSV file" do
-          freeze_time do
-            allow(FormSubmissionMailer).to receive(:email_confirmation_input).and_call_original
-
-            service.submit
-
-            expect(FormSubmissionMailer).to have_received(:email_confirmation_input).with(
-              { text_input: "# What is the meaning of life?\n42\n",
-                notify_response_id: email_confirmation_input.submission_email_reference,
-                submission_email: "testing@gov.uk",
-                mailer_options: instance_of(FormSubmissionService::MailerOptions),
-                csv_file: instance_of(File) },
-            ).once
-          end
-        end
-
-        it "logs submission" do
-          allow(LogEventService).to receive(:log_submit).once
-
+        it "calls NotifySubmissionService to submit the form" do
           service.submit
-
-          expect(LogEventService).to have_received(:log_submit).with(
-            current_context,
-            requested_email_confirmation: true,
-            preview: false,
-            submission_type: "email_with_csv",
-          )
+          expect(notify_submission_service_spy).to have_received(:submit)
         end
 
-        context "when Notify returns a bad request response when CSV file is attached" do
-          let(:notify_exception) { Notifications::Client::BadRequestError.new(OpenStruct.new(code: 400, body: "Bad file")) }
-
-          before do
-            delivery = double
-
-            allow(delivery).to receive(:deliver_now).with(no_args).and_raise(notify_exception)
-
-            allow(FormSubmissionMailer).to receive(:email_confirmation_input).with(hash_including(csv_file: instance_of(File))).and_return delivery
-            allow(FormSubmissionMailer).to receive(:email_confirmation_input).with(hash_including(csv_file: nil)).and_call_original
-
-            allow(Sentry).to receive(:capture_exception)
-            allow(Rails.logger).to receive(:error)
-            allow(LogEventService).to receive(:log_submit).once
-
-            service.submit
-          end
-
-          it "tries to send the email again without attaching a file" do
-            expect(FormSubmissionMailer).to have_received(:email_confirmation_input).with(
-              hash_including(csv_file: instance_of(File)),
-            ).once
-            expect(FormSubmissionMailer).to have_received(:email_confirmation_input).with(
-              hash_including(csv_file: nil),
-            ).once
-          end
-
-          it "sends the exception to Sentry" do
-            expect(Sentry).to have_received(:capture_exception).with(notify_exception)
-          end
-
-          it "logs the error" do
-            expect(Rails.logger).to have_received(:error).with(
-              "Error when attempting to send submission email with CSV attachment, retrying without attachment",
-              rescued_exception: ["Notifications::Client::BadRequestError", "Bad file"],
-            )
-          end
-
-          it "logs submission" do
-            expect(LogEventService).to have_received(:log_submit).with(
-              current_context,
-              requested_email_confirmation: true,
-              preview: false,
-              submission_type: "email_with_csv",
-            )
-          end
-        end
+        include_examples "logging"
       end
 
       context "when the submission type is s3" do
+        let(:submission_type) { "s3" }
         let(:s3_submission_service_spy) { instance_double(S3SubmissionService) }
 
         before do
-          form.submission_type = "s3"
-          form.s3_bucket_name = "a-bucket"
-          form.s3_bucket_aws_account_id = "123456789"
-          form.s3_bucket_region = "eu-west-1"
-          form.submission_email = nil
-
           allow(S3SubmissionService).to receive(:new).and_return(s3_submission_service_spy)
-          allow(s3_submission_service_spy).to receive("upload_file_to_s3")
+          allow(s3_submission_service_spy).to receive("submit")
         end
 
-        it "writes a CSV file" do
-          freeze_time do
-            service.submit
-            expect(CsvGenerator).to have_received(:write_submission)
-              .with(current_context:,
-                    submission_reference: reference,
-                    timestamp: Time.zone.now,
-                    output_file_path: an_instance_of(String))
-          end
-        end
-
-        it "creates a S3SubmissionService instance passing in a CSV file" do
+        it "creates a S3SubmissionService instance" do
           freeze_time do
             service.submit
 
             expect(S3SubmissionService).to have_received(:new).with(
-              file_path: an_instance_of(String),
-              form_id: form.id,
-              s3_bucket_name: form.s3_bucket_name,
-              s3_bucket_aws_account_id: form.s3_bucket_aws_account_id,
-              s3_bucket_region: form.s3_bucket_region,
+              current_context:,
               timestamp: Time.zone.now,
               submission_reference: reference,
             ).once
           end
         end
 
-        it "calls upload_file_to_s3" do
+        it "calls upload_submission_csv_to_s3" do
           service.submit
-          expect(s3_submission_service_spy).to have_received(:upload_file_to_s3)
-        end
-      end
-
-      describe "validations" do
-        context "when form has no submission email" do
-          let(:submission_email) { nil }
-
-          it "raises an error" do
-            expect { service.submit }.to raise_error("Form id(1) is missing a submission email address")
-          end
+          expect(s3_submission_service_spy).to have_received(:submit)
         end
 
-        context "when current context has no completed steps (i.e questions/answers)" do
-          let(:current_context) { OpenStruct.new(form:, steps: []) }
-          let(:result) { service.submit }
-
-          it "raises an error" do
-            expect { result }.to raise_error("Form id(1) has no completed steps i.e questions/answers to include in submission email")
-          end
+        it "does not call NotifySubmissionService to submit the form" do
+          service.submit
+          expect(notify_submission_service_spy).not_to have_received(:submit)
         end
+
+        include_examples "logging"
       end
 
       context "when form being submitted is from previewed form" do
         let(:preview_mode) { true }
 
-        it "calls FormSubmissionMailer" do
-          freeze_time do
-            allow(FormSubmissionMailer).to receive(:email_confirmation_input).and_call_original
+        include_examples "logging"
+      end
 
-            service.submit
+      describe "validations" do
+        context "when current context has no completed steps (i.e questions/answers)" do
+          let(:current_context) { OpenStruct.new(form:, steps: []) }
+          let(:result) { service.submit }
 
-            expect(FormSubmissionMailer).to have_received(:email_confirmation_input).with(
-              { text_input: "# What is the meaning of life?\n42\n",
-                notify_response_id: email_confirmation_input.submission_email_reference,
-                submission_email: "testing@gov.uk",
-                mailer_options: instance_of(FormSubmissionService::MailerOptions),
-                csv_file: nil },
-            ).once
-          end
-        end
-
-        it "logs preview submission" do
-          allow(LogEventService).to receive(:log_submit).once
-
-          service.submit
-
-          expect(LogEventService).to have_received(:log_submit).with(
-            current_context,
-            requested_email_confirmation: true,
-            preview: true,
-            submission_type: "email",
-          )
-        end
-
-        describe "validations" do
-          context "when form has no submission email" do
-            let(:submission_email) { nil }
-
-            it "does not raise an error" do
-              expect { service.submit }.not_to raise_error
-            end
-
-            it "does not call the FormSubmissionMailer" do
-              allow(FormSubmissionMailer).to receive(:email_confirmation_input).at_least(:once)
-
-              service.submit
-
-              expect(FormSubmissionMailer).not_to have_received(:email_confirmation_input)
-            end
-          end
-
-          context "when from has no steps (i.e questions/answers)" do
-            let(:current_context) { OpenStruct.new(form:, steps: []) }
-            let(:result) { service.submit }
-
-            it "raises an error" do
-              expect { result }.to raise_error("Form id(1) has no completed steps i.e questions/answers to include in submission email")
-            end
+          it "raises an error" do
+            expect { result }.to raise_error("Form id(1) has no completed steps i.e questions/answers to submit")
           end
         end
       end
@@ -327,7 +158,6 @@ RSpec.describe FormSubmissionService do
       it "calls FormSubmissionConfirmationMailer" do
         freeze_time do
           allow(FormSubmissionConfirmationMailer).to receive(:send_confirmation_email).and_call_original
-
           service.submit
           expect(FormSubmissionConfirmationMailer).to have_received(:send_confirmation_email).with(
             { what_happens_next_markdown: form.what_happens_next_markdown,
@@ -344,7 +174,6 @@ RSpec.describe FormSubmissionService do
 
         it "does not call FormSubmissionConfirmationMailer" do
           allow(FormSubmissionConfirmationMailer).to receive(:send_confirmation_email)
-
           service.submit
           expect(FormSubmissionConfirmationMailer).not_to have_received(:send_confirmation_email)
         end
@@ -356,7 +185,6 @@ RSpec.describe FormSubmissionService do
 
           it "does not call FormSubmissionConfirmationMailer" do
             allow(FormSubmissionConfirmationMailer).to receive(:send_confirmation_email)
-
             service.submit
             expect(FormSubmissionConfirmationMailer).not_to have_received(:send_confirmation_email)
           end
@@ -370,7 +198,6 @@ RSpec.describe FormSubmissionService do
 
           it "does not call FormSubmissionConfirmationMailer" do
             allow(FormSubmissionConfirmationMailer).to receive(:send_confirmation_email)
-
             service.submit
             expect(FormSubmissionConfirmationMailer).not_to have_received(:send_confirmation_email)
           end
