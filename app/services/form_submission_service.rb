@@ -21,7 +21,7 @@ class FormSubmissionService
 
   def submit
     submit_form_to_processing_team
-    submit_confirmation_email_to_user
+    submit_confirmation_email_to_user if @requested_email_confirmation
 
     @submission_reference
   end
@@ -44,8 +44,10 @@ private
   end
 
   def submit_confirmation_email_to_user
-    return nil unless @form.what_happens_next_markdown.present? && has_support_contact_details?
-    return nil unless @requested_email_confirmation
+    unless @form.what_happens_next_markdown.present? && has_support_contact_details?
+      Rails.logger.info "Skipping sending confirmation email to user as what happens next and support contact details have not been set"
+      return nil
+    end
 
     mail = FormSubmissionConfirmationMailer.send_confirmation_email(
       what_happens_next_markdown: @form.what_happens_next_markdown,
