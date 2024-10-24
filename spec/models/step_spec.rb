@@ -128,57 +128,151 @@ RSpec.describe Step do
   end
 
   describe "#next_page_slug_after_routing" do
-    context "with matching routing conditions" do
-      let(:question) { instance_double(Question::Selection, selection: "Yes") }
-      let(:page) { build(:page, id: 2, position: 1, routing_conditions: [OpenStruct.new(answer_value: "Yes", goto_page_id: "5")]) }
+    let(:default_next_page) { "next-page" }
+    let(:selection) { "Yes" }
+    let(:question) { instance_double(Question::Selection, selection:) }
+    let(:routing_conditions) { [] }
+    let(:page) { build(:page, id: 2, position: 1, routing_conditions:) }
 
-      it "returns the goto_page_slug" do
-        expect(step.next_page_slug_after_routing).to eq("5")
+    describe "basic routing" do
+      context "without any routing conditions" do
+        let(:selection) { "Any" }
+
+        it "returns the next_page_slug when routing_conditions is empty" do
+          expect(step.next_page_slug_after_routing).to eq(default_next_page)
+        end
+      end
+
+      context "without conditions" do
+        it "returns the next_page_slug" do
+          expect(step.next_page_slug_after_routing).to eq(default_next_page)
+        end
       end
     end
 
-    context "with multiple routing conditions" do
-      let(:page) do
-        build(:page, id: 2, position: 1, routing_conditions: [
-          OpenStruct.new(answer_value: "Yes", goto_page_id: "5"),
-          OpenStruct.new(answer_value: "No", goto_page_id: "6"),
-        ])
+    describe "single condition routing" do
+      context "with a matching condition" do
+        let(:selection) { "Yes" }
+        let(:routing_conditions) { [OpenStruct.new(answer_value: "Yes", goto_page_id: "5")] }
+
+        it "returns the goto_page_id of the condition" do
+          expect(step.next_page_slug_after_routing).to eq("5")
+        end
       end
 
-      let(:question) { instance_double(Question::Selection, selection: "Yes") }
+      context "with a non-matching condition" do
+        let(:selection) { "No" }
+        let(:routing_conditions) { [OpenStruct.new(answer_value: "Yes", goto_page_id: "5")] }
 
-      it "returns the correct goto_page_id based on selection" do
-        expect(step.next_page_slug_after_routing).to eq("5")
+        it "returns the next_page_slug" do
+          expect(step.next_page_slug_after_routing).to eq(default_next_page)
+        end
+      end
+
+      context "with a non-selection question and a default condition" do
+        let(:question) { instance_double(Question::Text, :with_answer) }
+        let(:routing_conditions) { [OpenStruct.new(answer_value: "", goto_page_id: "5")] }
+
+        it "returns the next_page_slug" do
+          expect(step.next_page_slug_after_routing).to eq("5")
+        end
+      end
+
+      context "with a non-selection question and a match condition" do
+        let(:question) { instance_double(Question::Text, :with_answer) }
+        let(:routing_conditions) { [OpenStruct.new(answer_value: "something", goto_page_id: "5")] }
+
+        it "returns the next_page_slug" do
+          expect(step.next_page_slug_after_routing).to eq(default_next_page)
+        end
       end
     end
 
-    context "without matching routing conditions" do
-      it "returns the next_page_slug" do
-        expect(step.next_page_slug_after_routing).to eq("next-page")
+    describe "skip_to_end routing" do
+      context "with skip_to_end and no goto_page_id" do
+        let(:routing_conditions) do
+          [
+            OpenStruct.new(answer_value: "Yes", goto_page_id: nil, skip_to_end: true),
+          ]
+        end
+        let(:selection) { "Yes" }
+
+        it "returns the check your answers page slug" do
+          expect(step.next_page_slug_after_routing).to eq(CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG)
+        end
+      end
+
+      context "with skip_to_end and goto_page_id" do
+        let(:routing_conditions) do
+          [
+            OpenStruct.new(answer_value: "Yes", goto_page_id: 7, skip_to_end: true),
+          ]
+        end
+        let(:selection) { "Yes" }
+
+        it "prioritizes goto_page_id over skip_to_end" do
+          expect(step.next_page_slug_after_routing).to eq("7")
+        end
       end
     end
-  end
 
-  describe "#goto_page_slug" do
-    context "with routing conditions" do
-      let(:page) { build(:page, id: 2, position: 1, routing_conditions: [OpenStruct.new(goto_page_id: "5", skip_to_end: false)]) }
+    describe "with invalid states" do
+      context "with multiple conditions and second matches" do
+        let(:routing_conditions) do
+          [
+            OpenStruct.new(answer_value: "No", goto_page_id: "5"),
+            OpenStruct.new(answer_value: "Yes", goto_page_id: "6"),
+            OpenStruct.new(answer_value: "Maybe", goto_page_id: "7"),
+          ]
+        end
+        let(:selection) { "Yes" }
 
-      it "returns the goto_page_id as a string" do
-        expect(step.goto_page_slug).to eq("5")
+        it "returns the next_page_slug" do
+          expect(step.next_page_slug_after_routing).to eq(default_next_page)
+        end
       end
-    end
 
-    context "without routing conditions" do
-      it "returns nil" do
-        expect(step.goto_page_slug).to be_nil
+      context "with multiple conditions and second is default" do
+        let(:routing_conditions) do
+          [
+            OpenStruct.new(answer_value: "No", goto_page_id: "5"),
+            OpenStruct.new(answer_value: "Yes", goto_page_id: "6"),
+            OpenStruct.new(answer_value: "", goto_page_id: "7"),
+          ]
+        end
+        let(:selection) { "Something else" }
+
+        it "returns the next_page_slug" do
+          expect(step.next_page_slug_after_routing).to eq(default_next_page)
+        end
       end
-    end
 
-    context "with skip_to_end condition" do
-      let(:page) { build(:page, id: 2, position: 1, routing_conditions: [OpenStruct.new(goto_page_id: nil, skip_to_end: true)]) }
+      context "with multiple conditions but no matches" do
+        let(:routing_conditions) do
+          [
+            OpenStruct.new(answer_value: "Yes", goto_page_id: "5"),
+            OpenStruct.new(answer_value: "No", goto_page_id: "6"),
+            OpenStruct.new(answer_value: "Maybe", goto_page_id: "7"),
+          ]
+        end
+        let(:selection) { "Something Else" }
 
-      it "returns the check your answers page slug" do
-        expect(step.goto_page_slug).to eq(CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG)
+        it "returns the next_page_slug" do
+          expect(step.next_page_slug_after_routing).to eq(default_next_page)
+        end
+      end
+
+      context "with nil selection" do
+        let(:routing_conditions) do
+          [
+            OpenStruct.new(answer_value: "Yes", goto_page_id: "5"),
+          ]
+        end
+        let(:selection) { nil }
+
+        it "returns the next_page_slug" do
+          expect(step.next_page_slug_after_routing).to eq(default_next_page)
+        end
       end
     end
   end

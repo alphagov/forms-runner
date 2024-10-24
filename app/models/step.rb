@@ -74,18 +74,15 @@ class Step
   end
 
   def next_page_slug_after_routing
-    if routing_conditions.any? && routing_conditions.first.answer_value == question.selection
-      goto_page_slug
-    else
-      next_page_slug
+    if first_condition_default?
+      return goto_condition_page_slug(routing_conditions.first)
     end
-  end
 
-  def goto_page_slug
-    return nil if routing_conditions.empty?
+    if first_condition_matches?
+      return goto_condition_page_slug(routing_conditions.first)
+    end
 
-    condition = routing_conditions.first
-    condition.goto_page_id.nil? && condition.skip_to_end ? CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG : condition.goto_page_id.to_s
+    next_page_slug
   end
 
   def repeatable?
@@ -94,5 +91,25 @@ class Step
 
   def skipped?
     question.is_optional? && question.show_answer.blank?
+  end
+
+private
+
+  def goto_condition_page_slug(condition)
+    if condition.goto_page_id.nil? && condition.skip_to_end
+      CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG
+    else
+      condition.goto_page_id.to_s
+    end
+  end
+
+  def first_condition_matches?
+    return unless question.respond_to?(:selection)
+
+    routing_conditions.any? && (routing_conditions.first.answer_value == question.selection)
+  end
+
+  def first_condition_default?
+    routing_conditions.any? && routing_conditions.first.answer_value.blank?
   end
 end
