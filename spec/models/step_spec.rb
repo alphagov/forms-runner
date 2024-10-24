@@ -132,7 +132,7 @@ RSpec.describe Step do
       let(:question) { instance_double(Question::Selection, selection: "Yes") }
       let(:page) { build(:page, id: 2, position: 1, routing_conditions: [OpenStruct.new(answer_value: "Yes", goto_page_id: "5")]) }
 
-      it "returns the goto_page_slug" do
+      it "returns the next_page_slug" do
         expect(step.next_page_slug_after_routing).to eq("5")
       end
     end
@@ -157,28 +157,22 @@ RSpec.describe Step do
         expect(step.next_page_slug_after_routing).to eq("next-page")
       end
     end
-  end
 
-  describe "#goto_page_slug" do
-    context "with routing conditions" do
-      let(:page) { build(:page, id: 2, position: 1, routing_conditions: [OpenStruct.new(goto_page_id: "5", skip_to_end: false)]) }
-
-      it "returns the goto_page_id as a string" do
-        expect(step.goto_page_slug).to eq("5")
-      end
-    end
-
-    context "without routing conditions" do
-      it "returns nil" do
-        expect(step.goto_page_slug).to be_nil
-      end
-    end
-
-    context "with skip_to_end condition" do
-      let(:page) { build(:page, id: 2, position: 1, routing_conditions: [OpenStruct.new(goto_page_id: nil, skip_to_end: true)]) }
+    context "with skip_to_end condition and no goto_page_id" do
+      let(:question) { instance_double(Question::Selection, selection: "Yes") }
+      let(:page) { build(:page, id: 2, position: 1, routing_conditions: [OpenStruct.new(answer_value: "Yes", goto_page_id: nil, skip_to_end: true)]) }
 
       it "returns the check your answers page slug" do
-        expect(step.goto_page_slug).to eq(CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG)
+        expect(step.next_page_slug_after_routing).to eq(CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG)
+      end
+    end
+
+    context "with skip_to_end condition and goto_page_id set" do
+      let(:question) { instance_double(Question::Selection, selection: "Yes") }
+      let(:page) { build(:page, id: 2, position: 1, routing_conditions: [OpenStruct.new(answer_value: "Yes", goto_page_id: 7, skip_to_end: true)]) }
+
+      it "returns the goto_page_id as a string" do
+        expect(step.next_page_slug_after_routing).to eq("7")
       end
     end
   end
