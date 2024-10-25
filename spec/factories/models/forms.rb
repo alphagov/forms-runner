@@ -18,7 +18,7 @@ FactoryBot.define do
     declaration_text { nil }
     declaration_section_completed { false }
 
-    submission_type { :email }
+    submission_type { "email" }
 
     s3_bucket_name { nil }
     s3_bucket_aws_account_id { nil }
