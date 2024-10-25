@@ -1,11 +1,13 @@
 class S3SubmissionService
   def initialize(current_context:,
                  timestamp:,
-                 submission_reference:)
+                 submission_reference:,
+                 preview_mode:)
     @current_context = current_context
     @form = current_context.form
     @timestamp = timestamp
     @submission_reference = submission_reference
+    @preview_mode = preview_mode
   end
 
   def submit
@@ -58,6 +60,8 @@ private
   end
 
   def key_name
-    "form_submission/#{@form.id}_#{@timestamp}_#{@submission_reference}.csv"
+    folder = @preview_mode ? "test_form_submissions" : "form_submissions"
+    formatted_timestamp = @timestamp.utc.strftime("%Y%m%dT%H%M%SZ")
+    "#{folder}/#{@form.id}/#{formatted_timestamp}_#{@submission_reference}.csv"
   end
 end

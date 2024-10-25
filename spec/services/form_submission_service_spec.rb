@@ -119,6 +119,7 @@ RSpec.describe FormSubmissionService do
               current_context:,
               timestamp: Time.zone.now,
               submission_reference: reference,
+              preview_mode:,
             ).once
           end
         end
