@@ -73,6 +73,7 @@ private
       current_context: @current_context,
       timestamp: @timestamp,
       submission_reference: @submission_reference,
+      preview_mode: @preview_mode,
     )
   end
 

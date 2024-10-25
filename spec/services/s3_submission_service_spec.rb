@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe S3SubmissionService do
   subject(:service) do
-    described_class.new(current_context:, timestamp:, submission_reference:)
+    described_class.new(current_context:, timestamp:, submission_reference:, preview_mode:)
   end
 
   let(:file_body) { "some body/n" }
@@ -18,10 +18,11 @@ RSpec.describe S3SubmissionService do
   let(:s3_bucket_region) { "eu-west-1" }
   let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
   let(:timestamp) do
-    Time.use_zone("London") { Time.zone.local(2022, 9, 14, 8, 0o0, 0o0) }
+    Time.use_zone("London") { Time.zone.local(2022, 9, 14, 8, 24, 34) }
   end
   let(:current_context) { OpenStruct.new(form:, completed_steps: [step]) }
   let(:step) { build :step }
+  let(:preview_mode) { false }
 
   describe "#upload_submission_csv_to_s3" do
     let(:mock_credentials) { { foo: "bar" } }
@@ -62,13 +63,29 @@ RSpec.describe S3SubmissionService do
       end
 
       it "calls put_object" do
-        expected_key_name = "form_submission/#{form.id}_#{timestamp}_#{submission_reference}.csv"
+        expected_timestamp = "20220914T072434Z"
+        expected_key_name = "form_submissions/#{form.id}/#{expected_timestamp}_#{submission_reference}.csv"
         expect(mock_s3_client).to have_received(:put_object).with(
           body: file_body,
           bucket: s3_bucket_name,
           expected_bucket_owner: s3_bucket_aws_account_id,
           key: expected_key_name,
         )
+      end
+
+      context "when a preview is being submitted" do
+        let(:preview_mode) { true }
+
+        it "calls put_object with a key starting with 'test_form_submissions/'" do
+          expected_timestamp = "20220914T072434Z"
+          expected_key_name = "test_form_submissions/#{form.id}/#{expected_timestamp}_#{submission_reference}.csv"
+          expect(mock_s3_client).to have_received(:put_object).with(
+            body: file_body,
+            bucket: s3_bucket_name,
+            expected_bucket_owner: s3_bucket_aws_account_id,
+            key: expected_key_name,
+          )
+        end
       end
     end
 
