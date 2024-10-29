@@ -1,1 +1,18 @@
-<%= selection_html %>
+<% if question.answer_settings.selection_options.count > 30 %>
+  <%= render DfE::Autocomplete::View.new(
+    form_builder,
+    attribute_name: :selection,
+    form_field: form_builder.govuk_collection_select(:selection,
+                                          question.answer_settings.selection_options,
+                                          :name,
+                                          :name,
+                                          options: { prompt: t("autocomplete.prompt") },
+                                          label: { text: question_text_with_extra_suffix, **question_text_size_and_tag },
+                                          hint: { text: question.hint_text }
+                                          ),
+  )%>
+
+  <%= helpers.init_autocomplete_script(show_all_values: true) %>
+<% else %>
+  <%= selection_html %>
+<% end %>

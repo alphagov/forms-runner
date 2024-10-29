@@ -50,6 +50,25 @@ module ApplicationHelper
     "/node_modules/govuk-frontend/dist/govuk/assets"
   end
 
+  def init_autocomplete_script(show_all_values: false, raw_attribute: false, source: false, auto_select: false)
+    content_for(:body_end) do
+      javascript_tag defer: true do
+        "
+      document.addEventListener('DOMContentLoaded', function(event) {
+        if(window.dfeAutocomplete !== undefined && typeof window.dfeAutocomplete === 'function') {
+          dfeAutocomplete({
+            showAllValues: #{show_all_values},
+            rawAttribute: #{raw_attribute},
+            source: #{source},
+            autoselect: #{auto_select},
+          })
+        }
+      });
+        ".html_safe
+      end
+    end
+  end
+
 private
 
   def join_title_elements(title_elements)

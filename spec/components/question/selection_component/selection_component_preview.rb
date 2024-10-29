@@ -142,4 +142,55 @@ class Question::SelectionComponent::SelectionComponentPreview < ViewComponent::P
 
     render(Question::SelectionComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
   end
+
+  def select_single_with_more_than_30_options
+    question = OpenStruct.new(selection: "",
+                              answer_type: "selection",
+                              is_optional?: false,
+                              question_text_with_optional_suffix: "Which of these countries do you live in?",
+                              hint_text: "Select an option",
+                              answer_settings: OpenStruct.new(only_one_option: "true",
+                                                              selection_options: [
+                                                                OpenStruct.new(name: "Mexico"),
+                                                                OpenStruct.new(name: "Midway Islands"),
+                                                                OpenStruct.new(name: "Moldova"),
+                                                                OpenStruct.new(name: "Monaco"),
+                                                                OpenStruct.new(name: "Mongolia"),
+                                                                OpenStruct.new(name: "Montenegro"),
+                                                                OpenStruct.new(name: "Montserrat"),
+                                                                OpenStruct.new(name: "Morocco"),
+                                                                OpenStruct.new(name: "Mozambique"),
+                                                                OpenStruct.new(name: "Myanmar (Burma)"),
+                                                                OpenStruct.new(name: "Namibia"),
+                                                                OpenStruct.new(name: "Nauru"),
+                                                                OpenStruct.new(name: "Navassa Island"),
+                                                                OpenStruct.new(name: "Nepal"),
+                                                                OpenStruct.new(name: "Netherlands"),
+                                                                OpenStruct.new(name: "New Caledonia"),
+                                                                OpenStruct.new(name: "New Zealand"),
+                                                                OpenStruct.new(name: "Nicaragua"),
+                                                                OpenStruct.new(name: "Niger"),
+                                                                OpenStruct.new(name: "Nigeria"),
+                                                                OpenStruct.new(name: "Niue"),
+                                                                OpenStruct.new(name: "Norfolk Island"),
+                                                                OpenStruct.new(name: "Northern Mariana Islands"),
+                                                                OpenStruct.new(name: "North Korea"),
+                                                                OpenStruct.new(name: "North Macedonia"),
+                                                                OpenStruct.new(name: "Norway"),
+                                                                OpenStruct.new(name: "Occupied Palestinian Territories"),
+                                                                OpenStruct.new(name: "Oman"),
+                                                                OpenStruct.new(name: "Pakistan"),
+                                                                OpenStruct.new(name: "Palau"),
+                                                                OpenStruct.new(name: "Palmyra Atoll"),
+                                                                OpenStruct.new(name: "Panama"),
+                                                                OpenStruct.new(name: "Papua New Guinea"),
+                                                                OpenStruct.new(name: "Paraguay"),
+                                                                OpenStruct.new(name: "Peru"),
+                                                                OpenStruct.new(name: "Philippines"),
+                                                              ]))
+    form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
+                                                                 ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
+
+    render(Question::SelectionComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+  end
 end
