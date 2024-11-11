@@ -24,7 +24,7 @@
     "autoprefixer": "^10.4.20",
     "cssnano": "^7.0.6",
     "jsdom": "^25.0.0",
-    "postcss": "^8.4.47",
+    "postcss": "^8.4.48",
     "sass": "^1.80.6",
     "snazzy": "^9.0.0",
     "standard": "^17.1.2",
