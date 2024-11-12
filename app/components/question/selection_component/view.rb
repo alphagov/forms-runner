@@ -36,14 +36,14 @@ module Question
       def none_of_the_above_radio_button
         return nil unless question.is_optional?
 
-        option = form_builder.govuk_radio_button :selection, :none_of_the_above.to_s, label: { text: "None of the above" }
+        option = form_builder.govuk_radio_button :selection, I18n.t("page.none_of_the_above"), label: { text: "None of the above" }
         safe_join([divider, option])
       end
 
       def none_of_the_above_checkbox
         return nil unless question.is_optional?
 
-        option = form_builder.govuk_check_box :selection, :none_of_the_above.to_s, exclusive: true, label: { text: "None of the above" }
+        option = form_builder.govuk_check_box :selection, I18n.t("page.none_of_the_above"), exclusive: true, label: { text: "None of the above" }
         safe_join([divider, option])
       end
 

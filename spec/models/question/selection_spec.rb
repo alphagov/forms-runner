@@ -103,13 +103,13 @@ RSpec.describe Question::Selection, type: :model do
       end
 
       it "returns valid with none of the above selected" do
-        question.selection = [:none_of_the_above.to_s]
+        question.selection = [I18n.t("page.none_of_the_above")]
         expect(question).to be_valid
         expect(question.errors[:selection]).to be_empty
       end
 
       it "returns invalid with both an item and none selected" do
-        question.selection = ["option 1", :none_of_the_above.to_s]
+        question.selection = ["option 1", I18n.t("page.none_of_the_above")]
         expect(question).not_to be_valid
         expect(question.errors[:selection]).to include(I18n.t("activemodel.errors.models.question/selection.attributes.selection.both_none_and_value_selected"))
       end
@@ -197,7 +197,7 @@ RSpec.describe Question::Selection, type: :model do
       let(:is_optional) { true }
 
       it "returns valid with none of the above selected" do
-        question.selection = :none_of_the_above.to_s
+        question.selection = I18n.t("page.none_of_the_above")
         expect(question).to be_valid
         expect(question.errors[:selection]).to be_empty
       end
