@@ -29,14 +29,22 @@ module Question
       false
     end
 
+    def selection_options_with_none_of_the_above
+      options = answer_settings.selection_options
+
+      return options unless is_optional?
+
+      [*options, none_of_the_above_option]
+    end
+
   private
 
     def allowed_options
-      options = answer_settings.selection_options.map(&:name)
-      if is_optional?
-        options.concat([I18n.t("page.none_of_the_above")])
-      end
-      options
+      selection_options_with_none_of_the_above.map(&:name)
+    end
+
+    def none_of_the_above_option
+      OpenStruct.new(name: I18n.t("page.none_of_the_above"))
     end
 
     def selection_without_blanks

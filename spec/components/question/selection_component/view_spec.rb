@@ -82,17 +82,30 @@ RSpec.describe Question::SelectionComponent::View, type: :component do
     end
 
     context "when there are more than 30 options" do
-      let(:question) { build :single_selection_question, selection_options: }
+      let(:question) { build :single_selection_question, is_optional:, selection_options: }
 
       let(:selection_options) do
         Array.new(31).map { |_index| OpenStruct.new(name: Faker::Lorem.sentence) }
       end
 
-      it "renders the question as a select field with all of the options" do
-        expect(page).to have_select
+      let(:selection_option_names) { selection_options.map(&:name) }
 
-        selection_options.each do
-          expect(page).not_to have_field(type: "radio")
+      context "when 'None of the above' is not enabled" do
+        let(:is_optional) { false }
+
+        it "renders the question as a select field with a prompt and all of the options" do
+          expected_options = [I18n.t("autocomplete.prompt"), *selection_option_names]
+          expect(page).to have_select(question.question_text, options: expected_options)
+        end
+      end
+
+      context "when 'None of the above' is enabled" do
+        let(:is_optional) { true }
+
+        it "renders the question as a select field with a prompt, all of the options and a 'None of the above' option" do
+          expected_options = [I18n.t("autocomplete.prompt"), *selection_option_names, I18n.t("page.none_of_the_above")]
+
+          expect(page).to have_select(question.question_text, options: expected_options)
         end
       end
 

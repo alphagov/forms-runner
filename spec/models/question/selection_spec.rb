@@ -236,4 +236,37 @@ RSpec.describe Question::Selection, type: :model do
       end
     end
   end
+
+  describe "#selection_options_with_none_of_the_above" do
+    let(:only_one_option) { "true" }
+    let(:none_of_the_above_option) { OpenStruct.new(name: I18n.t("page.none_of_the_above")) }
+
+    context "when the user can select 'None of the above'" do
+      let(:is_optional) { true }
+
+      it "includes the selection options" do
+        question.answer_settings.each do |option|
+          expect(question.selection_options_with_none_of_the_above).to include(option)
+        end
+      end
+
+      it "includes 'None of the above'" do
+        expect(question.selection_options_with_none_of_the_above).to include(none_of_the_above_option)
+      end
+    end
+
+    context "when the user cannot select 'None of the above'" do
+      let(:is_optional) { false }
+
+      it "includes the selection options" do
+        question.answer_settings.selection_options.each do |option|
+          expect(question.selection_options_with_none_of_the_above).to include(option)
+        end
+      end
+
+      it "does not include 'None of the above'" do
+        expect(question.selection_options_with_none_of_the_above).not_to include(none_of_the_above_option)
+      end
+    end
+  end
 end
