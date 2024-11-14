@@ -103,13 +103,13 @@ RSpec.describe Question::Selection, type: :model do
       end
 
       it "returns valid with none of the above selected" do
-        question.selection = [:none_of_the_above.to_s]
+        question.selection = [I18n.t("page.none_of_the_above")]
         expect(question).to be_valid
         expect(question.errors[:selection]).to be_empty
       end
 
       it "returns invalid with both an item and none selected" do
-        question.selection = ["option 1", :none_of_the_above.to_s]
+        question.selection = ["option 1", I18n.t("page.none_of_the_above")]
         expect(question).not_to be_valid
         expect(question.errors[:selection]).to include(I18n.t("activemodel.errors.models.question/selection.attributes.selection.both_none_and_value_selected"))
       end
@@ -197,7 +197,7 @@ RSpec.describe Question::Selection, type: :model do
       let(:is_optional) { true }
 
       it "returns valid with none of the above selected" do
-        question.selection = :none_of_the_above.to_s
+        question.selection = I18n.t("page.none_of_the_above")
         expect(question).to be_valid
         expect(question.errors[:selection]).to be_empty
       end
@@ -233,6 +233,39 @@ RSpec.describe Question::Selection, type: :model do
         it "shows the answer in show_answer_in_csv" do
           expect(question.show_answer_in_csv).to eq(Hash[question_text, %w[something]])
         end
+      end
+    end
+  end
+
+  describe "#selection_options_with_none_of_the_above" do
+    let(:only_one_option) { "true" }
+    let(:none_of_the_above_option) { OpenStruct.new(name: I18n.t("page.none_of_the_above")) }
+
+    context "when the user can select 'None of the above'" do
+      let(:is_optional) { true }
+
+      it "includes the selection options" do
+        question.answer_settings.each do |option|
+          expect(question.selection_options_with_none_of_the_above).to include(option)
+        end
+      end
+
+      it "includes 'None of the above'" do
+        expect(question.selection_options_with_none_of_the_above).to include(none_of_the_above_option)
+      end
+    end
+
+    context "when the user cannot select 'None of the above'" do
+      let(:is_optional) { false }
+
+      it "includes the selection options" do
+        question.answer_settings.selection_options.each do |option|
+          expect(question.selection_options_with_none_of_the_above).to include(option)
+        end
+      end
+
+      it "does not include 'None of the above'" do
+        expect(question.selection_options_with_none_of_the_above).not_to include(none_of_the_above_option)
       end
     end
   end
