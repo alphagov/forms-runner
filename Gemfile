@@ -4,7 +4,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby file: ".ruby-version"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem "rails", "~> 7.2.1"
+gem "rails", "~> 7.2.2"
 
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", "~> 6.4.3"
@@ -56,7 +56,7 @@ gem "lograge"
 
 # For AWS interactions
 gem "aws-sdk-cloudwatch"
-gem "aws-sdk-codepipeline", "~> 1.89"
+gem "aws-sdk-codepipeline", "~> 1.90"
 gem "aws-sdk-s3"
 
 # For sending submissions as CSV
