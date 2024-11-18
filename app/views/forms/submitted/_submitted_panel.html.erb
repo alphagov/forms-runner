@@ -7,6 +7,6 @@
 ) do %>
   <% if current_context.get_submission_reference.present? %>
     <%= t('form.submitted.your_reference') %><br>
-    <strong><%= current_context.get_submission_reference %></strong>
+    <strong id="submission-reference"><%= current_context.get_submission_reference %></strong>
   <% end %>
 <% end %>
