@@ -84,6 +84,8 @@ group :development, :test do
 
   # For detecting security vulnerabilities in Ruby on Rails applications via static analysis.
   gem "brakeman", "~> 6.2"
+
+  gem "sidekiq"
 end
 
 group :test do

@@ -7,12 +7,13 @@ class FormSubmissionService
 
   MailerOptions = Data.define(:title, :preview_mode, :timestamp, :submission_reference, :payment_url)
 
-  def initialize(current_context:, email_confirmation_input:, preview_mode:)
+  def initialize(current_context:, email_confirmation_input:, preview_mode:, mode:)
     @current_context = current_context
     @form = current_context.form
     @email_confirmation_input = email_confirmation_input
     @requested_email_confirmation = @email_confirmation_input.send_confirmation == "send_email"
     @preview_mode = preview_mode
+    @mode = mode
     @timestamp = submission_timestamp
     @submission_reference = ReferenceNumberService.generate
 
@@ -34,7 +35,14 @@ private
     if @form.submission_type == "s3"
       s3_submission_service.submit
     else
-      notify_submission_service.submit
+      SubmissionMailerJob.perform_async(
+        @current_context.session_data.as_json,
+        @timestamp.to_s,
+        @submission_reference,
+        @email_confirmation_input.submission_email_reference,
+        @form.id,
+        @mode.to_s,
+      )
     end
 
     LogEventService.log_submit(@current_context,

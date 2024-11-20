@@ -1,8 +1,9 @@
 module Flow
   class Context
-    attr_reader :form, :support_details
+    attr_reader :form, :support_details, :session_data
 
     def initialize(form:, store:)
+      @session_data = store
       @form = form
       @form_context = Flow::FormContext.new(store)
       @step_factory = StepFactory.new(form:)
