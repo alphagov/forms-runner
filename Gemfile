@@ -22,6 +22,9 @@ gem "govuk_notify_rails"
 gem "redis"
 gem "redis-session-store"
 
+# Use postgresql as the database for Active Record
+gem "pg", "~> 1.5"
+
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
 # gem "kredis"
 
