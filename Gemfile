@@ -69,6 +69,8 @@ gem "csv"
 # the hash, also change in package.json
 gem "dfe-autocomplete", require: "dfe/autocomplete", github: "DFE-Digital/dfe-autocomplete", ref: "11738c0e25778162e26eb7ab5e22a6ffce671b08"
 
+gem "solid_queue", "~> 1.0"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[mri mingw x64_mingw]
