@@ -7,12 +7,13 @@ class FormSubmissionService
 
   MailerOptions = Data.define(:title, :preview_mode, :timestamp, :submission_reference, :payment_url)
 
-  def initialize(current_context:, email_confirmation_input:, preview_mode:)
+  def initialize(current_context:, email_confirmation_input:, mode:)
     @current_context = current_context
     @form = current_context.form
     @email_confirmation_input = email_confirmation_input
     @requested_email_confirmation = @email_confirmation_input.send_confirmation == "send_email"
-    @preview_mode = preview_mode
+    @preview_mode = mode.preview?
+    @mode = mode
     @timestamp = submission_timestamp
     @submission_reference = ReferenceNumberService.generate
 
@@ -20,7 +21,10 @@ class FormSubmissionService
   end
 
   def submit
-    submit_form_to_processing_team
+    raise StandardError, "Form id(#{@form.id}) has no completed steps i.e questions/answers to submit" if @current_context.completed_steps.blank?
+
+    # submit_form_to_processing_team
+    enqueue_submission
     submit_confirmation_email_to_user if @requested_email_confirmation
 
     @submission_reference
@@ -28,9 +32,18 @@ class FormSubmissionService
 
 private
 
-  def submit_form_to_processing_team
-    raise StandardError, "Form id(#{@form.id}) has no completed steps i.e questions/answers to submit" if @current_context.completed_steps.blank?
+  def enqueue_submission
+    submission = Submission.create!(
+      reference: @submission_reference,
+      form_id: @form.id,
+      mode: @mode,
+      data: @current_context.session_data,
+    )
 
+    SendSubmissionJob.perform_later(submission)
+  end
+
+  def submit_form_to_processing_team
     if @form.submission_type == "s3"
       s3_submission_service.submit
     else

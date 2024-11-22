@@ -17,7 +17,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_22_150629) do
   create_table "submissions", force: :cascade do |t|
     t.string "reference"
     t.bigint "form_id"
-    t.datetime "timestamp"
     t.string "mode"
     t.jsonb "data"
     t.datetime "created_at", null: false
