@@ -60,17 +60,18 @@ gem "uk_postcode"
 # For structured logging
 gem "lograge"
 
-# For AWS interactions
+# Use CloudWatch for metrics on form performance
 gem "aws-sdk-cloudwatch"
-gem "aws-sdk-codepipeline", "~> 1.101"
-gem "aws-sdk-kms"
+# Use S3 for uploading form submissions as a file
 gem "aws-sdk-s3"
+# Use SES for sending submission emails
 gem "aws-sdk-sesv2"
 gem "aws-sdk-sqs"
 gem "aws-sdk-sts"
 
-# For managing KMS keys in production
+# For managing Active Record encryption with KMS keys in production
 gem "active_kms"
+gem "aws-sdk-kms"
 
 # For sending submissions as CSV
 gem "csv"
@@ -102,6 +103,9 @@ group :development, :test do
 
   # For detecting security vulnerabilities in Ruby on Rails applications via static analysis.
   gem "brakeman", "~> 7.1"
+
+  # For pipeline rake tasks
+  gem "aws-sdk-codepipeline"
 end
 
 group :test do

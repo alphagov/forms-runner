@@ -517,7 +517,7 @@ DEPENDENCIES
   active_kms
   activeresource
   aws-sdk-cloudwatch
-  aws-sdk-codepipeline (~> 1.101)
+  aws-sdk-codepipeline
   aws-sdk-kms
   aws-sdk-s3
   aws-sdk-sesv2
