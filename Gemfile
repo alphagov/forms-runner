@@ -54,9 +54,9 @@ gem "uk_postcode"
 # For structured logging
 gem "lograge"
 
-# For AWS interactions
+# Use CloudWatch for metrics on form performance
 gem "aws-sdk-cloudwatch"
-gem "aws-sdk-codepipeline", "~> 1.91"
+# Use S3 for uploading form submissions as a file
 gem "aws-sdk-s3"
 
 # For sending submissions as CSV
@@ -84,6 +84,9 @@ group :development, :test do
 
   # For detecting security vulnerabilities in Ruby on Rails applications via static analysis.
   gem "brakeman", "~> 6.2"
+
+  # For pipeline rake tasks
+  gem "aws-sdk-codepipeline", "~> 1.91"
 end
 
 group :test do
