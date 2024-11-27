@@ -22,6 +22,8 @@ module Flow
                 Question::Text
               when :name
                 Question::Name
+              when :file
+                Question::File
               else
                 raise ArgumentError, "Unexpected answer_type for page #{page.id}: #{page.answer_type}"
               end
