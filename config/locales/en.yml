@@ -41,6 +41,10 @@ en:
             email:
               blank: Enter an email address
               invalid_email: Enter an email address in the correct format, like name@example.com
+        question/file:
+          attributes:
+            file:
+              too_big: The file is too big
         question/name:
           attributes:
             first_name:

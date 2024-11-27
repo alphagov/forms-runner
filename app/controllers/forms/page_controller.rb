@@ -16,20 +16,20 @@ module Forms
     def save
       page_params = params.require(:question).permit(*@step.params)
 
-      if @step.page&.answer_type == 'file'
-        file = File.open(page_params[:file])
-
-        s3 = Aws::S3::Client.new()
-        s3.put_object({
-                        body: file,
-                        bucket: "change-me",
-                        key: "a-file-upload-" + Time.new().strftime("%Y%m%dT%H%M%SZ") + File.extname(file.path),
-                      })
-      end
-
       @step.update!(page_params)
 
       if current_context.save_step(@step)
+        if @step.page&.answer_type == "file"
+          file = File.open(page_params[:file])
+
+          s3 = Aws::S3::Client.new
+          s3.put_object({
+            body: file,
+            bucket: "change-me",
+            key: "a-file-upload-" + Time.new.strftime("%Y%m%dT%H%M%SZ") + File.extname(file.path),
+          })
+        end
+
         current_context.clear_submission_details if is_first_page?
 
         unless mode.preview?
