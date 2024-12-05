@@ -17,6 +17,10 @@ module Question
       @guidance_markdown = options[:guidance_markdown]
     end
 
+    def update_answer(params)
+      assign_attributes(params)
+    end
+
     def attributes
       attribute_names.index_with { |_k| nil }
     end
