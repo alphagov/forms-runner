@@ -53,7 +53,7 @@ class Step
   end
 
   def update!(params)
-    question.assign_attributes(params)
+    question.update_answer(params)
     question.valid?
   end
 
