@@ -92,7 +92,7 @@ RSpec.describe Step do
   describe "#update!" do
     it "assigns attributes and validates the question" do
       params = { name: "New Name" }
-      expect(question).to receive(:assign_attributes).with(params)
+      expect(question).to receive(:update_answer).with(params)
       expect(question).to receive(:valid?)
       step.update!(params)
     end
