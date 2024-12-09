@@ -24,8 +24,8 @@ sentry:
   environment: local
   filter_mask: "[Filtered (client-side)]"
 
-aws_s3_submissions:
-  iam_role_arn: changeme
+aws:
+  s3_submission_iam_role_arn: changeme
 
 maintenance_mode:
   # When set to true, All pages will render 'Maintenance mode' message
