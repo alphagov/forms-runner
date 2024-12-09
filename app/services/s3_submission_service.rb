@@ -52,7 +52,7 @@ private
     role_session_name = "forms-runner-#{@submission_reference}"
     credentials = Aws::AssumeRoleCredentials.new(
       client: Aws::STS::Client.new,
-      role_arn: Settings.aws_s3_submissions.iam_role_arn,
+      role_arn: Settings.aws.s3_submission_iam_role_arn,
       role_session_name:,
     )
     Rails.logger.info "Assumed S3 role", { role_session_name: }
