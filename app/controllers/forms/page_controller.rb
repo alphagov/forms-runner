@@ -108,11 +108,11 @@ module Forms
       return unless @step.routing_conditions.filter { |condition| condition.validation_errors.filter { |error| %w[cannot_have_goto_page_before_routing_page goto_page_doesnt_exist].include? error.name }.any? }.any?
 
       EventLogger.log_page_event("goto_page_before_routing_page_error", @step.question.question_text, nil)
-      render template: "errors/goto_page_before_routing_page", locals: { link_url: admin_edit_condition_url(@step.form_id, @step.page_slug, @step.routing_conditions.first.id), question_number: @step.page_number }, status: :unprocessable_entity
+      render template: "errors/goto_page_before_routing_page", locals: { link_url: admin_edit_condition_url(@step.form_id, @step.page_slug), question_number: @step.page_number }, status: :unprocessable_entity
     end
 
-    def admin_edit_condition_url(form_id, page_id, condition_id)
-      "#{Settings.forms_admin.base_url}/forms/#{form_id}/pages/#{page_id}/conditions/#{condition_id}"
+    def admin_edit_condition_url(form_id, page_id)
+      "#{Settings.forms_admin.base_url}/forms/#{form_id}/pages/#{page_id}/routes"
     end
 
     def is_first_page?

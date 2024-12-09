@@ -285,7 +285,7 @@ RSpec.describe Forms::PageController, type: :request do
 
         it "shows the error page" do
           get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
-          link_url = "#{Settings.forms_admin.base_url}/forms/2/pages/1/conditions/1"
+          link_url = "#{Settings.forms_admin.base_url}/forms/2/pages/1/routes"
           question_number = first_step_in_form.position
           expect(response.body).to include(I18n.t("goto_page_before_routing_page.body_html", link_url:, question_number:))
         end
@@ -302,7 +302,7 @@ RSpec.describe Forms::PageController, type: :request do
 
         it "shows the error page" do
           get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
-          link_url = "#{Settings.forms_admin.base_url}/forms/2/pages/1/conditions/1"
+          link_url = "#{Settings.forms_admin.base_url}/forms/2/pages/1/routes"
           question_number = first_step_in_form.position
           expect(response.body).to include(I18n.t("goto_page_before_routing_page.body_html", link_url:, question_number:))
         end
@@ -513,7 +513,7 @@ RSpec.describe Forms::PageController, type: :request do
 
         it "shows the error page" do
           post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: { selection: "Option 2" }, changing_existing_answer: false }
-          link_url = "#{Settings.forms_admin.base_url}/forms/2/pages/1/conditions/1"
+          link_url = "#{Settings.forms_admin.base_url}/forms/2/pages/1/routes"
           question_number = first_step_in_form.position
           expect(response.body).to include(I18n.t("goto_page_before_routing_page.body_html", link_url:, question_number:))
         end
