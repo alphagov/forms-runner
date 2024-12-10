@@ -39,7 +39,7 @@ RSpec.describe S3SubmissionService do
         allow(Aws::STS::Client).to receive(:new).and_return(mock_sts_client)
         allow(Aws::S3::Client).to receive(:new).and_return(mock_s3_client)
         allow(mock_s3_client).to receive(:put_object)
-        allow(Settings.aws_s3_submissions).to receive(:iam_role_arn).and_return(role_arn)
+        allow(Settings.aws).to receive(:s3_submission_iam_role_arn).and_return(role_arn)
 
         service.submit
       end
