@@ -26,6 +26,7 @@ sentry:
 
 aws:
   s3_submission_iam_role_arn: changeme
+  file_upload_s3_bucket_name: changeme
 
 maintenance_mode:
   # When set to true, All pages will render 'Maintenance mode' message
