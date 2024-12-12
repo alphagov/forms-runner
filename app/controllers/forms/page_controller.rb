@@ -107,9 +107,26 @@ module Forms
     def check_goto_page_routing_error
       return if @step.conditions_with_goto_errors.blank?
 
-      EventLogger.log_page_event("goto_page_before_routing_page_error", @step.question.question_text, nil)
-      routes_page_id = @step.conditions_with_goto_errors.first.check_page_id
-      render template: "errors/goto_page_routing_error", locals: { link_url: admin_edit_condition_url(@step.form_id, routes_page_id), question_number: @step.page_number }, status: :unprocessable_entity
+      first_condition_with_error = @step.conditions_with_goto_errors.first
+
+      first_goto_error_name = first_condition_with_error.validation_errors.find { |error|
+        Step::GOTO_PAGE_ERROR_NAMES.include?(error.name)
+      }.name
+
+      event_name = if first_goto_error_name == "cannot_have_goto_page_before_routing_page"
+                     "goto_page_before_routing_page_error"
+                   else
+                     "goto_page_doesnt_exist_error"
+                   end
+
+      EventLogger.log_page_event(event_name, @step.question.question_text, nil)
+
+      routes_page_id = first_condition_with_error.check_page_id
+      render template: "errors/goto_page_routing_error", locals: {
+        error_name: first_goto_error_name,
+        link_url: admin_edit_condition_url(@step.form_id, routes_page_id),
+        question_number: @step.page_number,
+      }, status: :unprocessable_entity
     end
 
     def admin_edit_condition_url(form_id, page_id)

@@ -1,9 +1,14 @@
 ---
 en:
   goto_page_routing_error:
-    body_html: |
-      <p>The question you’re taking the person to is now above the question route, so the route cannot work.</p>
-      <p>To fix this <a href="%{link_url}">edit or delete question %{question_number}’s route</a>.</p>
+    cannot_have_goto_page_before_routing_page:
+      body_html: |
+        <p>Question %{question_number} has a route that takes the person to a question that‘s before the start of the route, so the route cannot work.</p>
+        <p>To fix this <a href="%{link_url}">edit or delete question %{question_number}’s route</a>.</p>
+    goto_page_doesnt_exist:
+      body_html: |
+        <p>Question %{question_number} has a route that takes people to a question that has been deleted.</p>
+        <p>To fix this <a href="%{link_url}">edit or delete question %{question_number}’s route</a>.</p>
     title: There’s a problem
   incomplete_submission:
     body_html: |
