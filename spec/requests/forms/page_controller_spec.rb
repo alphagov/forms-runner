@@ -290,6 +290,23 @@ RSpec.describe Forms::PageController, type: :request do
           expect(response.body).to include(I18n.t("goto_page_before_routing_page.body_html", link_url:, question_number:))
         end
       end
+
+      context "when the routing has a goto_page which does not exist" do
+        let(:pages_data) { [first_step_in_form, second_step_in_form, third_step_in_form] }
+        let(:validation_errors) { [{ name: "goto_page_doesnt_exist" }] }
+
+        it "returns a 422 response" do
+          get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
+          expect(response).to have_http_status(:unprocessable_entity)
+        end
+
+        it "shows the error page" do
+          get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
+          link_url = "#{Settings.forms_admin.base_url}/forms/2/pages/1/conditions/1"
+          question_number = first_step_in_form.position
+          expect(response.body).to include(I18n.t("goto_page_before_routing_page.body_html", link_url:, question_number:))
+        end
+      end
     end
 
     context "when page is repeatable" do
