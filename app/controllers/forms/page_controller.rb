@@ -1,6 +1,6 @@
 module Forms
   class PageController < BaseController
-    before_action :prepare_step, :set_logging_attributes, :changing_existing_answer, :check_goto_page_before_routing_page
+    before_action :prepare_step, :set_logging_attributes, :changing_existing_answer, :check_goto_page_routing_error
 
     def set_logging_attributes
       super
@@ -104,7 +104,7 @@ module Forms
       step.repeatable? && !step.skipped?
     end
 
-    def check_goto_page_before_routing_page
+    def check_goto_page_routing_error
       return unless @step.routing_conditions.filter { |condition| condition.validation_errors.filter { |error| %w[cannot_have_goto_page_before_routing_page goto_page_doesnt_exist].include? error.name }.any? }.any?
 
       EventLogger.log_page_event("goto_page_before_routing_page_error", @step.question.question_text, nil)
