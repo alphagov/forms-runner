@@ -1,0 +1,8 @@
+<% set_page_title(t("goto_page_routing_error.title")) %>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <h1 class="govuk-heading-l"><%= t('goto_page_routing_error.title') %></h1>
+    <%= t('goto_page_routing_error.body_html', link_url:, question_number:) %>
+  </div>
+</div>

@@ -109,7 +109,7 @@ module Forms
 
       EventLogger.log_page_event("goto_page_before_routing_page_error", @step.question.question_text, nil)
       routes_page_id = @step.conditions_with_goto_errors.first.check_page_id
-      render template: "errors/goto_page_before_routing_page", locals: { link_url: admin_edit_condition_url(@step.form_id, routes_page_id), question_number: @step.page_number }, status: :unprocessable_entity
+      render template: "errors/goto_page_routing_error", locals: { link_url: admin_edit_condition_url(@step.form_id, routes_page_id), question_number: @step.page_number }, status: :unprocessable_entity
     end
 
     def admin_edit_condition_url(form_id, page_id)
