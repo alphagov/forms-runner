@@ -19,7 +19,7 @@ RSpec.describe CsvGenerator do
     test_file.unlink
   end
 
-  describe "#write" do
+  describe "#write_submission" do
     before do
       described_class.write_submission(current_context:, submission_reference:, timestamp:, output_file_path: test_file.path)
     end
@@ -73,6 +73,29 @@ RSpec.describe CsvGenerator do
             ],
           ],
         )
+      end
+    end
+  end
+
+  describe "#csv_filename" do
+    let(:max_length) { 100 }
+    let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
+
+    context "when there is a long form name that would cause the filename to be longer than 100 characters" do
+      let(:form_title) { "A form name that will cause the filename to be truncated to obey the limittt" }
+
+      it "truncates the form name in the filename" do
+        filename = described_class.csv_filename(form_title:, submission_reference:, max_length:)
+        expect(filename).to eq("govuk_forms_a_form_name_that_will_cause_the_filename_to_be_truncated_to_obey_the_#{submission_reference}.csv")
+      end
+    end
+
+    context "when the form name would cause the filename to be exactly 100 characters long" do
+      let(:form_title) { "A form name that will cause the filename to be 100 characters long exactlyy" }
+
+      it "does not truncate the form name in the filename" do
+        filename = described_class.csv_filename(form_title:, submission_reference:, max_length:)
+        expect(filename).to eq("govuk_forms_a_form_name_that_will_cause_the_filename_to_be_100_characters_long_exactlyy_#{submission_reference}.csv")
       end
     end
   end
