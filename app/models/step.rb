@@ -2,6 +2,8 @@ class Step
   attr_accessor :page, :form, :question
   attr_reader :next_page_slug, :page_slug
 
+  GOTO_PAGE_ERROR_NAMES = %w[cannot_have_goto_page_before_routing_page goto_page_doesnt_exist].freeze
+
   def initialize(form:, page:, question:, next_page_slug:, page_slug:)
     @form = form
     @page = page
@@ -91,6 +93,14 @@ class Step
 
   def skipped?
     question.is_optional? && question.show_answer.blank?
+  end
+
+  def conditions_with_goto_errors
+    routing_conditions.filter do |condition|
+      condition.validation_errors.any? do |error|
+        GOTO_PAGE_ERROR_NAMES.include? error.name
+      end
+    end
   end
 
 private

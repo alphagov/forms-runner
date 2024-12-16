@@ -343,4 +343,62 @@ RSpec.describe Step do
   describe "#answer_settings" do
     it_behaves_like "delegates to question", :answer_settings
   end
+
+  describe "#conditions_with_goto_errors" do
+    let(:cannot_have_goto_page_before_routing_page_error) { OpenStruct.new(name: "cannot_have_goto_page_before_routing_page") }
+    let(:goto_page_doesnt_exist_error) { OpenStruct.new(name: "goto_page_doesnt_exist") }
+    let(:other_error) { OpenStruct.new(name: "some_other_error") }
+
+    context "when there are no routing conditions" do
+      let(:routing_conditions) { [] }
+      let(:page) { build(:page, id: 2, position: 1, routing_conditions: routing_conditions) }
+
+      it "returns an empty array" do
+        expect(step.conditions_with_goto_errors).to be_empty
+      end
+    end
+
+    context "when routing conditions have no errors" do
+      let(:condition) { OpenStruct.new(validation_errors: []) }
+      let(:routing_conditions) { [condition] }
+      let(:page) { build(:page, id: 2, position: 1, routing_conditions: routing_conditions) }
+
+      it "returns an empty array" do
+        expect(step.conditions_with_goto_errors).to be_empty
+      end
+    end
+
+    context "when routing conditions have relevant errors" do
+      let(:condition) { OpenStruct.new(validation_errors: [cannot_have_goto_page_before_routing_page_error]) }
+      let(:second_condition) { OpenStruct.new(validation_errors: [goto_page_doesnt_exist_error]) }
+      let(:routing_conditions) { [condition, second_condition] }
+      let(:page) { build(:page, id: 2, position: 1, routing_conditions: routing_conditions) }
+
+      it "returns conditions with specified errors" do
+        expect(step.conditions_with_goto_errors).to contain_exactly(condition, second_condition)
+      end
+    end
+
+    context "when routing conditions have irrelevant errors" do
+      let(:condition) { OpenStruct.new(validation_errors: [other_error]) }
+      let(:routing_conditions) { [condition] }
+      let(:page) { build(:page, id: 2, position: 1, routing_conditions: routing_conditions) }
+
+      it "returns an empty array" do
+        expect(step.conditions_with_goto_errors).to be_empty
+      end
+    end
+
+    context "when routing conditions have mixed errors" do
+      let(:condition_mixed) { OpenStruct.new(validation_errors: [cannot_have_goto_page_before_routing_page_error, other_error]) }
+      let(:condition_other) { OpenStruct.new(validation_errors: [other_error]) }
+      let(:condition_goto) { OpenStruct.new(validation_errors: [goto_page_doesnt_exist_error]) }
+      let(:routing_conditions) { [condition_mixed, condition_other, condition_goto] }
+      let(:page) { build(:page, id: 2, position: 1, routing_conditions: routing_conditions) }
+
+      it "returns only conditions with specified errors" do
+        expect(step.conditions_with_goto_errors).to contain_exactly(condition_mixed, condition_goto)
+      end
+    end
+  end
 end
