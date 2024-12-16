@@ -13,8 +13,10 @@ RSpec.describe FormSubmissionService do
           support_url_text:,
           submission_email:,
           payment_url:,
-          submission_type:)
+          submission_type:,
+          pages:)
   end
+  let(:pages) { [build(:page, id: 2, answer_type: "text")] }
   let(:submission_type) { "email" }
   let(:what_happens_next_markdown) { "We usually respond to applications within 10 working days." }
   let(:support_email) { Faker::Internet.email(domain: "example.gov.uk") }
@@ -100,6 +102,21 @@ RSpec.describe FormSubmissionService do
         end
 
         include_examples "logging"
+      end
+
+      context "when the form has a file upload question" do
+        let(:pages) { [build(:page, id: 2, answer_type: "file")] }
+        let(:aws_ses_submission_service_spy) { instance_double(AwsSesSubmissionService) }
+
+        before do
+          allow(AwsSesSubmissionService).to receive(:new).and_return(aws_ses_submission_service_spy)
+          allow(aws_ses_submission_service_spy).to receive(:submit)
+        end
+
+        it "calls AwsSesSubmissionService to submit the form" do
+          service.submit
+          expect(aws_ses_submission_service_spy).to have_received(:submit)
+        end
       end
 
       context "when the submission type is s3" do
