@@ -77,4 +77,9 @@ Rails.application.configure do
   # Disable log output for tests - remove these lines to enable
   config.lograge.logger = ActiveSupport::Logger.new(nil)
   config.logger = ApplicationLogger.new(nil)
+
+  # Don't interact with SES in the test environment.
+  # The :test delivery method accumulates sent emails in the
+  # ActionMailer::Base.deliveries array.
+  config.x.aws_ses_form_submission_mailer.delivery_method = :test
 end

@@ -73,5 +73,8 @@ module FormsRunner
     # logging use ActiveSupport::Logger.new($stdout) with formatter Logger::Formatter.new.
     config.logger = ApplicationLogger.new($stdout)
     config.logger.formatter = JsonLogFormatter.new
+
+    # custom configuration for the SES mailer delivery method
+    config.x.aws_ses_form_submission_mailer.delivery_method = :aws_ses
   end
 end
