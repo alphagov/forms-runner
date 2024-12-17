@@ -1,0 +1,69 @@
+require "rails_helper"
+
+RSpec.describe SesEmailFormatter do
+  let(:current_context) { instance_double(Flow::Context) }
+
+  describe "#build_question_answers_section" do
+    let(:text_question) { build :text, question_text: "What is the meaning of life?", text: "42" }
+    let(:text_step) { build :step, question: text_question }
+    let(:name_question) { build :first_middle_last_name_question, question_text: "What is your name?" }
+    let(:name_step) { build :step, question: name_question }
+    let(:completed_steps) { [text_step] }
+
+    before do
+      allow(current_context).to receive(:completed_steps).and_return(completed_steps)
+    end
+
+    context "when there is one step" do
+      it "returns question and and answer HTML" do
+        question_answers = described_class.new.build_question_answers_section(current_context)
+        expect(question_answers).to eq("<h2>What is the meaning of life?</h2><p>42</p>")
+      end
+    end
+
+    context "when the answer has multiple attributes" do
+      let(:completed_steps) { [name_step] }
+
+      it "inserts line breaks between answer attributes" do
+        question_answers = described_class.new.build_question_answers_section(current_context)
+        expect(question_answers).to eq("<h2>What is your name?</h2><p>First name: #{name_question.first_name}<br/><br/>Last name: #{name_question.last_name}</p>")
+      end
+    end
+
+    context "when the answer is blank i.e. skipped" do
+      let(:text_question) { build :text, question_text: "What is the meaning of life?", text: nil }
+      let(:completed_steps) { [text_step] }
+
+      it "returns the blank answer text" do
+        question_answers = described_class.new.build_question_answers_section(current_context)
+        expect(question_answers).to eq("<h2>What is the meaning of life?</h2><p>[This question was skipped]</p>")
+      end
+    end
+
+    context "when there is more than one step" do
+      let(:completed_steps) { [text_step, name_step] }
+
+      it "returns all question an answers separated by a horizontal rule" do
+        question_answers = described_class.new.build_question_answers_section(current_context)
+        expect(question_answers).to eq("<h2>What is the meaning of life?</h2><p>42</p><hr style=\"border: 0; height: 1px; background: #B1B4B6; Margin: 30px 0 30px 0;\"><h2>What is your name?</h2><p>First name: #{name_question.first_name}<br/><br/>Last name: #{name_question.last_name}</p>")
+      end
+    end
+
+    context "when there are special characters in the answer" do
+      let(:completed_steps) { [text_step] }
+
+      it "returns the sanitized answer" do
+        [
+          { input: "\n\nTest\n\nTest 2", output: "Test<br/><br/>Test 2" },
+          { input: "    paragraph 1\n\n\n\n\n\n\n\n\n\n\n\n\n Another Paragraph with trailing space     \n\n\n\n\n", output: "paragraph 1<br/><br/>Another Paragraph with trailing space" },
+
+        ].each do |test_case|
+          text_question.text = test_case[:input]
+
+          question_answers = described_class.new.build_question_answers_section(current_context)
+          expect(question_answers).to eq("<h2>What is the meaning of life?</h2><p>#{test_case[:output]}</p>")
+        end
+      end
+    end
+  end
+end
