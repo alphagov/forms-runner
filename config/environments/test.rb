@@ -1,4 +1,3 @@
-require "active_support/core_ext/integer/time"
 require "./app/lib/application_logger"
 
 # The test environment is used exclusively to run your application's
@@ -18,12 +17,11 @@ Rails.application.configure do
   # loading is working properly before deploying your code.
   config.eager_load = ENV["CI"].present?
 
-  # Configure public file server for tests with Cache-Control for performance.
-  config.public_file_server.headers = { "Cache-Control" => "public, max-age=#{1.hour.to_i}" }
+  # Configure public file server for tests with cache-control for performance.
+  config.public_file_server.headers = { "cache-control" => "public, max-age=3600" }
 
-  # Show full error reports and disable caching.
+  # Show full error reports.
   config.consider_all_requests_local = true
-  config.action_controller.perform_caching = false
   config.cache_store = :null_store
 
   # Render exception templates for rescuable exceptions and raise for other exceptions.
@@ -32,21 +30,15 @@ Rails.application.configure do
   # Disable request forgery protection in test environment.
   config.action_controller.allow_forgery_protection = false
 
-  # Disable caching for Action Mailer templates even if Action Controller
-  # caching is enabled.
-  config.action_mailer.perform_caching = false
-
   # Tell Action Mailer not to deliver emails to the real world.
   # The :test delivery method accumulates sent emails in the
   # ActionMailer::Base.deliveries array.
   config.action_mailer.delivery_method = :govuk_notify_test
 
-  # Unlike controllers, the mailer instance doesn't have any context about the
-  # incoming request so you'll need to provide the :host parameter yourself.
-  config.action_mailer.default_url_options = { host: "www.example.com" }
+  # Set host to be used by links generated in mailer templates.
+  config.action_mailer.default_url_options = { host: "example.com" }
 
   GovukNotifyRails::Mailer.default(delivery_method: :govuk_notify_test, from: "forms@example.com")
-
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
 
@@ -71,7 +63,7 @@ Rails.application.configure do
 
   # Allow previews so we can run feature tests against components
   config.view_component.show_previews = true
-  # Raise error when a before_action's only/except options reference missing actions
+  # Raise error when a before_action's only/except options reference missing actions.
   config.action_controller.raise_on_missing_callback_actions = true
 
   # Disable log output for tests - remove these lines to enable
