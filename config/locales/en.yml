@@ -167,6 +167,10 @@ en:
     legend:
       email_confirmation_input:
         send_confirmation: Do you want to get an email confirming your form has been submitted?
+  mailer:
+    submission:
+      from: GOV.UK Forms <%{email_address}>
+      subject: 'Form submission: %{form_title} - reference: %{reference}'
   mode:
     phase_banner_tag_preview-archived: Archived preview
     phase_banner_tag_preview-draft: Draft preview

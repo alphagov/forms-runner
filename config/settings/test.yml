@@ -1,3 +1,7 @@
 forms_admin:
   # URL to form-admin
   base_url: http://localhost
+
+ses_submission_email:
+  from_email_address: govuk_forms@example.com
+  reply_to_email_address: no-reply@example.com

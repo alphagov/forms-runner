@@ -31,16 +31,18 @@ private
   def submit_form_to_processing_team
     raise StandardError, "Form id(#{@form.id}) has no completed steps i.e questions/answers to submit" if @current_context.completed_steps.blank?
 
-    if @form.submission_type == "s3"
-      s3_submission_service.submit
-    else
-      notify_submission_service.submit
-    end
-
+    submit_using_form_submission_type
     LogEventService.log_submit(@current_context,
                                requested_email_confirmation: @requested_email_confirmation,
                                preview: @preview_mode,
                                submission_type: @form.submission_type)
+  end
+
+  def submit_using_form_submission_type
+    return s3_submission_service.submit if @form.submission_type == "s3"
+    return aws_ses_submission_service.submit if @form.has_file_upload_question?
+
+    notify_submission_service.submit
   end
 
   def submit_confirmation_email_to_user
@@ -74,6 +76,13 @@ private
       timestamp: @timestamp,
       submission_reference: @submission_reference,
       preview_mode: @preview_mode,
+    )
+  end
+
+  def aws_ses_submission_service
+    AwsSesSubmissionService.new(
+      current_context: @current_context,
+      mailer_options:,
     )
   end
 

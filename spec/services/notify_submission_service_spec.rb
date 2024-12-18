@@ -43,7 +43,7 @@ RSpec.describe NotifySubmissionService do
     Rails.logger.stop_broadcasting_to logger
   end
 
-  describe "#submit_form_to_processing_team" do
+  describe "#submit" do
     before do
       allow(CsvGenerator).to receive(:write_submission)
     end

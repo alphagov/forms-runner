@@ -6,7 +6,6 @@ describe FormSubmissionMailer, type: :mailer do
   let(:text_input) { "My question: My answer" }
   let(:preview_mode) { false }
   let(:submission_email) { "testing@gov.uk" }
-  let(:submission_timestamp) { Time.zone.now }
   let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
   let(:payment_url) { nil }
   let(:mailer_options) do
