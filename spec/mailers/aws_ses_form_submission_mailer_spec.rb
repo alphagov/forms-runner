@@ -57,21 +57,28 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
     end
   end
 
-  context "when a file to attach is included in the arguments" do
-    let(:test_file) { Tempfile.new("csv") }
-    let(:filename) { "a-file.csv" }
-    let(:files) { { filename => test_file } }
-
-    after do
-      test_file.unlink
+  context "when files to attach are included in the arguments" do
+    let(:csv_file_name) { "first-file.csv" }
+    let(:png_file_name) { "second-file.png" }
+    let(:files) do
+      {
+        csv_file_name => Faker::Lorem.sentence,
+        png_file_name => Faker::Lorem.sentence,
+      }
     end
 
-    it "adds the file as an attachment" do
-      expect(mail.attachments.size).to eq(1)
+    it "has 2 attachments" do
+      expect(mail.attachments.size).to eq(2)
     end
 
-    it "uses the filename for the attachment" do
-      expect(mail.attachments.first.filename).to eq(filename)
+    it "has the files attached with expected filenames" do
+      expect(mail.attachments[0].filename).to eq(csv_file_name)
+      expect(mail.attachments[1].filename).to eq(png_file_name)
+    end
+
+    it "has the files attached with expected content" do
+      expect(mail.attachments[0].body).to eq(files[csv_file_name])
+      expect(mail.attachments[1].body).to eq(files[png_file_name])
     end
   end
 

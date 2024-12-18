@@ -22,6 +22,14 @@ module Question
       self.uploaded_file_key = key
     end
 
+    def file_from_s3
+      s3 = Aws::S3::Client.new
+      s3.get_object({
+        bucket: Settings.aws.file_upload_s3_bucket_name,
+        key: uploaded_file_key,
+      }).body.read
+    end
+
   private
 
     def file_upload_s3_key(file)

@@ -71,4 +71,33 @@ RSpec.describe Question::File, type: :model do
       expect(question.show_answer).to eq original_filename
     end
   end
+
+  describe "#file_from_s3" do
+    subject(:question) { described_class.new({ original_filename:, uploaded_file_key: }, options) }
+
+    let(:mock_s3_client) { Aws::S3::Client.new(stub_responses: true) }
+    let(:bucket) { "an-s3-bucket" }
+    let(:get_object_output) { instance_double(Aws::S3::Types::GetObjectOutput) }
+    let(:original_filename) { "a-file.png" }
+    let(:uploaded_file_key) { Faker::Alphanumeric.alphanumeric }
+    let(:tempfile) { Tempfile.new(%w[temp-file .png]) }
+    let(:file_content) { Faker::Lorem.sentence }
+
+    after do
+      tempfile.unlink
+    end
+
+    before do
+      File.write(tempfile, file_content)
+
+      allow(Aws::S3::Client).to receive(:new).and_return(mock_s3_client)
+      allow(mock_s3_client).to receive(:get_object).and_return(get_object_output)
+      allow(get_object_output).to receive(:body).and_return(tempfile)
+      allow(Settings.aws).to receive(:file_upload_s3_bucket_name).and_return(bucket)
+    end
+
+    it("reads file contents from S3") do
+      expect(question.file_from_s3).to eq(file_content)
+    end
+  end
 end

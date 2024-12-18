@@ -17,7 +17,7 @@ RSpec.describe AwsSesSubmissionService do
   let(:payment_url) { nil }
   let(:submission_email) { "submissions@example.gov.uk" }
   let(:from_email_address) { "govukforms@example.gov.uk" }
-  let(:timestamp) { Time.zone.now }
+  let(:timestamp) { Time.utc(2022, 9, 14, 8, 0o0, 0o0) }
   let(:mailer_options) do
     FormSubmissionService::MailerOptions.new(title: form.name,
                                              preview_mode:,
@@ -43,7 +43,7 @@ RSpec.describe AwsSesSubmissionService do
 
   describe "#submit" do
     before do
-      allow(CsvGenerator).to receive(:write_submission)
+      allow(CsvGenerator).to receive(:write_submission).and_call_original
       allow(Settings.ses_submission_email).to receive(:from_email_address).and_return(from_email_address)
     end
 
@@ -73,34 +73,89 @@ RSpec.describe AwsSesSubmissionService do
       end
     end
 
+    context "when answers contain uploaded files" do
+      let(:question) { build :file, :with_uploaded_file }
+      let(:file_content) { Faker::Lorem.sentence }
+
+      before do
+        allow(question).to receive(:file_from_s3).and_return(file_content)
+      end
+
+      it "calls AwsSesFormSubmissionMailer passing in the uploaded files" do
+        travel_to timestamp do
+          allow(AwsSesFormSubmissionMailer).to receive(:submission_email).and_call_original
+
+          service.submit
+
+          expect(AwsSesFormSubmissionMailer).to have_received(:submission_email).with(
+            { answer_content: "<h2>#{question.question_text}</h2><p>#{question.original_filename}</p>",
+              submission_email_address: submission_email,
+              mailer_options: instance_of(FormSubmissionService::MailerOptions),
+              files: { question.original_filename => file_content } },
+          ).once
+        end
+      end
+    end
+
     context "when the submission type is email_with_csv" do
       before do
         form.submission_type = "email_with_csv"
       end
 
       it "writes a CSV file" do
-        freeze_time do
+        travel_to timestamp do
           service.submit
           expect(CsvGenerator).to have_received(:write_submission)
                                     .with(current_context:,
                                           submission_reference:,
-                                          timestamp: Time.zone.now,
+                                          timestamp:,
                                           output_file_path: an_instance_of(String))
         end
       end
 
       it "calls AwsSesFormSubmissionMailer passing in a CSV file" do
-        freeze_time do
+        travel_to timestamp do
           allow(AwsSesFormSubmissionMailer).to receive(:submission_email).and_call_original
 
           service.submit
+
+          expected_csv_content = "Reference,Submitted at,What is the meaning of life?\n#{submission_reference},2022-09-14T08:00:00Z,42\n"
 
           expect(AwsSesFormSubmissionMailer).to have_received(:submission_email).with(
             { answer_content: "<h2>What is the meaning of life?</h2><p>42</p>",
               submission_email_address: submission_email,
               mailer_options: instance_of(FormSubmissionService::MailerOptions),
-              files: { "govuk_forms_form_#{form.id}_#{submission_reference}.csv" => instance_of(File) } },
+              files: { "govuk_forms_form_#{form.id}_#{submission_reference}.csv" => expected_csv_content } },
           ).once
+        end
+      end
+
+      context "when answers contain uploaded files" do
+        let(:question) { build :file, :with_uploaded_file }
+        let(:file_content) { Faker::Lorem.sentence }
+
+        before do
+          allow(question).to receive(:file_from_s3).and_return(file_content)
+        end
+
+        it "calls AwsSesFormSubmissionMailer passing in the CSV and the uploaded files" do
+          travel_to timestamp do
+            allow(AwsSesFormSubmissionMailer).to receive(:submission_email).and_call_original
+
+            service.submit
+
+            expected_csv_content = "Reference,Submitted at,#{question.question_text}\n#{submission_reference},2022-09-14T08:00:00Z,#{question.original_filename}\n"
+
+            expect(AwsSesFormSubmissionMailer).to have_received(:submission_email).with(
+              { answer_content: "<h2>#{question.question_text}</h2><p>#{question.original_filename}</p>",
+                submission_email_address: submission_email,
+                mailer_options: instance_of(FormSubmissionService::MailerOptions),
+                files: {
+                  "govuk_forms_form_#{form.id}_#{submission_reference}.csv" => expected_csv_content,
+                  question.original_filename => file_content,
+                } },
+            ).once
+          end
         end
       end
     end
@@ -110,7 +165,7 @@ RSpec.describe AwsSesSubmissionService do
 
       context "when the submission email is set" do
         it "calls AwsSesFormSubmissionMailer" do
-          freeze_time do
+          travel_to timestamp do
             allow(AwsSesFormSubmissionMailer).to receive(:submission_email).and_call_original
 
             service.submit

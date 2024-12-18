@@ -9,7 +9,7 @@ class AwsSesFormSubmissionMailer < ApplicationMailer
     @subject = I18n.t("mailer.submission.subject", form_title: mailer_options.title, reference: mailer_options.submission_reference)
 
     files.each do |name, file|
-      attachments[name] = File.read(file.path)
+      attachments[name] = file
     end
 
     mail(to: submission_email_address, subject: @subject)
