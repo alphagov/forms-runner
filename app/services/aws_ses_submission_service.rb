@@ -17,20 +17,21 @@ class AwsSesSubmissionService
       return
     end
 
+    files = uploaded_files_in_answers
     if @form.submission_type == "email_with_csv"
-      deliver_submission_email_with_csv_attachment
+      deliver_submission_email_with_csv_attachment(files)
     else
-      deliver_submission_email({})
+      deliver_submission_email(files)
     end
   end
 
 private
 
-  def deliver_submission_email_with_csv_attachment
+  def deliver_submission_email_with_csv_attachment(files)
     Tempfile.create do |file|
       write_submission_csv(file)
 
-      files = { csv_filename => file }
+      files = files.merge({ csv_filename => File.read(file.path) })
       deliver_submission_email(files)
     end
   end
@@ -46,6 +47,13 @@ private
 
   def answer_content
     SesEmailFormatter.new.build_question_answers_section(@current_context)
+  end
+
+  def uploaded_files_in_answers
+    @current_context.completed_steps
+                   .select { |step| step.question.is_a?(Question::File) }
+                   .map { |step| [step.question.original_filename, step.question.file_from_s3] }
+                   .to_h
   end
 
   def write_submission_csv(file)
