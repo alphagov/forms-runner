@@ -104,11 +104,11 @@ GEM
       public_suffix (>= 2.0.2, < 6.0)
     ast (2.4.2)
     aws-eventstream (1.3.0)
-    aws-partitions (1.1022.0)
+    aws-partitions (1.1025.0)
     aws-sdk-cloudwatch (1.108.0)
       aws-sdk-core (~> 3, >= 3.210.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-codepipeline (1.91.0)
+    aws-sdk-codepipeline (1.92.0)
       aws-sdk-core (~> 3, >= 3.210.0)
       aws-sigv4 (~> 1.5)
     aws-sdk-core (3.214.0)
@@ -464,7 +464,7 @@ PLATFORMS
 DEPENDENCIES
   activeresource
   aws-sdk-cloudwatch
-  aws-sdk-codepipeline (~> 1.91)
+  aws-sdk-codepipeline (~> 1.92)
   aws-sdk-s3
   aws-sdk-sesv2
   axe-core-rspec
