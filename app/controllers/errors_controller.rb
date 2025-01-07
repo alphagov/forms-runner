@@ -29,7 +29,13 @@ class ErrorsController < ApplicationController
   def new_timeout; end
 
   def timeout
-    sleep 45 # CloudFront timeout is 30 seconds (default)
-    render "errors/submission_error"
+    if session[:timed_out]
+      session[:timed_out] = false
+      render body: "You made it through the timeout!"
+    else
+      session[:timed_out] = true
+      sleep 45 # CloudFront timeout is 30 seconds (default)
+      render "errors/submission_error"
+    end
   end
 end
