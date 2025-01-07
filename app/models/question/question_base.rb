@@ -17,8 +17,8 @@ module Question
       @guidance_markdown = options[:guidance_markdown]
     end
 
-    def update_answer(params)
-      assign_attributes(params)
+    def before_save
+      # only implemented for questions where we need to perform an action before saving the answer to the session
     end
 
     def attributes

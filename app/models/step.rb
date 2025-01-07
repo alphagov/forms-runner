@@ -44,6 +44,7 @@ class Step
   end
 
   def save_to_context(form_context)
+    question.before_save
     form_context.save_step(self, question.serializable_hash)
     self
   end
@@ -55,7 +56,7 @@ class Step
   end
 
   def update!(params)
-    question.update_answer(params)
+    question.assign_attributes(params)
     question.valid?
   end
 

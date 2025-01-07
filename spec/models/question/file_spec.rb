@@ -18,10 +18,9 @@ RSpec.describe Question::File, type: :model do
     it_behaves_like "a question model"
   end
 
-  describe "#update_answer" do
+  describe "#before_save" do
     let(:mock_s3_client) { Aws::S3::Client.new(stub_responses: true) }
     let(:uploaded_file) { instance_double(ActionDispatch::Http::UploadedFile) }
-    let(:params) { { file: uploaded_file } }
     let(:original_filename) { "a-file.png" }
     let(:bucket) { "an-s3-bucket" }
     let(:key) { Faker::Alphanumeric.alphanumeric }
@@ -40,7 +39,9 @@ RSpec.describe Question::File, type: :model do
 
       allow(SecureRandom).to receive(:uuid).and_return key
 
-      question.update_answer(params)
+      question.file = uploaded_file
+
+      question.before_save
     end
 
     it "puts object to S3" do

@@ -8,18 +8,16 @@ module Question
       original_filename
     end
 
-    def update_answer(params)
-      file_param = params[:file]
-      file = file_param.tempfile
+    def before_save
+      tempfile = file.tempfile
+      key = file_upload_s3_key(tempfile)
+      upload_to_s3(tempfile, key)
 
-      key = file_upload_s3_key(file)
-      upload_to_s3(file, key)
+      self.original_filename = file.original_filename
+      self.uploaded_file_key = key
 
       # we don't want to store the file itself on the session
       self.file = nil
-
-      self.original_filename = file_param.original_filename
-      self.uploaded_file_key = key
     end
 
     def file_from_s3
