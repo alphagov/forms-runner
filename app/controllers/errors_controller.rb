@@ -25,4 +25,9 @@ class ErrorsController < ApplicationController
     page = Page.find params.require(:page_id), params: { form_id: params.require(:form_id) }
     redirect_to form_page_path(form_id: form.id, form_slug: form.form_slug, page_slug: page.id, mode: :form)
   end
+
+  def timeout
+    sleep 45 # CloudFront timeout is 30 seconds (default)
+    render "errors/submission_error"
+  end
 end
