@@ -66,6 +66,7 @@ Rails.application.routes.draw do
   get "/404", to: "errors#not_found", as: :error_404, via: :all
   get "/500", to: "errors#internal_server_error", as: :error_500, via: :all
   get "/deprecated", to: "errors#deprecated"
-  get "/timeout", to: "errors#timeout"
+  get "/timeout/new", to: "errors#new_timeout"
+  match "/timeout", to: "errors#timeout", as: :error_timeout, via: [:get, :post]
   match "*path", to: "errors#not_found", via: :all
 end
