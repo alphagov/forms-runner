@@ -14,7 +14,7 @@ module Forms
     end
 
     def save
-      page_params = params.require(:question).permit(*@step.params)
+      page_params = params.fetch(:question, {}).permit(*@step.params)
       @step.update!(page_params)
 
       if current_context.save_step(@step)
