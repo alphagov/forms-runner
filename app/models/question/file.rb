@@ -3,6 +3,10 @@ module Question
     attribute :file
     attribute :original_filename
     attribute :uploaded_file_key
+    validates :file, presence: true, unless: :is_optional?
+    validate :validate_file_size
+
+    FILE_UPLOAD_MAX_SIZE_IN_MB = 7
 
     def show_answer
       original_filename
@@ -29,6 +33,12 @@ module Question
     end
 
   private
+
+    def validate_file_size
+      if file.present? && file.size > FILE_UPLOAD_MAX_SIZE_IN_MB.megabytes
+        errors.add(:file, :too_big)
+      end
+    end
 
     def file_upload_s3_key(file)
       uuid = SecureRandom.uuid

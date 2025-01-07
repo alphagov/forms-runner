@@ -101,4 +101,52 @@ RSpec.describe Question::File, type: :model do
       expect(question.file_from_s3).to eq(file_content)
     end
   end
+
+  describe "validations" do
+    context "when the question is mandatory" do
+      context "when no file is set" do
+        it "returns an error" do
+          expect(question).not_to be_valid
+          expect(question.errors[:file]).to include "Select a file"
+        end
+      end
+    end
+
+    context "when the question is optional" do
+      let(:is_optional) { true }
+
+      context "when no file is set" do
+        it "is valid" do
+          expect(question).to be_valid
+        end
+      end
+    end
+
+    context "when the file size is greater than 7MB" do
+      let(:uploaded_file) { instance_double(ActionDispatch::Http::UploadedFile) }
+
+      before do
+        allow(uploaded_file).to receive(:size).and_return(7.megabytes + 1)
+        question.file = uploaded_file
+      end
+
+      it "returns an error" do
+        expect(question).not_to be_valid
+        expect(question.errors[:file]).to include "The selected file must be smaller than 7MB"
+      end
+    end
+
+    context "when the file is valid" do
+      let(:uploaded_file) { instance_double(ActionDispatch::Http::UploadedFile) }
+
+      before do
+        allow(uploaded_file).to receive(:size).and_return(7.megabytes)
+        question.file = uploaded_file
+      end
+
+      it "is valid" do
+        expect(question).to be_valid
+      end
+    end
+  end
 end
