@@ -130,31 +130,56 @@ RSpec.describe AwsSesSubmissionService do
         end
       end
 
-      context "when answers contain uploaded files" do
+      context "when submission contains a file upload question" do
         let(:question) { build :file, :with_uploaded_file }
         let(:file_content) { Faker::Lorem.sentence }
 
-        before do
-          allow(question).to receive(:file_from_s3).and_return(file_content)
+        context "when the file upload question has been answered" do
+          before do
+            allow(question).to receive(:file_from_s3).and_return(file_content)
+          end
+
+          it "calls AwsSesFormSubmissionMailer passing in the CSV and the uploaded files" do
+            travel_to timestamp do
+              allow(AwsSesFormSubmissionMailer).to receive(:submission_email).and_call_original
+
+              service.submit
+
+              expected_csv_content = "Reference,Submitted at,#{question.question_text}\n#{submission_reference},2022-09-14T08:00:00Z,#{question.original_filename}\n"
+
+              expect(AwsSesFormSubmissionMailer).to have_received(:submission_email).with(
+                { answer_content: "<h2>#{question.question_text}</h2><p>#{question.original_filename}</p>",
+                  submission_email_address: submission_email,
+                  mailer_options: instance_of(FormSubmissionService::MailerOptions),
+                  files: {
+                    "govuk_forms_form_#{form.id}_#{submission_reference}.csv" => expected_csv_content,
+                    question.original_filename => file_content,
+                  } },
+              ).once
+            end
+          end
         end
 
-        it "calls AwsSesFormSubmissionMailer passing in the CSV and the uploaded files" do
-          travel_to timestamp do
-            allow(AwsSesFormSubmissionMailer).to receive(:submission_email).and_call_original
+        context "when the file upload question has been skipped" do
+          let(:question) { build :file, :with_answer_skipped }
 
-            service.submit
+          it "calls AwsSesFormSubmissionMailer without including a file for the unanswered question" do
+            travel_to timestamp do
+              allow(AwsSesFormSubmissionMailer).to receive(:submission_email).and_call_original
 
-            expected_csv_content = "Reference,Submitted at,#{question.question_text}\n#{submission_reference},2022-09-14T08:00:00Z,#{question.original_filename}\n"
+              service.submit
 
-            expect(AwsSesFormSubmissionMailer).to have_received(:submission_email).with(
-              { answer_content: "<h2>#{question.question_text}</h2><p>#{question.original_filename}</p>",
-                submission_email_address: submission_email,
-                mailer_options: instance_of(FormSubmissionService::MailerOptions),
-                files: {
-                  "govuk_forms_form_#{form.id}_#{submission_reference}.csv" => expected_csv_content,
-                  question.original_filename => file_content,
-                } },
-            ).once
+              expected_csv_content = "Reference,Submitted at,#{question.question_text}\n#{submission_reference},2022-09-14T08:00:00Z,\"\"\n"
+
+              expect(AwsSesFormSubmissionMailer).to have_received(:submission_email).with(
+                { answer_content: "<h2>#{question.question_text}</h2><p>[This question was skipped]</p>",
+                  submission_email_address: submission_email,
+                  mailer_options: instance_of(FormSubmissionService::MailerOptions),
+                  files: {
+                    "govuk_forms_form_#{form.id}_#{submission_reference}.csv" => expected_csv_content,
+                  } },
+              ).once
+            end
           end
         end
       end

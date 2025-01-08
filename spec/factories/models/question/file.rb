@@ -13,5 +13,10 @@ FactoryBot.define do
       original_filename { Faker::File.file_name(ext: "txt") }
       uploaded_file_key { Faker::Alphanumeric.alphanumeric }
     end
+
+    trait :with_answer_skipped do
+      is_optional { true }
+      original_filename { "" }
+    end
   end
 end

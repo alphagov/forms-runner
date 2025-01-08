@@ -13,6 +13,12 @@ module Question
     end
 
     def before_save
+      if file.blank?
+        # set to a blank string so that we serialize the answer correctly when an optional question isn't answered
+        self.original_filename = ""
+        return
+      end
+
       tempfile = file.tempfile
       key = file_upload_s3_key(tempfile)
       upload_to_s3(tempfile, key)
