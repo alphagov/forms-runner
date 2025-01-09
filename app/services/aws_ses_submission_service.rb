@@ -51,7 +51,7 @@ private
 
   def uploaded_files_in_answers
     @current_context.completed_steps
-                   .select { |step| step.question.is_a?(Question::File) }
+                   .select { |step| step.question.is_a?(Question::File) && step.question.uploaded_file_key.present? }
                    .map { |step| [step.question.original_filename, step.question.file_from_s3] }
                    .to_h
   end

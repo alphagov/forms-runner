@@ -3,23 +3,31 @@ module Question
     attribute :file
     attribute :original_filename
     attribute :uploaded_file_key
+    validates :file, presence: true, unless: :is_optional?
+    validate :validate_file_size
+
+    FILE_UPLOAD_MAX_SIZE_IN_MB = 7
 
     def show_answer
       original_filename
     end
 
-    def update_answer(params)
-      file_param = params[:file]
-      file = file_param.tempfile
+    def before_save
+      if file.blank?
+        # set to a blank string so that we serialize the answer correctly when an optional question isn't answered
+        self.original_filename = ""
+        return
+      end
 
-      key = file_upload_s3_key(file)
-      upload_to_s3(file, key)
+      tempfile = file.tempfile
+      key = file_upload_s3_key(tempfile)
+      upload_to_s3(tempfile, key)
+
+      self.original_filename = file.original_filename
+      self.uploaded_file_key = key
 
       # we don't want to store the file itself on the session
       self.file = nil
-
-      self.original_filename = file_param.original_filename
-      self.uploaded_file_key = key
     end
 
     def file_from_s3
@@ -31,6 +39,12 @@ module Question
     end
 
   private
+
+    def validate_file_size
+      if file.present? && file.size > FILE_UPLOAD_MAX_SIZE_IN_MB.megabytes
+        errors.add(:file, :too_big)
+      end
+    end
 
     def file_upload_s3_key(file)
       uuid = SecureRandom.uuid
