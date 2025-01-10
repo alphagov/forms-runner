@@ -3,5 +3,10 @@
                                     text: question_text_with_extra_suffix,
                                     **question_text_size_and_tag
                                   },
-                                  hint: { text: question.hint_text }
+                                  hint: {
+                                    text: question.hint_text,
+                                    class: "govuk-!-margin-bottom-7"
+                                  }
 %>
+
+<p class="govuk-body govuk-!-margin-bottom-8"><%= t("question/file.your_file_must_be_smaller_than")%></p>
