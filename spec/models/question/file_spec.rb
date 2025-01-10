@@ -26,6 +26,8 @@ RSpec.describe Question::File, type: :model do
       let(:bucket) { "an-s3-bucket" }
       let(:key) { Faker::Alphanumeric.alphanumeric }
       let(:tempfile) { Tempfile.new(%w[temp-file .png]) }
+      let(:file_size_in_bytes) { 2.megabytes }
+      let(:file_type) { "image/png" }
 
       after do
         tempfile.unlink
@@ -36,9 +38,12 @@ RSpec.describe Question::File, type: :model do
         allow(mock_s3_client).to receive(:put_object)
         allow(Settings.aws).to receive(:file_upload_s3_bucket_name).and_return(bucket)
 
-        allow(uploaded_file).to receive_messages(original_filename: original_filename, tempfile: tempfile)
+        allow(uploaded_file).to receive_messages(original_filename: original_filename, tempfile: tempfile,
+                                                 size: file_size_in_bytes, content_type: file_type)
 
         allow(SecureRandom).to receive(:uuid).and_return key
+
+        allow(Rails.logger).to receive(:info).at_least(:once)
 
         question.file = uploaded_file
 
@@ -59,6 +64,13 @@ RSpec.describe Question::File, type: :model do
 
       it "sets the original_filename" do
         expect(question.original_filename).to eq original_filename
+      end
+
+      it "logs information about the file" do
+        question.validate
+        expect(Rails.logger).to have_received(:info).with("Uploaded file to S3 for file upload question",
+                                                          { file_size_in_bytes:,
+                                                            file_type: })
       end
     end
 
@@ -133,15 +145,26 @@ RSpec.describe Question::File, type: :model do
 
     context "when the file size is greater than 7MB" do
       let(:uploaded_file) { instance_double(ActionDispatch::Http::UploadedFile) }
+      let(:file_size_in_bytes) { 7.megabytes + 1 }
+      let(:file_type) { "image/png" }
 
       before do
-        allow(uploaded_file).to receive(:size).and_return(7.megabytes + 1)
+        allow(uploaded_file).to receive_messages(size: file_size_in_bytes, content_type: file_type)
         question.file = uploaded_file
+
+        allow(Rails.logger).to receive(:info).at_least(:once)
       end
 
       it "returns an error" do
         expect(question).not_to be_valid
         expect(question.errors[:file]).to include "The selected file must be smaller than 7MB"
+      end
+
+      it "logs information about the file" do
+        question.validate
+        expect(Rails.logger).to have_received(:info).with("File upload question validation failed: file too big",
+                                                          { file_size_in_bytes:,
+                                                            file_type: })
       end
     end
 
