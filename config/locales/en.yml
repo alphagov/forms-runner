@@ -198,6 +198,8 @@ en:
   preview_banner:
     heading: This is a preview of this form. Do not enter personal information.
     title: Important
+  question/file:
+    your_file_must_be_smaller_than: Your file must be smaller than 7MB.
   question/name:
     label:
       first_name: First name
