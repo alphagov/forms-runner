@@ -2,7 +2,7 @@ $govuk-images-path: "@govuk/assets/images/";
 $govuk-fonts-path: "@govuk/assets/fonts/";
 $govuk-global-styles: true;
 
-@import "@govuk/all";
+@import "pkg:govuk-frontend";
 @import "dfe-autocomplete/src/dfe-autocomplete";
 @import "../../components/form_header_component/";
 @import "../styles/app-panel";
