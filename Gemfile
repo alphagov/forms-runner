@@ -56,7 +56,7 @@ gem "lograge"
 
 # For AWS interactions
 gem "aws-sdk-cloudwatch"
-gem "aws-sdk-codepipeline", "~> 1.92"
+gem "aws-sdk-codepipeline", "~> 1.93"
 gem "aws-sdk-s3"
 gem "aws-sdk-sesv2"
 
