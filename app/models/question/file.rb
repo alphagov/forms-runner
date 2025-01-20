@@ -60,6 +60,10 @@ module Question
       }).body.read
     end
 
+    def file_uploaded?
+      uploaded_file_key.present?
+    end
+
   private
 
     def validate_file_size

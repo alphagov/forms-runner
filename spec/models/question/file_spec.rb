@@ -123,6 +123,26 @@ RSpec.describe Question::File, type: :model do
     end
   end
 
+  describe "#file_uploaded?" do
+    subject(:question) { described_class.new({ uploaded_file_key: }, options) }
+
+    context "when a file has been uploaded" do
+      let(:uploaded_file_key) { Faker::Alphanumeric.alphanumeric }
+
+      it "returns true" do
+        expect(question.file_uploaded?).to be true
+      end
+    end
+
+    context "when a file has not been uploaded" do
+      let(:uploaded_file_key) { nil }
+
+      it "returns false" do
+        expect(question.file_uploaded?).to be false
+      end
+    end
+  end
+
   describe "validations" do
     context "when the question is mandatory" do
       context "when no file is set" do
