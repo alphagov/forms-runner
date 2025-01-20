@@ -1,7 +1,8 @@
 require "rails_helper"
 
 describe "forms/check_your_answers/show.html.erb" do
-  let(:form) { build :form, id: 1, declaration_text: }
+  let(:form) { build :form, :with_support, id: 1, declaration_text: }
+  let(:support_details) { OpenStruct.new(email: form.support_email) }
   let(:context) { OpenStruct.new(form:) }
   let(:full_width) { false }
   let(:declaration_text) { nil }
@@ -20,6 +21,7 @@ describe "forms/check_your_answers/show.html.erb" do
     assign(:form_submit_path, "/")
     assign(:full_width, full_width)
     assign(:rows, rows)
+    assign(:support_details, support_details)
     render template: "forms/check_your_answers/show", locals: { email_confirmation_input: }
   end
 
@@ -100,6 +102,10 @@ describe "forms/check_your_answers/show.html.erb" do
 
   it "contains a hidden notify reference for the confirmation email" do
     expect(rendered).to have_field("confirmation-email-reference", type: "hidden", with: email_confirmation_input.confirmation_email_reference)
+  end
+
+  it "displays the help link" do
+    expect(rendered).to have_text(I18n.t("support_details.get_help_with_this_form"))
   end
 
   # TODO: add view tests for playing back questions and Answers
