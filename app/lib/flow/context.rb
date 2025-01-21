@@ -80,5 +80,9 @@ module Flow
     def clear_submission_details
       @form_context.clear_submission_details(form.id)
     end
+
+    def all_steps
+      @form.pages.map { |page| find_or_create(page.id.to_s) }
+    end
   end
 end
