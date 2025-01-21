@@ -41,9 +41,7 @@ feature "Fill in and submit a form with a CSV submission", type: :feature do
     when_i_opt_out_of_email_confirmation
     and_i_submit_my_form
 
-    then_my_form_should_be_submitted
-    and_i_should_receive_a_reference_number
-    and_an_email_submission_should_have_been_sent
+    there_should_be_an_error_submitting
   end
 
   def when_i_visit_the_form_start_page
@@ -82,8 +80,8 @@ feature "Fill in and submit a form with a CSV submission", type: :feature do
     delivered_email = ActionMailer::Base.deliveries.first
 
     expected_content = [
-      ["Reference", "Submitted at", "A routing question"],
-      [reference, "2029-01-24T05:05:50+00:00", "Option 1"],
+      ["Reference", "Submitted at", "A routing question", "Skipped question"],
+      [reference, "2029-01-24T05:05:50+00:00", "Option 1", ""],
     ]
 
     expect(parse_email_csv(delivered_email)).to match_array(expected_content)
@@ -92,6 +90,10 @@ feature "Fill in and submit a form with a CSV submission", type: :feature do
   def then_my_form_should_be_submitted
     expect(page.find("h1")).to have_text "Your form has been submitted"
     expect_page_to_have_no_axe_errors(page)
+  end
+
+  def there_should_be_an_error_submitting
+    expect(page.find("h1")).to have_text "Sorry, we could not submit your answers"
   end
 
   def and_i_should_receive_a_reference_number
