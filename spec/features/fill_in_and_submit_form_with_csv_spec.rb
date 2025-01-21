@@ -113,8 +113,8 @@ feature "Fill in and submit a form with a CSV submission", type: :feature do
     delivered_email = ActionMailer::Base.deliveries.first
 
     expected_content = [
-      ["Reference", "Submitted at", question_text, "An optional question?", "A routing question?"],
-      [reference, formatted_timestamp, answer_text, "", "Option 1"],
+      ["Reference", "Submitted at", question_text, "An optional question?", "A routing question?", "a question skipped through routing"],
+      [reference, formatted_timestamp, answer_text, "", "Option 1", ""],
     ]
 
     expect(parse_email_csv(delivered_email)).to match_array(expected_content)
