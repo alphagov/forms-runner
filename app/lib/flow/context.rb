@@ -28,6 +28,10 @@ module Flow
       step.save_to_context(@form_context)
     end
 
+    def clear_stored_answer(step)
+      @form_context.clear_stored_answer(step)
+    end
+
     def previous_step(page_slug)
       index = completed_steps.find_index { |step| step.page_slug == page_slug }
       return nil if completed_steps.empty? || index&.zero?

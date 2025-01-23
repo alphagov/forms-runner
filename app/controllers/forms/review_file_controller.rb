@@ -7,7 +7,11 @@ module Forms
       @continue_url = review_file_continue_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug)
     end
 
-    def delete; end
+    def delete
+      @step.question.delete_from_s3
+      current_context.clear_stored_answer(@step)
+      redirect_to form_page_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug)
+    end
 
     def continue
       redirect_to next_page

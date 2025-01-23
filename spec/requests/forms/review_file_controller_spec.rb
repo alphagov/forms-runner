@@ -36,13 +36,14 @@ RSpec.describe Forms::ReviewFileController, type: :request do
   let(:mode) { "form" }
 
   let(:uploaded_filename) { "test.jpg" }
+  let(:uploaded_file_key) { "test_key" }
   let(:store) do
     {
       answers: {
         form_data.id.to_s => {
           file_upload_step.id.to_s => {
             "original_filename" => uploaded_filename,
-            "uploaded_file_key" => "test_key",
+            "uploaded_file_key" => uploaded_file_key,
           },
         },
       },
@@ -89,6 +90,69 @@ RSpec.describe Forms::ReviewFileController, type: :request do
 
     context "when the question isn't a file upload question" do
       let(:page_slug) { text_question_step.id }
+
+      it "redirects to the show page route" do
+        expect(response).to redirect_to form_page_path(form_data.id, form_data.form_slug, page_slug)
+      end
+    end
+  end
+
+  describe "#remove" do
+    let(:mock_s3_client) { Aws::S3::Client.new(stub_responses: true) }
+
+    before do
+      allow(Aws::S3::Client).to receive(:new).and_return(mock_s3_client)
+      allow(mock_s3_client).to receive(:delete_object)
+      post remove_file_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug:)
+    end
+
+    context "when the question is a file upload question" do
+      let(:page_slug) { file_upload_step.id.to_s }
+
+      context "when a file has been uploaded" do
+        it "deletes the file from S3" do
+          expect(mock_s3_client).to have_received(:delete_object)
+        end
+
+        it "removes the answer from the session" do
+          expect(store[:answers][form_data.id.to_s]).not_to have_key page_slug
+        end
+
+        it "redirects to the show page route" do
+          expect(response).to redirect_to form_page_path(form_data.id, form_data.form_slug, page_slug)
+        end
+      end
+
+      context "when a file has not been uploaded" do
+        let(:uploaded_file_key) { nil }
+
+        it "does not remove the answer from the session" do
+          expect(store[:answers][form_data.id.to_s]).to have_key page_slug
+        end
+
+        it "redirects to the show page route" do
+          expect(response).to redirect_to form_page_path(form_data.id, form_data.form_slug, page_slug)
+        end
+      end
+    end
+
+    context "when the question isn't a file upload question" do
+      let(:page_slug) { text_question_step.id.to_s }
+      let(:store) do
+        {
+          answers: {
+            form_data.id.to_s => {
+              text_question_step.id.to_s => {
+                "text" => "foo",
+              },
+            },
+          },
+        }
+      end
+
+      it "does not remove the answer from the session" do
+        expect(store[:answers][form_data.id.to_s]).to have_key page_slug
+      end
 
       it "redirects to the show page route" do
         expect(response).to redirect_to form_page_path(form_data.id, form_data.form_slug, page_slug)
