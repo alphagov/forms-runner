@@ -18,5 +18,10 @@ FactoryBot.define do
       is_optional { true }
       original_filename { "" }
     end
+
+    trait :with_guidance do
+      page_heading { Faker::Lorem.sentence }
+      guidance_markdown { Faker::Lorem.paragraph }
+    end
   end
 end
