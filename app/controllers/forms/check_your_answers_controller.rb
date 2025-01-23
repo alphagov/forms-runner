@@ -14,10 +14,13 @@ module Forms
       setup_check_your_answers
       email_confirmation_input = EmailConfirmationInput.new
 
+      @support_details = current_context.support_details
+
       render template: "forms/check_your_answers/show", locals: { email_confirmation_input: }
     end
 
     def submit_answers
+      @support_details = current_context.support_details
       email_confirmation_input = EmailConfirmationInput.new(email_confirmation_input_params)
       requested_email_confirmation = email_confirmation_input.send_confirmation == "send_email"
 
