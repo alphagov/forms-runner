@@ -1,0 +1,25 @@
+<% if question.page_heading.present? %>
+  <h2 class="govuk-heading-m"><%= question_text_with_extra_suffix %></h2>
+<% else %>
+  <h1 class="govuk-heading-l"><%= question_text_with_extra_suffix %></h1>
+<% end %>
+
+<%= hint_text %>
+
+<%= govuk_table(classes: "govuk-!-margin-top-7") do |table|
+  table.with_caption(size: 'm', text: t('forms.review_file.show.table_heading'))
+  table.with_body do |body|
+    body.with_row do |row|
+      row.with_cell(text: question.original_filename)
+      row.with_cell do |cell|
+        form_with url: @remove_file_url, method: :post do |form|
+          form.govuk_submit t('forms.review_file.show.remove'), secondary: true
+        end
+      end
+    end
+  end
+end %>
+
+<p>
+  <% t('forms.review_file.show.remove_file_guidance') %>
+</p>
