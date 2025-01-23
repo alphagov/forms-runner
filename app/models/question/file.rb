@@ -5,8 +5,26 @@ module Question
     attribute :uploaded_file_key
     validates :file, presence: true, unless: :is_optional?
     validate :validate_file_size
+    validate :validate_file_extension
 
     FILE_UPLOAD_MAX_SIZE_IN_MB = 7
+    FILE_TYPES = [
+      "text/csv",
+      "image/jpeg",
+      "image/png",
+      "application/rtf",
+      "text/plain",
+      "application/pdf",
+      "application/json",
+      # .xlsx:
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      # .doc:
+      "application/msword",
+      # .docx:
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      # .odt:
+      "application/vnd.oasis.opendocument.text",
+    ].freeze
 
     def show_answer
       original_filename
@@ -51,6 +69,16 @@ module Question
           file_type: file.content_type,
         })
         errors.add(:file, :too_big)
+      end
+    end
+
+    def validate_file_extension
+      if file.present? && FILE_TYPES.exclude?(file.content_type)
+        Rails.logger.info("File upload question validation failed: disallowed file type", {
+          file_size_in_bytes: file.size,
+          file_type: file.content_type,
+        })
+        errors.add(:file, :disallowed_type)
       end
     end
 

@@ -45,6 +45,7 @@ en:
           attributes:
             file:
               blank: Select a file
+              disallowed_type: The selected file must be a CSV, JPEG, JPG, PNG, XLSX, DOC, DOCX, PDF, JSON, ODT, RTF or TXT
               too_big: The selected file must be smaller than 7MB
         question/name:
           attributes:
