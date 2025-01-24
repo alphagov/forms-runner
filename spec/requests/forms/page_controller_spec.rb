@@ -334,6 +334,51 @@ RSpec.describe Forms::PageController, type: :request do
         expect(response).to have_http_status(:not_found)
       end
     end
+
+    context "when the page is a file upload question" do
+      let(:first_step_in_form) do
+        build :v2_question_page_step,
+              id: 1,
+              next_step_id: 2,
+              answer_type: "file",
+              is_optional: true
+      end
+
+      before do
+        allow(Flow::Context).to receive(:new).and_wrap_original do |original_method, *args|
+          context_spy = original_method.call(form: args[0][:form], store:)
+          context_spy
+        end
+        get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
+      end
+
+      context "when the question has already been answered" do
+        let(:store) do
+          {
+            answers: {
+              form_data.id.to_s => {
+                first_step_in_form.id.to_s => {
+                  "original_filename" => "foo.png",
+                  "uploaded_file_key" => "bar",
+                },
+              },
+            },
+          }
+        end
+
+        it "redirects to the review file route" do
+          expect(response).to redirect_to review_file_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
+        end
+      end
+
+      context "when the question hasn't been answered" do
+        let(:store) { { answers: {} } }
+
+        it "renders the show page template" do
+          expect(response).to render_template("forms/page/show")
+        end
+      end
+    end
   end
 
   describe "#save" do
