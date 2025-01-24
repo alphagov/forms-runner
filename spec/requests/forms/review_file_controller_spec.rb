@@ -159,4 +159,36 @@ RSpec.describe Forms::ReviewFileController, type: :request do
       end
     end
   end
+
+  describe "#continue" do
+    before do
+      post review_file_continue_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug:)
+    end
+
+    context "when the question is a file upload question" do
+      let(:page_slug) { file_upload_step.id.to_s }
+
+      context "when a file has been uploaded" do
+        it "redirects to the next step in the form" do
+          expect(response).to redirect_to form_page_path(form_data.id, form_data.form_slug, text_question_step.id)
+        end
+      end
+
+      context "when a file has not been uploaded" do
+        let(:uploaded_file_key) { nil }
+
+        it "redirects to the show page route" do
+          expect(response).to redirect_to form_page_path(form_data.id, form_data.form_slug, page_slug)
+        end
+      end
+    end
+
+    context "when the question isn't a file upload question" do
+      let(:page_slug) { text_question_step.id }
+
+      it "redirects to the show page route" do
+        expect(response).to redirect_to form_page_path(form_data.id, form_data.form_slug, page_slug)
+      end
+    end
+  end
 end
