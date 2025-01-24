@@ -10,8 +10,7 @@
   <div class="govuk-grid-column-two-thirds">
     <%= render GuidanceComponent::View.new(@step.question) %>
 
-    <% remove_file_url = remove_file_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug) %>
-    <%= render Question::FileReviewComponent::View.new(question: @step.question, extra_question_text_suffix: hidden_text_mode(@mode).html_safe, remove_file_url: ) %>
+    <%= render Question::FileReviewComponent::View.new(question: @step.question, extra_question_text_suffix: hidden_text_mode(@mode).html_safe, remove_file_url: @remove_file_url ) %>
 
     <%= form_with model: @step.question, url: @continue_url, scope: :question, method: :post do |form| %>
       <%= form.govuk_submit %>

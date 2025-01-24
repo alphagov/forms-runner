@@ -34,6 +34,7 @@ RSpec.describe Forms::ReviewFileController, type: :request do
 
   let(:api_url_suffix) { "/live" }
   let(:mode) { "form" }
+  let(:changing_existing_answer) { false }
 
   let(:uploaded_filename) { "test.jpg" }
   let(:uploaded_file_key) { "test_key" }
@@ -63,7 +64,7 @@ RSpec.describe Forms::ReviewFileController, type: :request do
 
   describe "#show" do
     before do
-      get review_file_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug:)
+      get review_file_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug:, changing_existing_answer:)
     end
 
     context "when the question is a file upload question" do
@@ -76,6 +77,22 @@ RSpec.describe Forms::ReviewFileController, type: :request do
 
         it "displays the uploaded filename" do
           expect(response.body).to include(uploaded_filename)
+        end
+
+        context "when changing an existing answer" do
+          let(:changing_existing_answer) { true }
+
+          it "includes the changing_existing_answer query parameter for the remove file URL" do
+            rendered = Capybara.string(response.body)
+            expected_url = remove_file_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug:, changing_existing_answer:)
+            expect(rendered).to have_css("form[action='#{expected_url}'][method='post']")
+          end
+
+          it "includes the changing_existing_answer query parameter for the continue URL" do
+            rendered = Capybara.string(response.body)
+            expected_url = review_file_continue_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug:, changing_existing_answer:)
+            expect(rendered).to have_css("form[action='#{expected_url}'][method='post']")
+          end
         end
       end
 
@@ -103,7 +120,7 @@ RSpec.describe Forms::ReviewFileController, type: :request do
     before do
       allow(Aws::S3::Client).to receive(:new).and_return(mock_s3_client)
       allow(mock_s3_client).to receive(:delete_object)
-      post remove_file_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug:)
+      post remove_file_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug:, changing_existing_answer:)
     end
 
     context "when the question is a file upload question" do
@@ -120,6 +137,14 @@ RSpec.describe Forms::ReviewFileController, type: :request do
 
         it "redirects to the show page route" do
           expect(response).to redirect_to form_page_path(form_data.id, form_data.form_slug, page_slug)
+        end
+
+        context "when changing an existing answer" do
+          let(:changing_existing_answer) { true }
+
+          it "redirects to the change answer route" do
+            expect(response).to redirect_to form_change_answer_path(form_data.id, form_data.form_slug, page_slug)
+          end
         end
       end
 
@@ -162,7 +187,7 @@ RSpec.describe Forms::ReviewFileController, type: :request do
 
   describe "#continue" do
     before do
-      post review_file_continue_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug:)
+      post review_file_continue_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug:, changing_existing_answer:)
     end
 
     context "when the question is a file upload question" do
@@ -171,6 +196,14 @@ RSpec.describe Forms::ReviewFileController, type: :request do
       context "when a file has been uploaded" do
         it "redirects to the next step in the form" do
           expect(response).to redirect_to form_page_path(form_data.id, form_data.form_slug, text_question_step.id)
+        end
+      end
+
+      context "when changing an existing answer" do
+        let(:changing_existing_answer) { true }
+
+        it "redirects to the check your answers page" do
+          expect(response).to redirect_to(check_your_answers_path(form_data.id, form_data.form_slug, mode:))
         end
       end
 

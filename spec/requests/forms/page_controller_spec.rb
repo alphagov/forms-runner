@@ -609,23 +609,29 @@ RSpec.describe Forms::PageController, type: :request do
               is_optional: true
       end
 
-      let(:mock_s3_client) { Aws::S3::Client.new(stub_responses: true) }
-      let(:tempfile) { Tempfile.new(%w[temp-file .jpeg]) }
-
-      before do
-        allow(Aws::S3::Client).to receive(:new).and_return(mock_s3_client)
-        post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question:, changing_existing_answer: false }
-      end
-
-      after do
-        tempfile.unlink
-      end
-
       context "when a file was uploaded" do
+        let(:mock_s3_client) { Aws::S3::Client.new(stub_responses: true) }
+        let(:tempfile) { Tempfile.new(%w[temp-file .jpeg]) }
         let(:question) { { file: Rack::Test::UploadedFile.new(tempfile.path, "image/jpeg") } }
 
+        before do
+          allow(Aws::S3::Client).to receive(:new).and_return(mock_s3_client)
+        end
+
+        after do
+          tempfile.unlink
+        end
+
         it "redirects to the review file route" do
+          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: }
           expect(response).to redirect_to review_file_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
+        end
+
+        context "when changing an existing answer" do
+          it "includes the changing_existing_answer query parameter in the redirect" do
+            post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1, changing_existing_answer: true), params: { question: }
+            expect(response).to redirect_to review_file_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1, changing_existing_answer: true)
+          end
         end
       end
 
@@ -633,6 +639,7 @@ RSpec.describe Forms::PageController, type: :request do
         let(:question) { { file: nil } }
 
         it "redirects to the next step in the form" do
+          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: }
           expect(response).to redirect_to form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2)
         end
       end

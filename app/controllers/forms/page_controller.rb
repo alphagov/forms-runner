@@ -81,7 +81,7 @@ module Forms
     end
 
     def review_file_page
-      review_file_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug)
+      review_file_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug, changing_existing_answer:)
     end
 
     def next_page
@@ -130,10 +130,10 @@ module Forms
       }.name
 
       event_name = if first_goto_error_name == "cannot_have_goto_page_before_routing_page"
-        "goto_page_before_routing_page_error"
-      else
-        "goto_page_doesnt_exist_error"
-      end
+                     "goto_page_before_routing_page_error"
+                   else
+                     "goto_page_doesnt_exist_error"
+                   end
 
       EventLogger.log_page_event(event_name, @step.question.question_text, nil)
 
@@ -156,6 +156,5 @@ module Forms
     def save_url
       save_form_page_path(@step.form_id, @step.form_slug, @step.id, changing_existing_answer: @changing_existing_answer, answer_index:)
     end
-
   end
 end

@@ -5,6 +5,7 @@ describe "forms/review_file/show.html.erb" do
   let(:mode) { OpenStruct.new(preview_draft?: false, preview_archived?: false, preview_live?: false) }
   let(:back_link) { "/back" }
   let(:continue_url) { "/review_file" }
+  let(:remove_file_url) { "/remove_file" }
   let(:question) { build :file, :with_uploaded_file }
   let(:step) { build :step, question: }
   let(:support_details) { OpenStruct.new({ email: "help@example.gov.uk", phone: "Call 01610123456\n\nThis line is only open on Tuesdays.", url: "https://example.gov.uk/contact", url_text: "Contact form" }) }
@@ -15,6 +16,7 @@ describe "forms/review_file/show.html.erb" do
     assign(:step, step)
     assign(:back_link, back_link)
     assign(:continue_url, continue_url)
+    assign(:remove_file_url, remove_file_url)
     assign(:support_details, support_details)
 
     without_partial_double_verification do
