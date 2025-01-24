@@ -7,7 +7,7 @@ RSpec.describe CsvGenerator do
   let(:name_question) { build :first_middle_last_name_question, question_text: "What is your name?" }
   let(:first_step) { build :step, question: text_question }
   let(:second_step) { build :step, question: name_question }
-  let(:current_context) { OpenStruct.new(form:, completed_steps: [first_step, second_step], support_details: OpenStruct.new(call_back_url: "http://gov.uk")) }
+  let(:current_context) { OpenStruct.new(form:, all_steps: [first_step, second_step], support_details: OpenStruct.new(call_back_url: "http://gov.uk")) }
   let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
   let(:timestamp) do
     Time.use_zone("London") { Time.zone.local(2022, 9, 14, 8, 0o0, 0o0) }

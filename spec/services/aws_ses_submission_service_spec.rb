@@ -9,7 +9,7 @@ RSpec.describe AwsSesSubmissionService do
           submission_email:,
           payment_url:)
   end
-  let(:current_context) { OpenStruct.new(form:, completed_steps: [step], support_details: OpenStruct.new(call_back_url: "http://gov.uk")) }
+  let(:current_context) { OpenStruct.new(form:, completed_steps: [step], all_steps: [step], support_details: OpenStruct.new(call_back_url: "http://gov.uk")) }
   let(:question) { build :text, question_text: "What is the meaning of life?", text: "42" }
   let(:step) { build :step, question: }
   let(:preview_mode) { false }
