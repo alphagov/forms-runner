@@ -6,6 +6,8 @@ class ApplicationController < ActionController::Base
   before_action :check_maintenance_mode_is_enabled
   after_action :add_robots_header
 
+  add_flash_types :success
+
   def accessibility_statement; end
 
   def cookies; end
