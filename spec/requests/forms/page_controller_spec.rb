@@ -554,6 +554,44 @@ RSpec.describe Forms::PageController, type: :request do
         end
       end
     end
+
+    context "when the page is a file upload question" do
+      let(:first_step_in_form) do
+        build :v2_question_page_step,
+              id: 1,
+              next_step_id: 2,
+              answer_type: "file",
+              is_optional: true
+      end
+
+      let(:mock_s3_client) { Aws::S3::Client.new(stub_responses: true) }
+      let(:tempfile) { Tempfile.new(%w[temp-file .jpeg]) }
+
+      before do
+        allow(Aws::S3::Client).to receive(:new).and_return(mock_s3_client)
+        post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question:, changing_existing_answer: false }
+      end
+
+      after do
+        tempfile.unlink
+      end
+
+      context "when a file was uploaded" do
+        let(:question) { { file: Rack::Test::UploadedFile.new(tempfile.path, "image/jpeg") } }
+
+        it "redirects to the review file route" do
+          expect(response).to redirect_to review_file_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
+        end
+      end
+
+      context "when the question was skipped" do
+        let(:question) { { file: nil } }
+
+        it "redirects to the next step in the form" do
+          expect(response).to redirect_to form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2)
+        end
+      end
+    end
   end
 
   def log_lines
