@@ -12,11 +12,7 @@ module Forms
       @step.question.delete_from_s3
       current_context.clear_stored_answer(@step)
 
-      if changing_existing_answer
-        redirect_to form_change_answer_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug)
-      else
-        redirect_to form_page_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug)
-      end
+      redirect_to redirect_after_delete_path, success: t("banner.success.file_removed")
     end
 
     def continue
@@ -29,6 +25,14 @@ module Forms
       unless @step.question.is_a?(Question::File) && @step.question.file_uploaded?
         redirect_to form_page_path(@step.form_id, @step.form_slug, @step.page_slug)
       end
+    end
+
+    def redirect_after_delete_path
+      if changing_existing_answer
+        return form_change_answer_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug)
+      end
+
+      form_page_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug)
     end
   end
 end

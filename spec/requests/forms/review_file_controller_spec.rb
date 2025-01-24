@@ -139,6 +139,10 @@ RSpec.describe Forms::ReviewFileController, type: :request do
           expect(response).to redirect_to form_page_path(form_data.id, form_data.form_slug, page_slug)
         end
 
+        it "displays a success banner" do
+          expect(flash[:success]).to eq(I18n.t("banner.success.file_removed"))
+        end
+
         context "when changing an existing answer" do
           let(:changing_existing_answer) { true }
 

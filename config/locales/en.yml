@@ -97,6 +97,10 @@ en:
               blank: You must select an option
   autocomplete:
     prompt: Select an answer
+  banner:
+    success:
+      file_removed: Your file has been removed
+      title: Success
   cookie_banner:
     accept: Accept analytics cookies
     content: We’d like to use analytics cookies so we can understand how you use this website and make improvements.
