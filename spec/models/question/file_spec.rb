@@ -168,11 +168,62 @@ RSpec.describe Question::File, type: :model do
       end
     end
 
-    context "when the file is valid" do
+    context "when the file type is not in the list of allowed file types" do
       let(:uploaded_file) { instance_double(ActionDispatch::Http::UploadedFile) }
+      let(:file_size_in_bytes) { 7.megabytes }
+      let(:file_type) { "text/javascript" }
 
       before do
-        allow(uploaded_file).to receive(:size).and_return(7.megabytes)
+        allow(uploaded_file).to receive_messages(size: file_size_in_bytes, content_type: file_type)
+        question.file = uploaded_file
+
+        allow(Rails.logger).to receive(:info).at_least(:once)
+      end
+
+      it "returns an error" do
+        expect(question).not_to be_valid
+        expect(question.errors[:file]).to include I18n.t("activemodel.errors.models.question/file.attributes.file.disallowed_type")
+      end
+
+      it "logs information about the file" do
+        question.validate
+        expect(Rails.logger).to have_received(:info).with("File upload question validation failed: disallowed file type",
+                                                          { file_size_in_bytes:,
+                                                            file_type: })
+      end
+    end
+
+    Question::File::FILE_TYPES.each do |file_type|
+      context "when the file type is #{file_type}" do
+        let(:uploaded_file) { instance_double(ActionDispatch::Http::UploadedFile) }
+        let(:file_size_in_bytes) { 7.megabytes }
+
+        before do
+          allow(uploaded_file).to receive_messages(size: file_size_in_bytes, content_type: file_type)
+          question.file = uploaded_file
+
+          allow(Rails.logger).to receive(:info).at_least(:once)
+        end
+
+        it "does not return an error" do
+          expect(question).to be_valid
+          expect(question.errors[:file]).to be_empty
+        end
+
+        it "does not log information about the file" do
+          question.validate
+          expect(Rails.logger).not_to have_received(:info)
+        end
+      end
+    end
+
+    context "when the file is valid" do
+      let(:uploaded_file) { instance_double(ActionDispatch::Http::UploadedFile) }
+      let(:file_size_in_bytes) { 7.megabytes }
+      let(:file_type) { "text/plain" }
+
+      before do
+        allow(uploaded_file).to receive_messages(size: file_size_in_bytes, content_type: file_type)
         question.file = uploaded_file
       end
 

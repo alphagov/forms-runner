@@ -21,10 +21,10 @@ feature "Fill in and submit a form with a file upload question", type: :feature 
     }
   end
 
-  let(:test_file) { Tempfile.new(%w[a-file txt]) }
+  let(:test_file) { "tmp/a-file.txt" }
 
   after do
-    test_file.unlink
+    File.delete(test_file) if File.exist?(test_file)
   end
 
   before do
@@ -37,6 +37,8 @@ feature "Fill in and submit a form with a file upload question", type: :feature 
     mock_s3_client = Aws::S3::Client.new(stub_responses: true)
     allow(Aws::S3::Client).to receive(:new).and_return(mock_s3_client)
     allow(mock_s3_client).to receive(:put_object)
+
+    FileUtils.touch test_file
   end
 
   scenario "As a form filler" do
@@ -67,7 +69,7 @@ feature "Fill in and submit a form with a file upload question", type: :feature 
   end
 
   def when_i_upload_a_file
-    attach_file question_text, test_file.path
+    attach_file question_text, test_file
   end
 
   def and_i_click_on_continue
@@ -77,7 +79,7 @@ feature "Fill in and submit a form with a file upload question", type: :feature 
   def then_i_should_see_the_check_your_answers_page
     expect(page.find("h1")).to have_text "Check your answers before submitting your form"
     expect(page).to have_text question_text
-    expect(page).to have_text File.basename(test_file.path)
+    expect(page).to have_text File.basename(test_file)
     expect_page_to_have_no_axe_errors(page)
   end
 
