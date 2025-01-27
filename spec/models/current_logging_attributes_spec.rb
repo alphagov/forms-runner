@@ -13,7 +13,7 @@ RSpec.describe CurrentLoggingAttributes, type: :model do
     end
 
     it "includes all properties when they are set" do
-      current.host = "www.example.com"
+      current.request_host = "www.example.com"
       current.request_id = "a-request-id"
       current.form_id = 1
       current.form_name = "A form"
@@ -31,7 +31,7 @@ RSpec.describe CurrentLoggingAttributes, type: :model do
       current.rescued_exception_trace = "a trace"
 
       expect(current.as_hash).to eq({
-        host: "www.example.com",
+        request_host: "www.example.com",
         request_id: "a-request-id",
         form_id: 1,
         form_name: "A form",
