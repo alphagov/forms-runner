@@ -14,18 +14,8 @@ RSpec.describe Question::FileReviewComponent::View, type: :component do
     render_inline(described_class.new(question:, extra_question_text_suffix:, remove_file_url:))
   end
 
-  context "when there is no page heading" do
-    it "renders the question text as a h1" do
-      expect(page.find("h1")).to have_text(question.question_text_with_optional_suffix)
-    end
-  end
-
-  context "when there is a page heading" do
-    let(:page_heading) { Faker::Lorem.sentence }
-
-    it "renders the question text as a h2" do
-      expect(page.find("h2")).to have_text(question.question_text_with_optional_suffix)
-    end
+  it "renders the question text as a h1" do
+    expect(page.find("h1")).to have_text(question.question_text_with_optional_suffix)
   end
 
   context "when the question has hint text" do

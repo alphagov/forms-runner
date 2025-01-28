@@ -1,4 +1,4 @@
-<% set_page_title(form_title(form_name: @current_context.form.name, page_name: (@step.question.page_heading.present? ? @step.question.page_heading : @step.question.question_text), mode: @mode, error: @step.question&.errors&.any?)) %>
+<% set_page_title(form_title(form_name: @current_context.form.name, page_name: @step.question.question_text, mode: @mode, error: @step.question&.errors&.any?)) %>
 
 <% content_for :back_link do %>
   <% if @back_link.present? %>
@@ -8,8 +8,6 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <%= render GuidanceComponent::View.new(@step.question) %>
-
     <%= render Question::FileReviewComponent::View.new(question: @step.question, extra_question_text_suffix: hidden_text_mode(@mode).html_safe, remove_file_url: @remove_file_url ) %>
 
     <%= form_with model: @step.question, url: @continue_url, scope: :question, method: :post do |form| %>

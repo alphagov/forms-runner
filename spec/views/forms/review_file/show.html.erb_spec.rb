@@ -38,26 +38,12 @@ describe "forms/review_file/show.html.erb" do
     end
   end
 
-  context "when the question has guidance" do
-    let(:question) { build :file, :with_uploaded_file, :with_guidance }
-
-    it "has the correct page title" do
-      expect(view.content_for(:title)).to eq "#{question.page_heading} - #{form.name}"
-    end
-
-    it "has the correct heading" do
-      expect(rendered).to have_css("h1", text: question.page_heading)
-    end
+  it "has the correct page title" do
+    expect(view.content_for(:title)).to eq "#{question.question_text} - #{form.name}"
   end
 
-  context "when the question does not have guidance" do
-    it "has the correct page title" do
-      expect(view.content_for(:title)).to eq "#{question.question_text} - #{form.name}"
-    end
-
-    it "has the correct heading" do
-      expect(rendered).to have_css("h1", text: question.question_text)
-    end
+  it "has the correct heading" do
+    expect(rendered).to have_css("h1", text: question.question_text)
   end
 
   it "displays the review file component with the uploaded file name" do
