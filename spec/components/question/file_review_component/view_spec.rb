@@ -66,4 +66,8 @@ RSpec.describe Question::FileReviewComponent::View, type: :component do
       expect(page.find("h1").native.inner_html).to eq(expected_output)
     end
   end
+
+  it "has text to explain the file can be removed" do
+    expect(page).to have_content(I18n.t("forms.review_file.show.remove_file_guidance"))
+  end
 end
