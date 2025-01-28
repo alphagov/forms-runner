@@ -80,8 +80,8 @@ feature "Fill in and submit a form with a file upload question", type: :feature 
 
   def then_i_see_the_review_file_page
     expect(page.find("h1")).to have_text question_text
-    expect(page).to have_text "Your uploaded file"
-    expect(page).to have_text File.basename(test_file.path)
+    expect(page).to have_text "Check your uploaded file"
+    expect(page).to have_text File.basename(File.path(test_file))
   end
 
   def then_i_should_see_the_check_your_answers_page

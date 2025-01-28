@@ -158,10 +158,10 @@ en:
         short_answer_legend: Are you sure you want to remove ‘%{answer_text}’?
     review_file:
       show:
-        hidden_text: Your file
         remove: Remove
         remove_file_guidance: You can remove this file if you need to upload a different one.
-        table_heading: Your uploaded file
+        table_caption: Check your uploaded file
+        table_header: Your file
   helpers:
     hint:
       email_confirmation_input:
