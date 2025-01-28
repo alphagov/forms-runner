@@ -100,6 +100,7 @@ en:
   banner:
     success:
       file_removed: Your file has been removed
+      file_uploaded: Your file has been uploaded
       title: Success
   cookie_banner:
     accept: Accept analytics cookies

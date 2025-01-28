@@ -26,7 +26,7 @@ module Forms
           LogEventService.new(current_context, @step, request, changing_existing_answer, page_params).log_page_save
         end
 
-        redirect_to save_redirect_path
+        redirect_post_save
       else
         setup_instance_vars_for_view
         render :show, status: :unprocessable_entity
@@ -70,10 +70,10 @@ module Forms
       end
     end
 
-    def save_redirect_path
-      return review_file_page if answered_file_question?
+    def redirect_post_save
+      return redirect_to review_file_page, success: t("banner.success.file_uploaded") if answered_file_question?
 
-      next_page
+      redirect_to next_page
     end
 
     def answered_file_question?

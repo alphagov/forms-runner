@@ -627,6 +627,12 @@ RSpec.describe Forms::PageController, type: :request do
           expect(response).to redirect_to review_file_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
         end
 
+        it "displays a success banner" do
+          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: }
+
+          expect(flash[:success]).to eq(I18n.t("banner.success.file_uploaded"))
+        end
+
         context "when changing an existing answer" do
           it "includes the changing_existing_answer query parameter in the redirect" do
             post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1, changing_existing_answer: true), params: { question: }
