@@ -13,7 +13,8 @@
       row.with_cell(text: question.original_filename)
       row.with_cell do |cell|
         form_with url: @remove_file_url, method: :post do |form|
-          form.govuk_submit t('forms.review_file.show.remove'), secondary: true
+          button_content = "#{t('forms.review_file.show.remove')} <span class='govuk-visually-hidden'>#{t('forms.review_file.show.hidden_text')}</span>".html_safe
+          form.govuk_submit button_content, secondary: true
         end
       end
     end

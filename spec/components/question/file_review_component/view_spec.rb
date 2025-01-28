@@ -49,6 +49,13 @@ RSpec.describe Question::FileReviewComponent::View, type: :component do
   it "has a button to delete the file" do
     within(page.find("form[action='#{remove_file_url}'][method='post']")) do
       expect(page).to have_button("Remove")
+      expect(page).to have_css("button span.hidden-text", text: t("forms.review_file.show.hidden_text"))
+    end
+  end
+
+  it "the button to delete the file has hidden text" do
+    within(page.find("form[action='#{remove_file_url}'][method='post']")) do
+      expect(page).to have_css("button span.hidden-text", text: t("forms.review_file.show.hidden_text"))
     end
   end
 
