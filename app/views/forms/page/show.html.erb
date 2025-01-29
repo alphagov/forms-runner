@@ -23,8 +23,8 @@
     <% end %>
 
     <% if @step.question.instance_of? Question::File %>
-      <%= govuk_details(summary_text: t("question/file.file_types.summary")) do %>
-        <% t("question/file.file_types.body_html") %>
+      <%= govuk_details(summary_text: t("question/file.file_requirements.summary")) do %>
+        <% t("question/file.file_requirements.body_html") %>
       <% end %>
     <% end %>
 

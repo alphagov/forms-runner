@@ -22,15 +22,15 @@ describe "forms/check_your_answers/show.html.erb" do
   end
 
   it "does not display the file upload help text" do
-    expect(rendered).not_to have_text(I18n.t("question/file.file_types.summary"))
+    expect(rendered).not_to have_text(I18n.t("question/file.file_requirements.summary"))
   end
 
   context "when the question asks for a file" do
     let(:question) { build :file }
 
     it "displays the file upload help text" do
-      expect(rendered).to have_text(I18n.t("question/file.file_types.summary"))
-      expect(rendered).to include(I18n.t("question/file.file_types.body_html"))
+      expect(rendered).to have_text(I18n.t("question/file.file_requirements.summary"))
+      expect(rendered).to include(I18n.t("question/file.file_requirements.body_html"))
     end
   end
 end
