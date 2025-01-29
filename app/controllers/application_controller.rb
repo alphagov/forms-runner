@@ -25,7 +25,7 @@ class ApplicationController < ActionController::Base
   end
 
   def set_logging_attributes
-    CurrentLoggingAttributes.host = request.host
+    CurrentLoggingAttributes.request_host = request.host
     CurrentLoggingAttributes.request_id = request.request_id
     CurrentLoggingAttributes.form_id = params[:form_id] if params[:form_id].present?
     CurrentLoggingAttributes.page_id = params[:page_slug] if params[:page_slug].present? && params[:page_slug].match(Page::PAGE_ID_REGEX)

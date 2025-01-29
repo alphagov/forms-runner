@@ -98,8 +98,8 @@ RSpec.describe Forms::BaseController, type: :request do
       expect(log_lines[0]["trace_id"]).to eq(trace_id)
     end
 
-    it "includes the host on log lines" do
-      expect(log_lines[0]["host"]).to eq("www.example.com")
+    it "includes the request_host on log lines" do
+      expect(log_lines[0]["request_host"]).to eq("www.example.com")
     end
 
     it "includes the request_id on log lines" do
