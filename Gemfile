@@ -59,6 +59,7 @@ gem "aws-sdk-cloudwatch"
 gem "aws-sdk-codepipeline", "~> 1.93"
 gem "aws-sdk-s3"
 gem "aws-sdk-sesv2"
+gem "aws-sdk-sts"
 
 # For sending submissions as CSV
 gem "csv"

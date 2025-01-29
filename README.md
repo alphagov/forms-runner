@@ -49,6 +49,19 @@ npm run dev
 
 You will also need to run the [forms-api service](https://github.com/alphagov/forms-api), as this app needs the API to create and access forms.
 
+#### Getting AWS credentials
+
+If you have access to the `readonly` role in the development environment can start the Rails server, locally, with the same set of permissions in use in the development AWS account. This allows you to test features like file upload to AWS S3 and sending emails via AWS SES.
+
+1. Assume the `readonly` role in the development AWS account:
+    ```
+    gds aws forms-dev-readonly --shell
+    ```
+2. Start the Rails server with the `ASSUME_DEV_IAM_ROLE` environment variable
+    ```
+    ASSUME_DEV_IAM_ROLE=true ./bin/rails server
+    ```
+
 ## Development tools
 
 ### Running the tests
