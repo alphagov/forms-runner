@@ -200,6 +200,18 @@ en:
     heading: This is a preview of this form. Do not enter personal information.
     title: Important
   question/file:
+    file_types:
+      body_html: |
+        <p>You can upload the following file types:</p>
+        <ul class="govuk-list govuk-list--bullet">
+          <li>CSV (.csv)</li>
+          <li>image (.jpeg, .jpg, .png)</li>
+          <li>Microsoft Excel Spreadsheet (.xlsx)</li>
+          <li>Microsoft Word Document (.doc, .docx)</li>
+          <li>PDF (.pdf)</li>
+          <li>text (.json, .odt, .rtf, .txt)</li>
+        </ul>
+      summary: What files can I upload?
     your_file_must_be_smaller_than: Your file must be smaller than 7MB.
   question/name:
     label:
