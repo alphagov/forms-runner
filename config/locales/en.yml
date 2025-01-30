@@ -45,7 +45,7 @@ en:
           attributes:
             file:
               blank: Select a file
-              disallowed_type: The selected file must be a CSV, JPEG, JPG, PNG, XLSX, DOC, DOCX, PDF, JSON, ODT, RTF or TXT
+              disallowed_type: The selected file must be a CSV, DOC, DOCX, JPEG, JPG, JSON, ODT, PDF, PNG, RTF, TXT, or XLSX
               too_big: The selected file must be smaller than 7MB
         question/name:
           attributes:
@@ -200,7 +200,19 @@ en:
     heading: This is a preview of this form. Do not enter personal information.
     title: Important
   question/file:
-    your_file_must_be_smaller_than: Your file must be smaller than 7MB.
+    file_requirements:
+      body_html: |
+        <p>You can upload the following file types:</p>
+        <ul class="govuk-list govuk-list--bullet">
+          <li>CSV (.csv)</li>
+          <li>image (.jpeg, .jpg, .png)</li>
+          <li>Microsoft Excel Spreadsheet (.xlsx)</li>
+          <li>Microsoft Word Document (.doc, .docx)</li>
+          <li>PDF (.pdf)</li>
+          <li>text (.json, .odt, .rtf, .txt)</li>
+        </ul>
+        <p>Your file must be smaller than 7MB.</p>
+      summary: What files can I upload?
   question/name:
     label:
       first_name: First name
