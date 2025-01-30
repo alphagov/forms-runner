@@ -19,6 +19,13 @@ module Forms
       redirect_to next_page
     end
 
+    def confirmation
+      back_link(@step.page_slug)
+      @remove_file_url = remove_file_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug, changing_existing_answer:)
+      @remove_file_input = RemoveFileInput.new
+      # @continue_url = review_file_continue_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug, changing_existing_answer:)
+    end
+
   private
 
     def redirect_if_not_answered_file_question
