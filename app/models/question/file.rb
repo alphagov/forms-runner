@@ -39,7 +39,8 @@ module Question
 
       tempfile = file.tempfile
       key = file_upload_s3_key(tempfile)
-      upload_to_s3(tempfile, key)
+      FileUploadS3Service.new.upload_to_s3(tempfile, key)
+
       Rails.logger.info("Uploaded file to S3 for file upload question", {
         file_size_in_bytes: file.size,
         file_type: file.content_type,
@@ -53,19 +54,11 @@ module Question
     end
 
     def file_from_s3
-      s3 = Aws::S3::Client.new
-      s3.get_object({
-        bucket: Settings.aws.file_upload_s3_bucket_name,
-        key: uploaded_file_key,
-      }).body.read
+      FileUploadS3Service.new.file_from_s3(uploaded_file_key)
     end
 
     def delete_from_s3
-      s3 = Aws::S3::Client.new
-      s3.delete_object({
-        bucket: Settings.aws.file_upload_s3_bucket_name,
-        key: uploaded_file_key,
-      })
+      FileUploadS3Service.new.delete_from_s3(uploaded_file_key)
     end
 
     def file_uploaded?
@@ -98,16 +91,6 @@ module Question
       uuid = SecureRandom.uuid
       extension = ::File.extname(file.path)
       "#{uuid}#{extension}"
-    end
-
-    def upload_to_s3(file, key)
-      s3 = Aws::S3::Client.new
-      s3.put_object({
-        body: file,
-        bucket: Settings.aws.file_upload_s3_bucket_name,
-        key:,
-      })
-      key
     end
   end
 end

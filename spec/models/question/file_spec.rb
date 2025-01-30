@@ -8,6 +8,12 @@ RSpec.describe Question::File, type: :model do
   let(:is_optional) { false }
   let(:question_text) { Faker::Lorem.question }
 
+  let(:mock_file_upload_s3_service) { instance_double(Question::FileUploadS3Service) }
+
+  before do
+    allow(Question::FileUploadS3Service).to receive(:new).and_return(mock_file_upload_s3_service)
+  end
+
   describe "base question" do
     let(:original_filename) { Faker::File.file_name }
 
@@ -34,9 +40,7 @@ RSpec.describe Question::File, type: :model do
       end
 
       before do
-        allow(Aws::S3::Client).to receive(:new).and_return(mock_s3_client)
-        allow(mock_s3_client).to receive(:put_object)
-        allow(Settings.aws).to receive(:file_upload_s3_bucket_name).and_return(bucket)
+        allow(mock_file_upload_s3_service).to receive(:upload_to_s3)
 
         allow(uploaded_file).to receive_messages(original_filename: original_filename, tempfile: tempfile,
                                                  size: file_size_in_bytes, content_type: file_type)
@@ -51,11 +55,7 @@ RSpec.describe Question::File, type: :model do
       end
 
       it "puts object to S3" do
-        expect(mock_s3_client).to have_received(:put_object).with(
-          body: tempfile,
-          bucket: bucket,
-          key: "#{key}.png",
-        )
+        expect(mock_file_upload_s3_service).to have_received(:upload_to_s3).with(tempfile, "#{key}.png")
       end
 
       it "sets the uploaded_file_key" do
@@ -97,25 +97,12 @@ RSpec.describe Question::File, type: :model do
   describe "#file_from_s3" do
     subject(:question) { described_class.new({ original_filename:, uploaded_file_key: }, options) }
 
-    let(:mock_s3_client) { Aws::S3::Client.new(stub_responses: true) }
-    let(:bucket) { "an-s3-bucket" }
-    let(:get_object_output) { instance_double(Aws::S3::Types::GetObjectOutput) }
     let(:original_filename) { "a-file.png" }
     let(:uploaded_file_key) { Faker::Alphanumeric.alphanumeric }
-    let(:tempfile) { Tempfile.new(%w[temp-file .png]) }
     let(:file_content) { Faker::Lorem.sentence }
 
-    after do
-      tempfile.unlink
-    end
-
     before do
-      File.write(tempfile, file_content)
-
-      allow(Aws::S3::Client).to receive(:new).and_return(mock_s3_client)
-      allow(mock_s3_client).to receive(:get_object).and_return(get_object_output)
-      allow(get_object_output).to receive(:body).and_return(tempfile)
-      allow(Settings.aws).to receive(:file_upload_s3_bucket_name).and_return(bucket)
+      allow(mock_file_upload_s3_service).to receive(:file_from_s3).with(uploaded_file_key).and_return(file_content)
     end
 
     it("reads file contents from S3") do
@@ -126,23 +113,14 @@ RSpec.describe Question::File, type: :model do
   describe "#delete_from_s3" do
     subject(:question) { described_class.new({ original_filename: "a-file.png", uploaded_file_key: }, options) }
 
-    let(:mock_s3_client) { Aws::S3::Client.new(stub_responses: true) }
-    let(:bucket) { "an-s3-bucket" }
     let(:uploaded_file_key) { Faker::Alphanumeric.alphanumeric }
 
     before do
-      allow(Aws::S3::Client).to receive(:new).and_return(mock_s3_client)
-      allow(mock_s3_client).to receive(:delete_object)
-      allow(Settings.aws).to receive(:file_upload_s3_bucket_name).and_return(bucket)
+      allow(mock_file_upload_s3_service).to receive(:delete_from_s3)
     end
 
     it("calls S3 to delete the file") do
-      expect(mock_s3_client).to receive(:delete_object).with(
-        {
-          bucket:,
-          key: uploaded_file_key,
-        },
-      )
+      expect(mock_file_upload_s3_service).to receive(:delete_from_s3).with(uploaded_file_key)
       question.delete_from_s3
     end
   end
