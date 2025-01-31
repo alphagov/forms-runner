@@ -60,6 +60,18 @@ module Question
       }).body.read
     end
 
+    def delete_from_s3
+      s3 = Aws::S3::Client.new
+      s3.delete_object({
+        bucket: Settings.aws.file_upload_s3_bucket_name,
+        key: uploaded_file_key,
+      })
+    end
+
+    def file_uploaded?
+      uploaded_file_key.present?
+    end
+
   private
 
     def validate_file_size

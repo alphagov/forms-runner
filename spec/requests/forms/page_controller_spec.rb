@@ -334,6 +334,51 @@ RSpec.describe Forms::PageController, type: :request do
         expect(response).to have_http_status(:not_found)
       end
     end
+
+    context "when the page is a file upload question" do
+      let(:first_step_in_form) do
+        build :v2_question_page_step,
+              id: 1,
+              next_step_id: 2,
+              answer_type: "file",
+              is_optional: true
+      end
+
+      before do
+        allow(Flow::Context).to receive(:new).and_wrap_original do |original_method, *args|
+          context_spy = original_method.call(form: args[0][:form], store:)
+          context_spy
+        end
+        get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
+      end
+
+      context "when the question has already been answered" do
+        let(:store) do
+          {
+            answers: {
+              form_data.id.to_s => {
+                first_step_in_form.id.to_s => {
+                  "original_filename" => "foo.png",
+                  "uploaded_file_key" => "bar",
+                },
+              },
+            },
+          }
+        end
+
+        it "redirects to the review file route" do
+          expect(response).to redirect_to review_file_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
+        end
+      end
+
+      context "when the question hasn't been answered" do
+        let(:store) { { answers: {} } }
+
+        it "renders the show page template" do
+          expect(response).to render_template("forms/page/show")
+        end
+      end
+    end
   end
 
   describe "#save" do
@@ -551,6 +596,57 @@ RSpec.describe Forms::PageController, type: :request do
         it "redirects to the next page when not given an answer" do
           post save_form_page_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug: first_step_in_form.id, params: { question: { number: nil } })
           expect(response).to redirect_to(form_page_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug: second_step_in_form.id))
+        end
+      end
+    end
+
+    context "when the page is a file upload question" do
+      let(:first_step_in_form) do
+        build :v2_question_page_step,
+              id: 1,
+              next_step_id: 2,
+              answer_type: "file",
+              is_optional: true
+      end
+
+      context "when a file was uploaded" do
+        let(:mock_s3_client) { Aws::S3::Client.new(stub_responses: true) }
+        let(:tempfile) { Tempfile.new(%w[temp-file .jpeg]) }
+        let(:question) { { file: Rack::Test::UploadedFile.new(tempfile.path, "image/jpeg") } }
+
+        before do
+          allow(Aws::S3::Client).to receive(:new).and_return(mock_s3_client)
+        end
+
+        after do
+          tempfile.unlink
+        end
+
+        it "redirects to the review file route" do
+          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: }
+          expect(response).to redirect_to review_file_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
+        end
+
+        it "displays a success banner" do
+          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: }
+
+          expect(flash[:success]).to eq(I18n.t("banner.success.file_uploaded"))
+        end
+
+        context "when changing an existing answer" do
+          it "includes the changing_existing_answer query parameter in the redirect" do
+            post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1, changing_existing_answer: true), params: { question: }
+            expect(response).to redirect_to review_file_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1, changing_existing_answer: true)
+          end
+        end
+      end
+
+      context "when the question was skipped" do
+        let(:question) { { file: nil } }
+
+        it "redirects to the next step in the form" do
+          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: }
+          expect(response).to redirect_to form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2)
         end
       end
     end

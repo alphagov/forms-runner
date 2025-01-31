@@ -9,6 +9,8 @@ module Forms
 
     def show
       redirect_to form_page_path(@step.form_id, @step.form_slug, current_context.next_page_slug) unless current_context.can_visit?(@step.page_slug)
+      redirect_to review_file_page if answered_file_question?
+
       back_link(@step.page_slug)
       setup_instance_vars_for_view
     end
@@ -24,7 +26,7 @@ module Forms
           LogEventService.new(current_context, @step, request, changing_existing_answer, page_params).log_page_save
         end
 
-        redirect_to next_page
+        redirect_post_save
       else
         setup_instance_vars_for_view
         render :show, status: :unprocessable_entity
@@ -66,6 +68,20 @@ module Forms
       elsif previous_step
         @back_link = previous_step.repeatable? ? add_another_answer_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug, page_slug: previous_step.page_slug) : form_page_path(@step.form_id, @step.form_slug, previous_step.page_id)
       end
+    end
+
+    def redirect_post_save
+      return redirect_to review_file_page, success: t("banner.success.file_uploaded") if answered_file_question?
+
+      redirect_to next_page
+    end
+
+    def answered_file_question?
+      @step.question.is_a?(Question::File) && @step.question.file_uploaded?
+    end
+
+    def review_file_page
+      review_file_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug, changing_existing_answer:)
     end
 
     def next_page

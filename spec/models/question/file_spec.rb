@@ -123,6 +123,50 @@ RSpec.describe Question::File, type: :model do
     end
   end
 
+  describe "#delete_from_s3" do
+    subject(:question) { described_class.new({ original_filename: "a-file.png", uploaded_file_key: }, options) }
+
+    let(:mock_s3_client) { Aws::S3::Client.new(stub_responses: true) }
+    let(:bucket) { "an-s3-bucket" }
+    let(:uploaded_file_key) { Faker::Alphanumeric.alphanumeric }
+
+    before do
+      allow(Aws::S3::Client).to receive(:new).and_return(mock_s3_client)
+      allow(mock_s3_client).to receive(:delete_object)
+      allow(Settings.aws).to receive(:file_upload_s3_bucket_name).and_return(bucket)
+    end
+
+    it("calls S3 to delete the file") do
+      expect(mock_s3_client).to receive(:delete_object).with(
+        {
+          bucket:,
+          key: uploaded_file_key,
+        },
+      )
+      question.delete_from_s3
+    end
+  end
+
+  describe "#file_uploaded?" do
+    subject(:question) { described_class.new({ uploaded_file_key: }, options) }
+
+    context "when a file has been uploaded" do
+      let(:uploaded_file_key) { Faker::Alphanumeric.alphanumeric }
+
+      it "returns true" do
+        expect(question.file_uploaded?).to be true
+      end
+    end
+
+    context "when a file has not been uploaded" do
+      let(:uploaded_file_key) { nil }
+
+      it "returns false" do
+        expect(question.file_uploaded?).to be false
+      end
+    end
+  end
+
   describe "validations" do
     context "when the question is mandatory" do
       context "when no file is set" do
