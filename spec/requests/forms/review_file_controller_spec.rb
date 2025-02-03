@@ -78,22 +78,6 @@ RSpec.describe Forms::ReviewFileController, type: :request do
         it "displays the uploaded filename" do
           expect(response.body).to include(uploaded_filename)
         end
-
-        context "when changing an existing answer" do
-          let(:changing_existing_answer) { true }
-
-          it "includes the changing_existing_answer query parameter for the remove file URL" do
-            rendered = Capybara.string(response.body)
-            expected_url = remove_file_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug:, changing_existing_answer:)
-            expect(rendered).to have_css("form[action='#{expected_url}'][method='post']")
-          end
-
-          it "includes the changing_existing_answer query parameter for the continue URL" do
-            rendered = Capybara.string(response.body)
-            expected_url = review_file_continue_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug:, changing_existing_answer:)
-            expect(rendered).to have_css("form[action='#{expected_url}'][method='post']")
-          end
-        end
       end
 
       context "when a file has not been uploaded" do
@@ -102,6 +86,12 @@ RSpec.describe Forms::ReviewFileController, type: :request do
         it "redirects to the show page route" do
           expect(response).to redirect_to form_page_path(form_data.id, form_data.form_slug, page_slug)
         end
+      end
+
+      it "includes the changing_existing_answer query parameter for the continue URL" do
+        rendered = Capybara.string(response.body)
+        expected_url = review_file_continue_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug:, changing_existing_answer:)
+        expect(rendered).to have_css("form[action='#{expected_url}'][method='post']")
       end
     end
 
@@ -249,6 +239,52 @@ RSpec.describe Forms::ReviewFileController, type: :request do
 
         it "redirects to the show page route" do
           expect(response).to redirect_to form_page_path(form_data.id, form_data.form_slug, page_slug)
+        end
+      end
+    end
+
+    context "when the question isn't a file upload question" do
+      let(:page_slug) { text_question_step.id }
+
+      it "redirects to the show page route" do
+        expect(response).to redirect_to form_page_path(form_data.id, form_data.form_slug, page_slug)
+      end
+    end
+  end
+
+  describe "#confirmation" do
+    before do
+      get remove_file_confirmation_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug:, changing_existing_answer:)
+    end
+
+    context "when the question is a file upload question" do
+      let(:page_slug) { file_upload_step.id }
+
+      context "when a file has been uploaded" do
+        it "renders the remove file confirmation template" do
+          expect(response).to render_template("forms/review_file/confirmation")
+        end
+
+        it "displays the uploaded filename" do
+          expect(response.body).to include(uploaded_filename)
+        end
+      end
+
+      context "when a file has not been uploaded" do
+        let(:store) { {} }
+
+        it "redirects to the show page route" do
+          expect(response).to redirect_to form_page_path(form_data.id, form_data.form_slug, page_slug)
+        end
+      end
+
+      context "when changing an existing answer" do
+        let(:changing_existing_answer) { true }
+
+        it "includes the changing_existing_answer query parameter for the confirmation URL" do
+          rendered = Capybara.string(response.body)
+          expected_url = remove_file_confirmation_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug:, changing_existing_answer:)
+          expect(rendered).to have_css("form[action='#{expected_url}'][method='post']")
         end
       end
     end
