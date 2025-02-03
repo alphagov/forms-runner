@@ -26,6 +26,10 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
       expect(mail.subject).to eq("Form submission: #{title} - reference: #{submission_reference}")
     end
 
+    it "has a link to GOV.UK" do
+      expect(mail.body).to have_link("GOV.UK", href: "https://www.gov.uk")
+    end
+
     it "includes the answers" do
       expect(mail.body).to match(answer_content)
     end
