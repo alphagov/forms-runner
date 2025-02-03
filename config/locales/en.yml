@@ -192,6 +192,7 @@ en:
         send_confirmation: Do you want to get an email confirming your form has been submitted?
   mailer:
     submission:
+      file_attached: "%{filename} (attached to this email)"
       from: GOV.UK Forms <%{email_address}>
       subject: 'Form submission: %{form_title} - reference: %{reference}'
   mode:
