@@ -17,15 +17,11 @@
 
 <hr style="border: 0; height: 1px; background: #B1B4B6; margin: 30px 0 30px 0;">
 
-<blockquote
+<div
   style="margin: 0 0 20px 0; border-left: 10px solid #B1B4B6;
     padding: 15px 0 0.1px 15px; font-size: 19px; line-height: 25px;"
 >
-  <h2>You cannot reply to this email</h2>
-  <p>
-    If you need to contact the person who completed this form, you’ll need to contact them directly.
-  </p>
-  <p>
-    If you’re experiencing a technical issue with this form, <a href="https://www.forms.service.gov.uk/support">contact the GOV.​UK Forms team</a> with details of the issue and the form it relates to.
-  </p>
-</blockquote>
+  <h2><%= I18n.t("mailer.submission.cannot_reply.heading") %></h2>
+  <%= I18n.t("mailer.submission.cannot_reply.contact_form_filler").html_safe %>
+  <%= I18n.t("mailer.submission.cannot_reply.contact_forms_team").html_safe %>
+</div>

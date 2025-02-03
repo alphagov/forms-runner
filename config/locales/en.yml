@@ -192,6 +192,10 @@ en:
         send_confirmation: Do you want to get an email confirming your form has been submitted?
   mailer:
     submission:
+      cannot_reply:
+        contact_form_filler: "<p>If you need to contact the person who completed this form, you’ll need to contact them directly.</p>"
+        contact_forms_team: <p>If you’re experiencing a technical issue with this form, <a href="https://www.forms.service.gov.uk/support">contact the GOV.​UK Forms team</a> with details of the issue and the form it relates to.</p>
+        heading: You cannot reply to this email
       check_before_using: Check that this data looks safe before you use it
       file_attached: "%{filename} (attached to this email)"
       from: GOV.UK Forms <%{email_address}>

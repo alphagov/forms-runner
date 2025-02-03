@@ -38,6 +38,12 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
       expect(mail.body).to have_css("p", text: I18n.t("mailer.submission.check_before_using"))
     end
 
+    it "includes the warning about not replying" do
+      expect(mail.body).to have_css("h2", text: I18n.t("mailer.submission.cannot_reply.heading"))
+      expect(mail.body).to include(I18n.t("mailer.submission.cannot_reply.contact_form_filler"))
+      expect(mail.body).to include(I18n.t("mailer.submission.cannot_reply.contact_forms_team"))
+    end
+
     describe "submission date/time" do
       context "with a time in BST" do
         let(:timestamp) { Time.utc(2022, 9, 14, 8, 0o0, 0o0) }
