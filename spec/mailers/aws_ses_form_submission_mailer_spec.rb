@@ -34,6 +34,10 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
       expect(mail.body).to match("reference number: #{submission_reference}")
     end
 
+    it "includes text about checking the answers" do
+      expect(mail.body).to have_css("p", text: I18n.t("mailer.submission.check_before_using"))
+    end
+
     describe "submission date/time" do
       context "with a time in BST" do
         let(:timestamp) { Time.utc(2022, 9, 14, 8, 0o0, 0o0) }
