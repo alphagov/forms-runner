@@ -73,4 +73,90 @@ RSpec.describe Question::FileUploadS3Service do
       service.delete_from_s3(key)
     end
   end
+
+  describe "#poll_for_scan_status" do
+    let(:no_threats_status) { "NO_THREATS_FOUND" }
+    let(:scan_status_tagging_response) { { tag_set: [{ key: "GuardDutyMalwareScanStatus", value: no_threats_status }] } }
+    let(:empty_tagging_response) { { tag_set: [] } }
+
+    before do
+      allow(Rails.logger).to receive(:info).at_least(:once)
+    end
+
+    context "when the scan status tag is found on the first attempt" do
+      before do
+        allow(mock_s3_client).to receive(:get_object_tagging).and_return(scan_status_tagging_response)
+      end
+
+      it "calls aws once" do
+        expect(mock_s3_client).to receive(:get_object_tagging).once.with(
+          {
+            bucket:,
+            key:,
+          },
+        )
+        service.poll_for_scan_status(key)
+      end
+
+      it "returns the scan status" do
+        expect(service.poll_for_scan_status(key)).to eq(no_threats_status)
+      end
+
+      it "logs the scan status" do
+        expect(Rails.logger).to receive(:info).once.with("Successfully got GuardDuty scan status for uploaded file", {
+          scan_status: no_threats_status,
+          scan_status_poll_attempts: 1,
+        })
+        service.poll_for_scan_status(key)
+      end
+    end
+
+    context "when the scan status is not found on the first attempt" do
+      let(:first_tagging_response) { { tag_set: [] } }
+      let(:second_tagging_response) { { tag_set: [{ key: "GuardDutyMalwareScanStatus", value: status }] } }
+      let(:status) { "NO_THREATS_FOUND" }
+
+      before do
+        allow(mock_s3_client).to receive(:get_object_tagging).and_return(empty_tagging_response, scan_status_tagging_response)
+      end
+
+      it "calls aws 2 times" do
+        expect(mock_s3_client).to receive(:get_object_tagging).twice.with(
+          {
+            bucket:,
+            key:,
+          },
+        )
+        service.poll_for_scan_status(key)
+      end
+
+      it "returns the scan status" do
+        expect(service.poll_for_scan_status(key)).to eq(no_threats_status)
+      end
+
+      it "logs the scan status" do
+        expect(Rails.logger).to receive(:info).once.with("Successfully got GuardDuty scan status for uploaded file", {
+          scan_status: no_threats_status,
+          scan_status_poll_attempts: 2,
+        })
+        service.poll_for_scan_status(key)
+      end
+    end
+
+    context "when scan status tag is not found after maximum attempts" do
+      before do
+        allow(mock_s3_client).to receive(:get_object_tagging).and_return(empty_tagging_response)
+      end
+
+      it "calls aws 2 times and raises an error" do
+        expect(mock_s3_client).to receive(:get_object_tagging).twice.with(
+          {
+            bucket:,
+            key:,
+          },
+        )
+        expect { service.poll_for_scan_status(key) }.to raise_error(Question::FileUploadS3Service::PollForScanResultTimeoutError)
+      end
+    end
+  end
 end
