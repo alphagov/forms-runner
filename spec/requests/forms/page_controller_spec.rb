@@ -629,6 +629,7 @@ RSpec.describe Forms::PageController, type: :request do
         let(:question) { { file: Rack::Test::UploadedFile.new(tempfile.path, content_type) } }
 
         before do
+          File.write(tempfile, "some content")
           allow(Aws::S3::Client).to receive(:new).and_return(mock_s3_client)
           allow(mock_s3_client).to receive(:get_object_tagging).and_return({ tag_set: [{ key: "GuardDutyMalwareScanStatus", value: "NO_THREATS_FOUND" }] })
         end
@@ -687,7 +688,7 @@ RSpec.describe Forms::PageController, type: :request do
         end
 
         it "adds validation_errors logging attribute" do
-          expect(log_lines[0]["validation_errors"]).to eq(["file: disallowed_type"])
+          expect(log_lines[0]["validation_errors"]).to eq(["file: disallowed_type", "file: empty"])
         end
 
         it "adds answer_metadata logging attribute" do

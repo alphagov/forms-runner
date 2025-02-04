@@ -9,11 +9,29 @@ RSpec.describe Question::File, type: :model do
 
   let(:is_optional) { false }
   let(:question_text) { Faker::Lorem.question }
+  let(:extension) { ".png" }
+  let(:tempfile) { Tempfile.new(["temp-file", extension]) }
+  let(:original_filename) { "a-file#{extension}" }
+  let(:file_size_in_bytes) { 2.megabytes }
+  let(:file_type) { "image/png" }
+  let(:file_content) { "not empty" }
 
+  let(:uploaded_file) { instance_double(ActionDispatch::Http::UploadedFile) }
   let(:mock_file_upload_s3_service) { instance_double(Question::FileUploadS3Service) }
 
   before do
+    File.write(tempfile, file_content)
+
     allow(Question::FileUploadS3Service).to receive(:new).and_return(mock_file_upload_s3_service)
+    allow(uploaded_file).to receive_messages(original_filename: original_filename,
+                                             tempfile: tempfile,
+                                             size: file_size_in_bytes,
+                                             content_type: file_type,
+                                             path: tempfile.path)
+  end
+
+  after do
+    tempfile.unlink
   end
 
   describe "base question" do
@@ -29,25 +47,12 @@ RSpec.describe Question::File, type: :model do
   describe "#before_save" do
     context "when a file was selected" do
       let(:mock_s3_client) { Aws::S3::Client.new(stub_responses: true) }
-      let(:uploaded_file) { instance_double(ActionDispatch::Http::UploadedFile) }
-      let(:extension) { ".png" }
-      let(:original_filename) { "a-file#{extension}" }
       let(:bucket) { "an-s3-bucket" }
       let(:uuid) { Faker::Alphanumeric.alphanumeric }
       let(:key) { "#{uuid}#{extension}" }
-      let(:tempfile) { Tempfile.new(["temp-file", extension]) }
-      let(:file_size_in_bytes) { 2.megabytes }
-      let(:file_type) { "image/png" }
-
-      after do
-        tempfile.unlink
-      end
 
       before do
         allow(mock_file_upload_s3_service).to receive(:upload_to_s3)
-
-        allow(uploaded_file).to receive_messages(original_filename: original_filename, tempfile: tempfile,
-                                                 size: file_size_in_bytes, content_type: file_type)
 
         allow(SecureRandom).to receive(:uuid).and_return uuid
 
@@ -421,7 +426,6 @@ RSpec.describe Question::File, type: :model do
       let(:file_type) { "image/png" }
 
       before do
-        allow(uploaded_file).to receive_messages(size: file_size_in_bytes, content_type: file_type)
         question.file = uploaded_file
       end
 
@@ -431,13 +435,25 @@ RSpec.describe Question::File, type: :model do
       end
     end
 
+    context "when the file size is empty" do
+      let(:file_content) { "" }
+
+      before do
+        question.file = uploaded_file
+      end
+
+      it "returns an error" do
+        expect(question).not_to be_valid
+        expect(question.errors[:file]).to include "The selected file is empty"
+      end
+    end
+
     context "when the file type is not in the list of allowed file types" do
       let(:uploaded_file) { instance_double(ActionDispatch::Http::UploadedFile) }
       let(:file_size_in_bytes) { 7.megabytes }
       let(:file_type) { "text/javascript" }
 
       before do
-        allow(uploaded_file).to receive_messages(size: file_size_in_bytes, content_type: file_type)
         question.file = uploaded_file
       end
 
