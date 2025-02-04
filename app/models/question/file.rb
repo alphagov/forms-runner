@@ -1,5 +1,7 @@
 module Question
   class File < Question::QuestionBase
+    include Question::File::VirusScan
+
     attribute :file
     attribute :original_filename
     attribute :uploaded_file_key
@@ -45,6 +47,8 @@ module Question
         file_size_in_bytes: file.size,
         file_type: file.content_type,
       })
+
+      check_scan_result(key)
 
       self.original_filename = file.original_filename
       self.uploaded_file_key = key

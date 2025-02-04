@@ -616,6 +616,7 @@ RSpec.describe Forms::PageController, type: :request do
 
         before do
           allow(Aws::S3::Client).to receive(:new).and_return(mock_s3_client)
+          allow(mock_s3_client).to receive(:get_object_tagging).and_return({ tag_set: [{ key: "GuardDutyMalwareScanStatus", value: "NO_THREATS_FOUND" }] })
         end
 
         after do

@@ -50,27 +50,72 @@ RSpec.describe Question::File, type: :model do
         allow(Rails.logger).to receive(:info).at_least(:once)
 
         question.file = uploaded_file
-
-        question.before_save
       end
 
-      it "puts object to S3" do
-        expect(mock_file_upload_s3_service).to have_received(:upload_to_s3).with(tempfile, "#{key}.png")
+      context "when the virus scan successfully returns a status" do
+        let(:scan_status) { Question::File::NO_THREATS_FOUND_SCAN_STATUS }
+
+        before do
+          allow(mock_file_upload_s3_service).to receive(:poll_for_scan_status).and_return(scan_status)
+          question.before_save
+        end
+
+        it "puts object to S3" do
+          expect(mock_file_upload_s3_service).to have_received(:upload_to_s3).with(tempfile, "#{key}.png")
+        end
+
+        it "sets the uploaded_file_key" do
+          expect(question.uploaded_file_key).to eq "#{key}.png"
+        end
+
+        it "sets the original_filename" do
+          expect(question.original_filename).to eq original_filename
+        end
+
+        it "logs information about the file" do
+          expect(Rails.logger).to have_received(:info).with("Uploaded file to S3 for file upload question",
+                                                            { file_size_in_bytes:,
+                                                              file_type: })
+        end
+
+        it "does not add any errors" do
+          expect(question.errors).to be_empty
+        end
+
+        context "when the scan returns the threats found status" do
+          let(:scan_status) { Question::File::THREATS_FOUND_SCAN_STATUS }
+
+          it "does adds a contains_virus error" do
+            expect(question.errors[:file]).to include "The selected file contains a virus"
+          end
+        end
+
+        context "when the scan returns a different status" do
+          let(:scan_status) { "FAILURE" }
+
+          it "does adds a contains_virus error" do
+            expect(question.errors[:file]).to include "The selected file could not be uploaded - try again"
+          end
+        end
       end
 
-      it "sets the uploaded_file_key" do
-        expect(question.uploaded_file_key).to eq "#{key}.png"
-      end
+      context "when the scan times out" do
+        before do
+          allow(mock_file_upload_s3_service).to receive(:poll_for_scan_status).and_raise(Question::FileUploadS3Service::PollForScanResultTimeoutError)
+          allow(Rails.logger).to receive(:error).at_least(:once)
 
-      it "sets the original_filename" do
-        expect(question.original_filename).to eq original_filename
-      end
+          question.before_save
+        end
 
-      it "logs information about the file" do
-        question.validate
-        expect(Rails.logger).to have_received(:info).with("Uploaded file to S3 for file upload question",
-                                                          { file_size_in_bytes:,
-                                                            file_type: })
+        let(:scan_status) { nil }
+
+        it "adds a contains_virus error" do
+          expect(question.errors[:file]).to include "The selected file could not be uploaded - try again"
+        end
+
+        it "logs an error" do
+          expect(Rails.logger).to have_received(:error).once.with("Timed out polling for GuardDuty scan status for uploaded file")
+        end
       end
     end
 

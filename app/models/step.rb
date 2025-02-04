@@ -45,6 +45,8 @@ class Step
 
   def save_to_context(form_context)
     question.before_save
+    return false unless question.errors.empty?
+
     form_context.save_step(self, question.serializable_hash)
     self
   end
