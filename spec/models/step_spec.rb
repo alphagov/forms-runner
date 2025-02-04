@@ -11,7 +11,7 @@ RSpec.describe Step do
     )
   end
 
-  let(:question) { instance_double(Question::Text, serializable_hash: {}, attribute_names: %w[name], valid?: true) }
+  let(:question) { instance_double(Question::Text, serializable_hash: {}, attribute_names: %w[name], valid?: true, errors: []) }
   let(:page) { build(:page, id: 2, position: 1, routing_conditions: []) }
   let(:form_context) { instance_double(Flow::FormContext) }
   let(:form) { build(:form, id: 3, form_slug: "test-form", pages: [page]) }
@@ -79,6 +79,24 @@ RSpec.describe Step do
       expect(question).to receive(:before_save)
       expect(form_context).to receive(:save_step).with(step, {})
       step.save_to_context(form_context)
+    end
+
+    context "when errors are added to the question by before_save" do
+      before do
+        errors = instance_double(ActiveModel::Errors, empty?: false)
+        allow(question).to receive(:errors).and_return(errors)
+        allow(question).to receive(:before_save)
+      end
+
+      it "does not save the step to the form context" do
+        expect(question).to receive(:before_save)
+        expect(form_context).not_to receive(:save_step)
+        step.save_to_context(form_context)
+      end
+
+      it "returns false" do
+        expect(step.save_to_context(form_context)).to be(false)
+      end
     end
   end
 

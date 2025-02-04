@@ -33,6 +33,10 @@ ses_submission_email:
   from_email_address: changeme
   reply_to_email_address: changeme
 
+file_upload:
+  poll_scan_status_wait_milliseconds: 500
+  poll_scan_status_max_attempts: 20
+
 maintenance_mode:
   # When set to true, All pages will render 'Maintenance mode' message
   enabled: false

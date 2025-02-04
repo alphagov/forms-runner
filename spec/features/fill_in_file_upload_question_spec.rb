@@ -37,6 +37,7 @@ feature "Fill in and submit a form with a file upload question", type: :feature 
     mock_s3_client = Aws::S3::Client.new(stub_responses: true)
     allow(Aws::S3::Client).to receive(:new).and_return(mock_s3_client)
     allow(mock_s3_client).to receive(:put_object)
+    allow(mock_s3_client).to receive(:get_object_tagging).and_return({ tag_set: [{ key: "GuardDutyMalwareScanStatus", value: "NO_THREATS_FOUND" }] })
 
     FileUtils.touch test_file
   end
