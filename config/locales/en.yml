@@ -47,7 +47,7 @@ en:
               blank: Select a file
               contains_virus: The selected file contains a virus
               disallowed_type: The selected file must be a CSV, DOC, DOCX, JPEG, JPG, JSON, ODT, PDF, PNG, RTF, TXT, or XLSX
-              scan_failure: The selected file could not be uploaded - try again
+              scan_failure: The selected file could not be uploaded — try again
               too_big: The selected file must be smaller than 7MB
         question/name:
           attributes:

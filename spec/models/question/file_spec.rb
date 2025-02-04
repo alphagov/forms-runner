@@ -94,7 +94,7 @@ RSpec.describe Question::File, type: :model do
           let(:scan_status) { "FAILURE" }
 
           it "does adds a contains_virus error" do
-            expect(question.errors[:file]).to include "The selected file could not be uploaded - try again"
+            expect(question.errors[:file]).to include "The selected file could not be uploaded — try again"
           end
         end
       end
@@ -110,7 +110,7 @@ RSpec.describe Question::File, type: :model do
         let(:scan_status) { nil }
 
         it "adds a contains_virus error" do
-          expect(question.errors[:file]).to include "The selected file could not be uploaded - try again"
+          expect(question.errors[:file]).to include "The selected file could not be uploaded — try again"
         end
 
         it "logs an error" do
