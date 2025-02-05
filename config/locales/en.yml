@@ -97,6 +97,10 @@ en:
           attributes:
             remove_answer:
               blank: You must select an option
+        remove_file_input:
+          attributes:
+            remove_file:
+              blank: You must select an option
   autocomplete:
     prompt: Select an answer
   banner:
@@ -160,6 +164,9 @@ en:
         phone_number_radios_legend: Are you sure you want to remove this phone number?
         short_answer_legend: Are you sure you want to remove ‘%{answer_text}’?
     review_file:
+      confirmation:
+        radios_legend: Are you sure you want to remove your file?
+        title: Remove your file
       show:
         remove: Remove
         remove_file_guidance: You can remove this file if you need to upload a different one.
@@ -180,6 +187,10 @@ en:
           send_email: 'Yes'
           skip_confirmation: 'No'
       remove_answer_input:
+        options:
+          'no': 'No'
+          'yes': 'Yes'
+      remove_file_input:
         options:
           'no': 'No'
           'yes': 'Yes'

@@ -8,10 +8,10 @@ RSpec.describe Question::FileReviewComponent::View, type: :component do
   let(:hint_text) { nil }
   let(:question) { build :file, :with_uploaded_file, question_text:, is_optional:, page_heading:, hint_text: }
   let(:extra_question_text_suffix) { nil }
-  let(:remove_file_url) { "/remove_file" }
+  let(:remove_file_confirmation_url) { "/remove_file_confirmation" }
 
   before do
-    render_inline(described_class.new(question:, extra_question_text_suffix:, remove_file_url:))
+    render_inline(described_class.new(question:, extra_question_text_suffix:, remove_file_confirmation_url:))
   end
 
   it "renders the question text as a h1" do
@@ -36,17 +36,12 @@ RSpec.describe Question::FileReviewComponent::View, type: :component do
     expect(page).to have_content(question.original_filename)
   end
 
-  it "has a button to delete the file" do
-    within(page.find("form[action='#{remove_file_url}'][method='post']")) do
-      expect(page).to have_button("Remove")
-      expect(page).to have_css("button span.hidden-text", text: t("forms.review_file.show.hidden_text"))
-    end
+  it "has a link to the file removal confirmation page" do
+    expect(page).to have_link(I18n.t("forms.review_file.show.remove"), href: remove_file_confirmation_url)
   end
 
-  it "the button to delete the file has hidden text" do
-    within(page.find("form[action='#{remove_file_url}'][method='post']")) do
-      expect(page).to have_css("button span.hidden-text", text: t("forms.review_file.show.hidden_text"))
-    end
+  it "the link to the file removal confirmation page has hidden text" do
+    expect(page).to have_css(".govuk-visually-hidden", text: I18n.t("forms.review_file.show.table_header"))
   end
 
   context "when there is an extra suffix to be added to the heading" do
