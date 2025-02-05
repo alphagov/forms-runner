@@ -37,25 +37,42 @@ feature "Fill in and submit a form with a file upload question", type: :feature 
     mock_s3_client = Aws::S3::Client.new(stub_responses: true)
     allow(Aws::S3::Client).to receive(:new).and_return(mock_s3_client)
     allow(mock_s3_client).to receive(:put_object)
-    allow(mock_s3_client).to receive(:get_object_tagging).and_return({ tag_set: [{ key: "GuardDutyMalwareScanStatus", value: "NO_THREATS_FOUND" }] })
+    allow(mock_s3_client).to receive(:get_object_tagging).and_return({ tag_set: [{ key: "GuardDutyMalwareScanStatus", value: scan_status }] })
 
     FileUtils.touch test_file
   end
 
-  scenario "As a form filler" do
-    when_i_visit_the_form_start_page
-    then_i_should_see_the_first_question
-    then_i_see_the_file_upload_component
-    when_i_upload_a_file
-    and_i_click_on_continue
-    then_i_see_the_review_file_page
-    and_i_click_on_continue
-    then_i_should_see_the_check_your_answers_page
+  context "when the file is successfully uploaded" do
+    let(:scan_status) { "NO_THREATS_FOUND" }
 
-    when_i_opt_out_of_email_confirmation
-    and_i_submit_my_form
-    then_my_form_should_be_submitted
-    and_i_should_receive_a_reference_number
+    scenario "As a form filler" do
+      when_i_visit_the_form_start_page
+      then_i_should_see_the_first_question
+      then_i_see_the_file_upload_component
+      when_i_upload_a_file
+      and_i_click_on_continue
+      then_i_see_the_review_file_page
+      and_i_click_on_continue
+      then_i_should_see_the_check_your_answers_page
+
+      when_i_opt_out_of_email_confirmation
+      and_i_submit_my_form
+      then_my_form_should_be_submitted
+      and_i_should_receive_a_reference_number
+    end
+  end
+
+  context "when the file fails the virus scan" do
+    let(:scan_status) { "THREATS_FOUND" }
+
+    scenario "As a form filler" do
+      when_i_visit_the_form_start_page
+      then_i_should_see_the_first_question
+      then_i_see_the_file_upload_component
+      when_i_upload_a_file
+      and_i_click_on_continue
+      then_i_see_an_error_message_that_the_file_contains_a_virus
+    end
   end
 
   def when_i_visit_the_form_start_page
@@ -107,5 +124,10 @@ feature "Fill in and submit a form with a file upload question", type: :feature 
 
   def and_i_should_receive_a_reference_number
     expect(page).to have_text reference
+  end
+
+  def then_i_see_an_error_message_that_the_file_contains_a_virus
+    expect(page.find(".govuk-error-summary")).to have_text "The selected file contains a virus"
+    expect(page).to have_css("input[type=file]")
   end
 end
