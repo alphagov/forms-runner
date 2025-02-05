@@ -3,14 +3,14 @@
 <%= hint_text %>
 
 <h2 class="govuk-heading-m">
-  <%= t('forms.review_file.show.table_caption') %>
+  <%= t('forms.review_file.show.check_file') %>
 </h2>
 
 <%= govuk_summary_list do |summary_list|
   summary_list.with_row do |row|
-    row.with_key { t('forms.review_file.show.table_header') }
+    row.with_key { t('forms.review_file.show.your_file') }
     row.with_value { question.original_filename }
-    row.with_action(text: t('forms.review_file.show.remove'), href: @remove_file_confirmation_url, visually_hidden_text: t('forms.review_file.show.table_header'))
+    row.with_action(text: t('forms.review_file.show.remove'), href: @remove_file_confirmation_url, visually_hidden_text: t('forms.review_file.show.your_file'))
   end
 end %>
 
