@@ -11,7 +11,7 @@ RSpec.describe Question::FileRemoveComponent::View, type: :component do
   let(:remove_file_url) { "/remove_file" }
 
   before do
-    render_inline(described_class.new(question:, extra_question_text_suffix:, remove_file_url:, remove_file_input: RemoveFileInput.new))
+    render_inline(described_class.new(question:, extra_question_text_suffix:, remove_file_url:, remove_input: RemoveInput.new))
   end
 
   it "renders the correct h1" do

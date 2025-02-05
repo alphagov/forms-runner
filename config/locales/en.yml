@@ -93,13 +93,9 @@ en:
               blank: Enter an answer
               long_text_too_long: The answer must be shorter than 5000 characters
               single_line_too_long: The answer must be shorter than 500 characters
-        remove_answer_input:
+        remove_input:
           attributes:
-            remove_answer:
-              blank: You must select an option
-        remove_file_input:
-          attributes:
-            remove_file:
+            remove:
               blank: You must select an option
   autocomplete:
     prompt: Select an answer
@@ -186,11 +182,7 @@ en:
         send_confirmation_options:
           send_email: 'Yes'
           skip_confirmation: 'No'
-      remove_answer_input:
-        options:
-          'no': 'No'
-          'yes': 'Yes'
-      remove_file_input:
+      remove_input:
         options:
           'no': 'No'
           'yes': 'Yes'

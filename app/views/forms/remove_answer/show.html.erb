@@ -2,16 +2,16 @@
   <%= link_to t("forms.back"), add_another_answer_path(@step.form_id, @step.form_slug, @step.page_slug), class: "govuk-back-link" %>
 <% end %>
 
-<%= form_with(model: @remove_answer_input , method: :delete, url: delete_form_remove_answer_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug, answer_index: @step.answer_index, changing_existing_answer: @changing_existing_answer, mode: @mode)) do |f| %>
+<%= form_with(model: @remove_input , method: :delete, url: delete_form_remove_answer_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug, answer_index: @step.answer_index, changing_existing_answer: @changing_existing_answer, mode: @mode)) do |f| %>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      <% if @remove_answer_input&.errors.any? %>
+      <% if @remove_input&.errors.any? %>
         <%= f.govuk_error_summary %>
       <% end %>
 
       <% case %>
       <% when @step.question.is_a?(Question::PhoneNumber) %>
-        <% set_page_title(form_title(form_name: @current_context.form.name, page_name: t('.phone_number_heading'), mode: @mode, error: @step.question&.errors&.any?)) %>   
+        <% set_page_title(form_title(form_name: @current_context.form.name, page_name: t('.phone_number_heading'), mode: @mode, error: @step.question&.errors&.any?)) %>
 
         <h1 class="govuk-heading-l"><%= t('.phone_number_heading') %></h1>
 
@@ -19,8 +19,8 @@
           <%= @step.question.show_answer %>
         </p>
 
-        <%= f.govuk_collection_radio_buttons :remove_answer,
-        @remove_answer_input.values, ->(option) { option }, ->(option) { t('helpers.label.remove_answer_input.options.' + "#{option}") },
+        <%= f.govuk_collection_radio_buttons :remove,
+        @remove_input.values, ->(option) { option }, ->(option) { t('helpers.label.remove_input.options.' + "#{option}") },
         legend: { text: t('.phone_number_radios_legend'), size: 'm' },
         inline: true %>
 
@@ -34,8 +34,8 @@
           <%= @step.question.show_answer %>
         </p>
 
-        <%= f.govuk_collection_radio_buttons :remove_answer,
-        @remove_answer_input.values, ->(option) { option }, ->(option) { t('helpers.label.remove_answer_input.options.' + "#{option}") },
+        <%= f.govuk_collection_radio_buttons :remove,
+        @remove_input.values, ->(option) { option }, ->(option) { t('helpers.label.remove_input.options.' + "#{option}") },
         legend: { text: t('.national_insurance_number_radios_legend'), size: 'm' },
         inline: true %>
 
@@ -49,8 +49,8 @@
           <%= @step.question.show_answer %>
         </p>
 
-        <%= f.govuk_collection_radio_buttons :remove_answer,
-        @remove_answer_input.values, ->(option) { option }, ->(option) { t('helpers.label.remove_answer_input.options.' + "#{option}") },
+        <%= f.govuk_collection_radio_buttons :remove,
+        @remove_input.values, ->(option) { option }, ->(option) { t('helpers.label.remove_input.options.' + "#{option}") },
         legend: { text: t('.address_radios_legend'), size: 'm' },
         inline: true %>
 
@@ -64,9 +64,9 @@
         <p class="govuk-inset-text">
           <%= @step.question.show_answer %>
         </p>
-        
-        <%= f.govuk_collection_radio_buttons :remove_answer,
-        @remove_answer_input.values, ->(option) { option }, ->(option) { t('helpers.label.remove_answer_input.options.' + "#{option}") },
+
+        <%= f.govuk_collection_radio_buttons :remove,
+        @remove_input.values, ->(option) { option }, ->(option) { t('helpers.label.remove_input.options.' + "#{option}") },
         legend: { text: t('.long_radios_legend'), size: 'm' },
         inline: true %>
 
@@ -79,9 +79,9 @@
         <p class="govuk-inset-text">
           <%= @step.question.show_answer %>
         </p>
-        
-        <%= f.govuk_collection_radio_buttons :remove_answer,
-        @remove_answer_input.values, ->(option) { option }, ->(option) { t('helpers.label.remove_answer_input.options.' + "#{option}") },
+
+        <%= f.govuk_collection_radio_buttons :remove,
+        @remove_input.values, ->(option) { option }, ->(option) { t('helpers.label.remove_input.options.' + "#{option}") },
         legend: { text: t('.long_radios_legend'), size: 'm' },
         inline: true %>
 
@@ -89,15 +89,15 @@
       <% else %>
         <% set_page_title(form_title(form_name: @current_context.form.name, page_name: t('.short_answer_legend', answer_text: @step.question.show_answer), mode: @mode, error: @step.question&.errors&.any?)) %>
 
-        <%= f.govuk_collection_radio_buttons :remove_answer,
-        @remove_answer_input.values, ->(option) { option }, ->(option) { t('helpers.label.remove_answer_input.options.' + "#{option}") },
+        <%= f.govuk_collection_radio_buttons :remove,
+        @remove_input.values, ->(option) { option }, ->(option) { t('helpers.label.remove_input.options.' + "#{option}") },
         legend: { text: t('.short_answer_legend', answer_text: @step.question.show_answer), size: 'l' },
         inline: true %>
 
         <%= f.govuk_submit %>
       <% end %>
 
-      
+
     </div>
   </div>
 <% end %>
