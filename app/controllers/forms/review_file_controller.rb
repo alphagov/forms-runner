@@ -9,10 +9,21 @@ module Forms
     end
 
     def delete
-      @step.question.delete_from_s3
-      current_context.clear_stored_answer(@step)
+      @remove_file_input = RemoveFileInput.new(remove_file_input_params)
 
-      redirect_to redirect_after_delete_path, success: t("banner.success.file_removed")
+      if @remove_file_input.invalid?
+        back_link(@step.page_slug)
+        @remove_file_url = remove_file_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug, changing_existing_answer:)
+        return render :confirmation, status: :unprocessable_entity
+      end
+
+      if @remove_file_input.remove_file?
+        @step.question.delete_from_s3
+        current_context.clear_stored_answer(@step)
+        return redirect_to redirect_after_delete_path, success: t("banner.success.file_removed")
+      end
+
+      redirect_to review_file_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug, changing_existing_answer:)
     end
 
     def continue
@@ -23,10 +34,13 @@ module Forms
       back_link(@step.page_slug)
       @remove_file_url = remove_file_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug, changing_existing_answer:)
       @remove_file_input = RemoveFileInput.new
-      # @continue_url = review_file_continue_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug, changing_existing_answer:)
     end
 
   private
+
+    def remove_file_input_params
+      params.require(:remove_file_input).permit(:remove_file)
+    end
 
     def redirect_if_not_answered_file_question
       unless @step.question.is_a?(Question::File) && @step.question.file_uploaded?

@@ -49,9 +49,9 @@ Rails.application.routes.draw do
       get "/:page_slug/remove-file" => "forms/review_file#confirmation",
           as: :remove_file_confirmation,
           constraints: page_constraints
-      post "/:page_slug/remove-file" => "forms/review_file#delete",
-           as: :remove_file,
-           constraints: page_constraints
+      delete "/:page_slug/remove-file" => "forms/review_file#delete",
+             as: :remove_file,
+             constraints: page_constraints
 
       get "/:page_slug/(/:answer_index)/change" => "forms/page#show",
           as: :form_change_answer,
