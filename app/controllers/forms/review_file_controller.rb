@@ -12,8 +12,7 @@ module Forms
       @remove_file_input = RemoveFileInput.new(remove_file_input_params)
 
       if @remove_file_input.invalid?
-        back_link(@step.page_slug)
-        @remove_file_url = remove_file_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug, changing_existing_answer:)
+        setup_confirmation
         return render :confirmation, status: :unprocessable_entity
       end
 
@@ -31,8 +30,7 @@ module Forms
     end
 
     def confirmation
-      back_link(@step.page_slug)
-      @remove_file_url = remove_file_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug, changing_existing_answer:)
+      setup_confirmation
       @remove_file_input = RemoveFileInput.new
     end
 
@@ -54,6 +52,11 @@ module Forms
       end
 
       form_page_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug)
+    end
+
+    def setup_confirmation
+      @back_link = review_file_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug, changing_existing_answer:)
+      @remove_file_url = remove_file_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug, changing_existing_answer:)
     end
   end
 end
