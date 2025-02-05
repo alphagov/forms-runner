@@ -9,7 +9,7 @@ describe "forms/review_file/confirmation.html.erb" do
   let(:question) { build :file, :with_uploaded_file }
   let(:step) { build :step, question: }
   let(:support_details) { OpenStruct.new({ email: "help@example.gov.uk", phone: "Call 01610123456\n\nThis line is only open on Tuesdays.", url: "https://example.gov.uk/contact", url_text: "Contact form" }) }
-  let(:remove_file_input) { RemoveFileInput.new }
+  let(:remove_input) { RemoveInput.new }
 
   before do
     assign(:current_context, OpenStruct.new(form:))
@@ -19,7 +19,7 @@ describe "forms/review_file/confirmation.html.erb" do
     assign(:continue_url, continue_url)
     assign(:remove_file_url, remove_file_url)
     assign(:support_details, support_details)
-    assign(:remove_file_input, remove_file_input)
+    assign(:remove_input, remove_input)
 
     without_partial_double_verification do
       allow(view).to receive(:remove_file_path).and_return("/remove_file")
@@ -42,7 +42,7 @@ describe "forms/review_file/confirmation.html.erb" do
 
   context "when there are errors" do
     before do
-      remove_file_input.errors.add(:base, "Error message")
+      remove_input.errors.add(:base, "Error message")
     end
 
     it "renders the error summary" do

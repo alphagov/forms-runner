@@ -110,19 +110,19 @@ RSpec.describe Forms::ReviewFileController, type: :request do
 
   describe "#delete" do
     let(:mock_s3_client) { Aws::S3::Client.new(stub_responses: true) }
-    let(:remove_file) { "yes" }
+    let(:remove) { "yes" }
 
     before do
       allow(Aws::S3::Client).to receive(:new).and_return(mock_s3_client)
       allow(mock_s3_client).to receive(:delete_object)
-      delete remove_file_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug:, changing_existing_answer:, remove_file_input: { remove_file: })
+      delete remove_file_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug:, changing_existing_answer:, remove_input: { remove: })
     end
 
     context "when the question is a file upload question" do
       let(:page_slug) { file_upload_step.id.to_s }
 
       context "when the input object validation fails" do
-        let(:remove_file) { "invalid" }
+        let(:remove) { "invalid" }
 
         it "renders the confirmation page with 422 status" do
           expect(response).to render_template("forms/review_file/confirmation")
@@ -180,7 +180,7 @@ RSpec.describe Forms::ReviewFileController, type: :request do
       end
 
       context "when the user has not confirmed they want to remove their file" do
-        let(:remove_file) { "no" }
+        let(:remove) { "no" }
 
         it "does not delete the file from S3" do
           expect(mock_s3_client).not_to have_received(:delete_object)

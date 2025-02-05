@@ -4,15 +4,15 @@
   <%= question.original_filename %>
 </p>
 
-<%= form_with model: @remove_file_input, url: @remove_file_url, method: :delete do |form| %>
+<%= form_with model: @remove_input, url: @remove_file_url, method: :delete do |form| %>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      <% if @remove_file_input&.errors.any? %>
+      <% if @remove_input&.errors.any? %>
         <%= form.govuk_error_summary %>
       <% end %>
 
-      <%= form.govuk_collection_radio_buttons :remove_file,
-            @remove_file_input.values, ->(option) { option }, ->(option) { t('helpers.label.remove_file_input.options.' + "#{option}") },
+      <%= form.govuk_collection_radio_buttons :remove,
+            @remove_input.values, ->(option) { option }, ->(option) { t('helpers.label.remove_input.options.' + "#{option}") },
             legend: { text: t('forms.review_file.confirmation.radios_legend')},
             inline: true  %>
 

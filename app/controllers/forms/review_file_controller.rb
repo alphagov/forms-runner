@@ -9,14 +9,14 @@ module Forms
     end
 
     def delete
-      @remove_file_input = RemoveFileInput.new(remove_file_input_params)
+      @remove_input = RemoveInput.new(remove_input_params)
 
-      if @remove_file_input.invalid?
+      if @remove_input.invalid?
         setup_confirmation
         return render :confirmation, status: :unprocessable_entity
       end
 
-      if @remove_file_input.remove_file?
+      if @remove_input.remove?
         @step.question.delete_from_s3
         current_context.clear_stored_answer(@step)
         return redirect_to redirect_after_delete_path, success: t("banner.success.file_removed")
@@ -31,13 +31,13 @@ module Forms
 
     def confirmation
       setup_confirmation
-      @remove_file_input = RemoveFileInput.new
+      @remove_input = RemoveInput.new
     end
 
   private
 
-    def remove_file_input_params
-      params.require(:remove_file_input).permit(:remove_file)
+    def remove_input_params
+      params.require(:remove_input).permit(:remove)
     end
 
     def redirect_if_not_answered_file_question
