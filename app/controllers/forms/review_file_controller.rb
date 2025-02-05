@@ -55,7 +55,7 @@ module Forms
     end
 
     def setup_confirmation
-      back_link(@step.page_slug)
+      @back_link = review_file_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug, changing_existing_answer:)
       @remove_file_url = remove_file_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug, changing_existing_answer:)
     end
   end

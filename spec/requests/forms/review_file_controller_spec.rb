@@ -78,6 +78,10 @@ RSpec.describe Forms::ReviewFileController, type: :request do
         it "displays the uploaded filename" do
           expect(response.body).to include(uploaded_filename)
         end
+
+        it "displays a back link to the file upload page" do
+          expect(response.body).to include(form_page_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug: file_upload_step.id))
+        end
       end
 
       context "when a file has not been uploaded" do
@@ -128,6 +132,10 @@ RSpec.describe Forms::ReviewFileController, type: :request do
         it "displays an error" do
           rendered = Capybara.string(response.body)
           expect(rendered).to have_css(".govuk-error-summary")
+        end
+
+        it "displays a back link to the review file page" do
+          expect(response.body).to include(review_file_path(form_data.id, form_data.form_slug, page_slug, changing_existing_answer:))
         end
       end
 
@@ -267,6 +275,10 @@ RSpec.describe Forms::ReviewFileController, type: :request do
 
         it "displays the uploaded filename" do
           expect(response.body).to include(uploaded_filename)
+        end
+
+        it "displays a back link to the review file page" do
+          expect(response.body).to include(review_file_path(form_data.id, form_data.form_slug, page_slug, changing_existing_answer:))
         end
       end
 
