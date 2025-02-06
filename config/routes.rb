@@ -46,10 +46,10 @@ Rails.application.routes.draw do
       post "/:page_slug/review-file" => "forms/review_file#continue",
            as: :review_file_continue,
            constraints: page_constraints
-      get "/:page_slug/remove-file" => "forms/review_file#confirmation",
+      get "/:page_slug/remove-file" => "forms/remove_file#show",
           as: :remove_file_confirmation,
           constraints: page_constraints
-      delete "/:page_slug/remove-file" => "forms/review_file#delete",
+      delete "/:page_slug/remove-file" => "forms/remove_file#destroy",
              as: :remove_file,
              constraints: page_constraints
 

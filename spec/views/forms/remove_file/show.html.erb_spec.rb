@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe "forms/review_file/confirmation.html.erb" do
+describe "forms/remove_file/show.html.erb" do
   let(:form) { build :form, :with_support, id: 1 }
   let(:mode) { OpenStruct.new(preview_draft?: false, preview_archived?: false, preview_live?: false) }
   let(:back_link) { "/back" }
@@ -52,11 +52,11 @@ describe "forms/review_file/confirmation.html.erb" do
   end
 
   it "has the correct page title" do
-    expect(view.content_for(:title)).to eq "#{I18n.t('forms.review_file.confirmation.title')} - #{question.question_text} - #{form.name}"
+    expect(view.content_for(:title)).to eq "#{I18n.t('forms.remove_file.show.title')} - #{question.question_text} - #{form.name}"
   end
 
   it "has the correct heading" do
-    expect(rendered).to have_css("h1", text: I18n.t("forms.review_file.confirmation.title"))
+    expect(rendered).to have_css("h1", text: I18n.t("forms.remove_file.show.title"))
   end
 
   it "displays the review file component with the uploaded file name" do
