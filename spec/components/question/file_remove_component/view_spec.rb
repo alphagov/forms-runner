@@ -15,7 +15,7 @@ RSpec.describe Question::FileRemoveComponent::View, type: :component do
   end
 
   it "renders the correct h1" do
-    expect(page.find("h1")).to have_text(I18n.t("forms.review_file.confirmation.title"))
+    expect(page.find("h1")).to have_text(I18n.t("forms.remove_file.show.title"))
   end
 
   it "renders the original file name" do
@@ -24,7 +24,7 @@ RSpec.describe Question::FileRemoveComponent::View, type: :component do
 
   it "renders radio buttons to confirm removal" do
     expect(page).to have_css("form[action='#{remove_file_url}'][method='post']")
-    expect(page).to have_css("fieldset", text: I18n.t("forms.review_file.confirmation.radios_legend"))
+    expect(page).to have_css("fieldset", text: I18n.t("forms.remove_file.show.radios_legend"))
     expect(page).to have_field("Yes", type: :radio)
     expect(page).to have_field("No", type: :radio)
   end

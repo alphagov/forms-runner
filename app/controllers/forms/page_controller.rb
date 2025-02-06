@@ -76,6 +76,12 @@ module Forms
       redirect_to next_page
     end
 
+    def redirect_if_not_answered_file_question
+      unless @step.question.is_a?(Question::File) && @step.question.file_uploaded?
+        redirect_to form_page_path(@step.form_id, @step.form_slug, @step.page_slug)
+      end
+    end
+
     def answered_file_question?
       @step.question.is_a?(Question::File) && @step.question.file_uploaded?
     end
