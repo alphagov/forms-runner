@@ -28,10 +28,12 @@ RSpec.describe Question::File, type: :model do
     context "when a file was selected" do
       let(:mock_s3_client) { Aws::S3::Client.new(stub_responses: true) }
       let(:uploaded_file) { instance_double(ActionDispatch::Http::UploadedFile) }
-      let(:original_filename) { "a-file.png" }
+      let(:extension) { ".png" }
+      let(:original_filename) { "a-file#{extension}" }
       let(:bucket) { "an-s3-bucket" }
-      let(:key) { Faker::Alphanumeric.alphanumeric }
-      let(:tempfile) { Tempfile.new(%w[temp-file .png]) }
+      let(:uuid) { Faker::Alphanumeric.alphanumeric }
+      let(:key) { "#{uuid}#{extension}" }
+      let(:tempfile) { Tempfile.new(["temp-file", extension]) }
       let(:file_size_in_bytes) { 2.megabytes }
       let(:file_type) { "image/png" }
 
@@ -45,7 +47,7 @@ RSpec.describe Question::File, type: :model do
         allow(uploaded_file).to receive_messages(original_filename: original_filename, tempfile: tempfile,
                                                  size: file_size_in_bytes, content_type: file_type)
 
-        allow(SecureRandom).to receive(:uuid).and_return key
+        allow(SecureRandom).to receive(:uuid).and_return uuid
 
         allow(Rails.logger).to receive(:info).at_least(:once)
 
@@ -61,11 +63,11 @@ RSpec.describe Question::File, type: :model do
         end
 
         it "puts object to S3" do
-          expect(mock_file_upload_s3_service).to have_received(:upload_to_s3).with(tempfile, "#{key}.png")
+          expect(mock_file_upload_s3_service).to have_received(:upload_to_s3).with(tempfile, key)
         end
 
         it "sets the uploaded_file_key" do
-          expect(question.uploaded_file_key).to eq "#{key}.png"
+          expect(question.uploaded_file_key).to eq key
         end
 
         it "sets the original_filename" do
@@ -75,7 +77,8 @@ RSpec.describe Question::File, type: :model do
         it "logs information about the file" do
           expect(Rails.logger).to have_received(:info).with("Uploaded file to S3 for file upload question",
                                                             { file_size_in_bytes:,
-                                                              file_type: })
+                                                              file_type:,
+                                                              s3_object_key: key })
         end
 
         it "does not add any errors" do
@@ -114,7 +117,10 @@ RSpec.describe Question::File, type: :model do
         end
 
         it "logs an error" do
-          expect(Rails.logger).to have_received(:error).once.with("Timed out polling for GuardDuty scan status for uploaded file")
+          expect(Rails.logger).to have_received(:error).once.with(
+            "Timed out polling for GuardDuty scan status for uploaded file",
+            { s3_object_key: key },
+          )
         end
       end
     end

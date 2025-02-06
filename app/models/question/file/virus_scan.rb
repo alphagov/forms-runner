@@ -14,6 +14,6 @@ module Question::File::VirusScan
     errors.add(:file, :scan_failure)
   rescue Question::FileUploadS3Service::PollForScanResultTimeoutError
     errors.add(:file, :scan_failure)
-    Rails.logger.error "Timed out polling for GuardDuty scan status for uploaded file"
+    FileUploadLogger.log_s3_operation_error(key, "Timed out polling for GuardDuty scan status for uploaded file")
   end
 end

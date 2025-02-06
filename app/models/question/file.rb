@@ -43,7 +43,7 @@ module Question
       key = file_upload_s3_key(tempfile)
       FileUploadS3Service.new.upload_to_s3(tempfile, key)
 
-      Rails.logger.info("Uploaded file to S3 for file upload question", {
+      FileUploadLogger.log_s3_operation(key, "Uploaded file to S3 for file upload question", {
         file_size_in_bytes: file.size,
         file_type: file.content_type,
       })
