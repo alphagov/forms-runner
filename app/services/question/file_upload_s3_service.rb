@@ -20,10 +20,12 @@ class Question::FileUploadS3Service
   end
 
   def file_from_s3(key)
-    @s3.get_object({
+    file = @s3.get_object({
       bucket: @bucket,
       key:,
     }).body.read
+    FileUploadLogger.log_s3_operation(key, "Retrieved uploaded file from S3")
+    file
   end
 
   def delete_from_s3(key)
@@ -31,6 +33,7 @@ class Question::FileUploadS3Service
       bucket: @bucket,
       key:,
     })
+    FileUploadLogger.log_s3_operation(key, "Deleted uploaded file from S3", { s3_object_key: key })
   end
 
   def poll_for_scan_status(key)
@@ -39,10 +42,10 @@ class Question::FileUploadS3Service
       Rails.logger.debug "Polled S3 object to get GuardDuty scan status for uploaded file. Attempt: #{i + 1} of 20"
 
       if scan_status_tag.present?
-        Rails.logger.info "Successfully got GuardDuty scan status for uploaded file", {
+        FileUploadLogger.log_s3_operation(key, "Successfully got GuardDuty scan status for uploaded file", {
           scan_status: scan_status_tag[:value],
           scan_status_poll_attempts: i + 1,
-        }
+        })
         return scan_status_tag[:value]
       end
 

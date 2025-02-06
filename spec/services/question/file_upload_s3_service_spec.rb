@@ -10,6 +10,7 @@ RSpec.describe Question::FileUploadS3Service do
   before do
     allow(Settings.aws).to receive(:file_upload_s3_bucket_name).and_return(bucket)
     allow(Aws::S3::Client).to receive(:new).and_return(mock_s3_client)
+    allow(Rails.logger).to receive(:info).at_least(:once)
   end
 
   describe "#upload_to_s3" do
@@ -56,6 +57,13 @@ RSpec.describe Question::FileUploadS3Service do
     it("reads file contents from S3") do
       expect(service.file_from_s3(key)).to eq(file_content)
     end
+
+    it("logs at info level") do
+      expect(Rails.logger).to receive(:info).once.with("Retrieved uploaded file from S3", {
+        s3_object_key: key,
+      })
+      service.file_from_s3(key)
+    end
   end
 
   describe "#delete_from_s3" do
@@ -72,16 +80,19 @@ RSpec.describe Question::FileUploadS3Service do
       )
       service.delete_from_s3(key)
     end
+
+    it("logs at info level") do
+      expect(Rails.logger).to receive(:info).once.with("Deleted uploaded file from S3", {
+        s3_object_key: key,
+      })
+      service.delete_from_s3(key)
+    end
   end
 
   describe "#poll_for_scan_status" do
     let(:no_threats_status) { "NO_THREATS_FOUND" }
     let(:scan_status_tagging_response) { { tag_set: [{ key: "GuardDutyMalwareScanStatus", value: no_threats_status }] } }
     let(:empty_tagging_response) { { tag_set: [] } }
-
-    before do
-      allow(Rails.logger).to receive(:info).at_least(:once)
-    end
 
     context "when the scan status tag is found on the first attempt" do
       before do
@@ -106,6 +117,7 @@ RSpec.describe Question::FileUploadS3Service do
         expect(Rails.logger).to receive(:info).once.with("Successfully got GuardDuty scan status for uploaded file", {
           scan_status: no_threats_status,
           scan_status_poll_attempts: 1,
+          s3_object_key: key,
         })
         service.poll_for_scan_status(key)
       end
@@ -138,6 +150,7 @@ RSpec.describe Question::FileUploadS3Service do
         expect(Rails.logger).to receive(:info).once.with("Successfully got GuardDuty scan status for uploaded file", {
           scan_status: no_threats_status,
           scan_status_poll_attempts: 2,
+          s3_object_key: key,
         })
         service.poll_for_scan_status(key)
       end
