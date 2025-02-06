@@ -41,7 +41,7 @@ RSpec.describe Question::FileReviewComponent::View, type: :component do
   end
 
   it "the link to the file removal confirmation page has hidden text" do
-    expect(page).to have_css(".govuk-visually-hidden", text: I18n.t("forms.review_file.show.table_header"))
+    expect(page).to have_css(".govuk-visually-hidden", text: I18n.t("forms.review_file.show.your_file"))
   end
 
   context "when there is an extra suffix to be added to the heading" do

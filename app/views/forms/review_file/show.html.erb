@@ -1,4 +1,4 @@
-<% set_page_title("#{t('forms.review_file.show.table_caption')} - #{form_title(form_name: @current_context.form.name, page_name: @step.question.question_text, mode: @mode, error: @step.question&.errors&.any?)}") %>
+<% set_page_title("#{t('forms.review_file.show.check_file')} - #{form_title(form_name: @current_context.form.name, page_name: @step.question.question_text, mode: @mode, error: @step.question&.errors&.any?)}") %>
 
 <% content_for :back_link do %>
   <% if @back_link.present? %>

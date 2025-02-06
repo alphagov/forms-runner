@@ -39,7 +39,7 @@ describe "forms/review_file/show.html.erb" do
   end
 
   it "has the correct page title" do
-    expect(view.content_for(:title)).to eq "#{I18n.t('forms.review_file.show.table_caption')} - #{question.question_text} - #{form.name}"
+    expect(view.content_for(:title)).to eq "#{I18n.t('forms.review_file.show.check_file')} - #{question.question_text} - #{form.name}"
   end
 
   it "has the correct heading" do
