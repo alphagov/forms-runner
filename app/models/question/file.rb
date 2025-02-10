@@ -32,6 +32,12 @@ module Question
       original_filename
     end
 
+    def show_answer_in_email
+      return nil if original_filename.blank?
+
+      I18n.t("mailer.submission.file_attached", filename: original_filename)
+    end
+
     def before_save
       if file.blank?
         # set to a blank string so that we serialize the answer correctly when an optional question isn't answered

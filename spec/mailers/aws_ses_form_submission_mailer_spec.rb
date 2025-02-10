@@ -26,12 +26,34 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
       expect(mail.subject).to eq("Form submission: #{title} - reference: #{submission_reference}")
     end
 
+    it "has a link to GOV.UK" do
+      expect(mail.body).to have_link("GOV.UK", href: "https://www.gov.uk")
+    end
+
     it "includes the answers" do
       expect(mail.body).to match(answer_content)
     end
 
+    it "includes the form title text" do
+      expect(mail.body).to have_css("p", text: I18n.t("mailer.submission.title", title:))
+    end
+
+    it "includes text about the submission time" do
+      expect(mail.body).to have_css("p", text: I18n.t("mailer.submission.time", time: submission_timestamp.strftime("%l:%M%P").strip, date: submission_timestamp.strftime("%-d %B %Y")))
+    end
+
     it "includes the submission reference" do
-      expect(mail.body).to match("reference number: #{submission_reference}")
+      expect(mail.body).to have_css("p", text: I18n.t("mailer.submission.reference", submission_reference:))
+    end
+
+    it "includes text about checking the answers" do
+      expect(mail.body).to have_css("p", text: I18n.t("mailer.submission.check_before_using"))
+    end
+
+    it "includes the warning about not replying" do
+      expect(mail.body).to have_css("h2", text: I18n.t("mailer.submission.cannot_reply.heading"))
+      expect(mail.body).to include(I18n.t("mailer.submission.cannot_reply.contact_form_filler"))
+      expect(mail.body).to include(I18n.t("mailer.submission.cannot_reply.contact_forms_team"))
     end
 
     describe "submission date/time" do
