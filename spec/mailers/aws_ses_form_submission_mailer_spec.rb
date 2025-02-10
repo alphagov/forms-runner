@@ -34,8 +34,16 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
       expect(mail.body).to match(answer_content)
     end
 
+    it "includes the form title text" do
+      expect(mail.body).to have_css("p", text: I18n.t("mailer.submission.title", title:))
+    end
+
+    it "includes text about the submission time" do
+      expect(mail.body).to have_css("p", text: I18n.t("mailer.submission.time", time: submission_timestamp.strftime("%l:%M%P").strip, date: submission_timestamp.strftime("%-d %B %Y")))
+    end
+
     it "includes the submission reference" do
-      expect(mail.body).to match("reference number: #{submission_reference}")
+      expect(mail.body).to have_css("p", text: I18n.t("mailer.submission.reference", submission_reference:))
     end
 
     it "includes text about checking the answers" do

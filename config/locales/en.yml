@@ -199,7 +199,10 @@ en:
       check_before_using: Check that this data looks safe before you use it
       file_attached: "%{filename} (attached to this email)"
       from: GOV.UK Forms <%{email_address}>
+      reference: 'GOV.​UK Forms reference number: %{submission_reference}'
       subject: 'Form submission: %{form_title} - reference: %{reference}'
+      time: This form was submitted at %{time} on %{date}
+      title: This is a completed “%{title}” form.
   mode:
     phase_banner_tag_preview-archived: Archived preview
     phase_banner_tag_preview-draft: Draft preview

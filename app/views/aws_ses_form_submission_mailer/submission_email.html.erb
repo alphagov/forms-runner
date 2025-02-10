@@ -1,11 +1,11 @@
 <p>
-  This is a completed "<%= @mailer_options.title %>" form.
+  <%= I18n.t("mailer.submission.title", title: @mailer_options.title) %>
 </p>
 <p>
-  This form was submitted at <%= @mailer_options.timestamp.strftime("%l:%M%P").strip %> on <%= @mailer_options.timestamp.strftime("%-d %B %Y") %>
+  <%= I18n.t("mailer.submission.time", time: @mailer_options.timestamp.strftime("%l:%M%P").strip, date: @mailer_options.timestamp.strftime("%-d %B %Y") ) %>
 </p>
 <p>
-  GOV.​UK Forms reference number: <%= @mailer_options.submission_reference %><br>
+  <%= I18n.t("mailer.submission.reference", submission_reference: @mailer_options.submission_reference) %>
 </p>
 <p style="margin: 0 0 20px 0; border-left: 10px solid #B1B4B6; padding: 15px;">
   <%= I18n.t("mailer.submission.check_before_using") %>
