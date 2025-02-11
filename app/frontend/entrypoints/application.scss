@@ -2,6 +2,6 @@ $govuk-assets-path: "@govuk/assets/";
 $govuk-global-styles: true;
 
 @import "pkg:govuk-frontend";
-@import "pkg:dfe-autocomplete/src/dfe-autocomplete";
+@import "pkg:dfe-autocomplete";
 @import "../../components/form_header_component/";
 @import "../styles/app-panel";
