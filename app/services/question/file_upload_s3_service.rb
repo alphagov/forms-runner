@@ -26,6 +26,9 @@ class Question::FileUploadS3Service
     }).body.read
     FileUploadLogger.log_s3_operation(key, "Retrieved uploaded file from S3")
     file
+  rescue Aws::S3::Errors::NoSuchKey
+    FileUploadLogger.log_s3_operation_error(key, "Object with key does not exist in S3")
+    raise
   end
 
   def delete_from_s3(key)
