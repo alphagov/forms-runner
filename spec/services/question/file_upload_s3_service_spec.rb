@@ -39,30 +39,45 @@ RSpec.describe Question::FileUploadS3Service do
   end
 
   describe "#file_from_s3" do
-    let(:get_object_output) { instance_double(Aws::S3::Types::GetObjectOutput) }
-    let(:tempfile) { Tempfile.new(%w[temp-file .png]) }
-    let(:file_content) { Faker::Lorem.sentence }
+    context "when the file exists in S3" do
+      let(:get_object_output) { instance_double(Aws::S3::Types::GetObjectOutput) }
+      let(:tempfile) { Tempfile.new(%w[temp-file .png]) }
+      let(:file_content) { Faker::Lorem.sentence }
 
-    before do
-      File.write(tempfile, file_content)
+      before do
+        File.write(tempfile, file_content)
 
-      allow(mock_s3_client).to receive(:get_object).and_return(get_object_output)
-      allow(get_object_output).to receive(:body).and_return(tempfile)
+        allow(mock_s3_client).to receive(:get_object).and_return(get_object_output)
+        allow(get_object_output).to receive(:body).and_return(tempfile)
+      end
+
+      after do
+        tempfile.unlink
+      end
+
+      it "reads file contents from S3" do
+        expect(service.file_from_s3(key)).to eq(file_content)
+      end
+
+      it("logs at info level") do
+        expect(Rails.logger).to receive(:info).once.with("Retrieved uploaded file from S3", {
+          s3_object_key: key,
+        })
+        service.file_from_s3(key)
+      end
     end
 
-    after do
-      tempfile.unlink
-    end
+    context "when the file is not found in S3" do
+      before do
+        mock_s3_client.stub_responses(:get_object, "NoSuchKey")
+      end
 
-    it("reads file contents from S3") do
-      expect(service.file_from_s3(key)).to eq(file_content)
-    end
-
-    it("logs at info level") do
-      expect(Rails.logger).to receive(:info).once.with("Retrieved uploaded file from S3", {
-        s3_object_key: key,
-      })
-      service.file_from_s3(key)
+      it "logs at error level and re-raises the exception" do
+        expect(Rails.logger).to receive(:error).once.with("Object with key does not exist in S3", {
+          s3_object_key: key,
+        })
+        expect { service.file_from_s3(key) }.to raise_error(Aws::S3::Errors::NoSuchKey)
+      end
     end
   end
 
@@ -71,7 +86,7 @@ RSpec.describe Question::FileUploadS3Service do
       allow(mock_s3_client).to receive(:delete_object)
     end
 
-    it("calls S3 to delete the file") do
+    it "calls S3 to delete the file" do
       expect(mock_s3_client).to receive(:delete_object).with(
         {
           bucket:,
@@ -81,7 +96,7 @@ RSpec.describe Question::FileUploadS3Service do
       service.delete_from_s3(key)
     end
 
-    it("logs at info level") do
+    it "logs at info level" do
       expect(Rails.logger).to receive(:info).once.with("Deleted uploaded file from S3", {
         s3_object_key: key,
       })
