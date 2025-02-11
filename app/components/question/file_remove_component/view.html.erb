@@ -1,23 +1,19 @@
 
 <%= form_with model: @remove_input, url: @remove_file_url, method: :delete do |form| %>
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-      <% if @remove_input&.errors.any? %>
-        <%= form.govuk_error_summary %>
-      <% end %>
+  <% if @remove_input&.errors.any? %>
+    <%= form.govuk_error_summary %>
+  <% end %>
 
-      <h1 class="govuk-heading-l"><%= t('forms.remove_file.show.title') %></h1>
+  <h1 class="govuk-heading-l"><%= t('forms.remove_file.show.title') %></h1>
 
-      <p class="govuk-inset-text">
-        <%= question.original_filename %>
-      </p>
+  <p class="govuk-inset-text">
+    <%= question.original_filename %>
+  </p>
 
-      <%= form.govuk_collection_radio_buttons :remove,
-            @remove_input.values, ->(option) { option }, ->(option) { t('helpers.label.remove_input.options.' + "#{option}") },
-            legend: { text: t('forms.remove_file.show.radios_legend')},
-            inline: true  %>
+  <%= form.govuk_collection_radio_buttons :remove,
+        @remove_input.values, ->(option) { option }, ->(option) { t('helpers.label.remove_input.options.' + "#{option}") },
+        legend: { text: t('forms.remove_file.show.radios_legend')},
+        inline: true  %>
 
-      <%= form.govuk_submit  %>
-    </div>
-  </div>
+  <%= form.govuk_submit  %>
 <% end %>
