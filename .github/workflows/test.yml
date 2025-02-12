@@ -19,8 +19,18 @@ permissions:
 jobs:
   build_and_test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:13-alpine
+        ports:
+          - "5432:5432"
+        env:
+          POSTGRES_DB: forms_runner_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
     env:
       RAILS_ENV: "test"
+      DATABASE_URL: "postgres://postgres:postgres@localhost:5432/forms_runner_test"
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -39,6 +49,11 @@ jobs:
         run: npm ci
       - name: Run Frontend build
         run: bin/vite build
+      # Add or replace database setup steps here
+      - name: Create db
+        run: bin/rails db:migrate
+      - name: Set up database schema
+        run: bin/rails db:schema:load
       # Add or replace test runners here
       - name: Run Ruby tests
         run: bundle exec rspec
