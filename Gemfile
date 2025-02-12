@@ -38,6 +38,9 @@ gem "bootsnap", require: false
 # For forms-api
 gem "activeresource"
 
+# Use postgresql as the database for Active Record
+gem "pg", "~> 1.5"
+
 # For GOV.UK branding
 gem "govuk-components"
 gem "govuk_design_system_formbuilder"

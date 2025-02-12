@@ -288,6 +288,7 @@ GEM
     parser (3.3.7.0)
       ast (~> 2.4.1)
       racc
+    pg (1.5.9)
     pp (0.6.2)
       prettyprint
     prettyprint (0.2.0)
@@ -500,6 +501,7 @@ DEPENDENCIES
   govuk_notify_rails
   i18n-tasks (~> 1.0.14)
   lograge
+  pg (~> 1.5)
   puma (~> 6.6.0)
   rails (= 8.0.1)
   rails-controller-testing
