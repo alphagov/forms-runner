@@ -48,6 +48,8 @@ module Question
     end
 
     def selection_without_blanks
+      return [] if selection.nil?
+
       selection.reject(&:blank?)
     end
 
