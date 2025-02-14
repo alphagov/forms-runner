@@ -19,10 +19,45 @@ module Flow
   class Journey
     attr_reader :completed_steps
 
-    def initialize(form_context:, step_factory:)
+    def initialize(form_context:, form:)
       @form_context = form_context
-      @step_factory = step_factory
+      @form = form
+      @step_factory = StepFactory.new(form:)
       @completed_steps = generate_completed_steps
+    end
+
+    def find_or_create(page_slug)
+      step = completed_steps.find { |s| s.page_slug == page_slug }
+      step || @step_factory.create_step(page_slug)
+    end
+
+    def previous_step(page_slug)
+      index = completed_steps.find_index { |step| step.page_slug == page_slug }
+      return nil if completed_steps.empty? || index&.zero?
+
+      return completed_steps.last if index.nil?
+
+      completed_steps[index - 1]
+    end
+
+    def next_page_slug
+      return nil if completed_steps.last&.end_page?
+
+      completed_steps.last&.next_page_slug_after_routing || @step_factory.start_step.page_slug
+    end
+
+    def next_step
+      return nil if completed_steps.last&.end_page?
+
+      find_or_create(completed_steps.last&.next_page_slug_after_routing) || @step_factory.start_step
+    end
+
+    def can_visit?(page_slug)
+      (completed_steps.map(&:page_slug).include? page_slug) || page_slug == next_page_slug
+    end
+
+    def all_steps
+      @form.pages.map { |page| find_or_create(page.id.to_s) }
     end
 
   private

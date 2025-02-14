@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe Flow::Journey do
-  subject(:journey) { described_class.new(form_context:, step_factory:) }
+  subject(:journey) { described_class.new(form_context:, form:) }
 
   let(:store) { {} }
   let(:form_context) { Flow::FormContext.new(store) }
@@ -205,6 +205,17 @@ RSpec.describe Flow::Journey do
 
       it "stops generating the completed_steps when it reaches the question with the error" do
         expect(journey.completed_steps.to_json).to eq [first_step_in_journey].to_json
+      end
+    end
+  end
+
+  describe "#all_steps" do
+    context "when some questions have not been answered" do
+      let(:store) { { answers: { "2" => { "1" => { selection: "Option 2" }, "2" => { text: "Example text" } } } } }
+
+      it "creates steps for the unanswered questions" do
+        expect(journey.all_steps.length).to eq(3)
+        expect(journey.all_steps.to_json).to eq [first_step_in_journey, second_step_in_journey, third_step_in_journey].to_json
       end
     end
   end

@@ -5,8 +5,7 @@ module Flow
     def initialize(form:, store:)
       @form = form
       @form_context = Flow::FormContext.new(store)
-      @step_factory = StepFactory.new(form:)
-      @journey = Journey.new(form_context: @form_context, step_factory: @step_factory)
+      @journey = Journey.new(form_context: @form_context, form:)
 
       @support_details = OpenStruct.new({
         email: form.support_email,
@@ -18,8 +17,7 @@ module Flow
     end
 
     def find_or_create(page_slug)
-      step = completed_steps.find { |s| s.page_slug == page_slug }
-      step || @step_factory.create_step(page_slug)
+      @journey.find_or_create(page_slug)
     end
 
     def save_step(step)
@@ -33,32 +31,27 @@ module Flow
     end
 
     def previous_step(page_slug)
-      index = completed_steps.find_index { |step| step.page_slug == page_slug }
-      return nil if completed_steps.empty? || index&.zero?
-
-      return completed_steps.last if index.nil?
-
-      completed_steps[index - 1]
+      @journey.previous_step(page_slug)
     end
 
     def next_page_slug
-      return nil if completed_steps.last&.end_page?
-
-      completed_steps.last&.next_page_slug_after_routing || @step_factory.start_step.page_slug
+      @journey.next_page_slug
     end
 
     def next_step
-      return nil if completed_steps.last&.end_page?
-
-      find_or_create(completed_steps.last&.next_page_slug_after_routing) || @step_factory.start_step
+      @journey.next_step
     end
 
     def can_visit?(page_slug)
-      (completed_steps.map(&:page_slug).include? page_slug) || page_slug == next_page_slug
+      @journey.can_visit?(page_slug)
     end
 
     def completed_steps
       @journey.completed_steps
+    end
+
+    def all_steps
+      @journey.all_steps
     end
 
     def clear
@@ -83,10 +76,6 @@ module Flow
 
     def clear_submission_details
       @form_context.clear_submission_details(form.id)
-    end
-
-    def all_steps
-      @form.pages.map { |page| find_or_create(page.id.to_s) }
     end
   end
 end
