@@ -20,7 +20,8 @@ RSpec.describe S3SubmissionService do
   let(:timestamp) do
     Time.use_zone("London") { Time.zone.local(2022, 9, 14, 8, 24, 34) }
   end
-  let(:current_context) { OpenStruct.new(form:, completed_steps: [step]) }
+  let(:all_steps) { [step] }
+  let(:current_context) { OpenStruct.new(form:, completed_steps: [step], all_steps:) }
   let(:step) { build :step }
   let(:preview_mode) { false }
 
@@ -46,7 +47,7 @@ RSpec.describe S3SubmissionService do
 
       it "writes a CSV file" do
         expect(CsvGenerator).to have_received(:write_submission)
-          .with(current_context:,
+          .with(all_steps:,
                 submission_reference:,
                 timestamp:,
                 output_file_path: an_instance_of(String))

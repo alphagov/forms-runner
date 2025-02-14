@@ -27,7 +27,7 @@ private
 
   def write_submission_csv(file)
     CsvGenerator.write_submission(
-      current_context: @current_context,
+      all_steps: @current_context.all_steps,
       submission_reference: @submission_reference,
       timestamp: @timestamp,
       output_file_path: file.path,

@@ -55,7 +55,7 @@ private
 
   def write_submission_csv(file)
     CsvGenerator.write_submission(
-      current_context: @current_context,
+      all_steps: @current_context.all_steps,
       submission_reference: @mailer_options.submission_reference,
       timestamp: @mailer_options.timestamp,
       output_file_path: file.path,

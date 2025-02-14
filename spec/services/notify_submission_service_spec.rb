@@ -9,7 +9,8 @@ RSpec.describe NotifySubmissionService do
           submission_email:,
           payment_url:)
   end
-  let(:current_context) { OpenStruct.new(form:, completed_steps: [step], support_details: OpenStruct.new(call_back_url: "http://gov.uk")) }
+  let(:all_steps) { [step] }
+  let(:current_context) { OpenStruct.new(form:, completed_steps: [step], all_steps:, support_details: OpenStruct.new(call_back_url: "http://gov.uk")) }
   let(:question) { build :text, question_text: "What is the meaning of life?", text: "42" }
   let(:step) { build :step, question: }
   let(:preview_mode) { false }
@@ -84,7 +85,7 @@ RSpec.describe NotifySubmissionService do
         freeze_time do
           service.submit
           expect(CsvGenerator).to have_received(:write_submission)
-            .with(current_context:,
+            .with(all_steps:,
                   submission_reference:,
                   timestamp: Time.zone.now,
                   output_file_path: an_instance_of(String))
