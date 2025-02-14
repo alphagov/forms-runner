@@ -46,7 +46,7 @@ private
   end
 
   def answer_content
-    SesEmailFormatter.new.build_question_answers_section(@current_context)
+    SesEmailFormatter.new.build_question_answers_section(@current_context.completed_steps)
   end
 
   def uploaded_files_in_answers
