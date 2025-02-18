@@ -1,6 +1,6 @@
 module Flow
   class Context
-    attr_reader :form, :support_details
+    attr_reader :form, :support_details, :journey
 
     def initialize(form:, store:)
       @form = form

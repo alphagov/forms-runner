@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe AwsSesSubmissionService do
-  let(:service) { described_class.new(current_context:, mailer_options:) }
+  let(:service) { described_class.new(journey:, form:, mailer_options:) }
   let(:form) do
     build(:form,
           id: 1,
@@ -10,7 +10,7 @@ RSpec.describe AwsSesSubmissionService do
           payment_url:)
   end
   let(:all_steps) { [step] }
-  let(:current_context) { OpenStruct.new(form:, completed_steps: [step], all_steps:, support_details: OpenStruct.new(call_back_url: "http://gov.uk")) }
+  let(:journey) { instance_double(Flow::Journey, completed_steps: all_steps, all_steps:) }
   let(:question) { build :text, question_text: "What is the meaning of life?", text: "42" }
   let(:step) { build :step, question: }
   let(:preview_mode) { false }

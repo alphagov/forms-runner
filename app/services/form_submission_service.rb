@@ -81,7 +81,8 @@ private
 
   def aws_ses_submission_service
     AwsSesSubmissionService.new(
-      current_context: @current_context,
+      journey: @current_context.journey,
+      form: @form,
       mailer_options:,
     )
   end
