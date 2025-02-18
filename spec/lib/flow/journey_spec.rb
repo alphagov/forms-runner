@@ -1,10 +1,10 @@
 require "rails_helper"
 
 RSpec.describe Flow::Journey do
-  subject(:journey) { described_class.new(form_context:, form:) }
+  subject(:journey) { described_class.new(answer_store:, form:) }
 
   let(:store) { {} }
-  let(:form_context) { Flow::FormContext.new(store) }
+  let(:answer_store) { Flow::SessionAnswerStore.new(store) }
   let(:step_factory) { Flow::StepFactory.new(form:) }
 
   let(:form) do
@@ -36,9 +36,9 @@ RSpec.describe Flow::Journey do
 
   let(:pages_data) { [first_page_in_form, second_page_in_form, third_page_in_form] }
 
-  let(:first_step_in_journey) { step_factory.create_step(first_page_in_form.id.to_s).load_from_context(form_context) }
-  let(:second_step_in_journey) { step_factory.create_step(second_page_in_form.id.to_s).load_from_context(form_context) }
-  let(:third_step_in_journey) { step_factory.create_step(third_page_in_form.id.to_s).load_from_context(form_context) }
+  let(:first_step_in_journey) { step_factory.create_step(first_page_in_form.id.to_s).load_from_context(answer_store) }
+  let(:second_step_in_journey) { step_factory.create_step(second_page_in_form.id.to_s).load_from_context(answer_store) }
+  let(:third_step_in_journey) { step_factory.create_step(third_page_in_form.id.to_s).load_from_context(answer_store) }
 
   describe "#completed_steps" do
     context "when no pages have been completed" do

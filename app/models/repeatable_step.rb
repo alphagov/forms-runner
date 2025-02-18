@@ -18,13 +18,13 @@ class RepeatableStep < Step
     true
   end
 
-  def save_to_context(form_context)
-    form_context.save_step(self, @questions.map(&:serializable_hash))
+  def save_to_context(answer_store)
+    answer_store.save_step(self, @questions.map(&:serializable_hash))
     self
   end
 
-  def load_from_context(form_context)
-    question_attrs = form_context.get_stored_answer(self)
+  def load_from_context(answer_store)
+    question_attrs = answer_store.get_stored_answer(self)
 
     unless question_attrs.is_a?(Array)
       raise ArgumentError

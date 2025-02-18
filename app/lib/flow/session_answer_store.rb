@@ -1,5 +1,5 @@
 module Flow
-  class FormContext
+  class SessionAnswerStore
     ANSWERS_KEY = :answers
 
     def initialize(store)

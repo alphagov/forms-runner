@@ -4,9 +4,9 @@ module Flow
 
     def initialize(form:, store:)
       @form = form
-      @form_context = Flow::FormContext.new(store)
+      @answer_store = Flow::SessionAnswerStore.new(store)
       @confirmation_details_store = Store::ConfirmationDetailsStore.new(store)
-      @journey = Journey.new(form_context: @form_context, form:)
+      @journey = Journey.new(answer_store: @answer_store, form:)
 
       @support_details = OpenStruct.new({
         email: form.support_email,
@@ -24,11 +24,11 @@ module Flow
     def save_step(step)
       return false unless step.valid?
 
-      step.save_to_context(@form_context)
+      step.save_to_context(@answer_store)
     end
 
     def clear_stored_answer(step)
-      @form_context.clear_stored_answer(step)
+      @answer_store.clear_stored_answer(step)
     end
 
     def previous_step(page_slug)
@@ -56,11 +56,11 @@ module Flow
     end
 
     def clear
-      @form_context.clear(form.id)
+      @answer_store.clear(form.id)
     end
 
     def form_submitted?
-      @form_context.form_submitted?(form.id)
+      @answer_store.form_submitted?(form.id)
     end
 
     def save_submission_details(reference, requested_email_confirmation)

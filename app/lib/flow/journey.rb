@@ -19,8 +19,8 @@ module Flow
   class Journey
     attr_reader :completed_steps
 
-    def initialize(form_context:, form:)
-      @form_context = form_context
+    def initialize(answer_store:, form:)
+      @answer_store = answer_store
       @form = form
       @step_factory = StepFactory.new(form:)
       @completed_steps = generate_completed_steps
@@ -106,7 +106,7 @@ module Flow
       original_step = step.deep_dup # load_from_context method for RepeatableStep can fail with data half loaded
 
       begin
-        step.load_from_context(@form_context)
+        step.load_from_context(@answer_store)
       rescue ActiveModel::UnknownAttributeError, ArgumentError
         original_step
       end
