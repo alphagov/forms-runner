@@ -1,5 +1,7 @@
 module Store
   class SessionAnswerStore
+    include Store::Access
+
     ANSWERS_KEY = :answers
 
     def initialize(store)
@@ -26,16 +28,6 @@ module Store
 
     def form_submitted?(form_id)
       @store[ANSWERS_KEY][form_id.to_s].nil?
-    end
-
-  private
-
-    def page_key(step)
-      step.page_id.to_s
-    end
-
-    def form_key(step)
-      step.form_id.to_s
     end
   end
 end
