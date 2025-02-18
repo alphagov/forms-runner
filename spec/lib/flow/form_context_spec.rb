@@ -4,7 +4,7 @@ require "ostruct"
 RSpec.describe Flow::FormContext do
   let(:store) { {} }
   let(:step) { OpenStruct.new({ page_id: "5", form_id: 1 }) }
-  let(:step2) { OpenStruct.new({ page_id: "1", form_id: 2 }) }
+  let(:other_form_step) { OpenStruct.new({ page_id: "1", form_id: 2 }) }
   let(:form_context) { described_class.new(store) }
   let(:reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
   let(:requested_email_confirmation) { true }
@@ -24,7 +24,7 @@ RSpec.describe Flow::FormContext do
 
   it "does not error if removing a step which doesn't exist in the store" do
     form_context.save_step(step, "test answer")
-    form_context.clear_stored_answer(step2)
+    form_context.clear_stored_answer(other_form_step)
     expect(form_context.get_stored_answer(step)).to eq("test answer")
   end
 
@@ -36,20 +36,18 @@ RSpec.describe Flow::FormContext do
     end
 
     it "doesn't change other forms" do
-      fc2 = described_class.new(store)
       form_context.save_step(step, "form1 answer")
-      fc2.save_step(step2, "form2 answer")
+      form_context.save_step(other_form_step, "form2 answer")
       form_context.clear(1)
-      expect(fc2.get_stored_answer(step2)).to eq("form2 answer")
-    end
+      expect(form_context.get_stored_answer(other_form_step)).to eq("form2 answer")
     end
   end
 
   it "returns the answers for a form" do
     form_context.save_step(step, "test answer")
-    form_context.save_step(step2, "test2 answer")
+    form_context.save_step(other_form_step, "test2 answer")
     expect(form_context.get_stored_answer(step)).to eq("test answer")
-    expect(form_context.get_stored_answer(step2)).to eq("test2 answer")
+    expect(form_context.get_stored_answer(other_form_step)).to eq("test2 answer")
   end
 
   describe "#form_submitted?" do
