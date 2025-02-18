@@ -5,6 +5,7 @@ module Flow
     def initialize(form:, store:)
       @form = form
       @form_context = Flow::FormContext.new(store)
+      @confirmation_details_store = Store::ConfirmationDetailsStore.new(store)
       @journey = Journey.new(form_context: @form_context, form:)
 
       @support_details = OpenStruct.new({
@@ -63,19 +64,19 @@ module Flow
     end
 
     def save_submission_details(reference, requested_email_confirmation)
-      @form_context.save_submission_details(form.id, reference, requested_email_confirmation)
+      @confirmation_details_store.save_submission_details(form.id, reference, requested_email_confirmation)
     end
 
     def get_submission_reference
-      @form_context.get_submission_reference(form.id)
+      @confirmation_details_store.get_submission_reference(form.id)
     end
 
     def requested_email_confirmation?
-      @form_context.requested_email_confirmation?(form.id)
+      @confirmation_details_store.requested_email_confirmation?(form.id)
     end
 
     def clear_submission_details
-      @form_context.clear_submission_details(form.id)
+      @confirmation_details_store.clear_submission_details(form.id)
     end
   end
 end
