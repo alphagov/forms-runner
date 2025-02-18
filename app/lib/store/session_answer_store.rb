@@ -1,4 +1,4 @@
-module Flow
+module Store
   class SessionAnswerStore
     ANSWERS_KEY = :answers
 

@@ -13,7 +13,7 @@ RSpec.describe Step do
 
   let(:question) { instance_double(Question::Text, serializable_hash: {}, attribute_names: %w[name], valid?: true, errors: []) }
   let(:page) { build(:page, id: 2, position: 1, routing_conditions: []) }
-  let(:answer_store) { instance_double(Flow::SessionAnswerStore) }
+  let(:answer_store) { instance_double(Store::SessionAnswerStore) }
   let(:form) { build(:form, id: 3, form_slug: "test-form", pages: [page]) }
 
   describe "#initialize" do

@@ -4,7 +4,7 @@ module Flow
 
     def initialize(form:, store:)
       @form = form
-      @answer_store = Flow::SessionAnswerStore.new(store)
+      @answer_store = Store::SessionAnswerStore.new(store)
       @confirmation_details_store = Store::ConfirmationDetailsStore.new(store)
       @journey = Journey.new(answer_store: @answer_store, form:)
 

@@ -40,8 +40,8 @@ RSpec.describe Forms::RemoveAnswerController, type: :request do
       mock.get "/api/v2/forms/#{form.id}#{api_url_suffix}", req_headers, form.to_json, 200
     end
 
-    answer_store = instance_double(Flow::SessionAnswerStore)
-    allow(Flow::SessionAnswerStore).to receive(:new).and_return(answer_store)
+    answer_store = instance_double(Store::SessionAnswerStore)
+    allow(Store::SessionAnswerStore).to receive(:new).and_return(answer_store)
     allow(answer_store).to receive(:clear_stored_answer)
     allow(answer_store).to receive(:get_stored_answer).and_return(stored_answers)
     allow(answer_store).to receive(:save_step)

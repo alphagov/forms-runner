@@ -4,7 +4,7 @@ RSpec.describe Flow::Journey do
   subject(:journey) { described_class.new(answer_store:, form:) }
 
   let(:store) { {} }
-  let(:answer_store) { Flow::SessionAnswerStore.new(store) }
+  let(:answer_store) { Store::SessionAnswerStore.new(store) }
   let(:step_factory) { Flow::StepFactory.new(form:) }
 
   let(:form) do

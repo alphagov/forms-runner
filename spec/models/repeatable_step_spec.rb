@@ -14,7 +14,7 @@ RSpec.describe RepeatableStep, type: :model do
   end
 
   describe "#save_to_context" do
-    let(:answer_store) { instance_double(Flow::SessionAnswerStore) }
+    let(:answer_store) { instance_double(Store::SessionAnswerStore) }
 
     it "calls save_step on the argument" do
       allow(answer_store).to receive(:save_step).with(repeatable_step, [question.serializable_hash])
@@ -23,7 +23,7 @@ RSpec.describe RepeatableStep, type: :model do
   end
 
   describe "#load_from_context" do
-    let(:answer_store) { instance_double(Flow::SessionAnswerStore) }
+    let(:answer_store) { instance_double(Store::SessionAnswerStore) }
 
     context "when form context contains a non-array questions attribute" do
       it "raises an argument error" do

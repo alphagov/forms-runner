@@ -1,7 +1,7 @@
 require "rails_helper"
 require "ostruct"
 
-RSpec.describe Flow::SessionAnswerStore do
+RSpec.describe Store::SessionAnswerStore do
   let(:store) { {} }
   let(:step) { OpenStruct.new({ page_id: "5", form_id: 1 }) }
   let(:other_form_step) { OpenStruct.new({ page_id: "1", form_id: 2 }) }
