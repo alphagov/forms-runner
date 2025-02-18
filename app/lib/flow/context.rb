@@ -17,42 +17,13 @@ module Flow
       })
     end
 
-    def find_or_create(page_slug)
-      @journey.find_or_create(page_slug)
-    end
+    delegate :find_or_create, :previous_step, :next_page_slug, :next_step, :can_visit?, :completed_steps, :all_steps, to: :journey
+    delegate :clear_stored_answer, to: :answer_store
 
     def save_step(step)
       return false unless step.valid?
 
       step.save_to_store(@answer_store)
-    end
-
-    def clear_stored_answer(step)
-      @answer_store.clear_stored_answer(step)
-    end
-
-    def previous_step(page_slug)
-      @journey.previous_step(page_slug)
-    end
-
-    def next_page_slug
-      @journey.next_page_slug
-    end
-
-    def next_step
-      @journey.next_step
-    end
-
-    def can_visit?(page_slug)
-      @journey.can_visit?(page_slug)
-    end
-
-    def completed_steps
-      @journey.completed_steps
-    end
-
-    def all_steps
-      @journey.all_steps
     end
 
     def clear
@@ -78,5 +49,9 @@ module Flow
     def clear_submission_details
       @confirmation_details_store.clear_submission_details(form.id)
     end
+
+  private
+
+    attr_reader :answer_store
   end
 end
