@@ -43,7 +43,7 @@ class Step
     instance_variables.map { |variable| instance_variable_get variable }
   end
 
-  def save_to_context(answer_store)
+  def save_to_store(answer_store)
     question.before_save
     return false unless question.errors.empty?
 
@@ -51,7 +51,7 @@ class Step
     self
   end
 
-  def load_from_context(answer_store)
+  def load_from_store(answer_store)
     attrs = answer_store.get_stored_answer(self)
     question.assign_attributes(attrs || {})
     self

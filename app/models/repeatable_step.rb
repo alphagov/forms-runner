@@ -18,12 +18,12 @@ class RepeatableStep < Step
     true
   end
 
-  def save_to_context(answer_store)
+  def save_to_store(answer_store)
     answer_store.save_step(self, @questions.map(&:serializable_hash))
     self
   end
 
-  def load_from_context(answer_store)
+  def load_from_store(answer_store)
     question_attrs = answer_store.get_stored_answer(self)
 
     unless question_attrs.is_a?(Array)

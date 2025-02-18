@@ -24,7 +24,7 @@ module Flow
     def save_step(step)
       return false unless step.valid?
 
-      step.save_to_context(@answer_store)
+      step.save_to_store(@answer_store)
     end
 
     def clear_stored_answer(step)

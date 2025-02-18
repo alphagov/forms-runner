@@ -18,7 +18,7 @@ RSpec.describe RepeatableStep, type: :model do
 
     it "calls save_step on the argument" do
       allow(answer_store).to receive(:save_step).with(repeatable_step, [question.serializable_hash])
-      expect(repeatable_step.save_to_context(answer_store)).to be(repeatable_step)
+      expect(repeatable_step.save_to_store(answer_store)).to be(repeatable_step)
     end
   end
 
@@ -28,7 +28,7 @@ RSpec.describe RepeatableStep, type: :model do
     context "when form context contains a non-array questions attribute" do
       it "raises an argument error" do
         allow(answer_store).to receive(:get_stored_answer).with(repeatable_step).and_return("a string")
-        expect { repeatable_step.load_from_context(answer_store) }.to raise_error(ArgumentError)
+        expect { repeatable_step.load_from_store(answer_store) }.to raise_error(ArgumentError)
       end
     end
 
@@ -45,7 +45,7 @@ RSpec.describe RepeatableStep, type: :model do
         expect(question_dup).to receive(:assign_attributes).with(first_attribute_hash)
         expect(question_dup).to receive(:assign_attributes).with(second_attribute_hash)
 
-        expect(repeatable_step.load_from_context(answer_store).questions).to eq([question_dup, question_dup])
+        expect(repeatable_step.load_from_store(answer_store).questions).to eq([question_dup, question_dup])
       end
     end
   end

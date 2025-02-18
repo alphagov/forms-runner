@@ -78,7 +78,7 @@ RSpec.describe Step do
     it "saves the step to the form context" do
       expect(question).to receive(:before_save)
       expect(answer_store).to receive(:save_step).with(step, {})
-      step.save_to_context(answer_store)
+      step.save_to_store(answer_store)
     end
 
     context "when errors are added to the question by before_save" do
@@ -91,11 +91,11 @@ RSpec.describe Step do
       it "does not save the step to the form context" do
         expect(question).to receive(:before_save)
         expect(answer_store).not_to receive(:save_step)
-        step.save_to_context(answer_store)
+        step.save_to_store(answer_store)
       end
 
       it "returns false" do
-        expect(step.save_to_context(answer_store)).to be(false)
+        expect(step.save_to_store(answer_store)).to be(false)
       end
     end
   end
@@ -104,7 +104,7 @@ RSpec.describe Step do
     it "loads the step from the form context" do
       allow(answer_store).to receive(:get_stored_answer).with(step).and_return({ name: "Test" })
       expect(question).to receive(:assign_attributes).with({ name: "Test" })
-      step.load_from_context(answer_store)
+      step.load_from_store(answer_store)
     end
   end
 

@@ -83,7 +83,7 @@ module Flow
           break if current_step.is_a? CheckYourAnswersStep # CheckYourAnswers step signals end of steps
 
           # We need to load the answer into the step for next_page_with_routing to give the correct result.
-          current_step = safe_load_from_context(current_step)
+          current_step = safe_load_from_store(current_step)
 
           next_page_slug = current_step.next_page_slug_after_routing
 
@@ -100,13 +100,13 @@ module Flow
       end
     end
 
-    def safe_load_from_context(step)
-      return step unless step.respond_to? :load_from_context # step may be a CheckYourAnswersStep without load_from_context method
+    def safe_load_from_store(step)
+      return step unless step.respond_to? :load_from_store # step may be a CheckYourAnswersStep without load_from_store method
 
-      original_step = step.deep_dup # load_from_context method for RepeatableStep can fail with data half loaded
+      original_step = step.deep_dup # load_from_store method for RepeatableStep can fail with data half loaded
 
       begin
-        step.load_from_context(@answer_store)
+        step.load_from_store(@answer_store)
       rescue ActiveModel::UnknownAttributeError, ArgumentError
         original_step
       end
