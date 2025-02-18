@@ -201,7 +201,6 @@ RSpec.describe Flow::Journey do
       end
 
       let(:store) { { answers: { "2" => { "1" => { text: "Example text" }, "2" => { selection: second_page_in_form.routing_conditions.first.answer_value }, "3" => { text: "More example text" } } } } }
-      let(:pages_data) { [first_page_in_form, second_page_in_form, third_page_in_form] }
 
       it "stops generating the completed_steps when it reaches the question with the error" do
         expect(journey.completed_steps.to_json).to eq [first_step_in_journey].to_json
