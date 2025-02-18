@@ -2,12 +2,23 @@ require "rails_helper"
 require "ostruct"
 
 RSpec.describe Store::SessionAnswerStore do
+  subject(:answer_store) { described_class.new(store) }
+
   let(:store) { {} }
   let(:step) { OpenStruct.new({ page_id: "5", form_id: 1 }) }
   let(:other_form_step) { OpenStruct.new({ page_id: "1", form_id: 2 }) }
-  let(:answer_store) { described_class.new(store) }
   let(:reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
   let(:requested_email_confirmation) { true }
+
+  describe "answer store common methods" do
+    let(:answer) { "test answer" }
+
+    before do
+      answer_store.save_step(step, answer)
+    end
+
+    it_behaves_like "an answer store"
+  end
 
   it "stores the answer for a step" do
     answer_store.save_step(step, "test answer")
