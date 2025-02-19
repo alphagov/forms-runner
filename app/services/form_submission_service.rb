@@ -73,7 +73,8 @@ private
 
   def s3_submission_service
     S3SubmissionService.new(
-      current_context: @current_context,
+      journey: @current_context.journey,
+      form: @form,
       timestamp: @timestamp,
       submission_reference: @submission_reference,
       preview_mode: @preview_mode,
