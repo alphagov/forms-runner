@@ -5,7 +5,7 @@ module Flow
     def initialize(form:, store:)
       @form = form
       @answer_store = Store::SessionAnswerStore.new(store, form.id)
-      @confirmation_details_store = Store::ConfirmationDetailsStore.new(store)
+      @confirmation_details_store = Store::ConfirmationDetailsStore.new(store, form.id)
       @journey = Journey.new(answer_store: @answer_store, form:)
 
       @support_details = OpenStruct.new({
@@ -19,6 +19,7 @@ module Flow
 
     delegate :find_or_create, :previous_step, :next_page_slug, :next_step, :can_visit?, :completed_steps, :all_steps, to: :journey
     delegate :clear_stored_answer, :clear, :form_submitted?, to: :answer_store
+    delegate :save_submission_details, :get_submission_reference, :requested_email_confirmation?, :clear_submission_details, to: :confirmation_details_store
 
     def save_step(step)
       return false unless step.valid?
@@ -26,24 +27,8 @@ module Flow
       step.save_to_store(@answer_store)
     end
 
-    def save_submission_details(reference, requested_email_confirmation)
-      @confirmation_details_store.save_submission_details(form.id, reference, requested_email_confirmation)
-    end
-
-    def get_submission_reference
-      @confirmation_details_store.get_submission_reference(form.id)
-    end
-
-    def requested_email_confirmation?
-      @confirmation_details_store.requested_email_confirmation?(form.id)
-    end
-
-    def clear_submission_details
-      @confirmation_details_store.clear_submission_details(form.id)
-    end
-
   private
 
-    attr_reader :answer_store
+    attr_reader :answer_store, :confirmation_details_store
   end
 end
