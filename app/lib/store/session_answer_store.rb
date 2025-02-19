@@ -4,30 +4,31 @@ module Store
 
     ANSWERS_KEY = :answers
 
-    def initialize(store)
+    def initialize(store, form_id)
       @store = store
+      @form_key = form_id.to_s
       @store[ANSWERS_KEY] ||= {}
     end
 
     def save_step(step, answer)
-      @store[ANSWERS_KEY][form_key(step)] ||= {}
-      @store[ANSWERS_KEY][form_key(step)][page_key(step)] = answer
+      @store[ANSWERS_KEY][@form_key] ||= {}
+      @store[ANSWERS_KEY][@form_key][page_key(step)] = answer
     end
 
     def get_stored_answer(step)
-      @store.dig(ANSWERS_KEY, form_key(step), page_key(step))
+      @store.dig(ANSWERS_KEY, @form_key, page_key(step))
     end
 
     def clear_stored_answer(step)
-      @store.dig(ANSWERS_KEY, form_key(step))&.delete(page_key(step))
+      @store.dig(ANSWERS_KEY, @form_key)&.delete(page_key(step))
     end
 
-    def clear(form_id)
-      @store[ANSWERS_KEY][form_id.to_s] = nil
+    def clear
+      @store[ANSWERS_KEY][@form_key] = nil
     end
 
-    def form_submitted?(form_id)
-      @store[ANSWERS_KEY][form_id.to_s].nil?
+    def form_submitted?
+      @store[ANSWERS_KEY][@form_key].nil?
     end
   end
 end

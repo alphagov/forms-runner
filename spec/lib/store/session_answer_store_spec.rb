@@ -2,10 +2,11 @@ require "rails_helper"
 require "ostruct"
 
 RSpec.describe Store::SessionAnswerStore do
-  subject(:answer_store) { described_class.new(store) }
+  subject(:answer_store) { described_class.new(store, form_id) }
 
   let(:store) { {} }
-  let(:step) { OpenStruct.new({ page_id: "5", form_id: 1 }) }
+  let(:form_id) { 1 }
+  let(:step) { OpenStruct.new({ page_id: "5", form_id: }) }
   let(:other_form_step) { OpenStruct.new({ page_id: "1", form_id: 2 }) }
   let(:reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
   let(:requested_email_confirmation) { true }
@@ -42,15 +43,18 @@ RSpec.describe Store::SessionAnswerStore do
   describe "#clear" do
     it "clears the session for a form" do
       answer_store.save_step(step, "test answer")
-      answer_store.clear(1)
+      answer_store.clear
       expect(answer_store.get_stored_answer(step)).to be_nil
     end
 
     it "doesn't change other forms" do
       answer_store.save_step(step, "form1 answer")
-      answer_store.save_step(other_form_step, "form2 answer")
-      answer_store.clear(1)
-      expect(answer_store.get_stored_answer(other_form_step)).to eq("form2 answer")
+
+      other_form_answer_store = described_class.new(store, other_form_step.form_id)
+      other_form_answer_store.save_step(other_form_step, "form2 answer")
+
+      answer_store.clear
+      expect(other_form_answer_store.get_stored_answer(other_form_step)).to eq("form2 answer")
     end
   end
 
@@ -62,17 +66,17 @@ RSpec.describe Store::SessionAnswerStore do
   end
 
   describe "#form_submitted?" do
-    let(:store) { { answers: { "123" => nil } } }
+    let(:store) { { answers: { form_id.to_s => nil } } }
 
     it "returns true when a form has been submitted and cleared" do
-      expect(answer_store.form_submitted?(123)).to be true
+      expect(answer_store.form_submitted?).to be true
     end
 
     context "when form answers have not been submitted and cleared" do
-      let(:store) { { answers: { "123" => "This is my answer to question 1" } } }
+      let(:store) { { answers: { form_id.to_s => "This is my answer to question 1" } } }
 
       it "returns true when a form has been submitted and cleared" do
-        expect(answer_store.form_submitted?(123)).to be false
+        expect(answer_store.form_submitted?).to be false
       end
     end
   end

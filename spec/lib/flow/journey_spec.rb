@@ -41,7 +41,7 @@ RSpec.describe Flow::Journey do
 
   describe "#completed_steps" do
     context "when answers are loaded from the session" do
-      let(:answer_store) { Store::SessionAnswerStore.new(store) }
+      let(:answer_store) { Store::SessionAnswerStore.new(store, form.id) }
 
       context "when no pages have been completed" do
         it "is empty" do
@@ -229,7 +229,7 @@ RSpec.describe Flow::Journey do
 
   describe "#all_steps" do
     context "when answers are loaded from the session" do
-      let(:answer_store) { Store::SessionAnswerStore.new(store) }
+      let(:answer_store) { Store::SessionAnswerStore.new(store, form.id) }
 
       context "when some questions have not been answered" do
         let(:store) { { answers: { "2" => { "1" => { selection: "Option 2" }, "2" => { text: "Example text" } } } } }
