@@ -64,7 +64,8 @@ private
 
   def notify_submission_service
     NotifySubmissionService.new(
-      current_context: @current_context,
+      journey: @current_context.journey,
+      form: @form,
       notify_email_reference: @email_confirmation_input.submission_email_reference,
       mailer_options:,
     )
