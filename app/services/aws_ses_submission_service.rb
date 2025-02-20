@@ -43,6 +43,7 @@ private
                                                        files:).deliver_now
 
     CurrentLoggingAttributes.submission_email_id = mail.message_id
+    mail.message_id
   end
 
   def answer_content

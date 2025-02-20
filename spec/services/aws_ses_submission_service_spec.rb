@@ -48,6 +48,15 @@ RSpec.describe AwsSesSubmissionService do
       allow(Settings.ses_submission_email).to receive(:from_email_address).and_return(from_email_address)
     end
 
+    shared_examples "it returns the message id" do
+      it "returns the message id" do
+        message_id = service.submit
+
+        last_email = ActionMailer::Base.deliveries.last
+        expect(message_id).to eq last_email.message_id
+      end
+    end
+
     context "when the submission type is email" do
       before do
         form.submission_type = "email"
@@ -72,6 +81,8 @@ RSpec.describe AwsSesSubmissionService do
         service.submit
         expect(CsvGenerator).not_to have_received(:write_submission)
       end
+
+      include_examples "it returns the message id"
     end
 
     context "when answers contain uploaded files" do
@@ -96,6 +107,8 @@ RSpec.describe AwsSesSubmissionService do
           ).once
         end
       end
+
+      include_examples "it returns the message id"
     end
 
     context "when the submission type is email_with_csv" do
@@ -130,6 +143,8 @@ RSpec.describe AwsSesSubmissionService do
           ).once
         end
       end
+
+      include_examples "it returns the message id"
 
       context "when submission contains a file upload question" do
         let(:question) { build :file, :with_uploaded_file }
@@ -219,6 +234,8 @@ RSpec.describe AwsSesSubmissionService do
           expect(AwsSesFormSubmissionMailer).not_to have_received(:submission_email)
         end
       end
+
+      include_examples "it returns the message id"
     end
 
     describe "validations" do
