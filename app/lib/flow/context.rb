@@ -18,7 +18,7 @@ module Flow
     end
 
     delegate :find_or_create, :previous_step, :next_page_slug, :next_step, :can_visit?, :completed_steps, :all_steps, to: :journey
-    delegate :clear_stored_answer, :clear, :form_submitted?, to: :answer_store
+    delegate :clear_stored_answer, :clear, :form_submitted?, :answers, to: :answer_store
     delegate :save_submission_details, :get_submission_reference, :requested_email_confirmation?, :clear_submission_details, to: :confirmation_details_store
 
     def save_step(step)

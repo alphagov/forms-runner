@@ -40,7 +40,7 @@ private
 
   def submit_using_form_submission_type
     return s3_submission_service.submit if @form.submission_type == "s3"
-    return aws_ses_submission_service.submit if @form.has_file_upload_question?
+    return submit_via_aws_ses if @form.has_file_upload_question?
 
     notify_submission_service.submit
   end
@@ -87,6 +87,12 @@ private
       form: @form,
       mailer_options:,
     )
+  end
+
+  def submit_via_aws_ses
+    submission = Submission.new(reference: @submission_reference, form_id: @form.id, answers: @current_context.answers, is_preview: @preview_mode)
+    submission.mail_message_id = aws_ses_submission_service.submit
+    submission.save!
   end
 
   def form_title
