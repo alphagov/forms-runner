@@ -1,7 +1,7 @@
 class NotifySubmissionService
-  def initialize(current_context:, notify_email_reference:, mailer_options:)
-    @current_context = current_context
-    @form = current_context.form
+  def initialize(journey:, form:, notify_email_reference:, mailer_options:)
+    @journey = journey
+    @form = form
     @notify_email_reference = notify_email_reference
     @mailer_options = mailer_options
   end
@@ -55,7 +55,7 @@ private
 
   def write_submission_csv(file)
     CsvGenerator.write_submission(
-      current_context: @current_context,
+      all_steps: @journey.all_steps,
       submission_reference: @mailer_options.submission_reference,
       timestamp: @mailer_options.timestamp,
       output_file_path: file.path,
@@ -63,6 +63,6 @@ private
   end
 
   def email_body
-    NotifyTemplateFormatter.new.build_question_answers_section(@current_context)
+    NotifyTemplateFormatter.new.build_question_answers_section(@journey.completed_steps)
   end
 end

@@ -1,10 +1,10 @@
 class S3SubmissionService
-  def initialize(current_context:,
+  def initialize(journey:, form:,
                  timestamp:,
                  submission_reference:,
                  preview_mode:)
-    @current_context = current_context
-    @form = current_context.form
+    @journey = journey
+    @form = form
     @timestamp = timestamp
     @submission_reference = submission_reference
     @preview_mode = preview_mode
@@ -25,9 +25,10 @@ class S3SubmissionService
 
 private
 
+  # we only need all_steps. Should we just pass this in, or are we missing something that needs completed_steps?
   def write_submission_csv(file)
     CsvGenerator.write_submission(
-      current_context: @current_context,
+      all_steps: @journey.all_steps,
       submission_reference: @submission_reference,
       timestamp: @timestamp,
       output_file_path: file.path,

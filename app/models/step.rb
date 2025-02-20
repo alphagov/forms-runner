@@ -43,16 +43,16 @@ class Step
     instance_variables.map { |variable| instance_variable_get variable }
   end
 
-  def save_to_context(form_context)
+  def save_to_store(answer_store)
     question.before_save
     return false unless question.errors.empty?
 
-    form_context.save_step(self, question.serializable_hash)
+    answer_store.save_step(self, question.serializable_hash)
     self
   end
 
-  def load_from_context(form_context)
-    attrs = form_context.get_stored_answer(self)
+  def load_from_store(answer_store)
+    attrs = answer_store.get_stored_answer(self)
     question.assign_attributes(attrs || {})
     self
   end

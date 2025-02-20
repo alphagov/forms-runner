@@ -1,9 +1,9 @@
 class AwsSesSubmissionService
   CSV_MAX_FILENAME_LENGTH = 100
 
-  def initialize(current_context:, mailer_options:)
-    @current_context = current_context
-    @form = current_context.form
+  def initialize(journey:, form:, mailer_options:)
+    @journey = journey
+    @form = form
     @mailer_options = mailer_options
   end
 
@@ -46,19 +46,19 @@ private
   end
 
   def answer_content
-    SesEmailFormatter.new.build_question_answers_section(@current_context)
+    SesEmailFormatter.new.build_question_answers_section(@journey.completed_steps)
   end
 
   def uploaded_files_in_answers
-    @current_context.completed_steps
-                   .select { |step| step.question.is_a?(Question::File) && step.question.file_uploaded? }
-                   .map { |step| [step.question.original_filename, step.question.file_from_s3] }
-                   .to_h
+    @journey.completed_steps
+            .select { |step| step.question.is_a?(Question::File) && step.question.file_uploaded? }
+            .map { |step| [step.question.original_filename, step.question.file_from_s3] }
+            .to_h
   end
 
   def write_submission_csv(file)
     CsvGenerator.write_submission(
-      current_context: @current_context,
+      all_steps: @journey.all_steps,
       submission_reference: @mailer_options.submission_reference,
       timestamp: @mailer_options.timestamp,
       output_file_path: file.path,

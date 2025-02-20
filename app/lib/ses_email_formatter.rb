@@ -1,8 +1,8 @@
 class SesEmailFormatter
   H_RULE = '<hr style="border: 0; height: 1px; background: #B1B4B6; Margin: 30px 0 30px 0;">'.freeze
 
-  def build_question_answers_section(current_context)
-    current_context.completed_steps.map { |page|
+  def build_question_answers_section(completed_steps)
+    completed_steps.map { |page|
       [prep_question_title(page.question_text),
        prep_answer_text(page.show_answer_in_email)].join
     }.join(H_RULE)
