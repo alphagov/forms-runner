@@ -1,7 +1,11 @@
 require "rails_helper"
 
 RSpec.describe FormSubmissionService do
-  let(:service) { described_class.call(current_context:, email_confirmation_input:, preview_mode:) }
+  subject(:service) { described_class.call(current_context:, email_confirmation_input:, preview_mode:) }
+
+  let(:preview_mode) { false }
+  let(:email_confirmation_input) { build :email_confirmation_input_opted_in }
+
   let(:form) do
     build(:form,
           id: 1,
@@ -23,16 +27,15 @@ RSpec.describe FormSubmissionService do
   let(:support_phone) { Faker::Lorem.paragraph(sentence_count: 2, supplemental: true, random_sentences_to_add: 4) }
   let(:support_url) { Faker::Internet.url(host: "gov.uk") }
   let(:support_url_text) { Faker::Lorem.sentence(word_count: 1, random_words_to_add: 4) }
-  let(:current_context) { OpenStruct.new(form:, completed_steps: [step], support_details: OpenStruct.new(call_back_url: "http://gov.uk")) }
-  let(:request) { OpenStruct.new({ url: "url", method: "method" }) }
-  let(:step) { OpenStruct.new({ question_text: "What is the meaning of life?", show_answer_in_email: "42" }) }
-  let(:preview_mode) { false }
-  let(:email_confirmation_input) { build :email_confirmation_input_opted_in }
-  let(:reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
   let(:payment_url) { nil }
   let(:submission_email) { "testing@gov.uk" }
-  let(:submission_email_id) { "id-for-submission-email-notification" }
-  let(:confirmation_email_id) { "id-for-confirmation-email-notification" }
+
+  let(:reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
+
+  let(:step) { OpenStruct.new({ question_text: "What is the meaning of life?", show_answer_in_email: "42" }) }
+  let(:all_steps) { [step] }
+  let(:journey) { instance_double(Flow::Journey, completed_steps: all_steps, all_steps:) }
+  let(:current_context) { instance_double(Flow::Context, form:, journey:, completed_steps: all_steps, support_details: OpenStruct.new(call_back_url: "http://gov.uk")) }
 
   let(:output) { StringIO.new }
   let(:logger) do
@@ -133,7 +136,8 @@ RSpec.describe FormSubmissionService do
             service.submit
 
             expect(S3SubmissionService).to have_received(:new).with(
-              current_context:,
+              journey:,
+              form:,
               timestamp: Time.zone.now,
               submission_reference: reference,
               preview_mode:,
