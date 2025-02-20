@@ -123,29 +123,5 @@ RSpec.describe Flow::Context do
       end
     end
   end
-
-  describe "#all_steps" do
-    let(:context) { described_class.new(form:, store: {}) }
-
-    let(:form_context) { instance_double(Flow::FormContext) }
-    let(:step_factory) { instance_double(Flow::StepFactory) }
-    let(:journey) { instance_double(Flow::Journey) }
-    let(:steps) { [build(:step, page_slug: 1), build(:step, page_slug: 2)] }
-
-    before do
-      allow(Flow::FormContext).to receive(:new).with({}).and_return(form_context)
-      allow(Flow::StepFactory).to receive(:new).with(form: form).and_return(step_factory)
-      allow(Flow::Journey).to receive(:new).with(form_context: form_context, step_factory: step_factory).and_return(journey)
-
-      allow(journey).to receive(:completed_steps).and_return([])
-      allow(step_factory).to receive(:create_step).with("1").and_return(steps.first)
-      allow(step_factory).to receive(:create_step).with("2").and_return(steps.second)
-    end
-
-    it "creates steps for all pages in the form" do
-      expect(context.all_steps.length).to eq(2)
-      expect(context.all_steps).to match_array steps
-    end
-  end
 end
 # rubocop:enable RSpec/InstanceVariable

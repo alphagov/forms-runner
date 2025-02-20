@@ -5,19 +5,19 @@ RSpec.describe NotifyTemplateFormatter, type: :model do
     let(:notify_template_body_filter) { described_class.new }
 
     describe "#build_question_answers_section" do
-      let(:form) { OpenStruct.new(completed_steps: [step]) }
+      let(:completed_steps) { [step] }
 
       let(:step) { OpenStruct.new({ question_text: "What is the meaning of life?", show_answer_in_email: "42" }) }
 
       it "returns combined title and answer" do
-        expect(notify_template_body_filter.build_question_answers_section(form)).to eq "# What is the meaning of life?\n42\n"
+        expect(notify_template_body_filter.build_question_answers_section(completed_steps)).to eq "# What is the meaning of life?\n42\n"
       end
 
       context "when there is more than one step" do
-        let(:form) { OpenStruct.new(completed_steps: [step, step]) }
+        let(:completed_steps) { [step, step] }
 
         it "contains a horizontal rule between each step" do
-          expect(notify_template_body_filter.build_question_answers_section(form)).to include "\n\n---\n\n"
+          expect(notify_template_body_filter.build_question_answers_section(completed_steps)).to include "\n\n---\n\n"
         end
       end
     end

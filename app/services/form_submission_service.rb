@@ -64,7 +64,8 @@ private
 
   def notify_submission_service
     NotifySubmissionService.new(
-      current_context: @current_context,
+      journey: @current_context.journey,
+      form: @form,
       notify_email_reference: @email_confirmation_input.submission_email_reference,
       mailer_options:,
     )
@@ -72,7 +73,8 @@ private
 
   def s3_submission_service
     S3SubmissionService.new(
-      current_context: @current_context,
+      journey: @current_context.journey,
+      form: @form,
       timestamp: @timestamp,
       submission_reference: @submission_reference,
       preview_mode: @preview_mode,
@@ -81,7 +83,8 @@ private
 
   def aws_ses_submission_service
     AwsSesSubmissionService.new(
-      current_context: @current_context,
+      journey: @current_context.journey,
+      form: @form,
       mailer_options:,
     )
   end

@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe S3SubmissionService do
   subject(:service) do
-    described_class.new(current_context:, timestamp:, submission_reference:, preview_mode:)
+    described_class.new(journey:, form:, timestamp:, submission_reference:, preview_mode:)
   end
 
   let(:file_body) { "some body/n" }
@@ -20,7 +20,8 @@ RSpec.describe S3SubmissionService do
   let(:timestamp) do
     Time.use_zone("London") { Time.zone.local(2022, 9, 14, 8, 24, 34) }
   end
-  let(:current_context) { OpenStruct.new(form:, completed_steps: [step]) }
+  let(:all_steps) { [step] }
+  let(:journey) { instance_double(Flow::Journey, completed_steps: all_steps, all_steps:) }
   let(:step) { build :step }
   let(:preview_mode) { false }
 
@@ -46,7 +47,7 @@ RSpec.describe S3SubmissionService do
 
       it "writes a CSV file" do
         expect(CsvGenerator).to have_received(:write_submission)
-          .with(current_context:,
+          .with(all_steps:,
                 submission_reference:,
                 timestamp:,
                 output_file_path: an_instance_of(String))

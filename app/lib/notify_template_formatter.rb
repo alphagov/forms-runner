@@ -1,6 +1,6 @@
 class NotifyTemplateFormatter
-  def build_question_answers_section(current_context)
-    current_context.completed_steps.map { |page|
+  def build_question_answers_section(completed_steps)
+    completed_steps.map { |page|
       [prep_question_title(page.question_text),
        prep_answer_text(page.show_answer_in_email)].join
     }.join("\n\n---\n\n").concat("\n")
