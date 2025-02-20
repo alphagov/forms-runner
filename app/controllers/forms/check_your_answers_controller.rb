@@ -39,7 +39,7 @@ module Forms
 
       submission_reference = FormSubmissionService.call(current_context:,
                                                         email_confirmation_input:,
-                                                        preview_mode: mode.preview?).submit
+                                                        is_preview: mode.preview?).submit
 
       current_context.save_submission_details(submission_reference, requested_email_confirmation)
 

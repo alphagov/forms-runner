@@ -1,9 +1,9 @@
 require "rails_helper"
 
 RSpec.describe FormSubmissionService do
-  subject(:service) { described_class.call(current_context:, email_confirmation_input:, preview_mode:) }
+  subject(:service) { described_class.call(current_context:, email_confirmation_input:, is_preview:) }
 
-  let(:preview_mode) { false }
+  let(:is_preview) { false }
   let(:email_confirmation_input) { build :email_confirmation_input_opted_in }
 
   let(:form) do
@@ -90,7 +90,7 @@ RSpec.describe FormSubmissionService do
         expect(LogEventService).to have_received(:log_submit).with(
           current_context,
           requested_email_confirmation: true,
-          preview: preview_mode,
+          preview: is_preview,
           submission_type:,
         )
       end
@@ -137,7 +137,7 @@ RSpec.describe FormSubmissionService do
             service.submit
           }.to change(Submission, :count).by(1)
 
-          expect(Submission.last).to have_attributes(reference:, form_id: form.id, answers: answers.deep_stringify_keys, is_preview: preview_mode, mail_message_id:)
+          expect(Submission.last).to have_attributes(reference:, form_id: form.id, answers: answers.deep_stringify_keys, is_preview: is_preview, mail_message_id:)
         end
       end
 
@@ -159,7 +159,7 @@ RSpec.describe FormSubmissionService do
               form:,
               timestamp: Time.zone.now,
               submission_reference: reference,
-              preview_mode:,
+              is_preview:,
             ).once
           end
         end
@@ -178,7 +178,7 @@ RSpec.describe FormSubmissionService do
       end
 
       context "when form being submitted is from previewed form" do
-        let(:preview_mode) { true }
+        let(:is_preview) { true }
 
         include_examples "logging"
       end

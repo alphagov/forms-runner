@@ -13,7 +13,7 @@ RSpec.describe NotifySubmissionService do
   let(:journey) { instance_double(Flow::Journey, completed_steps: all_steps, all_steps:) }
   let(:question) { build :text, question_text: "What is the meaning of life?", text: "42" }
   let(:step) { build :step, question: }
-  let(:preview_mode) { false }
+  let(:is_preview) { false }
   let(:notify_email_reference) { "ffffffff-submission-email" }
   let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
   let(:payment_url) { nil }
@@ -23,7 +23,7 @@ RSpec.describe NotifySubmissionService do
   let(:timestamp) { Time.zone.now }
   let(:mailer_options) do
     FormSubmissionService::MailerOptions.new(title: form.name,
-                                             preview_mode:,
+                                             is_preview:,
                                              timestamp:,
                                              submission_reference:,
                                              payment_url:)
@@ -149,7 +149,7 @@ RSpec.describe NotifySubmissionService do
     end
 
     context "when form being submitted is from previewed form" do
-      let(:preview_mode) { true }
+      let(:is_preview) { true }
 
       context "when the submission email is set" do
         it "calls FormSubmissionMailer" do

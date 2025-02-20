@@ -4,14 +4,14 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
   let(:mail) { described_class.submission_email(answer_content:, submission_email_address:, mailer_options:, files:) }
   let(:title) { "Form 1" }
   let(:answer_content) { "My question: My answer" }
-  let(:preview_mode) { false }
+  let(:is_preview) { false }
   let(:submission_email_address) { "testing@gov.uk" }
   let(:files) { {} }
   let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
   let(:payment_url) { nil }
   let(:mailer_options) do
     FormSubmissionService::MailerOptions.new(title:,
-                                             preview_mode:,
+                                             is_preview:,
                                              timestamp: submission_timestamp,
                                              submission_reference:,
                                              payment_url:)

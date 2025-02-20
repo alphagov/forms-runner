@@ -8,11 +8,11 @@ class AwsSesSubmissionService
   end
 
   def submit
-    if !@mailer_options.preview_mode && @form.submission_email.blank?
+    if !@mailer_options.is_preview && @form.submission_email.blank?
       raise StandardError, "Form id(#{@form.id}) is missing a submission email address"
     end
 
-    if @form.submission_email.blank? && @mailer_options.preview_mode
+    if @form.submission_email.blank? && @mailer_options.is_preview
       Rails.logger.info "Skipping sending submission email for preview submission, as the submission email address has not been set"
       return
     end
