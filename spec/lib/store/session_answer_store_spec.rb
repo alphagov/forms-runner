@@ -65,6 +65,35 @@ RSpec.describe Store::SessionAnswerStore do
     expect(answer_store.get_stored_answer(other_form_step)).to eq("test2 answer")
   end
 
+  describe "#answers" do
+    let(:form_answers) do
+      {
+        "1" => {
+          selection: "Option 1",
+        },
+        "2" => {
+          text: "Example text",
+        },
+      }
+    end
+    let(:store) do
+      {
+        answers: {
+          form_id.to_s => form_answers,
+          "2" => {
+            "3" => {
+              selection: "Option 2",
+            },
+          },
+        },
+      }
+    end
+
+    it "returns all answers for a form" do
+      expect(answer_store.answers).to eq form_answers
+    end
+  end
+
   describe "#form_submitted?" do
     let(:store) { { answers: { form_id.to_s => nil } } }
 
