@@ -10,19 +10,15 @@ module Question
     end
 
     def show_answer
-      if allow_multiple_answers?
-        selection_without_blanks.join(", ")
-      else
-        selection
-      end
+      return selection_without_blanks.join(", ") if allow_multiple_answers?
+
+      selection
     end
 
     def show_answer_in_email
-      if allow_multiple_answers?
-        selection_without_blanks.join("\n\n")
-      else
-        selection
-      end
+      return selection_without_blanks.join("\n\n") if allow_multiple_answers?
+
+      selection
     end
 
     def show_optional_suffix
