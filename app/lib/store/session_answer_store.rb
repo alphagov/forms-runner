@@ -30,5 +30,9 @@ module Store
     def form_submitted?
       @store[ANSWERS_KEY][@form_key].nil?
     end
+
+    def answers
+      @store[ANSWERS_KEY][@form_key]
+    end
   end
 end

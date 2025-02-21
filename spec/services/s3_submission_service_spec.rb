@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe S3SubmissionService do
   subject(:service) do
-    described_class.new(journey:, form:, timestamp:, submission_reference:, preview_mode:)
+    described_class.new(journey:, form:, timestamp:, submission_reference:, is_preview:)
   end
 
   let(:file_body) { "some body/n" }
@@ -23,7 +23,7 @@ RSpec.describe S3SubmissionService do
   let(:all_steps) { [step] }
   let(:journey) { instance_double(Flow::Journey, completed_steps: all_steps, all_steps:) }
   let(:step) { build :step }
-  let(:preview_mode) { false }
+  let(:is_preview) { false }
 
   describe "#upload_submission_csv_to_s3" do
     let(:mock_credentials) { { foo: "bar" } }
@@ -75,7 +75,7 @@ RSpec.describe S3SubmissionService do
       end
 
       context "when a preview is being submitted" do
-        let(:preview_mode) { true }
+        let(:is_preview) { true }
 
         it "calls put_object with a key starting with 'test_form_submissions/'" do
           expected_timestamp = "20220914T072434Z"

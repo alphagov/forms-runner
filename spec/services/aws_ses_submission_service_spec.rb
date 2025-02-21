@@ -13,7 +13,7 @@ RSpec.describe AwsSesSubmissionService do
   let(:journey) { instance_double(Flow::Journey, completed_steps: all_steps, all_steps:) }
   let(:question) { build :text, question_text: "What is the meaning of life?", text: "42" }
   let(:step) { build :step, question: }
-  let(:preview_mode) { false }
+  let(:is_preview) { false }
   let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
   let(:payment_url) { nil }
   let(:submission_email) { "submissions@example.gov.uk" }
@@ -21,7 +21,7 @@ RSpec.describe AwsSesSubmissionService do
   let(:timestamp) { Time.utc(2022, 9, 14, 8, 0o0, 0o0) }
   let(:mailer_options) do
     FormSubmissionService::MailerOptions.new(title: form.name,
-                                             preview_mode:,
+                                             is_preview:,
                                              timestamp:,
                                              submission_reference:,
                                              payment_url:)
@@ -48,6 +48,15 @@ RSpec.describe AwsSesSubmissionService do
       allow(Settings.ses_submission_email).to receive(:from_email_address).and_return(from_email_address)
     end
 
+    shared_examples "it returns the message id" do
+      it "returns the message id" do
+        message_id = service.submit
+
+        last_email = ActionMailer::Base.deliveries.last
+        expect(message_id).to eq last_email.message_id
+      end
+    end
+
     context "when the submission type is email" do
       before do
         form.submission_type = "email"
@@ -72,6 +81,8 @@ RSpec.describe AwsSesSubmissionService do
         service.submit
         expect(CsvGenerator).not_to have_received(:write_submission)
       end
+
+      include_examples "it returns the message id"
     end
 
     context "when answers contain uploaded files" do
@@ -96,6 +107,8 @@ RSpec.describe AwsSesSubmissionService do
           ).once
         end
       end
+
+      include_examples "it returns the message id"
     end
 
     context "when the submission type is email_with_csv" do
@@ -130,6 +143,8 @@ RSpec.describe AwsSesSubmissionService do
           ).once
         end
       end
+
+      include_examples "it returns the message id"
 
       context "when submission contains a file upload question" do
         let(:question) { build :file, :with_uploaded_file }
@@ -187,7 +202,7 @@ RSpec.describe AwsSesSubmissionService do
     end
 
     context "when form being submitted is from previewed form" do
-      let(:preview_mode) { true }
+      let(:is_preview) { true }
 
       context "when the submission email is set" do
         it "calls AwsSesFormSubmissionMailer" do
@@ -219,6 +234,8 @@ RSpec.describe AwsSesSubmissionService do
           expect(AwsSesFormSubmissionMailer).not_to have_received(:submission_email)
         end
       end
+
+      include_examples "it returns the message id"
     end
 
     describe "validations" do

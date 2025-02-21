@@ -6,8 +6,8 @@ RSpec.describe Store::SessionAnswerStore do
 
   let(:store) { {} }
   let(:form_id) { 1 }
-  let(:step) { OpenStruct.new({ page_id: "5", form_id: }) }
-  let(:other_form_step) { OpenStruct.new({ page_id: "1", form_id: 2 }) }
+  let(:step) { OpenStruct.new({ page_id: "5" }) }
+  let(:other_step) { OpenStruct.new({ page_id: "1" }) }
   let(:reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
   let(:requested_email_confirmation) { true }
 
@@ -27,42 +27,86 @@ RSpec.describe Store::SessionAnswerStore do
     expect(result).to eq("test answer")
   end
 
-  it "clears a single answer for a step" do
-    answer_store.save_step(step, "test answer")
-    expect(answer_store.get_stored_answer(step)).to eq("test answer")
-    answer_store.clear_stored_answer(step)
-    expect(answer_store.get_stored_answer(step)).to be_nil
-  end
+  describe "#clear_stored_answer" do
+    before do
+      answer_store.save_step(step, "test answer")
+    end
 
-  it "does not error if removing a step which doesn't exist in the store" do
-    answer_store.save_step(step, "test answer")
-    answer_store.clear_stored_answer(other_form_step)
-    expect(answer_store.get_stored_answer(step)).to eq("test answer")
+    it "clears a single answer for a step" do
+      expect(answer_store.get_stored_answer(step)).to eq("test answer")
+      answer_store.clear_stored_answer(step)
+      expect(answer_store.get_stored_answer(step)).to be_nil
+    end
+
+    it "does not error if removing a step which doesn't exist in the store" do
+      answer_store.clear_stored_answer(other_step)
+      expect(answer_store.get_stored_answer(step)).to eq("test answer")
+    end
   end
 
   describe "#clear" do
-    it "clears the session for a form" do
+    let(:other_form_id) { 9 }
+
+    before do
       answer_store.save_step(step, "test answer")
+    end
+
+    it "clears the session for a form" do
       answer_store.clear
       expect(answer_store.get_stored_answer(step)).to be_nil
     end
 
     it "doesn't change other forms" do
-      answer_store.save_step(step, "form1 answer")
-
-      other_form_answer_store = described_class.new(store, other_form_step.form_id)
-      other_form_answer_store.save_step(other_form_step, "form2 answer")
+      other_form_answer_store = described_class.new(store, other_form_id)
+      other_form_answer_store.save_step(other_step, "other form answer")
 
       answer_store.clear
-      expect(other_form_answer_store.get_stored_answer(other_form_step)).to eq("form2 answer")
+      expect(other_form_answer_store.get_stored_answer(other_step)).to eq("other form answer")
     end
   end
 
-  it "returns the answers for a form" do
-    answer_store.save_step(step, "test answer")
-    answer_store.save_step(other_form_step, "test2 answer")
-    expect(answer_store.get_stored_answer(step)).to eq("test answer")
-    expect(answer_store.get_stored_answer(other_form_step)).to eq("test2 answer")
+  describe "#get_stored_answer" do
+    before do
+      answer_store.save_step(step, "test answer")
+      answer_store.save_step(other_step, "test2 answer")
+    end
+
+    it "returns the answer for the first step" do
+      expect(answer_store.get_stored_answer(step)).to eq("test answer")
+    end
+
+    it "returns the answer for the second step" do
+      expect(answer_store.get_stored_answer(other_step)).to eq("test2 answer")
+    end
+  end
+
+  describe "#answers" do
+    let(:form_answers) do
+      {
+        "1" => {
+          selection: "Option 1",
+        },
+        "2" => {
+          text: "Example text",
+        },
+      }
+    end
+    let(:store) do
+      {
+        answers: {
+          form_id.to_s => form_answers,
+          "2" => {
+            "3" => {
+              selection: "Option 2",
+            },
+          },
+        },
+      }
+    end
+
+    it "returns all answers for a form" do
+      expect(answer_store.answers).to eq form_answers
+    end
   end
 
   describe "#form_submitted?" do

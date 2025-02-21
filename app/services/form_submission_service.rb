@@ -5,14 +5,14 @@ class FormSubmissionService
     end
   end
 
-  MailerOptions = Data.define(:title, :preview_mode, :timestamp, :submission_reference, :payment_url)
+  MailerOptions = Data.define(:title, :is_preview, :timestamp, :submission_reference, :payment_url)
 
-  def initialize(current_context:, email_confirmation_input:, preview_mode:)
+  def initialize(current_context:, email_confirmation_input:, is_preview:)
     @current_context = current_context
     @form = current_context.form
     @email_confirmation_input = email_confirmation_input
     @requested_email_confirmation = @email_confirmation_input.send_confirmation == "send_email"
-    @preview_mode = preview_mode
+    @is_preview = is_preview
     @timestamp = submission_timestamp
     @submission_reference = ReferenceNumberService.generate
 
@@ -34,13 +34,13 @@ private
     submit_using_form_submission_type
     LogEventService.log_submit(@current_context,
                                requested_email_confirmation: @requested_email_confirmation,
-                               preview: @preview_mode,
+                               preview: @is_preview,
                                submission_type: @form.submission_type)
   end
 
   def submit_using_form_submission_type
     return s3_submission_service.submit if @form.submission_type == "s3"
-    return aws_ses_submission_service.submit if @form.has_file_upload_question?
+    return submit_via_aws_ses if @form.has_file_upload_question?
 
     notify_submission_service.submit
   end
@@ -77,7 +77,7 @@ private
       form: @form,
       timestamp: @timestamp,
       submission_reference: @submission_reference,
-      preview_mode: @preview_mode,
+      is_preview: @is_preview,
     )
   end
 
@@ -87,6 +87,12 @@ private
       form: @form,
       mailer_options:,
     )
+  end
+
+  def submit_via_aws_ses
+    submission = Submission.new(reference: @submission_reference, form_id: @form.id, answers: @current_context.answers, is_preview: @is_preview)
+    submission.mail_message_id = aws_ses_submission_service.submit
+    submission.save!
   end
 
   def form_title
@@ -134,7 +140,7 @@ private
 
   def mailer_options
     MailerOptions.new(title: form_title,
-                      preview_mode: @preview_mode,
+                      is_preview: @is_preview,
                       timestamp: @timestamp,
                       submission_reference: @submission_reference,
                       payment_url: @form.payment_url_with_reference(@submission_reference))

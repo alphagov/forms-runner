@@ -1,9 +1,9 @@
 require "rails_helper"
 
 RSpec.describe FormSubmissionService do
-  subject(:service) { described_class.call(current_context:, email_confirmation_input:, preview_mode:) }
+  subject(:service) { described_class.call(current_context:, email_confirmation_input:, is_preview:) }
 
-  let(:preview_mode) { false }
+  let(:is_preview) { false }
   let(:email_confirmation_input) { build :email_confirmation_input_opted_in }
 
   let(:form) do
@@ -35,7 +35,17 @@ RSpec.describe FormSubmissionService do
   let(:step) { OpenStruct.new({ question_text: "What is the meaning of life?", show_answer_in_email: "42" }) }
   let(:all_steps) { [step] }
   let(:journey) { instance_double(Flow::Journey, completed_steps: all_steps, all_steps:) }
-  let(:current_context) { instance_double(Flow::Context, form:, journey:, completed_steps: all_steps, support_details: OpenStruct.new(call_back_url: "http://gov.uk")) }
+  let(:answers) do
+    {
+      "1" => {
+        selection: "Option 1",
+      },
+      "2" => {
+        text: "Example text",
+      },
+    }
+  end
+  let(:current_context) { instance_double(Flow::Context, form:, journey:, completed_steps: all_steps, support_details: OpenStruct.new(call_back_url: "http://gov.uk"), answers:) }
 
   let(:output) { StringIO.new }
   let(:logger) do
@@ -80,7 +90,7 @@ RSpec.describe FormSubmissionService do
         expect(LogEventService).to have_received(:log_submit).with(
           current_context,
           requested_email_confirmation: true,
-          preview: preview_mode,
+          preview: is_preview,
           submission_type:,
         )
       end
@@ -110,15 +120,24 @@ RSpec.describe FormSubmissionService do
       context "when the form has a file upload question" do
         let(:pages) { [build(:page, id: 2, answer_type: "file")] }
         let(:aws_ses_submission_service_spy) { instance_double(AwsSesSubmissionService) }
+        let(:mail_message_id) { "1234" }
 
         before do
           allow(AwsSesSubmissionService).to receive(:new).and_return(aws_ses_submission_service_spy)
-          allow(aws_ses_submission_service_spy).to receive(:submit)
+          allow(aws_ses_submission_service_spy).to receive(:submit).and_return(mail_message_id)
         end
 
         it "calls AwsSesSubmissionService to submit the form" do
           service.submit
           expect(aws_ses_submission_service_spy).to have_received(:submit)
+        end
+
+        it "saves the submission data" do
+          expect {
+            service.submit
+          }.to change(Submission, :count).by(1)
+
+          expect(Submission.last).to have_attributes(reference:, form_id: form.id, answers: answers.deep_stringify_keys, is_preview: is_preview, mail_message_id:)
         end
       end
 
@@ -140,7 +159,7 @@ RSpec.describe FormSubmissionService do
               form:,
               timestamp: Time.zone.now,
               submission_reference: reference,
-              preview_mode:,
+              is_preview:,
             ).once
           end
         end
@@ -159,7 +178,7 @@ RSpec.describe FormSubmissionService do
       end
 
       context "when form being submitted is from previewed form" do
-        let(:preview_mode) { true }
+        let(:is_preview) { true }
 
         include_examples "logging"
       end
