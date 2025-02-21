@@ -108,7 +108,7 @@ GEM
     aws-sdk-cloudwatch (1.111.0)
       aws-sdk-core (~> 3, >= 3.216.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-codepipeline (1.94.0)
+    aws-sdk-codepipeline (1.96.0)
       aws-sdk-core (~> 3, >= 3.216.0)
       aws-sigv4 (~> 1.5)
     aws-sdk-core (3.219.0)
@@ -481,7 +481,7 @@ PLATFORMS
 DEPENDENCIES
   activeresource
   aws-sdk-cloudwatch
-  aws-sdk-codepipeline (~> 1.94)
+  aws-sdk-codepipeline (~> 1.96)
   aws-sdk-s3
   aws-sdk-sesv2
   aws-sdk-sts
