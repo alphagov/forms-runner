@@ -8,8 +8,8 @@ module Forms
     end
 
     def show
-      redirect_to form_page_path(@step.form_id, @step.form_slug, current_context.next_page_slug) unless current_context.can_visit?(@step.page_slug)
-      redirect_to review_file_page if answered_file_question?
+      return redirect_to form_page_path(@step.form_id, @step.form_slug, current_context.next_page_slug) unless current_context.can_visit?(@step.page_slug)
+      return redirect_to review_file_page if answered_file_question?
 
       back_link(@step.page_slug)
       setup_instance_vars_for_view
