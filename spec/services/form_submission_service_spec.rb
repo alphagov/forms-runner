@@ -1,9 +1,9 @@
 require "rails_helper"
 
 RSpec.describe FormSubmissionService do
-  subject(:service) { described_class.call(current_context:, email_confirmation_input:, is_preview:) }
+  subject(:service) { described_class.call(current_context:, email_confirmation_input:, mode:) }
 
-  let(:is_preview) { false }
+  let(:mode) { Mode.new }
   let(:email_confirmation_input) { build :email_confirmation_input_opted_in }
 
   let(:form) do
@@ -90,7 +90,7 @@ RSpec.describe FormSubmissionService do
         expect(LogEventService).to have_received(:log_submit).with(
           current_context,
           requested_email_confirmation: true,
-          preview: is_preview,
+          preview: mode.preview?,
           submission_type:,
         )
       end
@@ -137,7 +137,7 @@ RSpec.describe FormSubmissionService do
             service.submit
           }.to change(Submission, :count).by(1)
 
-          expect(Submission.last).to have_attributes(reference:, form_id: form.id, answers: answers.deep_stringify_keys, is_preview: is_preview, mail_message_id:)
+          expect(Submission.last).to have_attributes(reference:, form_id: form.id, answers: answers.deep_stringify_keys, mode: "live", mail_message_id:)
         end
       end
 
@@ -159,7 +159,7 @@ RSpec.describe FormSubmissionService do
               form:,
               timestamp: Time.zone.now,
               submission_reference: reference,
-              is_preview:,
+              is_preview: mode.preview?,
             ).once
           end
         end
@@ -178,7 +178,7 @@ RSpec.describe FormSubmissionService do
       end
 
       context "when form being submitted is from previewed form" do
-        let(:is_preview) { true }
+        let(:mode) { Mode.new("preview-live") }
 
         include_examples "logging"
       end
