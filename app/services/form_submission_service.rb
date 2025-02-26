@@ -90,9 +90,11 @@ private
   end
 
   def submit_via_aws_ses
-    submission = Submission.new(reference: @submission_reference, form_id: @form.id, answers: @current_context.answers, mode: @mode)
-    submission.mail_message_id = aws_ses_submission_service.submit
-    submission.save!
+    submission = Submission.create!(
+      reference: @submission_reference, form_id: @form.id, answers: @current_context.answers, mode: @mode,
+    )
+
+    SendSubmissionJob.perform_later(submission)
   end
 
   def form_title

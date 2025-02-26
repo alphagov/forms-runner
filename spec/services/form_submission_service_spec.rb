@@ -1,6 +1,8 @@
 require "rails_helper"
 
 RSpec.describe FormSubmissionService do
+  include ActiveJob::TestHelper
+
   subject(:service) { described_class.call(current_context:, email_confirmation_input:, mode:) }
 
   let(:mode) { Mode.new }
@@ -122,13 +124,33 @@ RSpec.describe FormSubmissionService do
         let(:aws_ses_submission_service_spy) { instance_double(AwsSesSubmissionService) }
         let(:mail_message_id) { "1234" }
 
+        let(:req_headers) do
+          {
+            "X-API-Token" => Settings.forms_api.auth_key,
+            "Accept" => "application/json",
+          }
+        end
+
         before do
+          ActiveResource::HttpMock.respond_to do |mock|
+            mock.get "/api/v2/forms/1/live", req_headers, form.to_json, 200
+          end
+
+          allow(Flow::Journey).to receive(:new)
+
           allow(AwsSesSubmissionService).to receive(:new).and_return(aws_ses_submission_service_spy)
           allow(aws_ses_submission_service_spy).to receive(:submit).and_return(mail_message_id)
         end
 
-        it "calls AwsSesSubmissionService to submit the form" do
-          service.submit
+        it "enqueues a job to send the submission" do
+          assert_enqueued_with(job: SendSubmissionJob) do
+            service.submit
+          end
+
+          expect(aws_ses_submission_service_spy).not_to have_received(:submit)
+
+          perform_enqueued_jobs
+
           expect(aws_ses_submission_service_spy).to have_received(:submit)
         end
 
@@ -137,7 +159,7 @@ RSpec.describe FormSubmissionService do
             service.submit
           }.to change(Submission, :count).by(1)
 
-          expect(Submission.last).to have_attributes(reference:, form_id: form.id, answers: answers.deep_stringify_keys, mode: "live", mail_message_id:)
+          expect(Submission.last).to have_attributes(reference:, form_id: form.id, answers: answers.deep_stringify_keys, mode: "live", mail_message_id: nil)
         end
       end
 
