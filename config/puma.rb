@@ -40,3 +40,5 @@ pidfile ENV["PIDFILE"] if ENV["PIDFILE"]
 # Specifies the persistent timeout to be higher than AWS ALB default of 60
 # this is to prevent 502s
 persistent_timeout ENV.fetch("RAILS_PERSISTENT_TIMEOUT", 75)
+
+plugin :solid_queue if Rails.env.production?
