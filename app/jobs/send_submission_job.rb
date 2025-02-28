@@ -1,6 +1,11 @@
 class SendSubmissionJob < ApplicationJob
   queue_as :default
 
+  # this translates to approximately 4.5 hours of retrying in total
+  TOTAL_ATTEMPTS = 10
+
+  retry_on Aws::SESV2::Errors::ServiceError, wait: :polynomially_longer, attempts: TOTAL_ATTEMPTS
+
   def perform(submission)
     mode = Mode.new(submission.mode)
 
