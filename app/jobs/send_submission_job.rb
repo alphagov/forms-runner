@@ -1,6 +1,10 @@
 class SendSubmissionJob < ApplicationJob
   queue_as :default
 
+  TOTAL_ATTEMPTS = 10
+
+  retry_on Exception, wait: :polynomially_longer, attempts: TOTAL_ATTEMPTS
+
   def perform(submission)
     mode = Mode.new(submission.mode)
 
