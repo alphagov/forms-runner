@@ -51,9 +51,8 @@ private
   end
 
   def uploaded_files_in_answers
-    @journey.completed_steps
-            .select { |step| step.question.is_a?(Question::File) && step.question.file_uploaded? }
-            .map { |step| [step.question.original_filename, step.question.file_from_s3] }
+    @journey.completed_file_upload_questions
+            .map { |question| [question.original_filename, question.file_from_s3] }
             .to_h
   end
 
