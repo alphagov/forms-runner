@@ -1,4 +1,5 @@
 class Submission < ApplicationRecord
+  delegate :preview?, to: :mode_object
 
   def journey
     @journey ||= Flow::Journey.new(answer_store:, form:)
@@ -8,11 +9,8 @@ class Submission < ApplicationRecord
     @form ||= Api::V1::FormSnapshotRepository.find_with_mode(id: form_id, mode: mode_object)
   end
 
-  def preview?
-    mode_object.preview?
-  end
-
 private
+
   def mode_object
     Mode.new(mode)
   end
@@ -20,5 +18,4 @@ private
   def answer_store
     Store::DatabaseAnswerStore.new(answers)
   end
-
 end
