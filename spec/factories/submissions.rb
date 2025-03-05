@@ -15,5 +15,9 @@ FactoryBot.define do
       }
     end
     mode { "live" }
+
+    trait :sent do
+      mail_message_id { Faker::Alphanumeric.alphanumeric }
+    end
   end
 end
