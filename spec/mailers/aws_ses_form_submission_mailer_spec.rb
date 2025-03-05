@@ -100,6 +100,23 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
       expect(mail.attachments[0].body).to eq(files[0][:file])
       expect(mail.attachments[1].body).to eq(files[1][:file])
     end
+
+    context "when number of files passed in does not match number of attachments" do
+      let(:attachments) { instance_double(Mail::AttachmentsList) }
+
+      before do
+        allow(Mail::AttachmentsList).to receive(:new).and_return(attachments)
+        allow(attachments).to receive(:[])
+        allow(attachments).to receive(:[]=)
+        allow(attachments).to receive(:count).and_return(files.count - 1)
+      end
+
+      it "throws an AttachmentMismatchError" do
+        expect {
+          mail.deliver_now
+        }.to raise_error(AwsSesFormSubmissionMailer::AttachmentMismatchError)
+      end
+    end
   end
 
 private

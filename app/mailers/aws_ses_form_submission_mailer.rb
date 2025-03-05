@@ -1,4 +1,10 @@
 class AwsSesFormSubmissionMailer < ApplicationMailer
+  class AttachmentMismatchError < StandardError
+    def message
+      "Number of files attached does not match number of files passed in"
+    end
+  end
+
   default from: I18n.t("mailer.submission.from", email_address: Settings.ses_submission_email.from_email_address),
           reply_to: Settings.ses_submission_email.reply_to_email_address,
           delivery_method: Rails.configuration.x.aws_ses_form_submission_mailer["delivery_method"]
@@ -11,6 +17,8 @@ class AwsSesFormSubmissionMailer < ApplicationMailer
     files.each do |file|
       attachments[file[:name]] = file[:file]
     end
+
+    raise AttachmentMismatchError if files.count != attachments.count
 
     mail(to: submission_email_address, subject: @subject)
   end
