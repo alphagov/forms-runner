@@ -6,7 +6,7 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
   let(:answer_content) { "My question: My answer" }
   let(:is_preview) { false }
   let(:submission_email_address) { "testing@gov.uk" }
-  let(:files) { {} }
+  let(:files) { [] }
   let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
   let(:payment_url) { nil }
   let(:mailer_options) do
@@ -83,10 +83,8 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
     let(:csv_file_name) { "first-file.csv" }
     let(:png_file_name) { "second-file.png" }
     let(:files) do
-      {
-        csv_file_name => Faker::Lorem.sentence,
-        png_file_name => Faker::Lorem.sentence,
-      }
+      [{ name: csv_file_name, file: Faker::Lorem.sentence },
+       { name: png_file_name, file: Faker::Lorem.sentence }]
     end
 
     it "has 2 attachments" do
@@ -99,8 +97,8 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
     end
 
     it "has the files attached with expected content" do
-      expect(mail.attachments[0].body).to eq(files[csv_file_name])
-      expect(mail.attachments[1].body).to eq(files[png_file_name])
+      expect(mail.attachments[0].body).to eq(files[0][:file])
+      expect(mail.attachments[1].body).to eq(files[1][:file])
     end
   end
 

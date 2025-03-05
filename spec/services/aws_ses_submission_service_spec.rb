@@ -72,7 +72,7 @@ RSpec.describe AwsSesSubmissionService do
             { answer_content: "<h2>What is the meaning of life?</h2><p>42</p>",
               submission_email_address: submission_email,
               mailer_options: instance_of(FormSubmissionService::MailerOptions),
-              files: {} },
+              files: [] },
           ).once
         end
       end
@@ -104,7 +104,7 @@ RSpec.describe AwsSesSubmissionService do
             { answer_content: "<h2>#{question.question_text}</h2><p>#{I18n.t('mailer.submission.file_attached', filename: question.original_filename)}</p>",
               submission_email_address: submission_email,
               mailer_options: instance_of(FormSubmissionService::MailerOptions),
-              files: { question.original_filename => file_content } },
+              files: [{ name: question.original_filename, file: file_content }] },
           ).once
         end
       end
@@ -140,7 +140,7 @@ RSpec.describe AwsSesSubmissionService do
             { answer_content: "<h2>What is the meaning of life?</h2><p>42</p>",
               submission_email_address: submission_email,
               mailer_options: instance_of(FormSubmissionService::MailerOptions),
-              files: { "govuk_forms_form_#{form.id}_#{submission_reference}.csv" => expected_csv_content } },
+              files: [{ name: "govuk_forms_form_#{form.id}_#{submission_reference}.csv", file: expected_csv_content }] },
           ).once
         end
       end
@@ -169,10 +169,10 @@ RSpec.describe AwsSesSubmissionService do
                 { answer_content: "<h2>#{question.question_text}</h2><p>#{I18n.t('mailer.submission.file_attached', filename: question.original_filename)}</p>",
                   submission_email_address: submission_email,
                   mailer_options: instance_of(FormSubmissionService::MailerOptions),
-                  files: {
-                    "govuk_forms_form_#{form.id}_#{submission_reference}.csv" => expected_csv_content,
-                    question.original_filename => file_content,
-                  } },
+                  files: [
+                    { name: question.original_filename, file: file_content },
+                    { name: "govuk_forms_form_#{form.id}_#{submission_reference}.csv", file: expected_csv_content },
+                  ] },
               ).once
             end
           end
@@ -194,7 +194,7 @@ RSpec.describe AwsSesSubmissionService do
               { answer_content: "<h2>What is the meaning of life?</h2><p>42</p>",
                 submission_email_address: submission_email,
                 mailer_options: instance_of(FormSubmissionService::MailerOptions),
-                files: {} },
+                files: [] },
             ).once
           end
         end
