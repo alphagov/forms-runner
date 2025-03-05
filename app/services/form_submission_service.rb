@@ -7,12 +7,12 @@ class FormSubmissionService
 
   MailerOptions = Data.define(:title, :is_preview, :timestamp, :submission_reference, :payment_url)
 
-  def initialize(current_context:, email_confirmation_input:, is_preview:)
+  def initialize(current_context:, email_confirmation_input:, mode:)
     @current_context = current_context
     @form = current_context.form
     @email_confirmation_input = email_confirmation_input
     @requested_email_confirmation = @email_confirmation_input.send_confirmation == "send_email"
-    @is_preview = is_preview
+    @mode = mode
     @timestamp = submission_timestamp
     @submission_reference = ReferenceNumberService.generate
 
@@ -34,7 +34,7 @@ private
     submit_using_form_submission_type
     LogEventService.log_submit(@current_context,
                                requested_email_confirmation: @requested_email_confirmation,
-                               preview: @is_preview,
+                               preview: @mode.preview?,
                                submission_type: @form.submission_type)
   end
 
@@ -77,7 +77,7 @@ private
       form: @form,
       timestamp: @timestamp,
       submission_reference: @submission_reference,
-      is_preview: @is_preview,
+      is_preview: @mode.preview?,
     )
   end
 
@@ -90,9 +90,11 @@ private
   end
 
   def submit_via_aws_ses
-    submission = Submission.new(reference: @submission_reference, form_id: @form.id, answers: @current_context.answers, is_preview: @is_preview)
-    submission.mail_message_id = aws_ses_submission_service.submit
-    submission.save!
+    submission = Submission.create!(
+      reference: @submission_reference, form_id: @form.id, answers: @current_context.answers, mode: @mode,
+    )
+
+    SendSubmissionJob.perform_later(submission)
   end
 
   def form_title
@@ -140,7 +142,7 @@ private
 
   def mailer_options
     MailerOptions.new(title: form_title,
-                      is_preview: @is_preview,
+                      is_preview: @mode.preview?,
                       timestamp: @timestamp,
                       submission_reference: @submission_reference,
                       payment_url: @form.payment_url_with_reference(@submission_reference))
