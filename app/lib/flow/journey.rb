@@ -60,6 +60,12 @@ module Flow
       @form.pages.map { |page| find_or_create(page.id.to_s) }
     end
 
+    def completed_file_upload_questions
+      completed_steps
+              .select { |step| step.question.is_a?(Question::File) && step.question.file_uploaded? }
+              .map(&:question)
+    end
+
   private
 
     def step_is_completed?(question_page_step)

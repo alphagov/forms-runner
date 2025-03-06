@@ -254,4 +254,34 @@ RSpec.describe Flow::Journey do
       end
     end
   end
+
+  describe "#completed_file_upload_questions" do
+    let(:first_page_in_form) { build(:page, answer_type: "file", id: 1, next_page: 2) }
+    let(:second_page_in_form) { build(:page, answer_type: "file", id: 2, next_page: 3) }
+    let(:third_page_in_form) { build(:page, answer_type: "file", id: 3, next_page: 4) }
+    let(:fourth_page_in_form) { build(:page, :with_text_settings, id: 4) }
+    let(:pages_data) { [first_page_in_form, second_page_in_form, third_page_in_form, fourth_page_in_form] }
+
+    let(:answer_store) { Store::SessionAnswerStore.new(store, form.id) }
+    let(:store) do
+      {
+        answers: {
+          "2" =>
+            {
+              "1" => { uploaded_file_key: "key1", original_filename: "file1" },
+              "2" => { original_filename: "" },
+              "3" => { uploaded_file_key: "key2", original_filename: "file2" },
+              "4" => { text: "Example text" },
+            },
+        },
+      }
+    end
+
+    it "returns the answered file upload questions" do
+      completed_file_upload_questions = journey.completed_file_upload_questions
+      expect(completed_file_upload_questions.length).to eq 2
+      expect(completed_file_upload_questions.first.uploaded_file_key).to eq "key1"
+      expect(completed_file_upload_questions.second.uploaded_file_key).to eq "key2"
+    end
+  end
 end

@@ -5,3 +5,5 @@ aws:
 ses_submission_email:
   from_email_address: "local-test@dev.forms.service.gov.uk"
   reply_to_email_address: "local-test@dev.forms.service.gov.uk"
+
+retain_submissions_for_seconds: 60

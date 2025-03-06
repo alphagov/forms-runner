@@ -10,7 +10,7 @@ RSpec.describe AwsSesSubmissionService do
           payment_url:)
   end
   let(:all_steps) { [step] }
-  let(:journey) { instance_double(Flow::Journey, completed_steps: all_steps, all_steps:) }
+  let(:journey) { instance_double(Flow::Journey, completed_steps: all_steps, all_steps:, completed_file_upload_questions: []) }
   let(:question) { build :text, question_text: "What is the meaning of life?", text: "42" }
   let(:step) { build :step, question: }
   let(:is_preview) { false }
@@ -87,6 +87,7 @@ RSpec.describe AwsSesSubmissionService do
 
     context "when answers contain uploaded files" do
       let(:question) { build :file, :with_uploaded_file }
+      let(:journey) { instance_double(Flow::Journey, completed_steps: all_steps, all_steps:, completed_file_upload_questions: [question]) }
       let(:file_content) { Faker::Lorem.sentence }
 
       before do
@@ -148,6 +149,7 @@ RSpec.describe AwsSesSubmissionService do
 
       context "when submission contains a file upload question" do
         let(:question) { build :file, :with_uploaded_file }
+        let(:journey) { instance_double(Flow::Journey, completed_steps: all_steps, all_steps:, completed_file_upload_questions: [question]) }
         let(:file_content) { Faker::Lorem.sentence }
 
         context "when the file upload question has been answered" do
@@ -170,29 +172,6 @@ RSpec.describe AwsSesSubmissionService do
                   files: {
                     "govuk_forms_form_#{form.id}_#{submission_reference}.csv" => expected_csv_content,
                     question.original_filename => file_content,
-                  } },
-              ).once
-            end
-          end
-        end
-
-        context "when the file upload question has been skipped" do
-          let(:question) { build :file, :with_answer_skipped }
-
-          it "calls AwsSesFormSubmissionMailer without including a file for the unanswered question" do
-            travel_to timestamp do
-              allow(AwsSesFormSubmissionMailer).to receive(:submission_email).and_call_original
-
-              service.submit
-
-              expected_csv_content = "Reference,Submitted at,#{question.question_text}\n#{submission_reference},2022-09-14T08:00:00Z,\"\"\n"
-
-              expect(AwsSesFormSubmissionMailer).to have_received(:submission_email).with(
-                { answer_content: "<h2>#{question.question_text}</h2><p>[This question was skipped]</p>",
-                  submission_email_address: submission_email,
-                  mailer_options: instance_of(FormSubmissionService::MailerOptions),
-                  files: {
-                    "govuk_forms_form_#{form.id}_#{submission_reference}.csv" => expected_csv_content,
                   } },
               ).once
             end
