@@ -134,7 +134,7 @@ RSpec.describe Question::File, type: :model do
   end
 
   describe "#show_answer" do
-    let(:original_filename) { Faker::File.file_name }
+    let(:original_filename) { Faker::File.file_name(dir: "", directory_separator: "") }
 
     before do
       question.original_filename = original_filename
