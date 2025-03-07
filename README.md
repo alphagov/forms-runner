@@ -228,6 +228,35 @@ If you want to deliberately raise an exception to test, uncomment out the trigge
 
 [Sentry]: https://sentry.io
 
+### Configuring Solid Queue
+
+We use [Solid Queue] as an adapter for Active Job in deployed environments to run delayed and recurring jobs. Locally, Active Job will use the Async adapter by default, which supports running delayed jobs such as sending submission emails, but not recurring jobs.
+
+In order to test recurring jobs, uncomment the lines in [development.rb](config/environments/development.rb) that set Solid Queue as the Active Job adapter:
+
+```rb
+  config.active_job.queue_adapter = :solid_queue
+  config.solid_queue.connects_to = { database: { writing: :queue } }
+```
+
+Then start Solid queue by running
+
+```bash
+./bin/jobs
+```
+
+On a Mac, you may encounter the process crashing with the error `[__NSCFConstantString initialize] may have been in progress in another thread when fork() was called.`
+
+To fix, this you can set `PGGSSENCMODE=disable` - see this [GitHub rails issue](https://github.com/rails/rails/issues/38560#issuecomment-1881733872).
+
+```bash
+PGGSSENCMODE=disable ./bin/jobs
+```
+
+If the jobs you need to test interact with AWS, follow the instructions for [Getting AWS credentials](#getting-aws-credentials)
+
+[Solid Queue]: https://github.com/rails/solid_queue
+
 ## Deploying apps
 
 The forms-runner app is containerised (see [Dockerfile](Dockerfile)) and can be deployed in the same way you'd normally deploy a containerised app.
