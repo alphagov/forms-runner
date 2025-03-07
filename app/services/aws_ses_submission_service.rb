@@ -31,7 +31,7 @@ private
     Tempfile.create do |file|
       write_submission_csv(file)
 
-      files = files.merge({ csv_filename => File.read(file.path) })
+      files <<= { name: csv_filename, file: File.read(file.path) }
       deliver_submission_email(files)
     end
   end
@@ -52,8 +52,7 @@ private
 
   def uploaded_files_in_answers
     @journey.completed_file_upload_questions
-            .map { |question| [question.original_filename, question.file_from_s3] }
-            .to_h
+            .map { |question| { name: question.original_filename, file: question.file_from_s3 } }
   end
 
   def write_submission_csv(file)
