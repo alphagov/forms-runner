@@ -66,6 +66,14 @@ module Flow
               .map(&:question)
     end
 
+    def populate_disambiguation_suffixes
+      completed_file_upload_questions.each_with_index do |question, index|
+        count = completed_file_upload_questions.take(index).filter { it.original_filename == question.original_filename }.count
+
+        question.disambiguation_suffix = "_#{count}" unless count.zero?
+      end
+    end
+
   private
 
     def step_is_completed?(question_page_step)
