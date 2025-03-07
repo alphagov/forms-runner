@@ -15,7 +15,7 @@ class AwsSesFormSubmissionMailer < ApplicationMailer
     @subject = I18n.t("mailer.submission.subject", form_title: mailer_options.title, reference: mailer_options.submission_reference)
 
     files.each do |file|
-      attachments[file[:name]] = file[:file]
+      attachments[file[:name]] = { body: file[:file], content_id: SecureRandom.uuid }
     end
 
     raise AttachmentMismatchError if files.count != attachments.count

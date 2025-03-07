@@ -101,6 +101,12 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
       expect(mail.attachments[1].body).to eq(files[1][:file])
     end
 
+    it "has the files attached with unique content ids" do
+      expect(mail.attachments[0].content_id.present?).to be true
+      expect(mail.attachments[1].content_id.present?).to be true
+      expect(mail.attachments[0].content_id).not_to eq(mail.attachments[1].content_id)
+    end
+
     context "when number of files passed in does not match number of attachments" do
       let(:attachments) { instance_double(Mail::AttachmentsList) }
 
