@@ -12,12 +12,6 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
     ]
   end
   let(:text_step) { build(:v2_question_page_step, :with_text_settings, id: 3) }
-  let(:req_headers) do
-    {
-      "X-API-Token" => Settings.forms_api.auth_key,
-      "Accept" => "application/json",
-    }
-  end
 
   let(:file_upload_s3_service_spy) { instance_double(Question::FileUploadS3Service) }
 
@@ -28,17 +22,34 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
     }
   end
 
-  let!(:sent_submission_updated_8_days_ago) { create :submission, :sent, reference: "SENT8DAYS", form_id: form_with_file_upload.id, updated_at: 8.days.ago, answers: form_with_file_upload_answers }
-  let!(:sent_submission_updated_7_days_ago) { create :submission, :sent, reference: "SENT7DAYS", form_id: form_without_file_upload.id, updated_at: 7.days.ago }
-  let!(:sent_submission_updated_6_days_ago) { create :submission, :sent, reference: "SENT6DAYS", form_id: form_without_file_upload.id, updated_at: 6.days.ago }
+  let!(:sent_submission_updated_8_days_ago) do
+    create :submission,
+           :sent,
+           reference: "SENT8DAYS",
+           form_id: form_with_file_upload.id,
+           form_document: form_with_file_upload,
+           updated_at: 8.days.ago,
+           answers: form_with_file_upload_answers
+  end
+  let!(:sent_submission_updated_7_days_ago) do
+    create :submission,
+           :sent,
+           reference: "SENT7DAYS",
+           form_id: form_without_file_upload.id,
+           form_document: form_without_file_upload,
+           updated_at: 7.days.ago
+  end
+  let!(:sent_submission_updated_6_days_ago) do
+    create :submission,
+           :sent,
+           reference: "SENT6DAYS",
+           form_id: form_without_file_upload.id,
+           form_document: form_without_file_upload,
+           updated_at: 6.days.ago
+  end
   let!(:unsent_submission) { create :submission, reference: "UNSENT", updated_at: 7.days.ago }
 
   before do
-    ActiveResource::HttpMock.respond_to do |mock|
-      mock.get "/api/v2/forms/#{form_with_file_upload.id}/live", req_headers, form_with_file_upload.to_json, 200
-      mock.get "/api/v2/forms/#{form_without_file_upload.id}/live", req_headers, form_without_file_upload.to_json, 200
-    end
-
     allow(Question::FileUploadS3Service).to receive(:new).and_return(file_upload_s3_service_spy)
 
     described_class.perform_later

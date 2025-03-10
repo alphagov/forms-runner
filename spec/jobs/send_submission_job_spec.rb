@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe SendSubmissionJob, type: :job do
   include ActiveJob::TestHelper
 
-  let(:submission) { create :submission }
+  let(:submission) { create :submission, form_document: form }
   let(:form) { build(:form, id: 1, name: "Form 1") }
   let(:question) { build :text, question_text: "What is the meaning of life?", text: "42" }
   let(:step) { build :step, question: }
@@ -11,12 +11,6 @@ RSpec.describe SendSubmissionJob, type: :job do
   let(:journey) { instance_double(Flow::Journey, completed_steps: all_steps, all_steps:) }
   let(:aws_ses_submission_service_spy) { instance_double(AwsSesSubmissionService) }
   let(:mail_message_id) { "1234" }
-  let(:req_headers) do
-    {
-      "X-API-Token" => Settings.forms_api.auth_key,
-      "Accept" => "application/json",
-    }
-  end
   let(:mailer_options) do
     FormSubmissionService::MailerOptions.new(
       title: form.name,
@@ -28,10 +22,6 @@ RSpec.describe SendSubmissionJob, type: :job do
   end
 
   before do
-    ActiveResource::HttpMock.respond_to do |mock|
-      mock.get "/api/v2/forms/1/live", req_headers, form.to_json, 200
-    end
-
     allow(Flow::Journey).to receive(:new).and_return(journey)
     allow(AwsSesSubmissionService).to receive(:new).with(form:, journey:, mailer_options:).and_return(aws_ses_submission_service_spy)
   end
