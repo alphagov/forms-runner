@@ -1,5 +1,6 @@
 require "rails_helper"
 
+# rubocop:disable RSpec/InstanceVariable
 RSpec.describe DeleteSubmissionsJob, type: :job do
   include ActiveJob::TestHelper
 
@@ -49,16 +50,29 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
   end
   let!(:unsent_submission) { create :submission, reference: "UNSENT", updated_at: 7.days.ago }
 
+  let(:output) { StringIO.new }
+  let(:logger) do
+    ApplicationLogger.new(output).tap do |logger|
+      logger.formatter = JsonLogFormatter.new
+    end
+  end
+
   before do
+    Rails.logger.broadcast_to logger
+
     allow(Question::FileUploadS3Service).to receive(:new).and_return(file_upload_s3_service_spy)
 
-    described_class.perform_later
+    job = described_class.perform_later
+    @job_id = job.job_id
+  end
+
+  after do
+    Rails.logger.stop_broadcasting_to logger
   end
 
   context "when deleting uploaded files is successful" do
     before do
       allow(file_upload_s3_service_spy).to receive(:delete_from_s3)
-      allow(EventLogger).to receive(:log_form_event)
     end
 
     it "deletes the files from S3" do
@@ -85,29 +99,44 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
 
     it "logs deletion" do
       perform_enqueued_jobs
-      expect(EventLogger).to have_received(:log_form_event).once.with("submission_deleted", {
-        submission_reference: "SENT8DAYS", form_id: form_with_file_upload.id, form_name: form_with_file_upload.name, job_id: anything
-      })
-      expect(EventLogger).to have_received(:log_form_event).once.with("submission_deleted", {
-        submission_reference: "SENT7DAYS", form_id: form_without_file_upload.id, form_name: form_without_file_upload.name, job_id: anything
-      })
+      expect(log_lines).to include(
+        hash_including(
+          "level" => "INFO",
+          "message" => "Form event",
+          "event" => "form_submission_deleted",
+          "form_id" => form_with_file_upload.id,
+          "form_name" => form_with_file_upload.name,
+          "submission_reference" => sent_submission_updated_8_days_ago.reference,
+          "job_id" => @job_id,
+        ),
+        hash_including(
+          "level" => "INFO",
+          "message" => "Form event",
+          "event" => "form_submission_deleted",
+          "form_id" => form_without_file_upload.id,
+          "form_name" => form_without_file_upload.name,
+          "submission_reference" => sent_submission_updated_7_days_ago.reference,
+          "job_id" => @job_id,
+        ),
+      )
     end
   end
 
   context "when deleting uploaded files fails" do
     before do
       allow(file_upload_s3_service_spy).to receive(:delete_from_s3).and_raise(StandardError, "Test error")
-      allow(Rails.logger).to receive(:warn).at_least(:once)
       allow(Sentry).to receive(:capture_exception)
     end
 
     it "logs at warn level" do
       perform_enqueued_jobs
-      expect(Rails.logger).to have_received(:warn).with("Error deleting submission - StandardError: Test error", {
-        form_id: form_with_file_upload.id,
-        submission_reference: sent_submission_updated_8_days_ago.reference,
-        job_id: anything,
-      })
+      expect(log_lines).to include(hash_including(
+                                     "level" => "WARN",
+                                     "message" => "Error deleting submission - StandardError: Test error",
+                                     "form_id" => form_with_file_upload.id,
+                                     "submission_reference" => sent_submission_updated_8_days_ago.reference,
+                                     "job_id" => @job_id,
+                                   ))
     end
 
     it "sends error to Sentry" do
@@ -125,4 +154,9 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
       expect(Submission.exists?(sent_submission_updated_7_days_ago.id)).to be false
     end
   end
+
+  def log_lines
+    output.string.split("\n").map { |line| JSON.parse(line) }
+  end
 end
+# rubocop:enable RSpec/InstanceVariable
