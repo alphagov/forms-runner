@@ -34,7 +34,7 @@ private
     begin
       message_to_hash(msg)
         .merge(attribs || {})
-        .merge(CurrentLoggingAttributes.as_hash)
+        .merge(CurrentRequestLoggingAttributes.as_hash)
         .merge(CurrentJobLoggingAttributes.as_hash)
         .compact
     rescue NameError

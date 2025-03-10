@@ -18,7 +18,7 @@ module Forms
 
     def set_logging_attributes
       super
-      CurrentLoggingAttributes.form_name = current_form.name
+      CurrentRequestLoggingAttributes.form_name = current_form.name
     end
 
   private

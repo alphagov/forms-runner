@@ -4,7 +4,7 @@ module Forms
 
     def set_logging_attributes
       super
-      CurrentLoggingAttributes.question_number = @step.page_number if @step&.page_number
+      CurrentRequestLoggingAttributes.question_number = @step.page_number if @step&.page_number
     end
 
     def show

@@ -3,8 +3,8 @@ module Forms
     def set_logging_attributes
       super
       if params[:email_confirmation_input].present?
-        CurrentLoggingAttributes.confirmation_email_reference = email_confirmation_input_params[:confirmation_email_reference] if email_confirmation_input_params[:send_confirmation] == "send_email"
-        CurrentLoggingAttributes.submission_email_reference = email_confirmation_input_params[:submission_email_reference]
+        CurrentRequestLoggingAttributes.confirmation_email_reference = email_confirmation_input_params[:confirmation_email_reference] if email_confirmation_input_params[:send_confirmation] == "send_email"
+        CurrentRequestLoggingAttributes.submission_email_reference = email_confirmation_input_params[:submission_email_reference]
       end
     end
 
