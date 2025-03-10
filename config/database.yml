@@ -31,7 +31,7 @@ development:
   queue:
     <<: *primary_development
     database: forms_runner_development_queue
-    migrations_path: db/queue_migrate
+    migrations_paths: db/queue_migrate
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
