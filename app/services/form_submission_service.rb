@@ -91,7 +91,11 @@ private
 
   def submit_via_aws_ses
     submission = Submission.create!(
-      reference: @submission_reference, form_id: @form.id, answers: @current_context.answers, mode: @mode,
+      reference: @submission_reference,
+      form_id: @form.id,
+      answers: @current_context.answers,
+      mode: @mode,
+      form_document: @form.document_json,
     )
 
     SendSubmissionJob.perform_later(submission)

@@ -20,8 +20,10 @@ RSpec.describe FormSubmissionService do
           submission_email:,
           payment_url:,
           submission_type:,
-          pages:)
+          pages:,
+          document_json: form_document)
   end
+  let(:form_document) { build(:v2_form_document).to_h.with_indifferent_access }
   let(:pages) { [build(:page, id: 2, answer_type: "text")] }
   let(:submission_type) { "email" }
   let(:what_happens_next_markdown) { "We usually respond to applications within 10 working days." }
@@ -159,7 +161,8 @@ RSpec.describe FormSubmissionService do
             service.submit
           }.to change(Submission, :count).by(1)
 
-          expect(Submission.last).to have_attributes(reference:, form_id: form.id, answers: answers.deep_stringify_keys, mode: "live", mail_message_id: nil)
+          expect(Submission.last).to have_attributes(reference:, form_id: form.id, answers: answers.deep_stringify_keys,
+                                                     mode: "live", mail_message_id: nil, form_document: form_document)
         end
       end
 

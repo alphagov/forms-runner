@@ -1,6 +1,8 @@
 require "rails_helper"
 
 feature "Fill in and submit a form with a file upload question", type: :feature do
+  include ActiveJob::TestHelper
+
   let(:steps) { [(build :v2_question_page_step, answer_type: "file", id: 1, routing_conditions: [], question_text:)] }
   let(:form) { build :v2_form_document, :live?, id: 1, name: "Fill in this form", steps:, start_page: 1 }
   let(:question_text) { Faker::Lorem.question }
@@ -59,6 +61,7 @@ feature "Fill in and submit a form with a file upload question", type: :feature 
       and_i_submit_my_form
       then_my_form_should_be_submitted
       and_i_should_receive_a_reference_number
+      and_an_email_submission_should_have_been_sent
     end
   end
 
@@ -124,6 +127,15 @@ feature "Fill in and submit a form with a file upload question", type: :feature 
 
   def and_i_should_receive_a_reference_number
     expect(page).to have_text reference
+  end
+
+  def and_an_email_submission_should_have_been_sent
+    perform_enqueued_jobs
+    expect(ActionMailer::Base.deliveries.first).to be_present
+
+    delivered_email = ActionMailer::Base.deliveries.first
+
+    expect(delivered_email.body.parts.find { |p| p.content_type.match(/html/) }.body.raw_source).to match(/a-file.txt/)
   end
 
   def then_i_see_an_error_message_that_the_file_contains_a_virus
