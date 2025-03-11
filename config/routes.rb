@@ -27,6 +27,10 @@ Rails.application.routes.draw do
       answer_constraints = { answer_index: /\d+/ }
       page_answer_defaults = { answer_index: 1 }
 
+      get "/:page_slug/exit" => "forms/exit_pages#show",
+          as: :exit_page,
+          constraints: page_constraints
+
       get "/:page_slug/add-another-answer/change" => "forms/add_another_answer#show",
           as: :change_add_another_answer,
           constraints: page_constraints,
