@@ -106,6 +106,16 @@ class Step
     end
   end
 
+  def has_exit_page_condition?
+    return false unless routing_conditions&.first.respond_to?(:exit_page_markdown)
+
+    routing_conditions.first.exit_page_markdown.is_a?(String)
+  end
+
+  def exit_page_condition_matches?
+    first_condition_matches? && has_exit_page_condition?
+  end
+
 private
 
   def goto_condition_page_slug(condition)
