@@ -28,7 +28,7 @@ module Question
       # .odt:
       "application/vnd.oasis.opendocument.text",
     ].freeze
-    FILE_MAX_FILENAME_LENGTH = 255
+    FILE_MAX_FILENAME_LENGTH = 100
 
     def show_answer
       original_filename

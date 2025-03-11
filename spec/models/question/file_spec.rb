@@ -179,28 +179,28 @@ RSpec.describe Question::File, type: :model do
 
     let(:original_filename) { "#{file_basename}#{file_extension}" }
     let(:filename_suffix) { "" }
-    let(:maximum_file_basename_length) { 255 - filename_suffix.length - file_extension.length }
+    let(:maximum_file_basename_length) { 100 - filename_suffix.length - file_extension.length }
 
     let(:attributes) { { original_filename:, filename_suffix: } }
 
     context "when no suffix is supplied" do
-      context "when the filename and extension are less than or equal to 255 characters" do
+      context "when the filename and extension are less than or equal to 100 characters" do
         let(:file_basename) { Faker::Alphanumeric.alpha(number: maximum_file_basename_length) }
 
         it "returns the original_filename" do
           expect(question.name_with_filename_suffix).to eq original_filename
-          expect(question.name_with_filename_suffix.length).to eq 255
+          expect(question.name_with_filename_suffix.length).to eq 100
         end
       end
 
-      context "when the filename and extension are over 255 characters" do
+      context "when the filename and extension are over 100 characters" do
         let(:file_basename) { Faker::Alphanumeric.alpha(number: maximum_file_basename_length + 1) }
 
         it "returns the original_filename" do
           truncated_basename = file_basename.truncate(maximum_file_basename_length, omission: "")
           truncated_filename = "#{truncated_basename}#{file_extension}"
           expect(question.name_with_filename_suffix).to eq truncated_filename
-          expect(question.name_with_filename_suffix.length).to eq 255
+          expect(question.name_with_filename_suffix.length).to eq 100
         end
       end
     end
@@ -208,24 +208,24 @@ RSpec.describe Question::File, type: :model do
     context "when a suffix is supplied" do
       let(:filename_suffix) { "_1" }
 
-      context "when the filename, suffix and extension are less than or equal to 255 characters" do
+      context "when the filename, suffix and extension are less than or equal to 100 characters" do
         let(:file_basename) { Faker::Alphanumeric.alpha(number: maximum_file_basename_length) }
 
         it "returns the original filename with the suffix" do
           filename_with_suffix = "#{file_basename}#{filename_suffix}#{file_extension}"
           expect(question.name_with_filename_suffix).to eq filename_with_suffix
-          expect(question.name_with_filename_suffix.length).to eq 255
+          expect(question.name_with_filename_suffix.length).to eq 100
         end
       end
 
-      context "when the filename, suffix and extension are over 255 characters" do
+      context "when the filename, suffix and extension are over 100 characters" do
         let(:file_basename) { Faker::Alphanumeric.alpha(number: maximum_file_basename_length + 1) }
 
         it "returns the truncated filename with suffix" do
           truncated_basename = file_basename.truncate(maximum_file_basename_length, omission: "")
           truncated_filename_with_suffix = "#{truncated_basename}#{filename_suffix}#{file_extension}"
           expect(question.name_with_filename_suffix).to eq truncated_filename_with_suffix
-          expect(question.name_with_filename_suffix.length).to eq 255
+          expect(question.name_with_filename_suffix.length).to eq 100
         end
       end
     end
