@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe CurrentLoggingAttributes, type: :model do
+RSpec.describe CurrentRequestLoggingAttributes, type: :model do
   subject(:current) { described_class.new }
 
   let(:submission_email_id) { "a-submission-email-id" }

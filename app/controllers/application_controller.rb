@@ -2,7 +2,7 @@
 
 class ApplicationController < ActionController::Base
   before_action :set_request_id
-  before_action :set_logging_attributes
+  before_action :set_request_logging_attributes
   before_action :check_maintenance_mode_is_enabled
   after_action :add_robots_header
 
@@ -26,14 +26,14 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def set_logging_attributes
-    CurrentLoggingAttributes.request_host = request.host
-    CurrentLoggingAttributes.request_id = request.request_id
-    CurrentLoggingAttributes.form_id = params[:form_id] if params[:form_id].present?
-    CurrentLoggingAttributes.page_id = params[:page_slug] if params[:page_slug].present? && params[:page_slug].match(Page::PAGE_ID_REGEX)
-    CurrentLoggingAttributes.page_slug = params[:page_slug] if params[:page_slug].present?
-    CurrentLoggingAttributes.session_id_hash = session_id_hash
-    CurrentLoggingAttributes.trace_id = request.env["HTTP_X_AMZN_TRACE_ID"] if request.env["HTTP_X_AMZN_TRACE_ID"].present?
+  def set_request_logging_attributes
+    CurrentRequestLoggingAttributes.request_host = request.host
+    CurrentRequestLoggingAttributes.request_id = request.request_id
+    CurrentRequestLoggingAttributes.form_id = params[:form_id] if params[:form_id].present?
+    CurrentRequestLoggingAttributes.page_id = params[:page_slug] if params[:page_slug].present? && params[:page_slug].match(Page::PAGE_ID_REGEX)
+    CurrentRequestLoggingAttributes.page_slug = params[:page_slug] if params[:page_slug].present?
+    CurrentRequestLoggingAttributes.session_id_hash = session_id_hash
+    CurrentRequestLoggingAttributes.trace_id = request.env["HTTP_X_AMZN_TRACE_ID"] if request.env["HTTP_X_AMZN_TRACE_ID"].present?
   end
 
   def log_rescued_exception(exception)
@@ -57,8 +57,8 @@ class ApplicationController < ActionController::Base
     logger.warn message.join("\n")
 
     # add exception to request logs with same format used by ActiveSupport::Notifications::Instrumenter
-    CurrentLoggingAttributes.rescued_exception = [exception.class.name, exception.message]
-    CurrentLoggingAttributes.rescued_exception_trace = message
+    CurrentRequestLoggingAttributes.rescued_exception = [exception.class.name, exception.message]
+    CurrentRequestLoggingAttributes.rescued_exception_trace = message
 
     # send exception to Sentry
     Sentry.capture_exception(exception)

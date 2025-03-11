@@ -66,7 +66,7 @@ module FormsRunner
     config.lograge.keep_original_rails_log = false
 
     config.lograge.custom_options = lambda do |event|
-      CurrentLoggingAttributes.as_hash.merge(exception: event.payload[:exception]).compact
+      CurrentRequestLoggingAttributes.as_hash.merge(exception: event.payload[:exception]).compact
     end
 
     # Use custom logger and formatter to log in JSON with request context fields. To use conventional

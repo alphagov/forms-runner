@@ -40,7 +40,7 @@ private
                                 mailer_options: @mailer_options,
                                 csv_file:).deliver_now
 
-    CurrentLoggingAttributes.submission_email_id = mail.govuk_notify_response.id
+    CurrentRequestLoggingAttributes.submission_email_id = mail.govuk_notify_response.id
   end
 
   def deliver_submission_email_with_csv_attachment_with_fallback

@@ -7,6 +7,8 @@ class SendSubmissionJob < ApplicationJob
   retry_on Aws::SESV2::Errors::ServiceError, wait: :polynomially_longer, attempts: TOTAL_ATTEMPTS
 
   def perform(submission)
+    set_submission_logging_attributes(submission)
+
     form = submission.form
     mailer_options = FormSubmissionService::MailerOptions.new(title: form.name,
                                                               is_preview: submission.preview?,

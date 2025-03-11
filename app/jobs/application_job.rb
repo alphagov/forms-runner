@@ -1,9 +1,8 @@
-# frozen_string_literal: true
-
 class ApplicationJob < ActiveJob::Base
-  # Automatically retry jobs that encountered a deadlock
-  # retry_on ActiveRecord::Deadlocked
-
-  # Most jobs are safe to ignore if the underlying records are no longer available
-  # discard_on ActiveJob::DeserializationError
+  def set_submission_logging_attributes(submission)
+    CurrentJobLoggingAttributes.job_id = job_id
+    CurrentJobLoggingAttributes.form_id = submission.form.id
+    CurrentJobLoggingAttributes.form_name = submission.form.name
+    CurrentJobLoggingAttributes.submission_reference = submission.reference
+  end
 end

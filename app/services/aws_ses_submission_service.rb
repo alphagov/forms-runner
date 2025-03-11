@@ -42,7 +42,7 @@ private
                                                        mailer_options: @mailer_options,
                                                        files:).deliver_now
 
-    CurrentLoggingAttributes.submission_email_id = mail.message_id
+    CurrentJobLoggingAttributes.mail_message_id = mail.message_id
     mail.message_id
   end
 

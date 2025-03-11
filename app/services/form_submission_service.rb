@@ -16,7 +16,7 @@ class FormSubmissionService
     @timestamp = submission_timestamp
     @submission_reference = ReferenceNumberService.generate
 
-    CurrentLoggingAttributes.submission_reference = @submission_reference
+    CurrentRequestLoggingAttributes.submission_reference = @submission_reference
   end
 
   def submit
@@ -59,7 +59,7 @@ private
       mailer_options:,
     ).deliver_now
 
-    CurrentLoggingAttributes.confirmation_email_id = mail.govuk_notify_response.id
+    CurrentRequestLoggingAttributes.confirmation_email_id = mail.govuk_notify_response.id
   end
 
   def notify_submission_service
