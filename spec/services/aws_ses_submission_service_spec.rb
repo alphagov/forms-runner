@@ -101,10 +101,10 @@ RSpec.describe AwsSesSubmissionService do
           service.submit
 
           expect(AwsSesFormSubmissionMailer).to have_received(:submission_email).with(
-            { answer_content: "<h2>#{question.question_text}</h2><p>#{I18n.t('mailer.submission.file_attached', filename: question.original_filename)}</p>",
+            { answer_content: "<h2>#{question.question_text}</h2><p>#{I18n.t('mailer.submission.file_attached', filename: question.name_with_filename_suffix)}</p>",
               submission_email_address: submission_email,
               mailer_options: instance_of(FormSubmissionService::MailerOptions),
-              files: { question.original_filename => file_content } },
+              files: { question.name_with_filename_suffix => file_content } },
           ).once
         end
       end
@@ -163,15 +163,15 @@ RSpec.describe AwsSesSubmissionService do
 
               service.submit
 
-              expected_csv_content = "Reference,Submitted at,#{question.question_text}\n#{submission_reference},2022-09-14T08:00:00Z,#{question.original_filename}\n"
+              expected_csv_content = "Reference,Submitted at,#{question.question_text}\n#{submission_reference},2022-09-14T08:00:00Z,#{question.name_with_filename_suffix}\n"
 
               expect(AwsSesFormSubmissionMailer).to have_received(:submission_email).with(
-                { answer_content: "<h2>#{question.question_text}</h2><p>#{I18n.t('mailer.submission.file_attached', filename: question.original_filename)}</p>",
+                { answer_content: "<h2>#{question.question_text}</h2><p>#{I18n.t('mailer.submission.file_attached', filename: question.name_with_filename_suffix)}</p>",
                   submission_email_address: submission_email,
                   mailer_options: instance_of(FormSubmissionService::MailerOptions),
                   files: {
                     "govuk_forms_form_#{form.id}_#{submission_reference}.csv" => expected_csv_content,
-                    question.original_filename => file_content,
+                    question.name_with_filename_suffix => file_content,
                   } },
               ).once
             end
