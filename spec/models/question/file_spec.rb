@@ -1,7 +1,9 @@
 require "rails_helper"
 
 RSpec.describe Question::File, type: :model do
-  subject(:question) { described_class.new({}, options) }
+  subject(:question) { described_class.new(attributes, options) }
+
+  let(:attributes) { {} }
 
   let(:options) { { is_optional:, question_text: } }
 
@@ -143,10 +145,40 @@ RSpec.describe Question::File, type: :model do
     it "returns the original_filename" do
       expect(question.show_answer).to eq original_filename
     end
+
+    context "when the file has a suffix set" do
+      let(:attributes) { { original_filename:, filename_suffix: } }
+      let(:filename_suffix) { "_1" }
+
+      it "returns the filename without a suffix" do
+        expect(question.show_answer).to eq original_filename
+      end
+    end
+  end
+
+  describe "#show_answer_in_email" do
+    let(:original_filename) { Faker::File.file_name(dir: "", directory_separator: "") }
+    let(:attributes) { { original_filename: } }
+
+    it "returns the original_filename" do
+      expect(question.show_answer_in_email).to eq I18n.t("mailer.submission.file_attached", filename: original_filename)
+    end
+
+    context "when the file has a suffix set" do
+      let(:attributes) { { original_filename:, filename_suffix: } }
+      let(:filename_suffix) { "_1" }
+
+      it "returns the filename with a suffix" do
+        extension = File.extname(original_filename)
+        basename = File.basename(original_filename, ".*")
+        suffixed_filename = "#{basename}#{filename_suffix}#{extension}"
+        expect(question.show_answer_in_email).to eq I18n.t("mailer.submission.file_attached", filename: suffixed_filename)
+      end
+    end
   end
 
   describe "#file_from_s3" do
-    subject(:question) { described_class.new({ original_filename:, uploaded_file_key: }, options) }
+    let(:attributes) { { original_filename:, uploaded_file_key: } }
 
     let(:original_filename) { "a-file.png" }
     let(:uploaded_file_key) { Faker::Alphanumeric.alphanumeric }
@@ -162,7 +194,7 @@ RSpec.describe Question::File, type: :model do
   end
 
   describe "#delete_from_s3" do
-    subject(:question) { described_class.new({ original_filename: "a-file.png", uploaded_file_key: }, options) }
+    let(:attributes) { { original_filename: "a-file.png", uploaded_file_key: } }
 
     let(:uploaded_file_key) { Faker::Alphanumeric.alphanumeric }
 
@@ -177,7 +209,7 @@ RSpec.describe Question::File, type: :model do
   end
 
   describe "#file_uploaded?" do
-    subject(:question) { described_class.new({ uploaded_file_key: }, options) }
+    let(:attributes) { { uploaded_file_key: } }
 
     context "when a file has been uploaded" do
       let(:uploaded_file_key) { Faker::Alphanumeric.alphanumeric }

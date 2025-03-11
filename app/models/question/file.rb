@@ -5,6 +5,7 @@ module Question
     attribute :file
     attribute :original_filename
     attribute :uploaded_file_key
+    attribute :filename_suffix, default: ""
     validates :file, presence: true, unless: :is_optional?
     validate :validate_file_size
     validate :validate_file_extension
@@ -35,7 +36,14 @@ module Question
     def show_answer_in_email
       return nil if original_filename.blank?
 
-      I18n.t("mailer.submission.file_attached", filename: original_filename)
+      I18n.t("mailer.submission.file_attached", filename: name_with_filename_suffix)
+    end
+
+    def name_with_filename_suffix
+      extension = ::File.extname(original_filename)
+      base_name = ::File.basename(original_filename, extension)
+
+      "#{base_name}#{filename_suffix}#{extension}"
     end
 
     def before_save
