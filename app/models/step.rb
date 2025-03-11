@@ -79,6 +79,10 @@ class Step
   end
 
   def next_page_slug_after_routing
+    if exit_page_condition_matches?
+      return nil
+    end
+
     if first_condition_default?
       return goto_condition_page_slug(routing_conditions.first)
     end
