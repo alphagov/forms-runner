@@ -2,7 +2,13 @@ production:
   delete_submissions_job:
     class: DeleteSubmissionsJob
     schedule: every hour
+  receive_bounces_and_complaints_job:
+    class: ReceiveSubmissionBouncesAndComplaintsJob
+    schedule: every 10 minutes
 development:
   delete_submissions_job:
     class: DeleteSubmissionsJob
+    schedule: every minute
+  receive_bounces_and_complaints_job:
+    class: ReceiveSubmissionBouncesAndComplaintsJob
     schedule: every minute
