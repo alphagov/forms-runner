@@ -16,7 +16,7 @@ module Forms
       render template: "errors/repeat_submission", locals: { current_form: }
     end
 
-    def set_logging_attributes
+    def set_request_logging_attributes
       super
       CurrentRequestLoggingAttributes.form_name = current_form.name
     end

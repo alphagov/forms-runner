@@ -1,8 +1,8 @@
 module Forms
   class PageController < BaseController
-    before_action :prepare_step, :set_logging_attributes, :changing_existing_answer, :check_goto_page_routing_error
+    before_action :prepare_step, :set_request_logging_attributes, :changing_existing_answer, :check_goto_page_routing_error
 
-    def set_logging_attributes
+    def set_request_logging_attributes
       super
       CurrentRequestLoggingAttributes.question_number = @step.page_number if @step&.page_number
     end

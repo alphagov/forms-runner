@@ -2,7 +2,7 @@
 
 class ApplicationController < ActionController::Base
   before_action :set_request_id
-  before_action :set_logging_attributes
+  before_action :set_request_logging_attributes
   before_action :check_maintenance_mode_is_enabled
   after_action :add_robots_header
 
@@ -26,7 +26,7 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def set_logging_attributes
+  def set_request_logging_attributes
     CurrentRequestLoggingAttributes.request_host = request.host
     CurrentRequestLoggingAttributes.request_id = request.request_id
     CurrentRequestLoggingAttributes.form_id = params[:form_id] if params[:form_id].present?

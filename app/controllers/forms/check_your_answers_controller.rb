@@ -1,6 +1,6 @@
 module Forms
   class CheckYourAnswersController < BaseController
-    def set_logging_attributes
+    def set_request_logging_attributes
       super
       if params[:email_confirmation_input].present?
         CurrentRequestLoggingAttributes.confirmation_email_reference = email_confirmation_input_params[:confirmation_email_reference] if email_confirmation_input_params[:send_confirmation] == "send_email"
