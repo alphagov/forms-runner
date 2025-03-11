@@ -174,6 +174,24 @@ RSpec.describe Question::File, type: :model do
     end
   end
 
+  describe "#show_answer_in_csv" do
+    let(:original_filename) { Faker::File.file_name(dir: "", directory_separator: "") }
+    let(:attributes) { { original_filename: } }
+
+    it "returns the original_filename" do
+      expect(question.show_answer_in_csv).to eq({ question.question_text => question.name_with_filename_suffix })
+    end
+
+    context "when the file has a suffix set" do
+      let(:attributes) { { original_filename:, filename_suffix: } }
+      let(:filename_suffix) { "_1" }
+
+      it "returns the filename with a suffix" do
+        expect(question.show_answer_in_csv).to eq({ question.question_text => question.name_with_filename_suffix })
+      end
+    end
+  end
+
   describe "name_with_filename_suffix" do
     let(:file_extension) { ".txt" }
 

@@ -40,6 +40,12 @@ module Question
       I18n.t("mailer.submission.file_attached", filename: name_with_filename_suffix)
     end
 
+    def show_answer_in_csv
+      return nil if original_filename.blank?
+
+      { question_text => name_with_filename_suffix }
+    end
+
     def name_with_filename_suffix
       extension = ::File.extname(original_filename)
 
