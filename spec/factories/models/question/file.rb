@@ -10,7 +10,7 @@ FactoryBot.define do
     uploaded_file_key { nil }
 
     trait :with_uploaded_file do
-      original_filename { Faker::File.file_name(ext: "txt") }
+      original_filename { Faker::File.file_name(dir: "", directory_separator: "", ext: "txt") }
       uploaded_file_key { Faker::Alphanumeric.alphanumeric }
     end
 

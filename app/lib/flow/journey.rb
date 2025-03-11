@@ -24,6 +24,8 @@ module Flow
       @form = form
       @step_factory = StepFactory.new(form:)
       @completed_steps = generate_completed_steps
+
+      populate_file_suffixes
     end
 
     def find_or_create(page_slug)
@@ -64,6 +66,14 @@ module Flow
       completed_steps
               .select { |step| step.question.is_a?(Question::File) && step.question.file_uploaded? }
               .map(&:question)
+    end
+
+    def populate_file_suffixes
+      completed_file_upload_questions.each_with_index do |question, index|
+        count = completed_file_upload_questions.take(index).filter { it.original_filename == question.original_filename }.count
+
+        question.filename_suffix = count.zero? ? "" : "_#{count}"
+      end
     end
 
   private
