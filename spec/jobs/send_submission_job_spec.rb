@@ -54,6 +54,7 @@ RSpec.describe SendSubmissionJob, type: :job do
     context "and the error is an Aws::SESV2::Errors::ServiceError" do
       before do
         allow(aws_ses_submission_service_spy).to receive(:submit).and_raise(Aws::SESV2::Errors::ServiceError.new(nil, "Test SES error", nil))
+        allow(CloudWatchService).to receive(:log_job_failure)
       end
 
       it "retries for the configured number of attempts" do
@@ -66,6 +67,13 @@ RSpec.describe SendSubmissionJob, type: :job do
 
       it "raises an error after all attempts fail" do
         expect { described_class.new.perform(submission) }.to raise_error(Aws::SESV2::Errors::ServiceError)
+      end
+
+      it "sends cloudwatch metric for failure" do
+        described_class.new.perform(submission)
+        expect(CloudWatchService).to have_received(:log_job_failure).with("SendSubmissionJob")
+      rescue Aws::SESV2::Errors::ServiceError # If we don't catch the error, the test aborts prematurely
+        nil
       end
     end
 
@@ -84,6 +92,13 @@ RSpec.describe SendSubmissionJob, type: :job do
 
       it "raises an error immediately" do
         expect { described_class.new.perform(submission) }.to raise_error(StandardError)
+      end
+
+      it "sends cloudwatch metric for failure" do
+        described_class.new.perform(submission)
+        expect(CloudWatchService).to have_received(:log_job_failure).with("SendSubmissionJob")
+      rescue StandardError # If we don't catch the error, the test aborts prematurely
+        nil
       end
     end
   end

@@ -100,6 +100,26 @@ class CloudWatchService
     )
   end
 
+  def self.log_job_failure(job_name)
+    return unless Settings.cloudwatch_metrics_enabled
+
+    cloudwatch_client.put_metric_data(
+      namespace: JOBS_METRICS_NAMESPACE,
+      metric_data: [
+        {
+          metric_name: "Failure",
+          dimensions: [
+            environment_dimension,
+            service_name_dimension,
+            job_dimension(job_name),
+          ],
+          value: 1,
+          unit: "Count",
+        },
+      ],
+    )
+  end
+
   def self.old_form_metrics_namespace
     "forms/#{Settings.forms_env}".downcase
   end
