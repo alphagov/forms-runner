@@ -202,4 +202,45 @@ RSpec.describe CloudWatchService do
       described_class.log_job_failure(job_name)
     end
   end
+
+  describe ".log_job_started" do
+    context "when CloudWatch metrics are disabled" do
+      let(:cloudwatch_metrics_enabled) { false }
+
+      it "does not call the CloudWatch client with .put_metric_data" do
+        expect(cloudwatch_client).not_to receive(:put_metric_data)
+
+        described_class.log_job_started(job_name)
+      end
+    end
+
+    it "calls the cloudwatch client with put_metric_data" do
+      expect(cloudwatch_client).to receive(:put_metric_data).with(
+        namespace: "Forms/Jobs",
+        metric_data: [
+          {
+            metric_name: "Started",
+            dimensions: [
+              {
+                name: "Environment",
+                value: forms_env,
+              },
+              {
+                name: "ServiceName",
+                value: "forms-runner",
+              },
+              {
+                name: "JobName",
+                value: job_name,
+              },
+            ],
+            value: 1,
+            unit: "Count",
+          },
+        ],
+      )
+
+      described_class.log_job_started(job_name)
+    end
+  end
 end

@@ -61,6 +61,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
     Rails.logger.broadcast_to logger
 
     allow(Question::FileUploadS3Service).to receive(:new).and_return(file_upload_s3_service_spy)
+    allow(CloudWatchService).to receive(:log_job_started)
 
     job = described_class.perform_later
     @job_id = job.job_id
@@ -120,6 +121,11 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
         ),
       )
     end
+
+    it "sends cloudwatch metric" do
+      perform_enqueued_jobs
+      expect(CloudWatchService).to have_received(:log_job_started).with("DeleteSubmissionsJob")
+    end
   end
 
   context "when deleting uploaded files fails" do
@@ -152,6 +158,11 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
     it "continues to delete the next submission" do
       expect { perform_enqueued_jobs }.to change(Submission, :count).by(-1)
       expect(Submission.exists?(sent_submission_updated_7_days_ago.id)).to be false
+    end
+
+    it "sends cloudwatch metric" do
+      perform_enqueued_jobs
+      expect(CloudWatchService).to have_received(:log_job_started).with("DeleteSubmissionsJob")
     end
   end
 
