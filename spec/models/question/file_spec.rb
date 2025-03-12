@@ -158,18 +158,37 @@ RSpec.describe Question::File, type: :model do
 
   describe "#show_answer_in_email" do
     let(:original_filename) { Faker::File.file_name(dir: "", directory_separator: "") }
-    let(:attributes) { { original_filename: } }
+    let(:attributes) { { original_filename:, filename_suffix: } }
+    let(:filename_suffix) { "" }
 
-    it "returns the original_filename" do
-      expect(question.show_answer_in_email).to eq I18n.t("mailer.submission.file_attached", filename: question.name_with_filename_suffix)
+    context "when the original_filename is blank" do
+      let(:original_filename) { nil }
+
+      it "returns a nil value" do
+        expect(question.show_answer_in_email).to be_nil
+      end
+
+      context "when the file has a suffix set" do
+        let(:filename_suffix) { "_1" }
+
+        it "returns a nil value" do
+          expect(question.show_answer_in_email).to be_nil
+        end
+      end
     end
 
-    context "when the file has a suffix set" do
-      let(:attributes) { { original_filename:, filename_suffix: } }
-      let(:filename_suffix) { "_1" }
-
-      it "returns the filename with a suffix" do
+    context "when the original_filename has a value" do
+      it "returns the original_filename" do
         expect(question.show_answer_in_email).to eq I18n.t("mailer.submission.file_attached", filename: question.name_with_filename_suffix)
+      end
+
+      context "when the file has a suffix set" do
+        let(:attributes) { { original_filename:, filename_suffix: } }
+        let(:filename_suffix) { "_1" }
+
+        it "returns the filename with a suffix" do
+          expect(question.show_answer_in_email).to eq I18n.t("mailer.submission.file_attached", filename: question.name_with_filename_suffix)
+        end
       end
     end
   end
