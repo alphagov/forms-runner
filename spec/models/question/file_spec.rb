@@ -175,19 +175,39 @@ RSpec.describe Question::File, type: :model do
   end
 
   describe "#show_answer_in_csv" do
+    let(:attributes) { { original_filename:, filename_suffix: } }
     let(:original_filename) { Faker::File.file_name(dir: "", directory_separator: "") }
-    let(:attributes) { { original_filename: } }
+    let(:filename_suffix) { "" }
 
-    it "returns the original_filename" do
-      expect(question.show_answer_in_csv).to eq({ question.question_text => question.name_with_filename_suffix })
+    context "when the original_filename is blank" do
+      let(:original_filename) { nil }
+
+      it "returns a hash with the question text and a nil value" do
+        expect(question.show_answer_in_csv).to eq({ question.question_text => nil })
+      end
+
+      context "when the file has a suffix set" do
+        let(:filename_suffix) { "_1" }
+
+        it "returns a hash with the question text and a nil value" do
+          expect(question.show_answer_in_csv).to eq({ question.question_text => nil })
+        end
+      end
     end
 
-    context "when the file has a suffix set" do
-      let(:attributes) { { original_filename:, filename_suffix: } }
-      let(:filename_suffix) { "_1" }
+    context "when the original_filename has a value" do
+      let(:original_filename) { Faker::File.file_name(dir: "", directory_separator: "") }
 
-      it "returns the filename with a suffix" do
+      it "returns the original_filename" do
         expect(question.show_answer_in_csv).to eq({ question.question_text => question.name_with_filename_suffix })
+      end
+
+      context "when the file has a suffix set" do
+        let(:filename_suffix) { "_1" }
+
+        it "returns the filename with a suffix" do
+          expect(question.show_answer_in_csv).to eq({ question.question_text => question.name_with_filename_suffix })
+        end
       end
     end
   end
