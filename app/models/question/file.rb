@@ -41,7 +41,7 @@ module Question
     end
 
     def show_answer_in_csv
-      return nil if original_filename.blank?
+      return Hash[question_text, nil] if original_filename.blank?
 
       { question_text => name_with_filename_suffix }
     end
