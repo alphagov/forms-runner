@@ -58,5 +58,12 @@ module Question
 
       "#{question_text} #{I18n.t('page.optional')}"
     end
+
+    def question_text_for_check_your_answers
+      return question_text_with_optional_suffix if page_heading.blank?
+      return question_text_with_optional_suffix unless is_a?(Question::File)
+
+      "<span class=\"govuk-caption-m govuk-!-margin-bottom-1\">#{page_heading}</span> #{question_text_with_optional_suffix}"
+    end
   end
 end
