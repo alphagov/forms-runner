@@ -6,6 +6,7 @@ RSpec.describe CloudWatchService do
   let(:forms_env) { "test" }
   let(:cloudwatch_metrics_enabled) { true }
   let(:cloudwatch_client) { Aws::CloudWatch::Client.new(stub_responses: true) }
+  let(:job_name) { "AJobName" }
 
   before do
     allow(Settings).to receive_messages(forms_env:, cloudwatch_metrics_enabled:)
@@ -112,9 +113,52 @@ RSpec.describe CloudWatchService do
             unit: "Count",
           },
         ],
-      )
+        )
 
       described_class.log_form_start(form_id:)
+    end
+  end
+
+  describe ".log_submission_sent" do
+    let(:milliseconds_since_scheduled) { 1000 }
+
+    context "when CloudWatch metrics are disabled" do
+      let(:cloudwatch_metrics_enabled) { false }
+
+      it "does not call the CloudWatch client with .put_metric_data" do
+        expect(cloudwatch_client).not_to receive(:put_metric_data)
+
+        described_class.log_submission_sent(milliseconds_since_scheduled)
+      end
+    end
+
+    it "calls the cloudwatch client with put_metric_data" do
+      expect(cloudwatch_client).to receive(:put_metric_data).with(
+        namespace: "Forms/Jobs",
+        metric_data: [
+          {
+            metric_name: "TimeToSendSubmission",
+            dimensions: [
+              {
+                name: "Environment",
+                value: forms_env,
+              },
+              {
+                name: "ServiceName",
+                value: "forms-runner",
+              },
+              {
+                name: "JobName",
+                value: "SendSubmissionJob",
+              },
+            ],
+            value: milliseconds_since_scheduled,
+            unit: "Milliseconds",
+          },
+        ],
+        )
+
+      described_class.log_submission_sent(milliseconds_since_scheduled)
     end
   end
 end
