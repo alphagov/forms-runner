@@ -4,6 +4,7 @@ module Question
     include ActiveModel::Validations
     include ActiveModel::Serialization
     include ActiveModel::Attributes
+    include ActionView::Helpers::TagHelper
 
     attr_accessor :question_text, :hint_text, :answer_settings, :is_optional, :page_heading, :guidance_markdown
 
@@ -63,7 +64,8 @@ module Question
       return question_text_with_optional_suffix if page_heading.blank?
       return question_text_with_optional_suffix unless is_a?(Question::File)
 
-      "<span class=\"govuk-caption-m govuk-!-margin-bottom-1\">#{page_heading}</span> #{question_text_with_optional_suffix}"
+      caption = tag.span(page_heading, class: %w[govuk-caption-m govuk-!-margin-bottom-1])
+      [caption, question_text_with_optional_suffix].join(" ")
     end
   end
 end
