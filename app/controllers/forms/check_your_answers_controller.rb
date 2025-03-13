@@ -59,7 +59,7 @@ module Forms
                       form_change_answer_path(page.form_id, page.form_slug, page.page_id)
                     end
 
-      question_name = helpers.question_text_with_optional_suffix_inc_mode(page, @mode)
+      question_name = page.question.question_text_with_optional_suffix
       {
         key: { text: question_name },
         value: { text: page.show_answer },

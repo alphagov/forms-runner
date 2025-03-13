@@ -25,23 +25,6 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
   end
 
-  describe "#question_text_with_optional_suffix_inc_mode" do
-    it "renders the question text followed by the mode the page is viewed in" do
-      page = OpenStruct.new(question: OpenStruct.new(question_text_with_optional_suffix: "What is your name?"))
-      allow(helper).to receive(:hidden_text_mode).and_return("<span>PREVIEWING MODE</span>")
-      expect(helper.question_text_with_optional_suffix_inc_mode(page, "mode")).to eq("What is your name? <span>PREVIEWING MODE</span>")
-    end
-
-    context "with unsafe question text" do
-      it "returns the escaped title but doesn't escape the trusted suffix" do
-        page = OpenStruct.new(question: OpenStruct.new(question_text_with_optional_suffix: "What is your name? <script>alert(\"Hi\")</script>"))
-        allow(helper).to receive(:hidden_text_mode).and_return("<span>not escaped</span>")
-        expected_output = "What is your name? &lt;script&gt;alert(&quot;Hi&quot;)&lt;/script&gt; <span>not escaped</span>"
-        expect(helper.question_text_with_optional_suffix_inc_mode(page, "")).to eq(expected_output)
-      end
-    end
-  end
-
   describe "#hidden_text_mode" do
     let(:mode) { OpenStruct.new(preview?: false) }
 

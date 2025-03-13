@@ -23,12 +23,6 @@ module ApplicationHelper
     "#{t('page_titles.error_prefix') if error}#{page_name}#{mode_string} - #{form_name}"
   end
 
-  def question_text_with_optional_suffix_inc_mode(page, mode)
-    mode_string = hidden_text_mode(mode)
-
-    [CGI.escapeHTML(page.question.question_text_with_optional_suffix), mode_string].compact_blank.join(" ").html_safe
-  end
-
   def hidden_text_mode(mode)
     return "" unless mode.preview?
 
