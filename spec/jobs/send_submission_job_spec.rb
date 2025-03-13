@@ -24,14 +24,16 @@ RSpec.describe SendSubmissionJob, type: :job do
   before do
     allow(Flow::Journey).to receive(:new).and_return(journey)
     allow(AwsSesSubmissionService).to receive(:new).with(form:, journey:, mailer_options:).and_return(aws_ses_submission_service_spy)
+    allow(CloudWatchService).to receive(:log_submission_sent)
   end
 
   context "when the job is processed" do
     before do
       allow(aws_ses_submission_service_spy).to receive(:submit).and_return(mail_message_id)
 
-      perform_enqueued_jobs do
-        described_class.perform_later(submission)
+      described_class.perform_later(submission)
+      travel 5.seconds do
+        perform_enqueued_jobs
       end
     end
 
@@ -41,6 +43,10 @@ RSpec.describe SendSubmissionJob, type: :job do
 
     it "updates the submission message ID" do
       expect(Submission.last).to have_attributes(mail_message_id:)
+    end
+
+    it "sends cloudwatch metric for the submission being sent" do
+      expect(CloudWatchService).to have_received(:log_submission_sent).with(be_within(1000).of(5000))
     end
   end
 
