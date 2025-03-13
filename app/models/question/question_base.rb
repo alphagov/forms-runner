@@ -61,11 +61,7 @@ module Question
     end
 
     def question_text_for_check_your_answers
-      return question_text_with_optional_suffix if page_heading.blank?
-      return question_text_with_optional_suffix unless is_a?(Question::File)
-
-      caption = tag.span(page_heading, class: %w[govuk-caption-m govuk-!-margin-bottom-1])
-      [caption, question_text_with_optional_suffix].join(" ")
+      question_text_with_optional_suffix
     end
   end
 end
