@@ -79,6 +79,10 @@ class Step
   end
 
   def next_page_slug_after_routing
+    if exit_page_condition_matches?
+      return nil
+    end
+
     if first_condition_default?
       return goto_condition_page_slug(routing_conditions.first)
     end
@@ -104,6 +108,16 @@ class Step
         GOTO_PAGE_ERROR_NAMES.include? error.name
       end
     end
+  end
+
+  def has_exit_page_condition?
+    return false unless routing_conditions&.first.respond_to?(:exit_page_markdown)
+
+    routing_conditions.first.exit_page_markdown.is_a?(String)
+  end
+
+  def exit_page_condition_matches?
+    first_condition_matches? && has_exit_page_condition?
   end
 
 private

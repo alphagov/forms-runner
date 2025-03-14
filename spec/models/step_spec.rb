@@ -420,4 +420,49 @@ RSpec.describe Step do
       end
     end
   end
+
+  describe "#has_exit_page_condition?" do
+    it "returns false when no routing conditions" do
+      expect(step.has_exit_page_condition?).to be false
+    end
+
+    it "returns false when first routing condition is not exit page" do
+      page.routing_conditions = [OpenStruct.new(answer_value: "Yes", goto_page_id: "5")]
+      expect(step.has_exit_page_condition?).to be false
+    end
+
+    it "returns false when first routing condition contains markdown exit_page_markdown" do
+      page.routing_conditions = [OpenStruct.new(exit_page_markdown: 12)]
+      expect(step.has_exit_page_condition?).to be false
+    end
+
+    it "returns true when first routing condition contains string markdown exit_page_markdown" do
+      page.routing_conditions = [OpenStruct.new(exit_page_markdown: "")]
+      expect(step.has_exit_page_condition?).to be true
+    end
+  end
+
+  describe "#exit_page_condition_matches?" do
+    let(:selection) { "Yes" }
+    let(:question) { instance_double(Question::Selection, selection:) }
+    let(:routing_conditions) { [OpenStruct.new(answer_value: "Yes", exit_page_markdown: "string")] }
+    let(:page) { build(:page, id: 2, position: 1, routing_conditions:) }
+
+    it "returns true when condition matches and condition is an exit page" do
+      expect(step.exit_page_condition_matches?).to be true
+    end
+
+    it "when condition matches but not an exit page it returns false" do
+      routing_conditions.first.exit_page_markdown = nil
+      expect(step.exit_page_condition_matches?).to be false
+    end
+
+    context "when condition doesn't match" do
+      let(:selection) { "No" }
+
+      it "returns false" do
+        expect(step.exit_page_condition_matches?).to be false
+      end
+    end
+  end
 end

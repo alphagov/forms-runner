@@ -651,6 +651,26 @@ RSpec.describe Forms::PageController, type: :request do
         end
       end
     end
+
+    context "when the page is a an exit question" do
+      let(:first_step_in_form) do
+        build :v2_question_page_step, :with_selections_settings,
+              id: 1,
+              next_step_id: 2,
+              routing_conditions: [DataStruct.new(id: 1, routing_page_id: 1, check_page_id: 1, goto_page_id: nil, answer_value: "Option 1", validation_errors: [], exit_page_markdown: "Exit page markdown", exit_page_heading: "exit page heading")],
+              is_optional: false
+      end
+
+      it "redirects to the exit page when exit page answer given" do
+        post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1, params: { question: { selection: "Option 1" }, changing_existing_answer: false })
+        expect(response).to redirect_to exit_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
+      end
+
+      it "redirects to the next step in the form when any other answer given" do
+        post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1, params: { question: { selection: "Option 2" }, changing_existing_answer: false })
+        expect(response).to redirect_to form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2)
+      end
+    end
   end
 
   def log_lines
