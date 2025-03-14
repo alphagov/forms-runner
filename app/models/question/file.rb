@@ -93,6 +93,13 @@ module Question
       uploaded_file_key.present?
     end
 
+    def question_text_for_check_your_answers
+      return question_text_with_optional_suffix if page_heading.blank?
+
+      caption = tag.span(page_heading, class: %w[govuk-caption-m govuk-!-margin-bottom-1])
+      [caption, question_text_with_optional_suffix].join(" ")
+    end
+
   private
 
     def validate_file_size

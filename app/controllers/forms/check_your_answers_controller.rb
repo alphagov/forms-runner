@@ -53,18 +53,18 @@ module Forms
   private
 
     def page_to_row(page)
-      change_link = if page.repeatable? && page.show_answer.present?
-                      change_add_another_answer_path(page.form_id, page.form_slug, page.page_id)
-                    else
-                      form_change_answer_path(page.form_id, page.form_slug, page.page_id)
-                    end
-
-      question_name = helpers.question_text_with_optional_suffix_inc_mode(page, @mode)
+      question_name = page.question.question_text_for_check_your_answers
       {
-        key: { text: question_name },
+        key: { text: helpers.sanitize(question_name) },
         value: { text: page.show_answer },
-        actions: [{ href: change_link, visually_hidden_text: question_name }],
+        actions: [{ href: change_link(page), visually_hidden_text: helpers.strip_tags(question_name) }],
       }
+    end
+
+    def change_link(page)
+      return change_add_another_answer_path(page.form_id, page.form_slug, page.page_id) if page.repeatable? && page.show_answer.present?
+
+      form_change_answer_path(page.form_id, page.form_slug, page.page_id)
     end
 
     def check_your_answers_rows

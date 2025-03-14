@@ -4,6 +4,7 @@ module Question
     include ActiveModel::Validations
     include ActiveModel::Serialization
     include ActiveModel::Attributes
+    include ActionView::Helpers::TagHelper
 
     attr_accessor :question_text, :hint_text, :answer_settings, :is_optional, :page_heading, :guidance_markdown
 
@@ -57,6 +58,10 @@ module Question
       return question_text unless show_optional_suffix
 
       "#{question_text} #{I18n.t('page.optional')}"
+    end
+
+    def question_text_for_check_your_answers
+      question_text_with_optional_suffix
     end
   end
 end
