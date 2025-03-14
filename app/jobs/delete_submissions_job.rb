@@ -2,6 +2,7 @@ class DeleteSubmissionsJob < ApplicationJob
   queue_as :default
 
   def perform(*_args)
+    CloudWatchService.log_job_started(self.class.name)
     CurrentJobLoggingAttributes.job_id = job_id
 
     delete_submissions_updated_before_time = Settings.retain_submissions_for_seconds.seconds.ago
