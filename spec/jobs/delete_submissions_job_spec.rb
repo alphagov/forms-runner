@@ -48,6 +48,15 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
            form_document: form_without_file_upload,
            updated_at: 6.days.ago
   end
+  let!(:bounced_submission) do
+    create :submission,
+           :sent,
+           reference: "BOUNCED",
+           form_id: form_without_file_upload.id,
+           form_document: form_without_file_upload,
+           updated_at: 7.days.ago,
+           mail_status: "bounced"
+  end
   let!(:unsent_submission) { create :submission, reference: "UNSENT", updated_at: 7.days.ago }
 
   let(:output) { StringIO.new }
@@ -95,6 +104,11 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
     it "does not destroy the submission that hasn't been sent" do
       perform_enqueued_jobs
       expect(Submission.exists?(unsent_submission.id)).to be true
+    end
+
+    it "does not destroy the submission that bounced" do
+      perform_enqueued_jobs
+      expect(Submission.exists?(bounced_submission.id)).to be true
     end
 
     it "logs deletion" do
