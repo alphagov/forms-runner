@@ -24,14 +24,16 @@ RSpec.describe SendSubmissionJob, type: :job do
   before do
     allow(Flow::Journey).to receive(:new).and_return(journey)
     allow(AwsSesSubmissionService).to receive(:new).with(form:, journey:, mailer_options:).and_return(aws_ses_submission_service_spy)
+    allow(CloudWatchService).to receive(:log_submission_sent)
   end
 
   context "when the job is processed" do
     before do
       allow(aws_ses_submission_service_spy).to receive(:submit).and_return(mail_message_id)
 
-      perform_enqueued_jobs do
-        described_class.perform_later(submission)
+      described_class.perform_later(submission)
+      travel 5.seconds do
+        perform_enqueued_jobs
       end
     end
 
@@ -42,12 +44,17 @@ RSpec.describe SendSubmissionJob, type: :job do
     it "updates the submission message ID" do
       expect(Submission.last).to have_attributes(mail_message_id:)
     end
+
+    it "sends cloudwatch metric for the submission being sent" do
+      expect(CloudWatchService).to have_received(:log_submission_sent).with(be_within(1000).of(5000))
+    end
   end
 
   context "when there is an error during processing" do
     context "and the error is an Aws::SESV2::Errors::ServiceError" do
       before do
         allow(aws_ses_submission_service_spy).to receive(:submit).and_raise(Aws::SESV2::Errors::ServiceError.new(nil, "Test SES error", nil))
+        allow(CloudWatchService).to receive(:log_job_failure)
       end
 
       it "retries for the configured number of attempts" do
@@ -60,6 +67,13 @@ RSpec.describe SendSubmissionJob, type: :job do
 
       it "raises an error after all attempts fail" do
         expect { described_class.new.perform(submission) }.to raise_error(Aws::SESV2::Errors::ServiceError)
+      end
+
+      it "sends cloudwatch metric for failure" do
+        described_class.new.perform(submission)
+        expect(CloudWatchService).to have_received(:log_job_failure).with("SendSubmissionJob")
+      rescue Aws::SESV2::Errors::ServiceError # If we don't catch the error, the test aborts prematurely
+        nil
       end
     end
 
@@ -78,6 +92,13 @@ RSpec.describe SendSubmissionJob, type: :job do
 
       it "raises an error immediately" do
         expect { described_class.new.perform(submission) }.to raise_error(StandardError)
+      end
+
+      it "sends cloudwatch metric for failure" do
+        described_class.new.perform(submission)
+        expect(CloudWatchService).to have_received(:log_job_failure).with("SendSubmissionJob")
+      rescue StandardError # If we don't catch the error, the test aborts prematurely
+        nil
       end
     end
   end
