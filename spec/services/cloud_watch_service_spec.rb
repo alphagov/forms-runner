@@ -243,4 +243,48 @@ RSpec.describe CloudWatchService do
       described_class.log_job_started(job_name)
     end
   end
+
+  describe ".log_queue_length" do
+    let(:queue_name) { "test-queue" }
+    let(:queue_length) { 42 }
+
+    context "when CloudWatch metrics are disabled" do
+      let(:cloudwatch_metrics_enabled) { false }
+
+      it "does not call the CloudWatch client with .put_metric_data" do
+        expect(cloudwatch_client).not_to receive(:put_metric_data)
+
+        described_class.log_queue_length(queue_name, queue_length)
+      end
+    end
+
+    it "calls the cloudwatch client with put_metric_data" do
+      expect(cloudwatch_client).to receive(:put_metric_data).with(
+        namespace: "Forms/Jobs",
+        metric_data: [
+          {
+            metric_name: "QueueLength",
+            dimensions: [
+              {
+                name: "Environment",
+                value: forms_env,
+              },
+              {
+                name: "ServiceName",
+                value: "forms-runner",
+              },
+              {
+                name: "QueueName",
+                value: queue_name,
+              },
+            ],
+            value: queue_length,
+            unit: "Count",
+          },
+        ],
+      )
+
+      described_class.log_queue_length(queue_name, queue_length)
+    end
+  end
 end

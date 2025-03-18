@@ -2,7 +2,13 @@ production:
   delete_submissions_job:
     class: DeleteSubmissionsJob
     schedule: every hour
+  queue_metrics_job:
+    class: QueueMetricsJob
+    schedule: every minute
 development:
   delete_submissions_job:
     class: DeleteSubmissionsJob
+    schedule: every minute
+  queue_metrics_job:
+    class: QueueMetricsJob
     schedule: every minute
