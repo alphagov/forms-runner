@@ -135,7 +135,7 @@ feature "Fill in and submit a form with a file upload question", type: :feature 
 
     delivered_email = ActionMailer::Base.deliveries.first
 
-    expect(delivered_email.body.parts.find { |p| p.content_type.match(/html/) }.body.raw_source).to match(/a-file.txt/)
+    expect(delivered_email.html_part.body.raw_source).to match(/a-file.txt/)
   end
 
   def then_i_see_an_error_message_that_the_file_contains_a_virus
