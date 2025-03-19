@@ -1,5 +1,5 @@
 class SendSubmissionJob < ApplicationJob
-  queue_as :default
+  queue_as :submissions
 
   # this translates to approximately 4.5 hours of retrying in total
   TOTAL_ATTEMPTS = 10

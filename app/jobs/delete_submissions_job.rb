@@ -1,5 +1,5 @@
 class DeleteSubmissionsJob < ApplicationJob
-  queue_as :default
+  queue_as :background
 
   def perform(*_args)
     CloudWatchService.log_job_started(self.class.name)
