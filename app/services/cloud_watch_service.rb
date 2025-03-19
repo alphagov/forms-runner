@@ -140,6 +140,26 @@ class CloudWatchService
     )
   end
 
+  def self.log_queue_length(queue_name, length)
+    return unless Settings.cloudwatch_metrics_enabled
+
+    cloudwatch_client.put_metric_data(
+      namespace: JOBS_METRICS_NAMESPACE,
+      metric_data: [
+        {
+          metric_name: "QueueLength",
+          dimensions: [
+            environment_dimension,
+            service_name_dimension,
+            queue_name_dimension(queue_name),
+          ],
+          value: length,
+          unit: "Count",
+        },
+      ],
+    )
+  end
+
   def self.old_form_metrics_namespace
     "forms/#{Settings.forms_env}".downcase
   end
@@ -169,6 +189,13 @@ class CloudWatchService
     {
       name: "JobName",
       value: job_name,
+    }
+  end
+
+  def self.queue_name_dimension(queue_name)
+    {
+      name: "QueueName",
+      value: queue_name,
     }
   end
 
