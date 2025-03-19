@@ -193,8 +193,10 @@ en:
   mailer:
     submission:
       cannot_reply:
-        contact_form_filler: "<p>If you need to contact the person who completed this form, you’ll need to contact them directly.</p>"
-        contact_forms_team: <p>If you’re experiencing a technical issue with this form, <a href="https://www.forms.service.gov.uk/support">contact the GOV.​UK Forms team</a> with details of the issue and the form it relates to.</p>
+        contact_form_filler_html: "<p>If you need to contact the person who completed this form, you’ll need to contact them directly.</p>"
+        contact_form_filler_plain: If you need to contact the person who completed this form, you’ll need to contact them directly.
+        contact_forms_team_html: <p>If you’re experiencing a technical issue with this form, <a href="https://www.forms.service.gov.uk/support">contact the GOV.​UK Forms team</a> with details of the issue and the form it relates to.</p>
+        contact_forms_team_plain: If you’re experiencing a technical issue with this form, contact the GOV.​UK Forms team (https://www.forms.service.gov.uk/support) with details of the issue and the form it relates to.
         heading: You cannot reply to this email
       check_before_using: Check that this data looks safe before you use it
       file_attached: "%{filename} (attached to this email)"
