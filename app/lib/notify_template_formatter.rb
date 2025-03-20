@@ -1,19 +1,25 @@
 class NotifyTemplateFormatter
+  class FormattingError < StandardError; end
+
   def build_question_answers_section(completed_steps)
     completed_steps.map { |page|
-      [prep_question_title(page.question_text),
-       prep_answer_text(page.show_answer_in_email)].join
+      [prep_question_title(page),
+       prep_answer_text(page)].join
     }.join("\n\n---\n\n").concat("\n")
   end
 
-  def prep_question_title(question_text)
-    "# #{question_text}\n"
+  def prep_question_title(page)
+    "# #{page.question_text}\n"
   end
 
-  def prep_answer_text(answer)
+  def prep_answer_text(page)
+    answer = page.show_answer_in_email
+
     return "\\[This question was skipped\\]" if answer.blank?
 
     escape(answer)
+  rescue StandardError
+    raise FormattingError, "could not format answer for question page #{page.id}"
   end
 
   def escape(text)

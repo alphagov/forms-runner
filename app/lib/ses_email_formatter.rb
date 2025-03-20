@@ -1,21 +1,27 @@
 class SesEmailFormatter
   H_RULE = '<hr style="border: 0; height: 1px; background: #B1B4B6; Margin: 30px 0 30px 0;">'.freeze
 
+  class FormattingError < StandardError; end
+
   def build_question_answers_section(completed_steps)
     completed_steps.map { |page|
-      [prep_question_title(page.question_text),
-       prep_answer_text(page.show_answer_in_email)].join
+      [prep_question_title(page),
+       prep_answer_text(page)].join
     }.join(H_RULE)
   end
 
-  def prep_question_title(question_text)
-    "<h2>#{question_text}</h2>"
+  def prep_question_title(page)
+    "<h2>#{page.question_text}</h2>"
   end
 
-  def prep_answer_text(answer)
+  def prep_answer_text(page)
+    answer = page.show_answer_in_email
+
     return "<p>[This question was skipped]</p>" if answer.blank?
 
     "<p>#{sanitize(answer)}</p>"
+  rescue StandardError
+    raise FormattingError, "could not format answer for question page #{page.id}"
   end
 
   def sanitize(text)
