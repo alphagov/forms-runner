@@ -52,7 +52,7 @@ private
   end
 
   def answer_content_plain_text
-    SesEmailFormatter.new.build_question_answers_section_html(@journey.completed_steps)
+    SesEmailFormatter.new.build_question_answers_section_plain_text(@journey.completed_steps)
   end
 
   def uploaded_files_in_answers
