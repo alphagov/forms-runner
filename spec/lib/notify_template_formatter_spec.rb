@@ -7,7 +7,7 @@ RSpec.describe NotifyTemplateFormatter, type: :model do
     describe "#build_question_answers_section" do
       let(:completed_steps) { [step] }
 
-      let(:step) { instance_double(Step, { question_text: "What is the meaning of life?", show_answer_in_email: "42" }) }
+      let(:step) { instance_double(Step, { id: 99, question_text: "What is the meaning of life?", show_answer_in_email: "42" }) }
 
       it "returns combined title and answer" do
         expect(notify_template_formatter.build_question_answers_section(completed_steps)).to eq "# What is the meaning of life?\n42\n"
@@ -18,6 +18,18 @@ RSpec.describe NotifyTemplateFormatter, type: :model do
 
         it "contains a horizontal rule between each step" do
           expect(notify_template_formatter.build_question_answers_section(completed_steps)).to include "\n\n---\n\n"
+        end
+      end
+
+      context "when there is an error formatting an answer" do
+        before do
+          allow(step).to receive(:show_answer_in_email).and_raise(NoMethodError, "undefined method 'strip' for an instance of Array")
+        end
+
+        it "raises an error with the page id" do
+          expect {
+            notify_template_formatter.build_question_answers_section(completed_steps)
+          }.to raise_error(NotifyTemplateFormatter::FormattingError, "could not format answer for question page 99")
         end
       end
     end

@@ -1,4 +1,6 @@
 class NotifyTemplateFormatter
+  class FormattingError < StandardError; end
+
   def build_question_answers_section(completed_steps)
     completed_steps.map { |page|
       [prep_question_title(page),
@@ -16,6 +18,8 @@ class NotifyTemplateFormatter
     return "\\[This question was skipped\\]" if answer.blank?
 
     escape(answer)
+  rescue StandardError
+    raise FormattingError, "could not format answer for question page #{page.id}"
   end
 
   def escape(text)

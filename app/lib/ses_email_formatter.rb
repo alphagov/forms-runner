@@ -1,6 +1,8 @@
 class SesEmailFormatter
   H_RULE = '<hr style="border: 0; height: 1px; background: #B1B4B6; Margin: 30px 0 30px 0;">'.freeze
 
+  class FormattingError < StandardError; end
+
   def build_question_answers_section(completed_steps)
     completed_steps.map { |page|
       [prep_question_title(page),
@@ -18,6 +20,8 @@ class SesEmailFormatter
     return "<p>[This question was skipped]</p>" if answer.blank?
 
     "<p>#{sanitize(answer)}</p>"
+  rescue StandardError
+    raise FormattingError, "could not format answer for question page #{page.id}"
   end
 
   def sanitize(text)
