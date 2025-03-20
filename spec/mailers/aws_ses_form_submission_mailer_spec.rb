@@ -1,9 +1,9 @@
 require "rails_helper"
 
 describe AwsSesFormSubmissionMailer, type: :mailer do
-  let(:mail) { described_class.submission_email(answer_content:, submission_email_address:, mailer_options:, files:) }
+  let(:mail) { described_class.submission_email(answer_content_html:, submission_email_address:, mailer_options:, files:) }
   let(:title) { "Form 1" }
-  let(:answer_content) { "My question: My answer" }
+  let(:answer_content_html) { "My question: My answer" }
   let(:is_preview) { false }
   let(:submission_email_address) { "testing@gov.uk" }
   let(:files) { {} }
@@ -34,7 +34,7 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
       end
 
       it "includes the answers" do
-        expect(part.body).to match(answer_content)
+        expect(part.body).to match(answer_content_html)
       end
 
       it "includes the form title text" do
@@ -86,7 +86,7 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
       let(:part) { mail.text_part }
 
       it "includes the answers" do
-        expect(part.body).to match(answer_content)
+        expect(part.body).to match(answer_content_html)
       end
 
       it "includes the form title text" do

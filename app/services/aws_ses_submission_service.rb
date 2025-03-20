@@ -37,7 +37,7 @@ private
   end
 
   def deliver_submission_email(files)
-    mail = AwsSesFormSubmissionMailer.submission_email(answer_content:,
+    mail = AwsSesFormSubmissionMailer.submission_email(answer_content_html: answer_content_html,
                                                        submission_email_address: @form.submission_email,
                                                        mailer_options: @mailer_options,
                                                        files:).deliver_now
@@ -46,8 +46,8 @@ private
     mail.message_id
   end
 
-  def answer_content
-    SesEmailFormatter.new.build_question_answers_section(@journey.completed_steps)
+  def answer_content_html
+    SesEmailFormatter.new.build_question_answers_section_html(@journey.completed_steps)
   end
 
   def uploaded_files_in_answers
