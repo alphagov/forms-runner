@@ -25,7 +25,8 @@ RSpec.describe NotifyTemplateFormatter, type: :model do
     describe "#prep_question_title" do
       it "returns markdown heading on its own line" do
         ["Hello", "3.4 Question", "-23.4 Negative headings", "\n\n # 4.5.6"].each do |title|
-          expect(notify_template_formatter.prep_question_title(title)).to eq "# #{title}\n"
+          page = instance_double(Step, question_text: title)
+          expect(notify_template_formatter.prep_question_title(page)).to eq "# #{title}\n"
         end
       end
     end
@@ -47,13 +48,16 @@ RSpec.describe NotifyTemplateFormatter, type: :model do
           { input: "    paragraph 1\n\n\n\n\n\n\n\n\n\n\n\n\n Another Paragraph with trailing space     \n\n\n\n\n", output: "paragraph 1\n\nAnother Paragraph with trailing space" },
 
         ].each do |test_case|
-          expect(notify_template_formatter.prep_answer_text(test_case[:input])).to eq test_case[:output]
+          page = instance_double(Step, show_answer_in_email: test_case[:input])
+          expect(notify_template_formatter.prep_answer_text(page)).to eq test_case[:output]
         end
       end
 
       context "when answer is blank i.e skipped" do
+        let(:page) { instance_double(Step, show_answer_in_email: "") }
+
         it "returns the blank answer text" do
-          expect(notify_template_formatter.prep_answer_text("")).to eq "\\[This question was skipped\\]"
+          expect(notify_template_formatter.prep_answer_text(page)).to eq "\\[This question was skipped\\]"
         end
       end
     end
