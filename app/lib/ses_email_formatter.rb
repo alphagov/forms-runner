@@ -3,7 +3,7 @@ class SesEmailFormatter
 
   class FormattingError < StandardError; end
 
-  def build_question_answers_section(completed_steps)
+  def build_question_answers_section_html(completed_steps)
     completed_steps.map { |page|
       [prep_question_title(page),
        prep_answer_text(page)].join
