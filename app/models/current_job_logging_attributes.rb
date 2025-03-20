@@ -1,5 +1,5 @@
 class CurrentJobLoggingAttributes < ActiveSupport::CurrentAttributes
-  attribute :job_id, :form_id, :form_name, :submission_reference, :mail_message_id
+  attribute :job_id, :form_id, :form_name, :submission_reference, :mail_message_id, :sqs_message_id
 
   def as_hash
     {
@@ -8,6 +8,7 @@ class CurrentJobLoggingAttributes < ActiveSupport::CurrentAttributes
       form_name:,
       submission_reference:,
       mail_message_id:,
+      sqs_message_id:,
     }.compact_blank
   end
 end

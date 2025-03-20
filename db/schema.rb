@@ -22,7 +22,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_10_114758) do
     t.integer "form_id"
     t.jsonb "answers"
     t.string "mode"
+    t.string "mail_status", default: "pending", null: false
     t.jsonb "form_document"
+    t.index ["mail_status"], name: "index_submissions_on_mail_status"
     t.index ["updated_at"], name: "index_submissions_on_updated_at"
   end
 end
