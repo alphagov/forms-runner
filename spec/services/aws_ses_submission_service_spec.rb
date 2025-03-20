@@ -70,6 +70,7 @@ RSpec.describe AwsSesSubmissionService do
 
           expect(AwsSesFormSubmissionMailer).to have_received(:submission_email).with(
             { answer_content_html: "<h2>What is the meaning of life?</h2><p>42</p>",
+              answer_content_plain_text: "<h2>What is the meaning of life?</h2><p>42</p>",
               submission_email_address: submission_email,
               mailer_options: instance_of(FormSubmissionService::MailerOptions),
               files: {} },
@@ -102,6 +103,7 @@ RSpec.describe AwsSesSubmissionService do
 
           expect(AwsSesFormSubmissionMailer).to have_received(:submission_email).with(
             { answer_content_html: "<h2>#{question.question_text}</h2><p>#{I18n.t('mailer.submission.file_attached', filename: question.name_with_filename_suffix)}</p>",
+              answer_content_plain_text: "<h2>#{question.question_text}</h2><p>#{I18n.t('mailer.submission.file_attached', filename: question.name_with_filename_suffix)}</p>",
               submission_email_address: submission_email,
               mailer_options: instance_of(FormSubmissionService::MailerOptions),
               files: { question.name_with_filename_suffix => file_content } },
@@ -138,6 +140,7 @@ RSpec.describe AwsSesSubmissionService do
 
           expect(AwsSesFormSubmissionMailer).to have_received(:submission_email).with(
             { answer_content_html: "<h2>What is the meaning of life?</h2><p>42</p>",
+              answer_content_plain_text: "<h2>What is the meaning of life?</h2><p>42</p>",
               submission_email_address: submission_email,
               mailer_options: instance_of(FormSubmissionService::MailerOptions),
               files: { "govuk_forms_form_#{form.id}_#{submission_reference}.csv" => expected_csv_content } },
@@ -167,6 +170,7 @@ RSpec.describe AwsSesSubmissionService do
 
               expect(AwsSesFormSubmissionMailer).to have_received(:submission_email).with(
                 { answer_content_html: "<h2>#{question.question_text}</h2><p>#{I18n.t('mailer.submission.file_attached', filename: question.name_with_filename_suffix)}</p>",
+                  answer_content_plain_text: "<h2>#{question.question_text}</h2><p>#{I18n.t('mailer.submission.file_attached', filename: question.name_with_filename_suffix)}</p>",
                   submission_email_address: submission_email,
                   mailer_options: instance_of(FormSubmissionService::MailerOptions),
                   files: {
@@ -192,6 +196,7 @@ RSpec.describe AwsSesSubmissionService do
 
             expect(AwsSesFormSubmissionMailer).to have_received(:submission_email).with(
               { answer_content_html: "<h2>What is the meaning of life?</h2><p>42</p>",
+                answer_content_plain_text: "<h2>What is the meaning of life?</h2><p>42</p>",
                 submission_email_address: submission_email,
                 mailer_options: instance_of(FormSubmissionService::MailerOptions),
                 files: {} },
