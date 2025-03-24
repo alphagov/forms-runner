@@ -9,6 +9,11 @@ class Submission < ApplicationRecord
     @form ||= get_form
   end
 
+  def self.emailed?(reference)
+    submission = Submission.find_by(reference: reference)
+    submission.mail_message_id.present? if submission.present?
+  end
+
 private
 
   def mode_object
