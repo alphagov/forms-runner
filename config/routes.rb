@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   get "/help/cookies" => "application#cookies", as: :cookies
 
   get "/security.txt" => redirect("https://vdp.cabinetoffice.gov.uk/.well-known/security.txt")
+  get "/submission" => "submission_status#status", as: :status
   get "/.well-known/security.txt" => redirect("https://vdp.cabinetoffice.gov.uk/.well-known/security.txt")
 
   scope "/:mode", mode: /preview-draft|preview-archived|preview-live|form/ do
