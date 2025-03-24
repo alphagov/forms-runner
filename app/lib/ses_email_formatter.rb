@@ -19,15 +19,11 @@ class SesEmailFormatter
   end
 
   def prep_question_title_html(page)
-    "<h2>#{page.question_text}</h2>"
+    "<h2>#{remove_heading_hashes(prep_question_title_plain_text(page))}</h2>"
   end
 
   def prep_answer_text_html(page)
-    answer = page.show_answer_in_email
-
-    return "<p>[This question was skipped]</p>" if answer.blank?
-
-    "<p>#{sanitize(answer)}</p>"
+    "<p>#{convert_newlines_to_html(prep_answer_text_plain_text(page))}</p>"
   rescue StandardError
     raise FormattingError, "could not format answer for question page #{page.id}"
   end
@@ -41,25 +37,25 @@ class SesEmailFormatter
 
     return "[This question was skipped]" if answer.blank?
 
-    sanitize_plain_text(answer)
+    sanitize(answer)
+  rescue StandardError
+    raise FormattingError, "could not format answer for question page #{page.id}"
   end
 
   def sanitize(text)
-    # TODO: we'll want to do more sanitizing on the answer text
     text
       .then { normalize_whitespace _1 }
   end
 
-  def sanitize_plain_text(text)
-    text
-      .then { normalize_whitespace_plain_text _1 }
-  end
-
   def normalize_whitespace(text)
-    text.strip.gsub(/\r\n?/, "<br/>").split(/\n\n+/).map(&:strip).join("<br/><br/>")
+    text.strip.gsub(/\r\n?/, "\n").split(/\n\n+/).map(&:strip).join("\n\n")
   end
 
-  def normalize_whitespace_plain_text(text)
-    text.strip.gsub(/\r\n?/, "\n").split(/\n\n+/).map(&:strip).join("\n\n")
+  def remove_heading_hashes(text)
+    text.gsub("## ", "")
+  end
+
+  def convert_newlines_to_html(text)
+    text.gsub("\n", "<br/>")
   end
 end
