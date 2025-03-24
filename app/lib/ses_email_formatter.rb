@@ -18,6 +18,8 @@ class SesEmailFormatter
     }.join(H_RULE_PLAIN_TEXT)
   end
 
+private
+
   def prep_question_title_html(page)
     "<h2>#{remove_heading_hashes(prep_question_title_plain_text(page))}</h2>"
   end
