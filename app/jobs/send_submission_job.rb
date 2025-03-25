@@ -22,7 +22,11 @@ class SendSubmissionJob < ApplicationJob
       mailer_options:,
     ).submit
 
-    submission.update!(mail_message_id: message_id, mail_status: "pending")
+    submission.update!(
+      mail_message_id: message_id,
+      mail_status: "pending",
+      sent_at: Time.zone.now,
+    )
 
     milliseconds_since_scheduled = (Time.current - scheduled_at_or_enqueued_at).in_milliseconds.round
     EventLogger.log_form_event("submission_email_sent", { milliseconds_since_scheduled: })
