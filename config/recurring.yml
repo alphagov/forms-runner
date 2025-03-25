@@ -8,6 +8,9 @@ production:
   receive_submission_bounces_and_complaints_job:
     class: ReceiveSubmissionBouncesAndComplaintsJob
     schedule: every 10 minutes
+  receive_submission_deliveries_job:
+    class: ReceiveSubmissionDeliveriesJob
+    schedule: every 10 minutes
 development:
   delete_submissions_job:
     class: DeleteSubmissionsJob
@@ -17,4 +20,7 @@ development:
     schedule: every minute
   receive_submission_bounces_and_complaints_job:
     class: ReceiveSubmissionBouncesAndComplaintsJob
+    schedule: every minute
+  receive_submission_deliveries_job:
+    class: ReceiveSubmissionDeliveriesJob
     schedule: every minute
