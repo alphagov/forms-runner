@@ -23,30 +23,30 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
     }
   end
 
-  let!(:sent_submission_updated_8_days_ago) do
+  let!(:sent_submission_sent_8_days_ago) do
     create :submission,
            :sent,
            reference: "SENT8DAYS",
            form_id: form_with_file_upload.id,
            form_document: form_with_file_upload,
-           updated_at: 8.days.ago,
+           sent_at: 8.days.ago,
            answers: form_with_file_upload_answers
   end
-  let!(:sent_submission_updated_7_days_ago) do
+  let!(:sent_submission_sent_7_days_ago) do
     create :submission,
            :sent,
            reference: "SENT7DAYS",
            form_id: form_without_file_upload.id,
            form_document: form_without_file_upload,
-           updated_at: 7.days.ago
+           sent_at: 7.days.ago
   end
-  let!(:sent_submission_updated_6_days_ago) do
+  let!(:sent_submission_sent_6_days_ago) do
     create :submission,
            :sent,
            reference: "SENT6DAYS",
            form_id: form_without_file_upload.id,
            form_document: form_without_file_upload,
-           updated_at: 6.days.ago
+           sent_at: 6.days.ago
   end
   let!(:bounced_submission) do
     create :submission,
@@ -54,10 +54,10 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
            reference: "BOUNCED",
            form_id: form_without_file_upload.id,
            form_document: form_without_file_upload,
-           updated_at: 7.days.ago,
+           sent_at: 7.days.ago,
            mail_status: "bounced"
   end
-  let!(:unsent_submission) { create :submission, reference: "UNSENT", updated_at: 7.days.ago }
+  let!(:unsent_submission) { create :submission, reference: "UNSENT", sent_at: nil }
 
   let(:output) { StringIO.new }
   let(:logger) do
@@ -93,13 +93,13 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
 
     it "destroys the sent submissions updated more than 7 days ago" do
       expect { perform_enqueued_jobs }.to change(Submission, :count).by(-2)
-      expect(Submission.exists?(sent_submission_updated_8_days_ago.id)).to be false
-      expect(Submission.exists?(sent_submission_updated_7_days_ago.id)).to be false
+      expect(Submission.exists?(sent_submission_sent_8_days_ago.id)).to be false
+      expect(Submission.exists?(sent_submission_sent_7_days_ago.id)).to be false
     end
 
     it "does not destroy the sent submission updated more recently than 7 days ago" do
       perform_enqueued_jobs
-      expect(Submission.exists?(sent_submission_updated_6_days_ago.id)).to be true
+      expect(Submission.exists?(sent_submission_sent_6_days_ago.id)).to be true
     end
 
     it "does not destroy the submission that hasn't been sent" do
@@ -121,7 +121,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
           "event" => "form_submission_deleted",
           "form_id" => form_with_file_upload.id,
           "form_name" => form_with_file_upload.name,
-          "submission_reference" => sent_submission_updated_8_days_ago.reference,
+          "submission_reference" => sent_submission_sent_8_days_ago.reference,
           "job_id" => @job_id,
         ),
         hash_including(
@@ -130,7 +130,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
           "event" => "form_submission_deleted",
           "form_id" => form_without_file_upload.id,
           "form_name" => form_without_file_upload.name,
-          "submission_reference" => sent_submission_updated_7_days_ago.reference,
+          "submission_reference" => sent_submission_sent_7_days_ago.reference,
           "job_id" => @job_id,
         ),
       )
@@ -154,7 +154,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
                                      "level" => "WARN",
                                      "message" => "Error deleting submission - StandardError: Test error",
                                      "form_id" => form_with_file_upload.id,
-                                     "submission_reference" => sent_submission_updated_8_days_ago.reference,
+                                     "submission_reference" => sent_submission_sent_8_days_ago.reference,
                                      "job_id" => @job_id,
                                    ))
     end
@@ -166,12 +166,12 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
 
     it "does not destroy the submission that errored" do
       perform_enqueued_jobs
-      expect(Submission.exists?(sent_submission_updated_8_days_ago.id)).to be true
+      expect(Submission.exists?(sent_submission_sent_8_days_ago.id)).to be true
     end
 
     it "continues to delete the next submission" do
       expect { perform_enqueued_jobs }.to change(Submission, :count).by(-1)
-      expect(Submission.exists?(sent_submission_updated_7_days_ago.id)).to be false
+      expect(Submission.exists?(sent_submission_sent_7_days_ago.id)).to be false
     end
 
     it "sends cloudwatch metric" do

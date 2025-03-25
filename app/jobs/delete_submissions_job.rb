@@ -5,9 +5,8 @@ class DeleteSubmissionsJob < ApplicationJob
     CloudWatchService.log_job_started(self.class.name)
     CurrentJobLoggingAttributes.job_id = job_id
 
-    delete_submissions_updated_before_time = Settings.retain_submissions_for_seconds.seconds.ago
-    submissions_to_delete = Submission.where(updated_at: ..delete_submissions_updated_before_time)
-                                      .where.not(mail_message_id: nil)
+    delete_submissions_sent_before_time = Settings.retain_submissions_for_seconds.seconds.ago
+    submissions_to_delete = Submission.where(sent_at: ..delete_submissions_sent_before_time)
                                       .where.not(mail_status: "bounced")
 
     submissions_to_delete.find_each { |submission| delete_submission_data(submission) }
