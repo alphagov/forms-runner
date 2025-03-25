@@ -21,7 +21,7 @@ class SesEmailFormatter
 private
 
   def prep_question_title_html(page)
-    "<h2>#{remove_heading_hashes(prep_question_title_plain_text(page))}</h2>"
+    "<h2>#{prep_question_title_plain_text(page)}</h2>"
   end
 
   def prep_answer_text_html(page)
@@ -31,7 +31,7 @@ private
   end
 
   def prep_question_title_plain_text(page)
-    "## #{page.question_text}"
+    page.question_text
   end
 
   def prep_answer_text_plain_text(page)
@@ -51,10 +51,6 @@ private
 
   def normalize_whitespace(text)
     text.strip.gsub(/\r\n?/, "\n").split(/\n\n+/).map(&:strip).join("\n\n")
-  end
-
-  def remove_heading_hashes(text)
-    text.gsub("## ", "")
   end
 
   def convert_newlines_to_html(text)

@@ -84,7 +84,7 @@ RSpec.describe SesEmailFormatter do
     context "when there is one step" do
       it "returns question and and answer HTML" do
         question_answers = described_class.new.build_question_answers_section_plain_text(completed_steps)
-        expect(question_answers).to eq("## What is the meaning of life?\n\n42")
+        expect(question_answers).to eq("What is the meaning of life?\n\n42")
       end
     end
 
@@ -93,7 +93,7 @@ RSpec.describe SesEmailFormatter do
 
       it "inserts line breaks between answer attributes" do
         question_answers = described_class.new.build_question_answers_section_plain_text(completed_steps)
-        expect(question_answers).to eq("## What is your name?\n\nFirst name: #{name_question.first_name}\n\nLast name: #{name_question.last_name}")
+        expect(question_answers).to eq("What is your name?\n\nFirst name: #{name_question.first_name}\n\nLast name: #{name_question.last_name}")
       end
     end
 
@@ -103,7 +103,7 @@ RSpec.describe SesEmailFormatter do
 
       it "returns the blank answer text" do
         question_answers = described_class.new.build_question_answers_section_plain_text(completed_steps)
-        expect(question_answers).to eq("## What is the meaning of life?\n\n[This question was skipped]")
+        expect(question_answers).to eq("What is the meaning of life?\n\n[This question was skipped]")
       end
     end
 
@@ -112,7 +112,7 @@ RSpec.describe SesEmailFormatter do
 
       it "returns all question an answers separated by a horizontal rule" do
         question_answers = described_class.new.build_question_answers_section_plain_text(completed_steps)
-        expect(question_answers).to eq("## What is the meaning of life?\n\n42\n\n---\n\n## What is your name?\n\nFirst name: #{name_question.first_name}\n\nLast name: #{name_question.last_name}")
+        expect(question_answers).to eq("What is the meaning of life?\n\n42\n\n---\n\nWhat is your name?\n\nFirst name: #{name_question.first_name}\n\nLast name: #{name_question.last_name}")
       end
     end
 
@@ -128,7 +128,7 @@ RSpec.describe SesEmailFormatter do
           text_question.text = test_case[:input]
 
           question_answers = described_class.new.build_question_answers_section_plain_text(completed_steps)
-          expect(question_answers).to eq("## What is the meaning of life?\n\n#{test_case[:output]}")
+          expect(question_answers).to eq("What is the meaning of life?\n\n#{test_case[:output]}")
         end
       end
     end
