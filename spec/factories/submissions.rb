@@ -16,6 +16,7 @@ FactoryBot.define do
     end
     mode { "live" }
     form_document { build :v2_form_document }
+    mail_status { "pending" }
 
     trait :sent do
       mail_message_id { Faker::Alphanumeric.alphanumeric }
