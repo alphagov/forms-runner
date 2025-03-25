@@ -52,6 +52,8 @@ private
 
       ses_event_type = ses_message["eventType"]
 
+      raise "Unexpected event type:#{ses_event_type}" unless %w[Bounce Complaint].include?(ses_event_type)
+
       submission = Submission.find_by!(mail_message_id: ses_message_id)
 
       process_bounce(submission) if ses_event_type == "Bounce"

@@ -7,10 +7,11 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
   let(:sqs_client) { instance_double(Aws::SQS::Client) }
   let(:receipt_handle) { "delivery-receipt-handle" }
   let(:sqs_message_id) { "sqs-message-id" }
-  let(:sqs_delivery_message) { instance_double(Aws::SQS::Types::Message, message_id: sqs_message_id, receipt_handle:, body: sns_delivery_message_body) }
+  let(:event_type) { "Delivery" }
+  let(:sqs_message) { instance_double(Aws::SQS::Types::Message, message_id: sqs_message_id, receipt_handle:, body: sns_delivery_message_body) }
   let(:messages) { [] }
   let(:sns_delivery_message_body) { { "Message" => ses_delivery_message_body.to_json }.to_json }
-  let(:ses_delivery_message_body) { { "mail" => { "messageId" => mail_message_id }, "eventType": "Delivery" } }
+  let(:ses_delivery_message_body) { { "mail" => { "messageId" => mail_message_id }, "eventType": event_type } }
   let(:file_upload_steps) do
     [
       build(:v2_question_page_step, answer_type: "file", id: 1, next_step_id: 2),
@@ -56,7 +57,7 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
 
     context "when there are many messages in the queue" do
       let(:message_count) { 15 }
-      let(:messages) { Array.new(message_count, sqs_delivery_message) }
+      let(:messages) { Array.new(message_count, sqs_message) }
 
       before do
         allow(sqs_client).to receive(:receive_message).and_return(OpenStruct.new(messages: messages[0..9]), OpenStruct.new(messages: messages[10..15]), OpenStruct.new(messages: []))
@@ -71,7 +72,7 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
     end
 
     context "when the message is a delivery notification" do
-      let(:messages) { [sqs_delivery_message] }
+      let(:messages) { [sqs_message] }
 
       before do
         job = described_class.perform_later
@@ -127,7 +128,7 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
       end
 
       context "when updating submission fails" do
-        let(:messages) { [sqs_delivery_message, sqs_delivery_message] }
+        let(:messages) { [sqs_message, sqs_message] }
 
         before do
           call_count = 0
@@ -173,6 +174,32 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
 
           expect(sqs_client).to have_received(:delete_message).exactly(expected_loop_count).times
         end
+      end
+    end
+
+    context "when the message is not a delivery notification" do
+      let(:event_type) { "Some other event type" }
+      let(:messages) { [sqs_message] }
+
+      before do
+        job = described_class.perform_later
+        @job_id = job.job_id
+      end
+
+      it "sends an error to Sentry" do
+        allow(Sentry).to receive(:capture_exception)
+
+        perform_enqueued_jobs
+
+        expect(Sentry).to have_received(:capture_exception) do |error|
+          expect(error.message).to eq("Unexpected event type:#{event_type}")
+        end
+      end
+
+      it "does not delete the SQS message" do
+        perform_enqueued_jobs
+
+        expect(sqs_client).not_to have_received(:delete_message)
       end
     end
   end

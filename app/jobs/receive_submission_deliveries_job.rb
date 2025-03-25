@@ -52,9 +52,11 @@ private
 
       ses_event_type = ses_message["eventType"]
 
+      raise "Unexpected event type:#{ses_event_type}" unless ses_event_type == "Delivery"
+
       submission = Submission.find_by!(mail_message_id: ses_message_id)
 
-      process_delivery(submission) if ses_event_type == "Delivery"
+      process_delivery(submission)
 
       sqs_client.delete_message(queue_url: queue_url, receipt_handle: receipt_handle)
     rescue StandardError => e
