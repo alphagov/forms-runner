@@ -1,11 +1,11 @@
-class ReceiveSubmissionBouncesAndComplaintsJob < ApplicationJob
+class ReceiveSubmissionDeliveriesJob < ApplicationJob
   require "aws-sdk-sqs"
   require "aws-sdk-sts"
 
   queue_as :background
 
   REGION = "eu-west-2".freeze
-  SQS_QUEUE_NAME = "submission_email_ses_bounces_and_complaints_queue".freeze
+  SQS_QUEUE_NAME = "submission_email_ses_successful_deliveries_queue".freeze
   MAX_NUMBER_OF_MESSAGES = 10
   POLLING_PERIOD = 20
 
@@ -52,12 +52,11 @@ private
 
       ses_event_type = ses_message["eventType"]
 
-      raise "Unexpected event type:#{ses_event_type}" unless %w[Bounce Complaint].include?(ses_event_type)
+      raise "Unexpected event type:#{ses_event_type}" unless ses_event_type == "Delivery"
 
       submission = Submission.find_by!(mail_message_id: ses_message_id)
 
-      process_bounce(submission) if ses_event_type == "Bounce"
-      process_complaint(submission) if ses_event_type == "Complaint"
+      process_delivery(submission)
 
       sqs_client.delete_message(queue_url: queue_url, receipt_handle: receipt_handle)
     rescue StandardError => e
@@ -68,23 +67,10 @@ private
     end
   end
 
-  def process_bounce(submission)
+  def process_delivery(submission)
     set_submission_logging_attributes(submission)
 
-    submission.update!(mail_status: "bounced")
-
-    EventLogger.log_form_event("submission_bounced")
-
-    Sentry.capture_message("Submission email bounced - #{self.class.name}:", extra: {
-      form_id: submission.form_id,
-      submission_reference: submission.reference,
-      job_id:,
-    })
-  end
-
-  def process_complaint(submission)
-    set_submission_logging_attributes(submission)
-
-    EventLogger.log_form_event("submission_complaint")
+    submission.update!(mail_status: "delivered")
+    EventLogger.log_form_event("submission_delivered")
   end
 end

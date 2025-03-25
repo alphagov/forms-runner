@@ -1,17 +1,17 @@
 require "rails_helper"
 
 # rubocop:disable RSpec/InstanceVariable
-RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
+RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
   include ActiveJob::TestHelper
 
   let(:sqs_client) { instance_double(Aws::SQS::Client) }
-  let(:receipt_handle) { "bounce-receipt-handle" }
+  let(:receipt_handle) { "delivery-receipt-handle" }
   let(:sqs_message_id) { "sqs-message-id" }
-  let(:sqs_message) { instance_double(Aws::SQS::Types::Message, message_id: sqs_message_id, receipt_handle:, body: sns_message_body) }
+  let(:event_type) { "Delivery" }
+  let(:sqs_message) { instance_double(Aws::SQS::Types::Message, message_id: sqs_message_id, receipt_handle:, body: sns_delivery_message_body) }
   let(:messages) { [] }
-  let(:sns_message_body) { { "Message" => ses_message_body.to_json }.to_json }
-  let(:event_type) { "Bounce" }
-  let(:ses_message_body) { { "mail" => { "messageId" => mail_message_id }, "eventType": event_type } }
+  let(:sns_delivery_message_body) { { "Message" => ses_delivery_message_body.to_json }.to_json }
+  let(:ses_delivery_message_body) { { "mail" => { "messageId" => mail_message_id }, "eventType": event_type } }
   let(:file_upload_steps) do
     [
       build(:v2_question_page_step, answer_type: "file", id: 1, next_step_id: 2),
@@ -71,7 +71,7 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
       end
     end
 
-    context "when the message is a bounce notification" do
+    context "when the message is a delivery notification" do
       let(:messages) { [sqs_message] }
 
       before do
@@ -79,9 +79,9 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
         @job_id = job.job_id
       end
 
-      it "updates the submission mail status to bounced" do
+      it "updates the submission mail status to delivered" do
         perform_enqueued_jobs
-        expect(submission.reload.mail_status).to eq("bounced")
+        expect(submission.reload.mail_status).to eq("delivered")
       end
 
       it "doesn't change the mail status for other submissions" do
@@ -95,17 +95,11 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
         expect(log_lines).to include(hash_including(
                                        "level" => "INFO",
                                        "message" => "Form event",
-                                       "event" => "form_submission_bounced",
+                                       "event" => "form_submission_delivered",
                                        "form_id" => form_with_file_upload.id,
                                        "submission_reference" => reference,
                                        "job_id" => @job_id,
                                      ))
-      end
-
-      it "alerts to Sentry that there was a bounced delivery" do
-        allow(Sentry).to receive(:capture_message)
-        perform_enqueued_jobs
-        expect(Sentry).to have_received(:capture_message)
       end
 
       it "deletes the SQS message" do
@@ -114,7 +108,7 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
       end
 
       context "when there is no submission found" do
-        let(:ses_message_body) { { "mail" => { "messageId" => "mismatched-message-id" }, "eventType": event_type } }
+        let(:ses_delivery_message_body) { { "mail" => { "messageId" => "mismatched-message-id" }, "eventType": "Delivery" } }
 
         it "sends an error to Sentry" do
           allow(Sentry).to receive(:capture_exception)
@@ -183,39 +177,7 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
       end
     end
 
-    context "when the message is a complaint notification" do
-      let(:event_type) { "Complaint" }
-
-      let(:messages) { [sqs_message] }
-      let(:receipt_handle) { "complaint-receipt-handle" }
-
-      before do
-        job = described_class.perform_later
-        @job_id = job.job_id
-      end
-
-      it "logs that there was a complaint" do
-        perform_enqueued_jobs
-
-        expect(log_lines).to include(hash_including(
-                                       "level" => "INFO",
-                                       "form_id" => form_with_file_upload.id,
-                                       "submission_reference" => reference,
-                                       "mail_message_id" => mail_message_id,
-                                       "sqs_message_id" => sqs_message_id,
-                                       "message" => "Form event",
-                                       "event" => "form_submission_complaint",
-                                       "job_id" => @job_id,
-                                     ))
-      end
-
-      it "deletes the SQS message" do
-        perform_enqueued_jobs
-        expect(sqs_client).to have_received(:delete_message).with(queue_url: anything, receipt_handle:)
-      end
-    end
-
-    context "when the message is neither a bounce or complaint notification" do
+    context "when the message is not a delivery notification" do
       let(:event_type) { "Some other event type" }
       let(:messages) { [sqs_message] }
 
