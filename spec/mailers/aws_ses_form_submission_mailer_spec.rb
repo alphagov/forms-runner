@@ -1,9 +1,10 @@
 require "rails_helper"
 
 describe AwsSesFormSubmissionMailer, type: :mailer do
-  let(:mail) { described_class.submission_email(answer_content:, submission_email_address:, mailer_options:, files:) }
+  let(:mail) { described_class.submission_email(answer_content_html:, answer_content_plain_text:, submission_email_address:, mailer_options:, files:) }
   let(:title) { "Form 1" }
-  let(:answer_content) { "My question: My answer" }
+  let(:answer_content_html) { "My question: My answer" }
+  let(:answer_content_plain_text) { "My question: My answer" }
   let(:is_preview) { false }
   let(:submission_email_address) { "testing@gov.uk" }
   let(:files) { {} }
@@ -26,53 +27,109 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
       expect(mail.subject).to eq("Form submission: #{title} - reference: #{submission_reference}")
     end
 
-    it "has a link to GOV.UK" do
-      expect(mail.body).to have_link("GOV.UK", href: "https://www.gov.uk")
-    end
+    context "when looking at the html part" do
+      let(:part) { mail.html_part }
 
-    it "includes the answers" do
-      expect(mail.body).to match(answer_content)
-    end
+      it "has a link to GOV.UK" do
+        expect(part.body).to have_link("GOV.UK", href: "https://www.gov.uk")
+      end
 
-    it "includes the form title text" do
-      expect(mail.body).to have_css("p", text: I18n.t("mailer.submission.title", title:))
-    end
+      it "includes the answers" do
+        expect(part.body).to match(answer_content_html)
+      end
 
-    it "includes text about the submission time" do
-      expect(mail.body).to have_css("p", text: I18n.t("mailer.submission.time", time: submission_timestamp.strftime("%l:%M%P").strip, date: submission_timestamp.strftime("%-d %B %Y")))
-    end
+      it "includes the form title text" do
+        expect(part.body).to have_css("p", text: I18n.t("mailer.submission.title", title:))
+      end
 
-    it "includes the submission reference" do
-      expect(mail.body).to have_css("p", text: I18n.t("mailer.submission.reference", submission_reference:))
-    end
+      it "includes text about the submission time" do
+        expect(part.body).to have_css("p", text: I18n.t("mailer.submission.time", time: submission_timestamp.strftime("%l:%M%P").strip, date: submission_timestamp.strftime("%-d %B %Y")))
+      end
 
-    it "includes text about checking the answers" do
-      expect(mail.body).to have_css("p", text: I18n.t("mailer.submission.check_before_using"))
-    end
+      it "includes the submission reference" do
+        expect(part.body).to have_css("p", text: I18n.t("mailer.submission.reference", submission_reference:))
+      end
 
-    it "includes the warning about not replying" do
-      expect(mail.body).to have_css("h2", text: I18n.t("mailer.submission.cannot_reply.heading"))
-      expect(mail.body).to include(I18n.t("mailer.submission.cannot_reply.contact_form_filler"))
-      expect(mail.body).to include(I18n.t("mailer.submission.cannot_reply.contact_forms_team"))
-    end
+      it "includes text about checking the answers" do
+        expect(part.body).to have_css("p", text: I18n.t("mailer.submission.check_before_using"))
+      end
 
-    describe "submission date/time" do
-      context "with a time in BST" do
-        let(:timestamp) { Time.utc(2022, 9, 14, 8, 0o0, 0o0) }
+      it "includes the warning about not replying" do
+        expect(part.body).to have_css("h2", text: I18n.t("mailer.submission.cannot_reply.heading"))
+        expect(part.body).to include(I18n.t("mailer.submission.cannot_reply.contact_form_filler_html"))
+        expect(part.body).to include(I18n.t("mailer.submission.cannot_reply.contact_forms_team_html"))
+      end
 
-        it "includes the date and time the user submitted the form" do
-          travel_to timestamp do
-            expect(mail.body).to match("This form was submitted at 9:00am on 14 September 2022")
+      describe "submission date/time" do
+        context "with a time in BST" do
+          let(:timestamp) { Time.utc(2022, 9, 14, 8, 0o0, 0o0) }
+
+          it "includes the date and time the user submitted the form" do
+            travel_to timestamp do
+              expect(part.body).to match("This form was submitted at 9:00am on 14 September 2022")
+            end
+          end
+        end
+
+        context "with a time in GMT" do
+          let(:timestamp) { Time.utc(2022, 12, 14, 13, 0o0, 0o0) }
+
+          it "includes the date and time the user submitted the form" do
+            travel_to timestamp do
+              expect(part.body).to match("This form was submitted at 1:00pm on 14 December 2022")
+            end
           end
         end
       end
+    end
 
-      context "with a time in GMT" do
-        let(:timestamp) { Time.utc(2022, 12, 14, 13, 0o0, 0o0) }
+    context "when looking at the plaintext part" do
+      let(:part) { mail.text_part }
 
-        it "includes the date and time the user submitted the form" do
-          travel_to timestamp do
-            expect(mail.body).to match("This form was submitted at 1:00pm on 14 December 2022")
+      it "includes the answers" do
+        expect(part.body).to match(answer_content_plain_text)
+      end
+
+      it "includes the form title text" do
+        expect(part.body).to have_text(I18n.t("mailer.submission.title", title:))
+      end
+
+      it "includes text about the submission time" do
+        expect(part.body).to have_text(I18n.t("mailer.submission.time", time: submission_timestamp.strftime("%l:%M%P").strip, date: submission_timestamp.strftime("%-d %B %Y")))
+      end
+
+      it "includes the submission reference" do
+        expect(part.body).to have_text(I18n.t("mailer.submission.reference", submission_reference:))
+      end
+
+      it "includes text about checking the answers" do
+        expect(part.body).to have_text(I18n.t("mailer.submission.check_before_using"))
+      end
+
+      it "includes the warning about not replying" do
+        expect(part.body).to have_text(I18n.t("mailer.submission.cannot_reply.heading"))
+        expect(part.body).to include(I18n.t("mailer.submission.cannot_reply.contact_form_filler_plain"))
+        expect(part.body).to include(I18n.t("mailer.submission.cannot_reply.contact_forms_team_plain"))
+      end
+
+      describe "submission date/time" do
+        context "with a time in BST" do
+          let(:timestamp) { Time.utc(2022, 9, 14, 8, 0o0, 0o0) }
+
+          it "includes the date and time the user submitted the form" do
+            travel_to timestamp do
+              expect(part.body).to match("This form was submitted at 9:00am on 14 September 2022")
+            end
+          end
+        end
+
+        context "with a time in GMT" do
+          let(:timestamp) { Time.utc(2022, 12, 14, 13, 0o0, 0o0) }
+
+          it "includes the date and time the user submitted the form" do
+            travel_to timestamp do
+              expect(part.body).to match("This form was submitted at 1:00pm on 14 December 2022")
+            end
           end
         end
       end

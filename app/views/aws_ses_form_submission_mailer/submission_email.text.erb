@@ -1,0 +1,18 @@
+<%= I18n.t("mailer.submission.title", title: @mailer_options.title) %>
+
+<%= I18n.t("mailer.submission.time", time: @mailer_options.timestamp.strftime("%l:%M%P").strip, date: @mailer_options.timestamp.strftime("%-d %B %Y") ) %>
+
+<%= I18n.t("mailer.submission.reference", submission_reference: @mailer_options.submission_reference) %>
+
+<%= I18n.t("mailer.submission.check_before_using") %>
+
+---
+
+<%= @answer_content_plain_text %>
+
+---
+
+<%= I18n.t("mailer.submission.cannot_reply.heading") %>
+
+<%= I18n.t("mailer.submission.cannot_reply.contact_form_filler_plain") %>
+<%= I18n.t("mailer.submission.cannot_reply.contact_forms_team_plain") %>

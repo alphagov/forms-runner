@@ -3,8 +3,9 @@ class AwsSesFormSubmissionMailer < ApplicationMailer
           reply_to: Settings.ses_submission_email.reply_to_email_address,
           delivery_method: Rails.configuration.x.aws_ses_form_submission_mailer["delivery_method"]
 
-  def submission_email(answer_content:, submission_email_address:, mailer_options:, files:)
-    @answer_content = answer_content
+  def submission_email(answer_content_html:, answer_content_plain_text:, submission_email_address:, mailer_options:, files:)
+    @answer_content_html = answer_content_html
+    @answer_content_plain_text = answer_content_plain_text
     @mailer_options = mailer_options
     @subject = I18n.t("mailer.submission.subject", form_title: mailer_options.title, reference: mailer_options.submission_reference)
 

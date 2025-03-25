@@ -69,7 +69,8 @@ RSpec.describe AwsSesSubmissionService do
           service.submit
 
           expect(AwsSesFormSubmissionMailer).to have_received(:submission_email).with(
-            { answer_content: "<h2>What is the meaning of life?</h2><p>42</p>",
+            { answer_content_html: "<h2>What is the meaning of life?</h2><p>42</p>",
+              answer_content_plain_text: "What is the meaning of life?\n\n42",
               submission_email_address: submission_email,
               mailer_options: instance_of(FormSubmissionService::MailerOptions),
               files: {} },
@@ -101,7 +102,8 @@ RSpec.describe AwsSesSubmissionService do
           service.submit
 
           expect(AwsSesFormSubmissionMailer).to have_received(:submission_email).with(
-            { answer_content: "<h2>#{question.question_text}</h2><p>#{I18n.t('mailer.submission.file_attached', filename: question.name_with_filename_suffix)}</p>",
+            { answer_content_html: "<h2>#{question.question_text}</h2><p>#{I18n.t('mailer.submission.file_attached', filename: question.name_with_filename_suffix)}</p>",
+              answer_content_plain_text: "#{question.question_text}\n\n#{I18n.t('mailer.submission.file_attached', filename: question.name_with_filename_suffix)}",
               submission_email_address: submission_email,
               mailer_options: instance_of(FormSubmissionService::MailerOptions),
               files: { question.name_with_filename_suffix => file_content } },
@@ -137,7 +139,8 @@ RSpec.describe AwsSesSubmissionService do
           expected_csv_content = "Reference,Submitted at,What is the meaning of life?\n#{submission_reference},2022-09-14T08:00:00Z,42\n"
 
           expect(AwsSesFormSubmissionMailer).to have_received(:submission_email).with(
-            { answer_content: "<h2>What is the meaning of life?</h2><p>42</p>",
+            { answer_content_html: "<h2>What is the meaning of life?</h2><p>42</p>",
+              answer_content_plain_text: "What is the meaning of life?\n\n42",
               submission_email_address: submission_email,
               mailer_options: instance_of(FormSubmissionService::MailerOptions),
               files: { "govuk_forms_form_#{form.id}_#{submission_reference}.csv" => expected_csv_content } },
@@ -166,7 +169,8 @@ RSpec.describe AwsSesSubmissionService do
               expected_csv_content = "Reference,Submitted at,#{question.question_text}\n#{submission_reference},2022-09-14T08:00:00Z,#{question.name_with_filename_suffix}\n"
 
               expect(AwsSesFormSubmissionMailer).to have_received(:submission_email).with(
-                { answer_content: "<h2>#{question.question_text}</h2><p>#{I18n.t('mailer.submission.file_attached', filename: question.name_with_filename_suffix)}</p>",
+                { answer_content_html: "<h2>#{question.question_text}</h2><p>#{I18n.t('mailer.submission.file_attached', filename: question.name_with_filename_suffix)}</p>",
+                  answer_content_plain_text: "#{question.question_text}\n\n#{I18n.t('mailer.submission.file_attached', filename: question.name_with_filename_suffix)}",
                   submission_email_address: submission_email,
                   mailer_options: instance_of(FormSubmissionService::MailerOptions),
                   files: {
@@ -191,7 +195,8 @@ RSpec.describe AwsSesSubmissionService do
             service.submit
 
             expect(AwsSesFormSubmissionMailer).to have_received(:submission_email).with(
-              { answer_content: "<h2>What is the meaning of life?</h2><p>42</p>",
+              { answer_content_html: "<h2>What is the meaning of life?</h2><p>42</p>",
+                answer_content_plain_text: "What is the meaning of life?\n\n42",
                 submission_email_address: submission_email,
                 mailer_options: instance_of(FormSubmissionService::MailerOptions),
                 files: {} },
