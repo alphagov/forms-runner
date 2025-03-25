@@ -48,6 +48,9 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
       allow(sqs_client).to receive(:delete_message) do
         messages.shift
       end
+
+      allow(CloudWatchService).to receive(:log_job_started)
+
       Rails.logger.broadcast_to logger
     end
 
@@ -68,6 +71,11 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
       it "clears the SQS queue" do
         perform_enqueued_jobs
         expect(sqs_client).to have_received(:delete_message).exactly(message_count).times
+      end
+
+      it "sends cloudwatch metric" do
+        perform_enqueued_jobs
+        expect(CloudWatchService).to have_received(:log_job_started).with("ReceiveSubmissionDeliveriesJob")
       end
     end
 
