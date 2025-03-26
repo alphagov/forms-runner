@@ -4,7 +4,7 @@ require "rails_helper"
 RSpec.describe SendSubmissionJob, type: :job do
   include ActiveJob::TestHelper
 
-  let(:submission) { create :submission, form_document: form, mail_status: "invalid" }
+  let(:submission) { create :submission, form_document: form, mail_status: :pending }
   let(:form) { build(:form, id: 1, name: "Form 1") }
   let(:question) { build :text, question_text: "What is the meaning of life?", text: "42" }
   let(:step) { build :step, question: }
@@ -48,7 +48,7 @@ RSpec.describe SendSubmissionJob, type: :job do
     end
 
     it "updates the submission mail status to pending" do
-      expect(Submission.last).to have_attributes(mail_status: "pending")
+      expect(Submission.last.pending?).to be true
     end
 
     it "updates the sent at time" do
