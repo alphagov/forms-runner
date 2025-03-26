@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe SendSubmissionJob, type: :job do
   include ActiveJob::TestHelper
 
-  let(:submission) { create :submission, form_document: form }
+  let(:submission) { create :submission, form_document: form, mail_status: "invalid" }
   let(:form) { build(:form, id: 1, name: "Form 1") }
   let(:question) { build :text, question_text: "What is the meaning of life?", text: "42" }
   let(:step) { build :step, question: }
@@ -43,6 +43,10 @@ RSpec.describe SendSubmissionJob, type: :job do
 
     it "updates the submission message ID" do
       expect(Submission.last).to have_attributes(mail_message_id:)
+    end
+
+    it "updates the submission mail status to pending" do
+      expect(Submission.last).to have_attributes(mail_status: "pending")
     end
 
     it "sends cloudwatch metric for the submission being sent" do
