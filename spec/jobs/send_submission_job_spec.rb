@@ -1,5 +1,6 @@
 require "rails_helper"
 
+# rubocop:disable RSpec/InstanceVariable
 RSpec.describe SendSubmissionJob, type: :job do
   include ActiveJob::TestHelper
 
@@ -33,6 +34,7 @@ RSpec.describe SendSubmissionJob, type: :job do
 
       described_class.perform_later(submission)
       travel 5.seconds do
+        @job_ran_at = Time.zone.now
         perform_enqueued_jobs
       end
     end
@@ -47,6 +49,10 @@ RSpec.describe SendSubmissionJob, type: :job do
 
     it "updates the submission mail status to pending" do
       expect(Submission.last).to have_attributes(mail_status: "pending")
+    end
+
+    it "updates the sent at time" do
+      expect(submission.reload.sent_at).to be_within(1.second).of(@job_ran_at)
     end
 
     it "sends cloudwatch metric for the submission being sent" do
@@ -107,3 +113,4 @@ RSpec.describe SendSubmissionJob, type: :job do
     end
   end
 end
+# rubocop:enable RSpec/InstanceVariable
