@@ -63,6 +63,6 @@ private
   def key_name
     folder = @is_preview ? "test_form_submissions" : "form_submissions"
     formatted_timestamp = @timestamp.utc.strftime("%Y%m%dT%H%M%SZ")
-    "#{folder}/#{@form.id}/#{formatted_timestamp}_#{@submission_reference}.csv"
+    "#{folder}/#{@form.id}/#{formatted_timestamp}_#{@submission_reference}/form_submission.csv"
   end
 end
