@@ -1,6 +1,12 @@
 class Submission < ApplicationRecord
   delegate :preview?, to: :mode_object
 
+  enum :mail_status, {
+    pending: "pending",
+    delivered: "delivered",
+    bounced: "bounced",
+  }
+
   def journey
     @journey ||= Flow::Journey.new(answer_store:, form:)
   end
