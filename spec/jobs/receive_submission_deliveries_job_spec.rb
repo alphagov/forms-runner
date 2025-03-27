@@ -89,7 +89,7 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
 
       it "updates the submission mail status to delivered" do
         perform_enqueued_jobs
-        expect(submission.reload.mail_status).to eq("delivered")
+        expect(submission.reload.delivered?).to be true
       end
 
       it "doesn't change the mail status for other submissions" do
