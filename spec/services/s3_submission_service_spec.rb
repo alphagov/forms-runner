@@ -65,7 +65,7 @@ RSpec.describe S3SubmissionService do
 
       it "calls put_object" do
         expected_timestamp = "20220914T072434Z"
-        expected_key_name = "form_submissions/#{form.id}/#{expected_timestamp}_#{submission_reference}.csv"
+        expected_key_name = "form_submissions/#{form.id}/#{expected_timestamp}_#{submission_reference}/form_submission.csv"
         expect(mock_s3_client).to have_received(:put_object).with(
           body: file_body,
           bucket: s3_bucket_name,
@@ -79,7 +79,7 @@ RSpec.describe S3SubmissionService do
 
         it "calls put_object with a key starting with 'test_form_submissions/'" do
           expected_timestamp = "20220914T072434Z"
-          expected_key_name = "test_form_submissions/#{form.id}/#{expected_timestamp}_#{submission_reference}.csv"
+          expected_key_name = "test_form_submissions/#{form.id}/#{expected_timestamp}_#{submission_reference}/form_submission.csv"
           expect(mock_s3_client).to have_received(:put_object).with(
             body: file_body,
             bucket: s3_bucket_name,
