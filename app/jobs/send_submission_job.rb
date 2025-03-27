@@ -24,7 +24,7 @@ class SendSubmissionJob < ApplicationJob
 
     submission.update!(
       mail_message_id: message_id,
-      mail_status: "pending",
+      mail_status: :pending,
       sent_at: Time.zone.now,
     )
 

@@ -7,7 +7,7 @@ class DeleteSubmissionsJob < ApplicationJob
 
     delete_submissions_sent_before_time = Settings.retain_submissions_for_seconds.seconds.ago
     submissions_to_delete = Submission.where(sent_at: ..delete_submissions_sent_before_time)
-                                      .where.not(mail_status: "bounced")
+                                      .not_bounced
 
     submissions_to_delete.find_each { |submission| delete_submission_data(submission) }
   end

@@ -55,7 +55,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
            form_id: form_without_file_upload.id,
            form_document: form_without_file_upload,
            sent_at: 7.days.ago,
-           mail_status: "bounced"
+           mail_status: :bounced
   end
   let!(:unsent_submission) { create :submission, reference: "UNSENT", sent_at: nil }
 

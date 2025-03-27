@@ -7,7 +7,7 @@ namespace :submissions do
     abort usage_message if form_id.blank?
 
     submissions_to_retry = Submission.where(form_id: form_id)
-                                      .where(mail_status: "bounced")
+                                      .bounced
 
     Rails.logger.info "#{submissions_to_retry.length} submissions to retry for form with ID: #{form_id}"
 

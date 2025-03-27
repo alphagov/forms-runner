@@ -30,17 +30,17 @@ RSpec.describe Submission, type: :model do
 
     describe "validations" do
       it "is valid for a submission's mail_status to be pending" do
-        submission.mail_status = :pending
+        submission.pending!
         expect(submission).to be_valid
       end
 
       it "is valid for a submission's mail_status to be delivered" do
-        submission.mail_status = :delivered
+        submission.delivered!
         expect(submission).to be_valid
       end
 
       it "is valid for a submission's mail_status to be bounced" do
-        submission.mail_status = :bounced
+        submission.bounced!
         expect(submission).to be_valid
       end
 

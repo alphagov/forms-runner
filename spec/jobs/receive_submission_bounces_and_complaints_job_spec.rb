@@ -89,7 +89,7 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
 
       it "updates the submission mail status to bounced" do
         perform_enqueued_jobs
-        expect(submission.reload.mail_status).to eq("bounced")
+        expect(submission.reload.bounced?).to be true
       end
 
       it "doesn't change the mail status for other submissions" do
