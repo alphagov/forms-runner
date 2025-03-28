@@ -24,6 +24,9 @@ sentry:
   environment: local
   filter_mask: "[Filtered (client-side)]"
 
+submission_status_api:
+  secret: changeme
+
 aws:
   s3_submission_iam_role_arn: changeme
   file_upload_s3_bucket_name: changeme
