@@ -21,20 +21,20 @@ RSpec.describe "submissions.rake" do
       create :submission,
              :sent,
              form_id:,
-             mail_status: "bounced"
+             mail_status: :bounced
     end
     let!(:pending_submission) do
       create :submission,
              :sent,
              form_id:,
-             mail_status: "pending"
+             mail_status: :pending
     end
 
     before do
       create :submission,
              :sent,
              form_id: other_form_id,
-             mail_status: "pending"
+             mail_status: :pending
     end
 
     context "with valid arguments" do
