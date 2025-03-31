@@ -6,6 +6,9 @@ ses_submission_email:
   from_email_address: govuk_forms@example.com
   reply_to_email_address: no-reply@example.com
 
+submission_status_api:
+  secret: test_token
+
 file_upload:
   poll_scan_status_wait_milliseconds: 50
   poll_scan_status_max_attempts: 2
