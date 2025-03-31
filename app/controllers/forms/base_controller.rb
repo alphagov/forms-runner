@@ -19,6 +19,7 @@ module Forms
     def set_request_logging_attributes
       super
       CurrentRequestLoggingAttributes.form_name = current_form.name
+      CurrentRequestLoggingAttributes.preview = mode.preview?
     end
 
   private
