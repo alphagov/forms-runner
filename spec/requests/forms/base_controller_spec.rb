@@ -94,6 +94,10 @@ RSpec.describe Forms::BaseController, type: :request do
       expect(log_lines[0]["form_id"]).to eq(form_id.to_s)
     end
 
+    it "includes preview bool on log lines" do
+      expect(log_lines[0]["preview"]).to eq("false")
+    end
+
     it "includes the trace ID on log lines" do
       expect(log_lines[0]["trace_id"]).to eq(trace_id)
     end
