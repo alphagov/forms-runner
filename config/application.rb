@@ -76,5 +76,8 @@ module FormsRunner
 
     # custom configuration for the SES mailer delivery method
     config.x.aws_ses_form_submission_mailer.delivery_method = :aws_ses
+
+    # Prevent ActiveRecord::PreparedStatementCacheExpired errors when adding columns
+    config.active_record.enumerate_columns_in_select_statements = true
   end
 end
