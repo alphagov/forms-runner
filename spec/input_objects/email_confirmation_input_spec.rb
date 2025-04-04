@@ -2,6 +2,38 @@ require "rails_helper"
 
 RSpec.describe EmailConfirmationInput, type: :model do
   let(:email_confirmation_input) { build :email_confirmation_input }
+  let(:invalid_emails) do
+    ["email@123.123.123.123",
+     "email@[123.123.123.123]",
+     "plainaddress",
+     "@no-local-part.com",
+     "Outlook Contact <outlook-contact@domain.com>",
+     "no-at.domain.com",
+     "no-tld@domain",
+     ";beginning-semicolon@domain.co.uk",
+     "middle-semicolon@domain.co;uk",
+     "trailing-semicolon@domain.com;",
+     '"email+leading-quotes@domain.com',
+     'email+middle"-quotes@domain.com',
+     '"quoted-local-part"@domain.com',
+     '"quoted@domain.com"',
+     "lots-of-dots@domain..gov..uk",
+     "two-dots..in-local@domain.com",
+     "multiple@domains@domain.com",
+     "spaces in local@domain.com",
+     "spaces-in-domain@dom ain.com",
+     "underscores-in-domain@dom_ain.com",
+     "pipe-in-domain@example.com|gov.uk",
+     "comma,in-local@gov.uk",
+     "comma-in-domain@domain,gov.uk",
+     "pound-sign-in-local£@domain.com",
+     "local-with-’-apostrophe@domain.com",
+     "local-with-”-quotes@domain.com",
+     "domain-starts-with-a-dot@.domain.com",
+     "brackets(in)local@domain.com",
+     "email-too-long-#{'a' * 320}@example.com",
+     "incorrect-punycode@xn---something.com"]
+  end
 
   context "when given an empty string or nil" do
     it "returns invalid with blank email" do
@@ -20,11 +52,13 @@ RSpec.describe EmailConfirmationInput, type: :model do
   end
 
   context "when user opts in and provides an invalid email address" do
-    let(:email_confirmation_input) { build :email_confirmation_input_opted_in, confirmation_email_address: "not an email address" }
+    it "does not allow invalid emails" do
+      invalid_emails.each do |invalid_email|
+        email_confirmation_input = build :email_confirmation_input_opted_in, confirmation_email_address: invalid_email
 
-    it "does not validate an address without an @" do
-      expect(email_confirmation_input).not_to be_valid
-      expect(email_confirmation_input.errors[:confirmation_email_address]).to include(I18n.t("activemodel.errors.models.email_confirmation_input.attributes.confirmation_email_address.invalid_email"))
+        expect(email_confirmation_input).not_to be_valid
+        expect(email_confirmation_input.errors[:confirmation_email_address]).to include(I18n.t("activemodel.errors.models.email_confirmation_input.attributes.confirmation_email_address.invalid_email"))
+      end
     end
   end
 
