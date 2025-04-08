@@ -160,6 +160,44 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
         end
       end
     end
+
+    context "when the form has a payment link" do
+      let(:payment_url) { "payment_url" }
+
+      describe "the html part" do
+        let(:part) { mail.html_part }
+
+        it "includes text about the payment" do
+          expect(part.body).to have_css("p", text: I18n.t("mailer.submission.payment"))
+        end
+      end
+
+      describe "the plaintext part" do
+        let(:part) { mail.text_part }
+
+        it "includes text about the payment" do
+          expect(part.body).to have_text(I18n.t("mailer.submission.payment"))
+        end
+      end
+    end
+
+    context "when the form does not have a payment link" do
+      describe "the html part" do
+        let(:part) { mail.html_part }
+
+        it "does not include text about the payment" do
+          expect(part.body).not_to have_css("p", text: I18n.t("mailer.submission.payment"))
+        end
+      end
+
+      describe "the plaintext part" do
+        let(:part) { mail.text_part }
+
+        it "does not include text about the payment" do
+          expect(part.body).not_to have_text(I18n.t("mailer.submission.payment"))
+        end
+      end
+    end
   end
 
   context "when files to attach are included in the arguments" do

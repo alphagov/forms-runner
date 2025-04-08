@@ -9,6 +9,10 @@
 
 <%= I18n.t("mailer.submission.reference", submission_reference: @mailer_options.submission_reference) %>
 
+<% if @mailer_options.payment_url.present? %>
+<%= I18n.t("mailer.submission.payment") %>
+
+<% end %>
 <%= I18n.t("mailer.submission.check_before_using") %>
 
 ---

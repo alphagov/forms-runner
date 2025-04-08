@@ -201,6 +201,7 @@ en:
       check_before_using: Check that this data looks safe before you use it
       file_attached: "%{filename} (attached to this email)"
       from: GOV.UK Forms <%{email_address}>
+      payment: You can check that a payment has been made by using this reference number to search transactions within GOV.​UK Pay.
       reference: 'GOV.​UK Forms reference number: %{submission_reference}'
       subject: 'Form submission: %{form_title} - reference: %{reference}'
       subject_preview: 'TEST FORM SUBMISSION: %{form_title} - reference: %{reference}'
