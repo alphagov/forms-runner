@@ -203,6 +203,7 @@ en:
       from: GOV.UK Forms <%{email_address}>
       reference: 'GOV.​UK Forms reference number: %{submission_reference}'
       subject: 'Form submission: %{form_title} - reference: %{reference}'
+      subject_preview: 'TEST FORM SUBMISSION: %{form_title} - reference: %{reference}'
       time: This form was submitted at %{time} on %{date}
       title: This is a completed “%{title}” form.
   mode:

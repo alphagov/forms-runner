@@ -7,12 +7,20 @@ class AwsSesFormSubmissionMailer < ApplicationMailer
     @answer_content_html = answer_content_html
     @answer_content_plain_text = answer_content_plain_text
     @mailer_options = mailer_options
-    @subject = I18n.t("mailer.submission.subject", form_title: mailer_options.title, reference: mailer_options.submission_reference)
+    @subject = email_subject
 
     files.each do |name, file|
       attachments[name] = file
     end
 
     mail(to: submission_email_address, subject: @subject)
+  end
+
+private
+
+  def email_subject
+    return I18n.t("mailer.submission.subject_preview", form_title: @mailer_options.title, reference: @mailer_options.submission_reference) if @mailer_options.is_preview
+
+    I18n.t("mailer.submission.subject", form_title: @mailer_options.title, reference: @mailer_options.submission_reference)
   end
 end
