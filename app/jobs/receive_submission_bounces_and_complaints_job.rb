@@ -72,7 +72,7 @@ private
   def process_bounce(submission)
     set_submission_logging_attributes(submission)
 
-    submission.update!(mail_status: "bounced")
+    submission.bounced!
 
     EventLogger.log_form_event("submission_bounced")
 

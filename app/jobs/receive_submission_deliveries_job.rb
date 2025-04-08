@@ -71,7 +71,7 @@ private
   def process_delivery(submission)
     set_submission_logging_attributes(submission)
 
-    submission.update!(mail_status: "delivered")
+    submission.delivered!
     EventLogger.log_form_event("submission_delivered")
   end
 end
