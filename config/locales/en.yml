@@ -206,6 +206,7 @@ en:
       subject_preview: 'TEST FORM SUBMISSION: %{form_title} - reference: %{reference}'
       time: This form was submitted at %{time} on %{date}
       title: This is a completed “%{title}” form.
+      title_preview: This is a test of the “%{title}” form.
   mode:
     phase_banner_tag_preview-archived: Archived preview
     phase_banner_tag_preview-draft: Draft preview

@@ -28,7 +28,7 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
         expect(mail.subject).to eq("Form submission: #{title} - reference: #{submission_reference}")
       end
 
-      context "when looking at the html part" do
+      describe "the html part" do
         let(:part) { mail.html_part }
 
         it "has a link to GOV.UK" do
@@ -84,7 +84,7 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
         end
       end
 
-      context "when looking at the plaintext part" do
+      describe "the plaintext part" do
         let(:part) { mail.text_part }
 
         it "includes the answers" do
@@ -142,6 +142,22 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
 
       it "sets the subject" do
         expect(mail.subject).to eq("TEST FORM SUBMISSION: #{title} - reference: #{submission_reference}")
+      end
+
+      describe "the html part" do
+        let(:part) { mail.html_part }
+
+        it "includes the form title text" do
+          expect(part.body).to have_css("p", text: I18n.t("mailer.submission.title_preview", title:))
+        end
+      end
+
+      describe "the plaintext part" do
+        let(:part) { mail.text_part }
+
+        it "includes the form title text" do
+          expect(part.body).to have_text(I18n.t("mailer.submission.title_preview", title:))
+        end
       end
     end
   end
