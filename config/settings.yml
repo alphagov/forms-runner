@@ -1,4 +1,5 @@
-features: {}
+features:
+  ses_submissions: false
 
 forms_admin:
   # URL to form-admin
