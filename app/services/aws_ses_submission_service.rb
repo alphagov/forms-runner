@@ -5,6 +5,7 @@ class AwsSesSubmissionService
     @journey = journey
     @form = form
     @mailer_options = mailer_options
+    @csv_filename = nil
   end
 
   def submit
@@ -31,6 +32,8 @@ private
     Tempfile.create do |file|
       write_submission_csv(file)
 
+      @csv_filename = csv_filename
+
       files = files.merge({ csv_filename => File.read(file.path) })
       deliver_submission_email(files)
     end
@@ -41,7 +44,8 @@ private
                                                        answer_content_plain_text:,
                                                        submission_email_address: @form.submission_email,
                                                        mailer_options: @mailer_options,
-                                                       files:).deliver_now
+                                                       files:,
+                                                       csv_filename: @csv_filename).deliver_now
 
     CurrentJobLoggingAttributes.mail_message_id = mail.message_id
     mail.message_id
