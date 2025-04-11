@@ -1,7 +1,7 @@
 require "rails_helper"
 
 describe AwsSesFormSubmissionMailer, type: :mailer do
-  let(:mail) { described_class.submission_email(answer_content_html:, answer_content_plain_text:, submission_email_address:, mailer_options:, files:) }
+  let(:mail) { described_class.submission_email(answer_content_html:, answer_content_plain_text:, submission_email_address:, mailer_options:, files:, csv_filename:) }
   let(:title) { "Form 1" }
   let(:answer_content_html) { "My question: My answer" }
   let(:answer_content_plain_text) { "My question: My answer" }
@@ -10,6 +10,7 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
   let(:files) { {} }
   let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
   let(:payment_url) { nil }
+  let(:csv_filename) { nil }
   let(:mailer_options) do
     FormSubmissionService::MailerOptions.new(title:,
                                              is_preview:,
@@ -195,6 +196,60 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
 
         it "does not include text about the payment" do
           expect(part.body).not_to have_text(I18n.t("mailer.submission.payment"))
+        end
+      end
+    end
+
+    context "when the csv file of answers is attached" do
+      let(:csv_filename) { "my_answers.csv" }
+
+      describe "the html part" do
+        let(:part) { mail.html_part }
+
+        it "includes a heading about an answers CSV file" do
+          expect(part.body).to have_css("h2", text: I18n.t("mailer.submission.csv_file"))
+        end
+
+        it "includes the CSV filename" do
+          expect(part.body).to have_css("p", text: I18n.t("mailer.submission.file_attached", filename: csv_filename))
+        end
+      end
+
+      describe "the plaintext part" do
+        let(:part) { mail.text_part }
+
+        it "includes text about an answers CSV file" do
+          expect(part.body).to have_text(I18n.t("mailer.submission.csv_file"))
+        end
+
+        it "includes the CSV filename" do
+          expect(part.body).to have_text(I18n.t("mailer.submission.file_attached", filename: csv_filename))
+        end
+      end
+    end
+
+    context "when the csv file of answers is not attached" do
+      describe "the html part" do
+        let(:part) { mail.html_part }
+
+        it "does not include a heading about an answers CSV file" do
+          expect(part.body).not_to have_css("h2", text: I18n.t("mailer.submission.csv_file"))
+        end
+
+        it "does not include the CSV filename" do
+          expect(part.body).not_to have_css("p", text: I18n.t("mailer.submission.file_attached", filename: csv_filename))
+        end
+      end
+
+      describe "the plaintext part" do
+        let(:part) { mail.text_part }
+
+        it "does not include text about an answers CSV file" do
+          expect(part.body).not_to have_text(I18n.t("mailer.submission.csv_file"))
+        end
+
+        it "does not include the CSV filename" do
+          expect(part.body).not_to have_text(I18n.t("mailer.submission.file_attached", filename: csv_filename))
         end
       end
     end
