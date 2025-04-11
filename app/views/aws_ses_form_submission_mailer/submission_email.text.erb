@@ -19,6 +19,14 @@
 
 <%= @answer_content_plain_text %>
 
+<% if @csv_filename.present? %>
+---
+
+<%= I18n.t("mailer.submission.csv_file") %>
+
+<%= I18n.t("mailer.submission.file_attached", filename: @csv_filename) %>
+<% end %>
+
 ---
 
 <%= I18n.t("mailer.submission.cannot_reply.heading") %>

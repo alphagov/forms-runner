@@ -32,16 +32,17 @@ private
       write_submission_csv(file)
 
       files = files.merge({ csv_filename => File.read(file.path) })
-      deliver_submission_email(files)
+      deliver_submission_email(files, csv_filename)
     end
   end
 
-  def deliver_submission_email(files)
+  def deliver_submission_email(files, csv_filename = nil)
     mail = AwsSesFormSubmissionMailer.submission_email(answer_content_html:,
                                                        answer_content_plain_text:,
                                                        submission_email_address: @form.submission_email,
                                                        mailer_options: @mailer_options,
-                                                       files:).deliver_now
+                                                       files:,
+                                                       csv_filename:).deliver_now
 
     CurrentJobLoggingAttributes.mail_message_id = mail.message_id
     mail.message_id

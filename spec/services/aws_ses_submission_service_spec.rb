@@ -73,7 +73,8 @@ RSpec.describe AwsSesSubmissionService do
               answer_content_plain_text: "What is the meaning of life?\n\n42",
               submission_email_address: submission_email,
               mailer_options: instance_of(FormSubmissionService::MailerOptions),
-              files: {} },
+              files: {},
+              csv_filename: nil },
           ).once
         end
       end
@@ -106,7 +107,8 @@ RSpec.describe AwsSesSubmissionService do
               answer_content_plain_text: "#{question.question_text}\n\n#{I18n.t('mailer.submission.file_attached', filename: question.name_with_filename_suffix)}",
               submission_email_address: submission_email,
               mailer_options: instance_of(FormSubmissionService::MailerOptions),
-              files: { question.name_with_filename_suffix => file_content } },
+              files: { question.name_with_filename_suffix => file_content },
+              csv_filename: nil },
           ).once
         end
       end
@@ -143,7 +145,8 @@ RSpec.describe AwsSesSubmissionService do
               answer_content_plain_text: "What is the meaning of life?\n\n42",
               submission_email_address: submission_email,
               mailer_options: instance_of(FormSubmissionService::MailerOptions),
-              files: { "govuk_forms_form_#{form.id}_#{submission_reference}.csv" => expected_csv_content } },
+              files: { "govuk_forms_form_#{form.id}_#{submission_reference}.csv" => expected_csv_content },
+              csv_filename: "govuk_forms_form_#{form.id}_#{submission_reference}.csv" },
           ).once
         end
       end
@@ -176,7 +179,8 @@ RSpec.describe AwsSesSubmissionService do
                   files: {
                     "govuk_forms_form_#{form.id}_#{submission_reference}.csv" => expected_csv_content,
                     question.name_with_filename_suffix => file_content,
-                  } },
+                  },
+                  csv_filename: "govuk_forms_form_#{form.id}_#{submission_reference}.csv" },
               ).once
             end
           end
@@ -199,7 +203,8 @@ RSpec.describe AwsSesSubmissionService do
                 answer_content_plain_text: "What is the meaning of life?\n\n42",
                 submission_email_address: submission_email,
                 mailer_options: instance_of(FormSubmissionService::MailerOptions),
-                files: {} },
+                files: {},
+                csv_filename: nil },
             ).once
           end
         end
