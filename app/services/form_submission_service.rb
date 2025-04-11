@@ -40,9 +40,14 @@ private
 
   def submit_using_form_submission_type
     return s3_submission_service.submit if @form.submission_type == "s3"
-    return submit_via_aws_ses if @form.has_file_upload_question?
 
-    notify_submission_service.submit
+    if FeatureService.enabled?(:ses_submissions)
+      submit_via_aws_ses
+    else
+      return submit_via_aws_ses if @form.has_file_upload_question?
+
+      notify_submission_service.submit
+    end
   end
 
   def submit_confirmation_email_to_user
