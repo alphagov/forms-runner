@@ -81,14 +81,6 @@ private
     )
   end
 
-  def aws_ses_submission_service
-    AwsSesSubmissionService.new(
-      journey: @current_context.journey,
-      form: @form,
-      mailer_options:,
-    )
-  end
-
   def submit_via_aws_ses
     submission = Submission.create!(
       reference: @submission_reference,
