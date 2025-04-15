@@ -160,6 +160,11 @@ RSpec.describe Question::File, type: :model do
     let(:original_filename) { Faker::File.file_name(dir: "", directory_separator: "") }
     let(:attributes) { { original_filename:, filename_suffix: } }
     let(:filename_suffix) { "" }
+    let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
+
+    before do
+      question.populate_email_filename(submission_reference:)
+    end
 
     context "when the original_filename is blank" do
       let(:original_filename) { nil }
@@ -167,28 +172,11 @@ RSpec.describe Question::File, type: :model do
       it "returns a nil value" do
         expect(question.show_answer_in_email).to be_nil
       end
-
-      context "when the file has a suffix set" do
-        let(:filename_suffix) { "_1" }
-
-        it "returns a nil value" do
-          expect(question.show_answer_in_email).to be_nil
-        end
-      end
     end
 
     context "when the original_filename has a value" do
-      it "returns the original_filename" do
-        expect(question.show_answer_in_email).to eq I18n.t("mailer.submission.file_attached", filename: question.name_with_filename_suffix)
-      end
-
-      context "when the file has a suffix set" do
-        let(:attributes) { { original_filename:, filename_suffix: } }
-        let(:filename_suffix) { "_1" }
-
-        it "returns the filename with a suffix" do
-          expect(question.show_answer_in_email).to eq I18n.t("mailer.submission.file_attached", filename: question.name_with_filename_suffix)
-        end
+      it "returns the email_filename with the email attachment text" do
+        expect(question.show_answer_in_email).to eq I18n.t("mailer.submission.file_attached", filename: question.email_filename)
       end
     end
   end
@@ -197,6 +185,11 @@ RSpec.describe Question::File, type: :model do
     let(:attributes) { { original_filename:, filename_suffix: } }
     let(:original_filename) { Faker::File.file_name(dir: "", directory_separator: "") }
     let(:filename_suffix) { "" }
+    let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
+
+    before do
+      question.populate_email_filename(submission_reference:)
+    end
 
     context "when the original_filename is blank" do
       let(:original_filename) { nil }
@@ -204,29 +197,13 @@ RSpec.describe Question::File, type: :model do
       it "returns a hash with the question text and a nil value" do
         expect(question.show_answer_in_csv).to eq({ question.question_text => nil })
       end
-
-      context "when the file has a suffix set" do
-        let(:filename_suffix) { "_1" }
-
-        it "returns a hash with the question text and a nil value" do
-          expect(question.show_answer_in_csv).to eq({ question.question_text => nil })
-        end
-      end
     end
 
     context "when the original_filename has a value" do
       let(:original_filename) { Faker::File.file_name(dir: "", directory_separator: "") }
 
-      it "returns the original_filename" do
-        expect(question.show_answer_in_csv).to eq({ question.question_text => question.name_with_filename_suffix })
-      end
-
-      context "when the file has a suffix set" do
-        let(:filename_suffix) { "_1" }
-
-        it "returns the filename with a suffix" do
-          expect(question.show_answer_in_csv).to eq({ question.question_text => question.name_with_filename_suffix })
-        end
+      it "returns a hash with the email_filename" do
+        expect(question.show_answer_in_csv).to eq({ question.question_text => question.email_filename })
       end
     end
   end

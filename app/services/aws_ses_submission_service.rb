@@ -58,7 +58,8 @@ private
 
   def uploaded_files_in_answers
     @journey.completed_file_upload_questions
-            .map { |question| [question.name_with_filename_suffix, question.file_from_s3] }
+            .each { it.populate_email_filename(submission_reference: @mailer_options.submission_reference) }
+            .map { |question| [question.email_filename, question.file_from_s3] }
             .to_h
   end
 

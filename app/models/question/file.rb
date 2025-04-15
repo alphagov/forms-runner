@@ -38,13 +38,13 @@ module Question
     def show_answer_in_email
       return nil if original_filename.blank?
 
-      I18n.t("mailer.submission.file_attached", filename: name_with_filename_suffix)
+      I18n.t("mailer.submission.file_attached", filename: email_filename)
     end
 
     def show_answer_in_csv
       return Hash[question_text, nil] if original_filename.blank?
 
-      { question_text => name_with_filename_suffix }
+      { question_text => email_filename }
     end
 
     def name_with_filename_suffix
