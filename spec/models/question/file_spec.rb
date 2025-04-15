@@ -266,33 +266,26 @@ RSpec.describe Question::File, type: :model do
   end
 
   describe "populate_email_filename" do
-    let(:file_extension) { ".txt" }
-
-    let(:original_filename) { "#{file_basename}#{file_extension}" }
-    let(:filename_suffix) { "" }
     let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
-    let(:maximum_file_basename_length) { 100 - submission_reference.length - filename_suffix.length - file_extension.length - 1 }
-
     let(:attributes) { { original_filename:, filename_suffix: } }
 
     context "when no suffix is supplied" do
-      context "when the filename and extension are less than or equal to 100 characters" do
-        let(:file_basename) { Faker::Alphanumeric.alpha(number: maximum_file_basename_length) }
+      let(:filename_suffix) { "" }
 
-        it "sets email_filename to the original_filename" do
-          expect { question.populate_email_filename(submission_reference:) }.to change(question, :email_filename).from("").to("#{file_basename}_#{submission_reference}#{file_extension}")
+      context "when the filename and extension are less than or equal to 100 characters" do
+        let(:original_filename) { "a_very_very_long_filename_that_is_very_nearly_but_not_quite_long_enough_to_be_truncated.txt" }
+
+        it "sets email_filename to the original_filename with the submission reference" do
+          expect { question.populate_email_filename(submission_reference:) }.to change(question, :email_filename).from("").to("a_very_very_long_filename_that_is_very_nearly_but_not_quite_long_enough_to_be_truncated_#{submission_reference}.txt")
           expect(question.email_filename.length).to eq 100
         end
       end
 
       context "when the filename and extension are over 100 characters" do
-        let(:file_basename) { Faker::Alphanumeric.alpha(number: maximum_file_basename_length + 1) }
+        let(:original_filename) { "a_very_very_very_very_very_very_very_long_filename_just_about_long_enough_for_truncation.png" }
 
-        it "returns the original_filename" do
-          truncated_basename = file_basename.truncate(maximum_file_basename_length, omission: "")
-          truncated_filename_with_reference = "#{truncated_basename}_#{submission_reference}#{file_extension}"
-
-          expect { question.populate_email_filename(submission_reference:) }.to change(question, :email_filename).from("").to(truncated_filename_with_reference)
+        it "sets email_filename to the a truncated original_filename with the submission reference" do
+          expect { question.populate_email_filename(submission_reference:) }.to change(question, :email_filename).from("").to("a_very_very_very_very_very_very_very_long_filename_just_about_long_enough_for_truncatio_#{submission_reference}.png")
           expect(question.email_filename.length).to eq 100
         end
       end
@@ -302,22 +295,20 @@ RSpec.describe Question::File, type: :model do
       let(:filename_suffix) { "_1" }
 
       context "when the filename, suffix and extension are less than or equal to 100 characters" do
-        let(:file_basename) { Faker::Alphanumeric.alpha(number: maximum_file_basename_length) }
+        let(:original_filename) { "a_very_very_long_filename_thats_very_nearly_but_not_quite_long_enough_to_be_truncated.jpg" }
 
-        it "returns the original filename with the suffix" do
-          filename_with_suffix_and_reference = "#{file_basename}#{filename_suffix}_#{submission_reference}#{file_extension}"
-
+        it "sets email_filename to the original filename with the suffix and reference" do
+          filename_with_suffix_and_reference = "a_very_very_long_filename_thats_very_nearly_but_not_quite_long_enough_to_be_truncated_1_#{submission_reference}.jpg"
           expect { question.populate_email_filename(submission_reference:) }.to change(question, :email_filename).from("").to(filename_with_suffix_and_reference)
           expect(question.email_filename.length).to eq 100
         end
       end
 
       context "when the filename, suffix and extension are over 100 characters" do
-        let(:file_basename) { Faker::Alphanumeric.alpha(number: maximum_file_basename_length + 1) }
+        let(:original_filename) { "an_unusual_and_atypically_long_filename_that_is_just_about_long_enough_to_be_truncated.doc" }
 
-        it "returns the truncated filename with suffix" do
-          truncated_basename = file_basename.truncate(maximum_file_basename_length, omission: "")
-          truncated_filename_with_suffix_and_reference = "#{truncated_basename}#{filename_suffix}_#{submission_reference}#{file_extension}"
+        it "sets email_filename to the truncated filename with suffix and reference" do
+          truncated_filename_with_suffix_and_reference = "an_unusual_and_atypically_long_filename_that_is_just_about_long_enough_to_be_truncate_1_#{submission_reference}.doc"
 
           expect { question.populate_email_filename(submission_reference:) }.to change(question, :email_filename).from("").to(truncated_filename_with_suffix_and_reference)
           expect(question.email_filename.length).to eq 100
