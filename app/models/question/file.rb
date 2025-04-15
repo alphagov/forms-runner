@@ -6,6 +6,7 @@ module Question
     attribute :original_filename
     attribute :uploaded_file_key
     attribute :filename_suffix, default: ""
+    attribute :email_filename, default: ""
     validates :file, presence: true, unless: :is_optional?
     validate :validate_file_size
     validate :validate_file_extension
@@ -54,6 +55,20 @@ module Question
       base_name = ::File.basename(original_filename, extension).truncate(base_name_max_length, omission: "")
 
       "#{base_name}#{filename_suffix}#{extension}"
+    end
+
+    def populate_email_filename(submission_reference:)
+      return if original_filename.blank?
+
+      extension = ::File.extname(original_filename)
+
+      submission_reference_with_underscore = "_#{submission_reference}"
+
+      base_name_max_length = FILE_MAX_FILENAME_LENGTH - submission_reference_with_underscore.length - extension.length - filename_suffix.length
+
+      base_name = ::File.basename(original_filename, extension).truncate(base_name_max_length, omission: "")
+
+      self.email_filename = "#{base_name}#{filename_suffix}#{submission_reference_with_underscore}#{extension}"
     end
 
     def before_save
