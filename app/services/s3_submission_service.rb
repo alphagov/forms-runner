@@ -101,7 +101,7 @@ private
   end
 
   def uploaded_file_target_key(file)
-    generate_key(file.name_with_filename_suffix)
+    generate_key(file.filename_for_s3_submission)
   end
 
   def generate_key(filename)
