@@ -167,7 +167,7 @@ RSpec.describe RepeatableStep, type: :model do
 
       it "returns a hash of all answers with keys containing the answer numbers" do
         # we convert to an array to test the ordering of the hash
-        expect(repeatable_step.show_answer_in_csv.to_a).to eq({
+        expect(repeatable_step.show_answer_in_csv(false).to_a).to eq({
           "What is your name? - First name - Answer 1" => first_question.first_name,
           "What is your name? - Last name - Answer 1" => first_question.last_name,
           "What is your name? - First name - Answer 2" => second_question.first_name,
@@ -186,7 +186,7 @@ RSpec.describe RepeatableStep, type: :model do
 
       it "returns a hash of all answers with keys containing the answer numbers" do
         # we convert to an array to test the ordering of the hash
-        expect(repeatable_step.show_answer_in_csv.to_a).to eq({
+        expect(repeatable_step.show_answer_in_csv(false).to_a).to eq({
           "What is the meaning of life? - Answer 1" => first_question.text,
           "What is the meaning of life? - Answer 2" => second_question.text,
         }.to_a)
@@ -197,7 +197,7 @@ RSpec.describe RepeatableStep, type: :model do
       let(:question) { build :text, is_optional: false }
 
       it "returns a hash containing a key for the first answer with a blank value" do
-        expect(repeatable_step.show_answer_in_csv).to eq({
+        expect(repeatable_step.show_answer_in_csv(false)).to eq({
           "#{question.question_text} - Answer 1" => "",
         })
       end

@@ -8,7 +8,7 @@ RSpec.shared_examples "a question model" do |_parameter|
   end
 
   it "responds with a hash to .show_answer_in_csv" do
-    expect(question.show_answer_in_csv).to be_a(Hash)
+    expect(question.show_answer_in_csv(true)).to be_a(Hash)
   end
 
   it "responds serializable_hash with a hash" do

@@ -72,6 +72,7 @@ private
       submission_reference: @mailer_options.submission_reference,
       timestamp: @mailer_options.timestamp,
       output_file_path: file.path,
+      is_s3_submission: false,
     )
   end
 

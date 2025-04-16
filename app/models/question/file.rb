@@ -41,8 +41,10 @@ module Question
       I18n.t("mailer.submission.file_attached", filename: email_filename)
     end
 
-    def show_answer_in_csv
+    def show_answer_in_csv(is_s3_submission)
       return Hash[question_text, nil] if original_filename.blank?
+
+      return { question_text => name_with_filename_suffix } if is_s3_submission
 
       { question_text => email_filename }
     end

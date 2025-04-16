@@ -195,15 +195,23 @@ RSpec.describe Question::File, type: :model do
       let(:original_filename) { nil }
 
       it "returns a hash with the question text and a nil value" do
-        expect(question.show_answer_in_csv).to eq({ question.question_text => nil })
+        expect(question.show_answer_in_csv(false)).to eq({ question.question_text => nil })
       end
     end
 
     context "when the original_filename has a value" do
-      let(:original_filename) { Faker::File.file_name(dir: "", directory_separator: "") }
+      context "when is_s3_submission is false" do
+        let(:original_filename) { Faker::File.file_name(dir: "", directory_separator: "") }
 
-      it "returns a hash with the email_filename" do
-        expect(question.show_answer_in_csv).to eq({ question.question_text => question.email_filename })
+        it "returns a hash with the email_filename" do
+          expect(question.show_answer_in_csv(false)).to eq({ question.question_text => question.email_filename })
+        end
+      end
+
+      context "when is_s3_submission is true" do
+        it "returns a hash with the filename_for_s3_submission" do
+          expect(question.show_answer_in_csv(true)).to eq({ question.question_text => question.filename_for_s3_submission })
+        end
       end
     end
   end
