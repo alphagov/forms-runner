@@ -18,8 +18,8 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
 
   let(:form_with_file_upload_answers) do
     {
-      "1" => { uploaded_file_key: "key1" },
-      "2" => { uploaded_file_key: "key2" },
+      "1" => { uploaded_file_key: "key1", original_filename: "first_file.png" },
+      "2" => { uploaded_file_key: "key2", original_filename: "second_file.txt" },
     }
   end
 

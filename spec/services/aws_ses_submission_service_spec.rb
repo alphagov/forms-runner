@@ -103,17 +103,29 @@ RSpec.describe AwsSesSubmissionService do
           service.submit
 
           expect(AwsSesFormSubmissionMailer).to have_received(:submission_email).with(
-            { answer_content_html: "<h2>#{question.question_text}</h2><p>#{I18n.t('mailer.submission.file_attached', filename: question.name_with_filename_suffix)}</p>",
-              answer_content_plain_text: "#{question.question_text}\n\n#{I18n.t('mailer.submission.file_attached', filename: question.name_with_filename_suffix)}",
+            { answer_content_html: "<h2>#{question.question_text}</h2><p>#{I18n.t('mailer.submission.file_attached', filename: question.email_filename)}</p>",
+              answer_content_plain_text: "#{question.question_text}\n\n#{I18n.t('mailer.submission.file_attached', filename: question.email_filename)}",
               submission_email_address: submission_email,
               mailer_options: instance_of(FormSubmissionService::MailerOptions),
-              files: { question.name_with_filename_suffix => file_content },
+              files: { question.email_filename => file_content },
               csv_filename: nil },
           ).once
         end
       end
 
       include_examples "it returns the message id"
+
+      context "when uploaded_files_in_answers returns the wrong number of files" do
+        before do
+          allow(service).to receive(:uploaded_files_in_answers).and_return({})
+        end
+
+        it "raises an error" do
+          expect {
+            service.submit
+          }.to raise_error(/Number of files does not match number of completed file questions/)
+        end
+      end
     end
 
     context "when the submission type is email_with_csv" do
@@ -169,16 +181,16 @@ RSpec.describe AwsSesSubmissionService do
 
               service.submit
 
-              expected_csv_content = "Reference,Submitted at,#{question.question_text}\n#{submission_reference},2022-09-14T08:00:00Z,#{question.name_with_filename_suffix}\n"
+              expected_csv_content = "Reference,Submitted at,#{question.question_text}\n#{submission_reference},2022-09-14T08:00:00Z,#{question.email_filename}\n"
 
               expect(AwsSesFormSubmissionMailer).to have_received(:submission_email).with(
-                { answer_content_html: "<h2>#{question.question_text}</h2><p>#{I18n.t('mailer.submission.file_attached', filename: question.name_with_filename_suffix)}</p>",
-                  answer_content_plain_text: "#{question.question_text}\n\n#{I18n.t('mailer.submission.file_attached', filename: question.name_with_filename_suffix)}",
+                { answer_content_html: "<h2>#{question.question_text}</h2><p>#{I18n.t('mailer.submission.file_attached', filename: question.email_filename)}</p>",
+                  answer_content_plain_text: "#{question.question_text}\n\n#{I18n.t('mailer.submission.file_attached', filename: question.email_filename)}",
                   submission_email_address: submission_email,
                   mailer_options: instance_of(FormSubmissionService::MailerOptions),
                   files: {
                     "govuk_forms_form_#{form.id}_#{submission_reference}.csv" => expected_csv_content,
-                    question.name_with_filename_suffix => file_content,
+                    question.email_filename => file_content,
                   },
                   csv_filename: "govuk_forms_form_#{form.id}_#{submission_reference}.csv" },
               ).once

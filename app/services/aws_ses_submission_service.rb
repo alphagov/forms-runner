@@ -18,6 +18,9 @@ class AwsSesSubmissionService
     end
 
     files = uploaded_files_in_answers
+
+    raise StandardError, "Number of files does not match number of completed file questions" unless files.count == @journey.completed_file_upload_questions.count
+
     if @form.submission_type == "email_with_csv"
       deliver_submission_email_with_csv_attachment(files)
     else
@@ -58,7 +61,8 @@ private
 
   def uploaded_files_in_answers
     @journey.completed_file_upload_questions
-            .map { |question| [question.name_with_filename_suffix, question.file_from_s3] }
+            .each { it.populate_email_filename(submission_reference: @mailer_options.submission_reference) }
+            .map { |question| [question.email_filename, question.file_from_s3] }
             .to_h
   end
 
