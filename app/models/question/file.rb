@@ -57,6 +57,16 @@ module Question
       "#{base_name}#{filename_suffix}#{extension}"
     end
 
+    def filename_after_reference_truncation
+      extension = ::File.extname(original_filename)
+
+      base_name_max_length = FILE_MAX_FILENAME_LENGTH - extension.length - ReferenceNumberService::REFERENCE_LENGTH
+
+      base_name = ::File.basename(original_filename, extension).truncate(base_name_max_length, omission: "")
+
+      "#{base_name}#{extension}"
+    end
+
     def populate_email_filename(submission_reference:)
       return if original_filename.blank?
 

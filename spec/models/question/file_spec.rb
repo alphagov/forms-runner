@@ -265,6 +265,27 @@ RSpec.describe Question::File, type: :model do
     end
   end
 
+  describe "filename_after_reference_truncation" do
+    let(:attributes) { { original_filename: } }
+
+    context "when the filename and extension are less than or equal to 100 characters" do
+      let(:original_filename) { "this_is_fairly_long_filename_that_is_luckily_just_short_enough_to_avoid_being_truncated.xlsx" }
+
+      it "returns the original_filename" do
+        expect(question.filename_after_reference_truncation).to eq original_filename
+      end
+    end
+
+    context "when the filename and extension are over 100 characters" do
+      let(:original_filename) { "this_is_an_incredibly_long_filename_that_will_surely_have_to_be_truncated_somewhere_near_the_end.xlsx" }
+
+      it "returns the original_filename" do
+        truncated_filename = "this_is_an_incredibly_long_filename_that_will_surely_have_to_be_truncated_somewhere_nea.xlsx"
+        expect(question.filename_after_reference_truncation).to eq truncated_filename
+      end
+    end
+  end
+
   describe "populate_email_filename" do
     let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
     let(:attributes) { { original_filename:, filename_suffix: } }

@@ -70,7 +70,11 @@ module Flow
 
     def populate_file_suffixes
       completed_file_upload_questions.each_with_index do |question, index|
-        count = completed_file_upload_questions.take(index).filter { it.original_filename == question.original_filename }.count
+        previous_completed_file_questions = completed_file_upload_questions.take(index)
+
+        count = previous_completed_file_questions.filter {
+          it.filename_after_reference_truncation == question.filename_after_reference_truncation
+        }.count
 
         question.filename_suffix = count.zero? ? "" : "_#{count}"
       end

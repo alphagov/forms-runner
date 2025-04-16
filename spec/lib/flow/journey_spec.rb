@@ -239,6 +239,37 @@ RSpec.describe Flow::Journey do
           expect(journey.all_steps[3].question.filename_suffix).to eq("_2")
         end
       end
+
+      context "when there are multiple files with different names that are the same after truncation" do
+        let(:first_page_in_form) { build(:page, answer_type: "file", id: 1, next_page: 2) }
+        let(:second_page_in_form) { build(:page, answer_type: "file", id: 2, next_page: 3) }
+        let(:third_page_in_form) { build(:page, answer_type: "file", id: 3, next_page: 4) }
+        let(:fourth_page_in_form) { build(:page, answer_type: "file", id: 4) }
+        let(:pages_data) { [first_page_in_form, second_page_in_form, third_page_in_form, fourth_page_in_form] }
+        let(:store) do
+          {
+            answers: {
+              "2" =>
+                {
+                  "1" => { uploaded_file_key: "key1", original_filename: "this_is_an_incredibly_long_filename_that_will_surely_have_to_be_truncated_somewhere_near_the_end_version_one", filename_suffix: "" },
+                  "2" => { uploaded_file_key: "key2", original_filename: "a different filename", filename_suffix: "" },
+                  "3" => { uploaded_file_key: "key3", original_filename: "this_is_an_incredibly_long_filename_that_will_surely_have_to_be_truncated_somewhere_near_the_end_version_two", filename_suffix: "" },
+                  "4" => { uploaded_file_key: "key4", original_filename: "this_is_an_incredibly_long_filename_that_will_surely_have_to_be_truncated_somewhere_near_the_end_version_three", filename_suffix: "" },
+                },
+            },
+          }
+        end
+
+        it "does not add a numerical suffix to the first instance of a filename" do
+          expect(journey.all_steps[0].question.filename_suffix).to eq("")
+          expect(journey.all_steps[1].question.filename_suffix).to eq("")
+        end
+
+        it "adds a numerical suffix to any files which would have duplicate filenames after truncation" do
+          expect(journey.all_steps[2].question.filename_suffix).to eq("_1")
+          expect(journey.all_steps[3].question.filename_suffix).to eq("_2")
+        end
+      end
     end
 
     context "when answers are loaded from the database" do
