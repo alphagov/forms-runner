@@ -114,6 +114,18 @@ RSpec.describe AwsSesSubmissionService do
       end
 
       include_examples "it returns the message id"
+
+      context "when uploaded_files_in_answers returns the wrong number of files" do
+        before do
+          allow(service).to receive(:uploaded_files_in_answers).and_return({})
+        end
+
+        it "raises an error" do
+          expect {
+            service.submit
+          }.to raise_error(/Number of files does not match number of completed file questions/)
+        end
+      end
     end
 
     context "when the submission type is email_with_csv" do

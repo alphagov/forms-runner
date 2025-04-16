@@ -18,6 +18,9 @@ class AwsSesSubmissionService
     end
 
     files = uploaded_files_in_answers
+
+    raise StandardError, "Number of files does not match number of completed file questions" unless files.count == @journey.completed_file_upload_questions.count
+
     if @form.submission_type == "email_with_csv"
       deliver_submission_email_with_csv_attachment(files)
     else
