@@ -55,6 +55,9 @@ RSpec.describe Forms::PageController, type: :request do
   let(:logger) { ActiveSupport::Logger.new(output) }
 
   before do
+    # Intercept the request logs so we can do assertions on them
+    allow(Lograge).to receive(:logger).and_return(logger)
+
     ActiveResource::HttpMock.respond_to do |mock|
       mock.get "/api/v2/forms/2#{api_url_suffix}", req_headers, form_data.to_json, 200
     end
@@ -77,9 +80,6 @@ RSpec.describe Forms::PageController, type: :request do
     end
 
     before do
-      # Intercept the request logs so we can do assertions on them
-      allow(Lograge).to receive(:logger).and_return(logger)
-
       ActiveResource::HttpMock.respond_to do |mock|
         mock.get "/api/v2/forms/200#{api_url_suffix}", req_headers, form_data.to_json, 200
       end
@@ -399,6 +399,10 @@ RSpec.describe Forms::PageController, type: :request do
         it "returns 422" do
           expect(response).to have_http_status(:unprocessable_entity)
         end
+
+        it "adds validation_errors logging attribute" do
+          expect(log_lines[0]["validation_errors"]).to eq(["text: blank"])
+        end
       end
     end
 
@@ -406,6 +410,11 @@ RSpec.describe Forms::PageController, type: :request do
       it "Redirects to the next page" do
         post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
         expect(response).to redirect_to(form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2))
+      end
+
+      it "does not add validation_errors logging attribute" do
+        post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
+        expect(log_lines[0].keys).not_to include("validation_errors")
       end
 
       context "when changing an existing answer" do

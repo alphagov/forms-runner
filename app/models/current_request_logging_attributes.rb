@@ -1,7 +1,8 @@
 class CurrentRequestLoggingAttributes < ActiveSupport::CurrentAttributes
   attribute :request_host, :request_id, :form_id, :form_name, :preview, :page_id, :page_slug, :session_id_hash, :trace_id,
             :question_number, :submission_reference, :submission_email_reference, :submission_email_id,
-            :confirmation_email_reference, :confirmation_email_id, :rescued_exception, :rescued_exception_trace
+            :confirmation_email_reference, :confirmation_email_id, :rescued_exception, :rescued_exception_trace,
+            :validation_errors
 
   def as_hash
     {
@@ -26,6 +27,7 @@ class CurrentRequestLoggingAttributes < ActiveSupport::CurrentAttributes
       }.compact,
       rescued_exception:,
       rescued_exception_trace:,
+      validation_errors:,
     }.compact_blank
   end
 end
