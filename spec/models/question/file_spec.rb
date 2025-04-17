@@ -195,20 +195,28 @@ RSpec.describe Question::File, type: :model do
       let(:original_filename) { nil }
 
       it "returns a hash with the question text and a nil value" do
-        expect(question.show_answer_in_csv).to eq({ question.question_text => nil })
+        expect(question.show_answer_in_csv(false)).to eq({ question.question_text => nil })
       end
     end
 
     context "when the original_filename has a value" do
-      let(:original_filename) { Faker::File.file_name(dir: "", directory_separator: "") }
+      context "when is_s3_submission is false" do
+        let(:original_filename) { Faker::File.file_name(dir: "", directory_separator: "") }
 
-      it "returns a hash with the email_filename" do
-        expect(question.show_answer_in_csv).to eq({ question.question_text => question.email_filename })
+        it "returns a hash with the email_filename" do
+          expect(question.show_answer_in_csv(false)).to eq({ question.question_text => question.email_filename })
+        end
+      end
+
+      context "when is_s3_submission is true" do
+        it "returns a hash with the filename_for_s3_submission" do
+          expect(question.show_answer_in_csv(true)).to eq({ question.question_text => question.filename_for_s3_submission })
+        end
       end
     end
   end
 
-  describe "name_with_filename_suffix" do
+  describe "#filename_for_s3_submission" do
     let(:file_extension) { ".txt" }
 
     let(:original_filename) { "#{file_basename}#{file_extension}" }
@@ -222,8 +230,8 @@ RSpec.describe Question::File, type: :model do
         let(:file_basename) { Faker::Alphanumeric.alpha(number: maximum_file_basename_length) }
 
         it "returns the original_filename" do
-          expect(question.name_with_filename_suffix).to eq original_filename
-          expect(question.name_with_filename_suffix.length).to eq 100
+          expect(question.filename_for_s3_submission).to eq original_filename
+          expect(question.filename_for_s3_submission.length).to eq 100
         end
       end
 
@@ -233,8 +241,8 @@ RSpec.describe Question::File, type: :model do
         it "returns the original_filename" do
           truncated_basename = file_basename.truncate(maximum_file_basename_length, omission: "")
           truncated_filename = "#{truncated_basename}#{file_extension}"
-          expect(question.name_with_filename_suffix).to eq truncated_filename
-          expect(question.name_with_filename_suffix.length).to eq 100
+          expect(question.filename_for_s3_submission).to eq truncated_filename
+          expect(question.filename_for_s3_submission.length).to eq 100
         end
       end
     end
@@ -247,8 +255,8 @@ RSpec.describe Question::File, type: :model do
 
         it "returns the original filename with the suffix" do
           filename_with_suffix = "#{file_basename}#{filename_suffix}#{file_extension}"
-          expect(question.name_with_filename_suffix).to eq filename_with_suffix
-          expect(question.name_with_filename_suffix.length).to eq 100
+          expect(question.filename_for_s3_submission).to eq filename_with_suffix
+          expect(question.filename_for_s3_submission.length).to eq 100
         end
       end
 
@@ -258,8 +266,8 @@ RSpec.describe Question::File, type: :model do
         it "returns the truncated filename with suffix" do
           truncated_basename = file_basename.truncate(maximum_file_basename_length, omission: "")
           truncated_filename_with_suffix = "#{truncated_basename}#{filename_suffix}#{file_extension}"
-          expect(question.name_with_filename_suffix).to eq truncated_filename_with_suffix
-          expect(question.name_with_filename_suffix.length).to eq 100
+          expect(question.filename_for_s3_submission).to eq truncated_filename_with_suffix
+          expect(question.filename_for_s3_submission.length).to eq 100
         end
       end
     end

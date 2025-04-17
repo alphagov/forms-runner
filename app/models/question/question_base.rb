@@ -38,7 +38,7 @@ module Question
       show_answer
     end
 
-    def show_answer_in_csv
+    def show_answer_in_csv(*)
       Hash[question_text, show_answer]
     end
 

@@ -13,7 +13,7 @@ module Question
     validate :phone_number, :not_enough_digits?
     validate :phone_number, :too_many_digits?
 
-    def show_answer_in_csv
+    def show_answer_in_csv(*)
       return { question_text => "" } if phone_number.blank?
       # numbers containing non-numeric characters, or starting with a non-0 digit, shouldn't need additional processing
       return { question_text => phone_number } unless phone_number.match(/^0\d*$/)

@@ -4,12 +4,13 @@ class CsvGenerator
   CSV_EXTENSION = ".csv".freeze
   CSV_FILENAME_PREFIX = "govuk_forms_".freeze
 
-  def self.write_submission(all_steps:, submission_reference:, timestamp:, output_file_path:)
+  def self.write_submission(all_steps:, submission_reference:, timestamp:, output_file_path:, is_s3_submission:)
     headers = ["Reference", "Submitted at"]
     values = [submission_reference, timestamp.iso8601]
     all_steps.map do |page|
-      headers.push(*page.show_answer_in_csv.keys)
-      values.push(*page.show_answer_in_csv.values)
+      answer_parts = page.show_answer_in_csv(is_s3_submission)
+      headers.push(*answer_parts.keys)
+      values.push(*answer_parts.values)
     end
 
     CSV.open(output_file_path, "w") do |csv|

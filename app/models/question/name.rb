@@ -53,7 +53,7 @@ module Question
       attributes_with_values.map { |attribute| generate_string_for_processing_email(attribute) }&.join("\n\n")
     end
 
-    def show_answer_in_csv
+    def show_answer_in_csv(*)
       header_values_hash = {}
       if needs_title?
         add_attribute_to_hash(:title, header_values_hash)

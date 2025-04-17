@@ -140,7 +140,8 @@ RSpec.describe AwsSesSubmissionService do
                                     .with(all_steps:,
                                           submission_reference:,
                                           timestamp:,
-                                          output_file_path: an_instance_of(String))
+                                          output_file_path: an_instance_of(String),
+                                          is_s3_submission: false)
         end
       end
 
