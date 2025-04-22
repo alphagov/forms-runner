@@ -1,5 +1,7 @@
 module Question
   class Selection < QuestionBase
+    NONE_OF_THE_ABOVE_VALUE = "None of the above".freeze
+
     attribute :selection
     validates :selection, presence: true
     validate :selection, :validate_checkbox, if: :allow_multiple_answers?
@@ -40,7 +42,7 @@ module Question
     end
 
     def none_of_the_above_option
-      OpenStruct.new(name: I18n.t("page.none_of_the_above"), value: I18n.t("page.none_of_the_above"))
+      OpenStruct.new(name: I18n.t("page.none_of_the_above"), value: Question::Selection::NONE_OF_THE_ABOVE_VALUE)
     end
 
     def selection_without_blanks
@@ -55,7 +57,7 @@ module Question
 
     def validate_checkbox
       return errors.add(:selection, is_optional? ? :both_none_and_value_selected : :checkbox_blank) if selection_without_blanks.empty?
-      return errors.add(:selection, :both_none_and_value_selected) if selection_without_blanks.count > 1 && I18n.t("page.none_of_the_above").in?(selection_without_blanks)
+      return errors.add(:selection, :both_none_and_value_selected) if selection_without_blanks.count > 1 && Question::Selection::NONE_OF_THE_ABOVE_VALUE.in?(selection_without_blanks)
 
       errors.add(:selection, :inclusion) if selection_without_blanks.any? { |item| allowed_options.exclude?(item) }
     end

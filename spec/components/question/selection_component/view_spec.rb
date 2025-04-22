@@ -103,7 +103,7 @@ RSpec.describe Question::SelectionComponent::View, type: :component do
         let(:is_optional) { true }
 
         it "renders the question as a select field with a prompt, all of the options and a 'None of the above' option" do
-          expected_options = [I18n.t("autocomplete.prompt"), *selection_option_names, I18n.t("page.none_of_the_above")]
+          expected_options = [I18n.t("autocomplete.prompt"), *selection_option_names, Question::Selection::NONE_OF_THE_ABOVE_VALUE]
 
           expect(page).to have_select(question.question_text, options: expected_options)
         end

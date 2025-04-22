@@ -120,7 +120,7 @@ RSpec.describe Question::Selection, type: :model do
       end
 
       it "returns invalid with both an item and none selected" do
-        question.selection = ["option 1", I18n.t("page.none_of_the_above")]
+        question.selection = ["option 1", Question::Selection::NONE_OF_THE_ABOVE_VALUE]
         expect(question).not_to be_valid
         expect(question.errors[:selection]).to include(I18n.t("activemodel.errors.models.question/selection.attributes.selection.both_none_and_value_selected"))
       end
@@ -250,7 +250,7 @@ RSpec.describe Question::Selection, type: :model do
 
   describe "#selection_options_with_none_of_the_above" do
     let(:only_one_option) { "true" }
-    let(:none_of_the_above_option) { OpenStruct.new(name: I18n.t("page.none_of_the_above"), value: I18n.t("page.none_of_the_above")) }
+    let(:none_of_the_above_option) { OpenStruct.new(name: I18n.t("page.none_of_the_above"), value: Question::Selection::NONE_OF_THE_ABOVE_VALUE) }
 
     context "when the user can select 'None of the above'" do
       let(:is_optional) { true }
