@@ -96,10 +96,7 @@ module Question
       key = file_upload_s3_key(tempfile)
       FileUploadS3Service.new.upload_to_s3(tempfile, key)
 
-      FileUploadLogger.log_s3_operation(key, "Uploaded file to S3 for file upload question", {
-        file_size_in_bytes: file.size,
-        file_type: file.content_type,
-      })
+      FileUploadLogger.log_s3_operation(key, "Uploaded file to S3 for file upload question")
 
       check_scan_result(key)
 
@@ -133,20 +130,12 @@ module Question
 
     def validate_file_size
       if file.present? && file.size > FILE_UPLOAD_MAX_SIZE_IN_MB.megabytes
-        Rails.logger.info("File upload question validation failed: file too big", {
-          file_size_in_bytes: file.size,
-          file_type: file.content_type,
-        })
         errors.add(:file, :too_big)
       end
     end
 
     def validate_file_extension
       if file.present? && FILE_TYPES.exclude?(file.content_type)
-        Rails.logger.info("File upload question validation failed: disallowed file type", {
-          file_size_in_bytes: file.size,
-          file_type: file.content_type,
-        })
         errors.add(:file, :disallowed_type)
       end
     end
