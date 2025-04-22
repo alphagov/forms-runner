@@ -20,6 +20,7 @@ RSpec.describe CurrentRequestLoggingAttributes, type: :model do
       current.preview = false
       current.page_id = 2
       current.page_slug = "a-page"
+      current.answer_type = "text"
       current.session_id_hash = "a-session-id"
       current.trace_id = "a-trace-id"
       current.question_number = 3
@@ -39,6 +40,7 @@ RSpec.describe CurrentRequestLoggingAttributes, type: :model do
         preview: "false",
         page_id: 2,
         page_slug: "a-page",
+        answer_type: "text",
         session_id_hash: "a-session-id",
         trace_id: "a-trace-id",
         question_number: 3,

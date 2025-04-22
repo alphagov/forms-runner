@@ -5,6 +5,7 @@ module Forms
     def set_request_logging_attributes
       super
       CurrentRequestLoggingAttributes.question_number = @step.page_number if @step&.page_number
+      CurrentRequestLoggingAttributes.answer_type = @step&.page&.answer_type if @step&.page&.answer_type
     end
 
     def show

@@ -94,6 +94,10 @@ RSpec.describe Forms::PageController, type: :request do
     it "adds the question_number to the instrumentation payload" do
       expect(log_lines[0]["question_number"]).to eq(1)
     end
+
+    it "adds the answer_type to the instrumentation payload" do
+      expect(log_lines[0]["answer_type"]).to eq("text")
+    end
   end
 
   shared_examples "ordered steps" do
