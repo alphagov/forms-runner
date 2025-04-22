@@ -5,7 +5,7 @@
     form_field: form_builder.govuk_collection_select(:selection,
                                           question.selection_options_with_none_of_the_above,
                                           :name,
-                                          :name,
+                                          :value,
                                           options: { prompt: t("autocomplete.prompt") },
                                           label: { text: question_text_with_extra_suffix, **question_text_size_and_tag },
                                           hint: { text: question.hint_text }

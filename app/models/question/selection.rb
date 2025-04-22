@@ -26,7 +26,7 @@ module Question
     end
 
     def selection_options_with_none_of_the_above
-      options = answer_settings.selection_options
+      options = answer_settings.selection_options.map { |option| OpenStruct.new(name: option.name, value: option.name) }
 
       return options unless is_optional?
 
@@ -40,7 +40,7 @@ module Question
     end
 
     def none_of_the_above_option
-      OpenStruct.new(name: I18n.t("page.none_of_the_above"))
+      OpenStruct.new(name: I18n.t("page.none_of_the_above"), value: I18n.t("page.none_of_the_above"))
     end
 
     def selection_without_blanks
