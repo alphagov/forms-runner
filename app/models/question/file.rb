@@ -11,6 +11,8 @@ module Question
     validate :validate_file_size
     validate :validate_file_extension
 
+    after_validation :set_logging_attributes
+
     FILE_UPLOAD_MAX_SIZE_IN_MB = 7
     FILE_TYPES = [
       "text/csv",
@@ -153,6 +155,15 @@ module Question
       uuid = SecureRandom.uuid
       extension = ::File.extname(file.path)
       "#{uuid}#{extension}"
+    end
+
+    def set_logging_attributes
+      if file.present?
+        CurrentRequestLoggingAttributes.answer_metadata = {
+          file_size_in_bytes: file.size,
+          file_type: file.content_type,
+        }
+      end
     end
   end
 end
