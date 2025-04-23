@@ -179,6 +179,15 @@ RSpec.describe Step do
         end
       end
 
+      context "with a matching none_of_the_above condition" do
+        let(:selection) { "None of the above" }
+        let(:routing_conditions) { [OpenStruct.new(answer_value: "none_of_the_above", goto_page_id: "5")] }
+
+        it "returns the goto_page_id of the condition" do
+          expect(step.next_page_slug_after_routing).to eq("5")
+        end
+      end
+
       context "with a non-matching condition" do
         let(:selection) { "No" }
         let(:routing_conditions) { [OpenStruct.new(answer_value: "Yes", goto_page_id: "5")] }
