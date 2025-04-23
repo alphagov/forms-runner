@@ -41,7 +41,7 @@ feature "Fill in and submit a form with a file upload question", type: :feature 
     allow(mock_s3_client).to receive(:put_object)
     allow(mock_s3_client).to receive(:get_object_tagging).and_return({ tag_set: [{ key: "GuardDutyMalwareScanStatus", value: scan_status }] })
 
-    FileUtils.touch test_file
+    File.write(test_file, "some content")
   end
 
   context "when the file is successfully uploaded" do

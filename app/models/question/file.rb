@@ -10,6 +10,7 @@ module Question
     validates :file, presence: true, unless: :is_optional?
     validate :validate_file_size
     validate :validate_file_extension
+    validate :validate_not_empty
 
     after_validation :set_logging_attributes
 
@@ -137,6 +138,12 @@ module Question
     def validate_file_extension
       if file.present? && FILE_TYPES.exclude?(file.content_type)
         errors.add(:file, :disallowed_type)
+      end
+    end
+
+    def validate_not_empty
+      if file.present? && ::File.zero?(file.path)
+        errors.add(:file, :empty)
       end
     end
 
