@@ -32,6 +32,7 @@ RSpec.describe CurrentRequestLoggingAttributes, type: :model do
       current.rescued_exception = "StandardError"
       current.rescued_exception_trace = "a trace"
       current.validation_errors = ["text: blank"]
+      current.answer_metadata = { foo: "bar" }
 
       expect(current.as_hash).to eq({
         request_host: "www.example.com",
@@ -57,6 +58,7 @@ RSpec.describe CurrentRequestLoggingAttributes, type: :model do
         rescued_exception: "StandardError",
         rescued_exception_trace: "a trace",
         validation_errors: ["text: blank"],
+        answer_metadata: { foo: "bar" },
       })
     end
 
@@ -78,6 +80,12 @@ RSpec.describe CurrentRequestLoggingAttributes, type: :model do
       current.validation_errors = []
 
       expect(current.as_hash.keys).not_to include :validation_errors
+    end
+
+    it "does not include the answer metadata if hash is empty" do
+      current.answer_metadata = {}
+
+      expect(current.as_hash.keys).not_to include :answer_metadata
     end
   end
 end

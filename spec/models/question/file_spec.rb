@@ -78,9 +78,7 @@ RSpec.describe Question::File, type: :model do
 
         it "logs information about the file" do
           expect(Rails.logger).to have_received(:info).with("Uploaded file to S3 for file upload question",
-                                                            { file_size_in_bytes:,
-                                                              file_type:,
-                                                              s3_object_key: key })
+                                                            { s3_object_key: key })
         end
 
         it "does not add any errors" do
@@ -425,20 +423,11 @@ RSpec.describe Question::File, type: :model do
       before do
         allow(uploaded_file).to receive_messages(size: file_size_in_bytes, content_type: file_type)
         question.file = uploaded_file
-
-        allow(Rails.logger).to receive(:info).at_least(:once)
       end
 
       it "returns an error" do
         expect(question).not_to be_valid
         expect(question.errors[:file]).to include "The selected file must be smaller than 7MB"
-      end
-
-      it "logs information about the file" do
-        question.validate
-        expect(Rails.logger).to have_received(:info).with("File upload question validation failed: file too big",
-                                                          { file_size_in_bytes:,
-                                                            file_type: })
       end
     end
 
@@ -450,20 +439,11 @@ RSpec.describe Question::File, type: :model do
       before do
         allow(uploaded_file).to receive_messages(size: file_size_in_bytes, content_type: file_type)
         question.file = uploaded_file
-
-        allow(Rails.logger).to receive(:info).at_least(:once)
       end
 
       it "returns an error" do
         expect(question).not_to be_valid
         expect(question.errors[:file]).to include I18n.t("activemodel.errors.models.question/file.attributes.file.disallowed_type")
-      end
-
-      it "logs information about the file" do
-        question.validate
-        expect(Rails.logger).to have_received(:info).with("File upload question validation failed: disallowed file type",
-                                                          { file_size_in_bytes:,
-                                                            file_type: })
       end
     end
 
@@ -475,18 +455,11 @@ RSpec.describe Question::File, type: :model do
         before do
           allow(uploaded_file).to receive_messages(size: file_size_in_bytes, content_type: file_type)
           question.file = uploaded_file
-
-          allow(Rails.logger).to receive(:info).at_least(:once)
         end
 
         it "does not return an error" do
           expect(question).to be_valid
           expect(question.errors[:file]).to be_empty
-        end
-
-        it "does not log information about the file" do
-          question.validate
-          expect(Rails.logger).not_to have_received(:info)
         end
       end
     end

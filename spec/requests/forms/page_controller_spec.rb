@@ -625,7 +625,8 @@ RSpec.describe Forms::PageController, type: :request do
       context "when a file was uploaded" do
         let(:mock_s3_client) { Aws::S3::Client.new(stub_responses: true) }
         let(:tempfile) { Tempfile.new(%w[temp-file .jpeg]) }
-        let(:question) { { file: Rack::Test::UploadedFile.new(tempfile.path, "image/jpeg") } }
+        let(:content_type) { "image/jpeg" }
+        let(:question) { { file: Rack::Test::UploadedFile.new(tempfile.path, content_type) } }
 
         before do
           allow(Aws::S3::Client).to receive(:new).and_return(mock_s3_client)
@@ -647,6 +648,14 @@ RSpec.describe Forms::PageController, type: :request do
           expect(flash[:success]).to eq(I18n.t("banner.success.file_uploaded"))
         end
 
+        it "adds answer_metadata logging attribute" do
+          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: }
+          expect(log_lines[0]["answer_metadata"]).to eq({
+            "file_size_in_bytes" => tempfile.size,
+            "file_type" => content_type,
+          })
+        end
+
         context "when changing an existing answer" do
           it "includes the changing_existing_answer query parameter in the redirect" do
             post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1, changing_existing_answer: true), params: { question: }
@@ -661,6 +670,31 @@ RSpec.describe Forms::PageController, type: :request do
         it "redirects to the next step in the form" do
           post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: }
           expect(response).to redirect_to form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2)
+        end
+      end
+
+      context "when there were validation errors" do
+        let(:tempfile) { Tempfile.new(%w[temp-file .gif]) }
+        let(:content_type) { "image/gif" }
+        let(:question) { { file: Rack::Test::UploadedFile.new(tempfile.path, content_type) } }
+
+        before do
+          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: }
+        end
+
+        after do
+          tempfile.unlink
+        end
+
+        it "adds validation_errors logging attribute" do
+          expect(log_lines[0]["validation_errors"]).to eq(["file: disallowed_type"])
+        end
+
+        it "adds answer_metadata logging attribute" do
+          expect(log_lines[0]["answer_metadata"]).to eq({
+            "file_size_in_bytes" => tempfile.size,
+            "file_type" => "image/gif",
+          })
         end
       end
     end
