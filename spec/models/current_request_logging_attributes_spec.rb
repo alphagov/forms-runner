@@ -20,6 +20,7 @@ RSpec.describe CurrentRequestLoggingAttributes, type: :model do
       current.preview = false
       current.page_id = 2
       current.page_slug = "a-page"
+      current.answer_type = "text"
       current.session_id_hash = "a-session-id"
       current.trace_id = "a-trace-id"
       current.question_number = 3
@@ -30,6 +31,8 @@ RSpec.describe CurrentRequestLoggingAttributes, type: :model do
       current.confirmation_email_id = "a-confirmation-email-id"
       current.rescued_exception = "StandardError"
       current.rescued_exception_trace = "a trace"
+      current.validation_errors = ["text: blank"]
+      current.answer_metadata = { foo: "bar" }
 
       expect(current.as_hash).to eq({
         request_host: "www.example.com",
@@ -39,6 +42,7 @@ RSpec.describe CurrentRequestLoggingAttributes, type: :model do
         preview: "false",
         page_id: 2,
         page_slug: "a-page",
+        answer_type: "text",
         session_id_hash: "a-session-id",
         trace_id: "a-trace-id",
         question_number: 3,
@@ -53,6 +57,8 @@ RSpec.describe CurrentRequestLoggingAttributes, type: :model do
         },
         rescued_exception: "StandardError",
         rescued_exception_trace: "a trace",
+        validation_errors: ["text: blank"],
+        answer_metadata: { foo: "bar" },
       })
     end
 
@@ -68,6 +74,18 @@ RSpec.describe CurrentRequestLoggingAttributes, type: :model do
 
       expect(current.as_hash[:notification_ids].keys).to include :submission_email_id
       expect(current.as_hash[:notification_ids].keys).not_to include :confirmation_email_id
+    end
+
+    it "does not include the validation errors array if empty" do
+      current.validation_errors = []
+
+      expect(current.as_hash.keys).not_to include :validation_errors
+    end
+
+    it "does not include the answer metadata if hash is empty" do
+      current.answer_metadata = {}
+
+      expect(current.as_hash.keys).not_to include :answer_metadata
     end
   end
 end

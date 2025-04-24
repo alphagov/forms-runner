@@ -9,11 +9,29 @@ RSpec.describe Question::File, type: :model do
 
   let(:is_optional) { false }
   let(:question_text) { Faker::Lorem.question }
+  let(:extension) { ".png" }
+  let(:tempfile) { Tempfile.new(["temp-file", extension]) }
+  let(:original_filename) { "a-file#{extension}" }
+  let(:file_size_in_bytes) { 2.megabytes }
+  let(:file_type) { "image/png" }
+  let(:file_content) { "not empty" }
 
+  let(:uploaded_file) { instance_double(ActionDispatch::Http::UploadedFile) }
   let(:mock_file_upload_s3_service) { instance_double(Question::FileUploadS3Service) }
 
   before do
+    File.write(tempfile, file_content)
+
     allow(Question::FileUploadS3Service).to receive(:new).and_return(mock_file_upload_s3_service)
+    allow(uploaded_file).to receive_messages(original_filename: original_filename,
+                                             tempfile: tempfile,
+                                             size: file_size_in_bytes,
+                                             content_type: file_type,
+                                             path: tempfile.path)
+  end
+
+  after do
+    tempfile.unlink
   end
 
   describe "base question" do
@@ -29,25 +47,12 @@ RSpec.describe Question::File, type: :model do
   describe "#before_save" do
     context "when a file was selected" do
       let(:mock_s3_client) { Aws::S3::Client.new(stub_responses: true) }
-      let(:uploaded_file) { instance_double(ActionDispatch::Http::UploadedFile) }
-      let(:extension) { ".png" }
-      let(:original_filename) { "a-file#{extension}" }
       let(:bucket) { "an-s3-bucket" }
       let(:uuid) { Faker::Alphanumeric.alphanumeric }
       let(:key) { "#{uuid}#{extension}" }
-      let(:tempfile) { Tempfile.new(["temp-file", extension]) }
-      let(:file_size_in_bytes) { 2.megabytes }
-      let(:file_type) { "image/png" }
-
-      after do
-        tempfile.unlink
-      end
 
       before do
         allow(mock_file_upload_s3_service).to receive(:upload_to_s3)
-
-        allow(uploaded_file).to receive_messages(original_filename: original_filename, tempfile: tempfile,
-                                                 size: file_size_in_bytes, content_type: file_type)
 
         allow(SecureRandom).to receive(:uuid).and_return uuid
 
@@ -78,9 +83,7 @@ RSpec.describe Question::File, type: :model do
 
         it "logs information about the file" do
           expect(Rails.logger).to have_received(:info).with("Uploaded file to S3 for file upload question",
-                                                            { file_size_in_bytes:,
-                                                              file_type:,
-                                                              s3_object_key: key })
+                                                            { s3_object_key: key })
         end
 
         it "does not add any errors" do
@@ -423,22 +426,25 @@ RSpec.describe Question::File, type: :model do
       let(:file_type) { "image/png" }
 
       before do
-        allow(uploaded_file).to receive_messages(size: file_size_in_bytes, content_type: file_type)
         question.file = uploaded_file
-
-        allow(Rails.logger).to receive(:info).at_least(:once)
       end
 
       it "returns an error" do
         expect(question).not_to be_valid
         expect(question.errors[:file]).to include "The selected file must be smaller than 7MB"
       end
+    end
 
-      it "logs information about the file" do
-        question.validate
-        expect(Rails.logger).to have_received(:info).with("File upload question validation failed: file too big",
-                                                          { file_size_in_bytes:,
-                                                            file_type: })
+    context "when the file size is empty" do
+      let(:file_content) { "" }
+
+      before do
+        question.file = uploaded_file
+      end
+
+      it "returns an error" do
+        expect(question).not_to be_valid
+        expect(question.errors[:file]).to include "The selected file is empty"
       end
     end
 
@@ -448,22 +454,12 @@ RSpec.describe Question::File, type: :model do
       let(:file_type) { "text/javascript" }
 
       before do
-        allow(uploaded_file).to receive_messages(size: file_size_in_bytes, content_type: file_type)
         question.file = uploaded_file
-
-        allow(Rails.logger).to receive(:info).at_least(:once)
       end
 
       it "returns an error" do
         expect(question).not_to be_valid
         expect(question.errors[:file]).to include I18n.t("activemodel.errors.models.question/file.attributes.file.disallowed_type")
-      end
-
-      it "logs information about the file" do
-        question.validate
-        expect(Rails.logger).to have_received(:info).with("File upload question validation failed: disallowed file type",
-                                                          { file_size_in_bytes:,
-                                                            file_type: })
       end
     end
 
@@ -475,18 +471,11 @@ RSpec.describe Question::File, type: :model do
         before do
           allow(uploaded_file).to receive_messages(size: file_size_in_bytes, content_type: file_type)
           question.file = uploaded_file
-
-          allow(Rails.logger).to receive(:info).at_least(:once)
         end
 
         it "does not return an error" do
           expect(question).to be_valid
           expect(question.errors[:file]).to be_empty
-        end
-
-        it "does not log information about the file" do
-          question.validate
-          expect(Rails.logger).not_to have_received(:info)
         end
       end
     end

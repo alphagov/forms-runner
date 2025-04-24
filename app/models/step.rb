@@ -133,10 +133,16 @@ private
   def first_condition_matches?
     return unless question.respond_to?(:selection)
 
+    return question.selection == I18n.t("page.none_of_the_above") if routing_condition_none_of_the_above
+
     routing_conditions.any? && (routing_conditions.first.answer_value == question.selection)
   end
 
   def first_condition_default?
     routing_conditions.any? && routing_conditions.first.answer_value.blank?
+  end
+
+  def routing_condition_none_of_the_above
+    routing_conditions.any? && routing_conditions.first.answer_value == :none_of_the_above.to_s
   end
 end

@@ -2,11 +2,14 @@ module Question
   class QuestionBase
     include ActiveModel::Model
     include ActiveModel::Validations
+    include ActiveModel::Validations::Callbacks
     include ActiveModel::Serialization
     include ActiveModel::Attributes
     include ActionView::Helpers::TagHelper
 
     attr_accessor :question_text, :hint_text, :answer_settings, :is_optional, :page_heading, :guidance_markdown
+
+    after_validation :set_validation_error_logging_attributes
 
     def initialize(attributes = {}, options = {})
       super(attributes)
@@ -62,6 +65,12 @@ module Question
 
     def question_text_for_check_your_answers
       question_text_with_optional_suffix
+    end
+
+  private
+
+    def set_validation_error_logging_attributes
+      CurrentRequestLoggingAttributes.validation_errors = errors.map { |error| "#{error.attribute}: #{error.type}" } if errors.any?
     end
   end
 end

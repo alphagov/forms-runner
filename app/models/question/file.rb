@@ -10,6 +10,9 @@ module Question
     validates :file, presence: true, unless: :is_optional?
     validate :validate_file_size
     validate :validate_file_extension
+    validate :validate_not_empty
+
+    after_validation :set_logging_attributes
 
     FILE_UPLOAD_MAX_SIZE_IN_MB = 7
     FILE_TYPES = [
@@ -94,10 +97,7 @@ module Question
       key = file_upload_s3_key(tempfile)
       FileUploadS3Service.new.upload_to_s3(tempfile, key)
 
-      FileUploadLogger.log_s3_operation(key, "Uploaded file to S3 for file upload question", {
-        file_size_in_bytes: file.size,
-        file_type: file.content_type,
-      })
+      FileUploadLogger.log_s3_operation(key, "Uploaded file to S3 for file upload question")
 
       check_scan_result(key)
 
@@ -131,21 +131,19 @@ module Question
 
     def validate_file_size
       if file.present? && file.size > FILE_UPLOAD_MAX_SIZE_IN_MB.megabytes
-        Rails.logger.info("File upload question validation failed: file too big", {
-          file_size_in_bytes: file.size,
-          file_type: file.content_type,
-        })
         errors.add(:file, :too_big)
       end
     end
 
     def validate_file_extension
       if file.present? && FILE_TYPES.exclude?(file.content_type)
-        Rails.logger.info("File upload question validation failed: disallowed file type", {
-          file_size_in_bytes: file.size,
-          file_type: file.content_type,
-        })
         errors.add(:file, :disallowed_type)
+      end
+    end
+
+    def validate_not_empty
+      if file.present? && ::File.zero?(file.path)
+        errors.add(:file, :empty)
       end
     end
 
@@ -153,6 +151,15 @@ module Question
       uuid = SecureRandom.uuid
       extension = ::File.extname(file.path)
       "#{uuid}#{extension}"
+    end
+
+    def set_logging_attributes
+      if file.present?
+        CurrentRequestLoggingAttributes.answer_metadata = {
+          file_size_in_bytes: file.size,
+          file_type: file.content_type,
+        }
+      end
     end
   end
 end
