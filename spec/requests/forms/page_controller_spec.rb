@@ -298,6 +298,31 @@ RSpec.describe Forms::PageController, type: :request do
           expect(EventLogger).to receive(:log_page_event).with("goto_page_before_routing_page_error", first_step_in_form.data.question_text, nil)
           get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
         end
+
+        context "when the route is a secondary skip" do
+          let(:page_with_secondary_skip) do
+            build :v2_question_page_step, :with_selections_settings,
+                  id: 4,
+                  next_step_id: nil,
+                  skip_to_end: true,
+                  routing_conditions: [DataStruct.new(id: 2, routing_page_id: 4, check_page_id: 1, goto_page_id: 3, validation_errors:)],
+                  is_optional: false
+          end
+
+          let(:steps_data) { [third_step_in_form, first_step_in_form, second_step_in_form, page_with_secondary_skip] }
+
+          it "returns a 422 response" do
+            get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 4)
+            expect(response).to have_http_status(:unprocessable_entity)
+          end
+
+          it "shows the error page" do
+            get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 4)
+            link_url = "#{Settings.forms_admin.base_url}/forms/2/pages/1/routes"
+            question_number = first_step_in_form.position
+            expect(response.body).to include(I18n.t("goto_page_routing_error.cannot_have_goto_page_before_routing_page.body_html", link_url:, question_number:))
+          end
+        end
       end
 
       context "when the routing has a goto_page which does not exist" do

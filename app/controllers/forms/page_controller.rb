@@ -146,10 +146,12 @@ module Forms
       EventLogger.log_page_event(event_name, @step.question.question_text, nil)
 
       routes_page_id = first_condition_with_error.check_page_id
+      routes_page = @current_context.find_or_create(routes_page_id)
+
       render template: "errors/goto_page_routing_error", locals: {
         error_name: first_goto_error_name,
         link_url: admin_edit_condition_url(@step.form_id, routes_page_id),
-        question_number: @step.page_number,
+        question_number: routes_page.page_number,
       }, status: :unprocessable_entity
     end
 
