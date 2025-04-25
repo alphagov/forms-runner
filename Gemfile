@@ -75,6 +75,10 @@ gem "csv"
 # the hash, also change in package.json
 gem "dfe-autocomplete", require: "dfe/autocomplete", github: "DFE-Digital/dfe-autocomplete", ref: "1d4cc65039e11cc3ba9e7217a719b8128d0e4d53"
 
+# Use Mission Control - Jobs to inspect Solid Queue jobs
+gem "mission_control-jobs"
+gem "propshaft" # needed as we use vite_rails
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[mri mingw x64_mingw]
