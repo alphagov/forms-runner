@@ -4,6 +4,7 @@ class Form < ActiveResource::Base
   self.include_format_in_path = false
 
   has_many :pages
+  attr_accessor :document_json
 
   def last_page
     pages.find { |p| !p.has_next_page? }

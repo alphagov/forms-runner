@@ -3,5 +3,9 @@
                                     text: question_text_with_extra_suffix,
                                     **question_text_size_and_tag
                                   },
-                                  hint: { text: question.hint_text }
+                                  hint: {
+                                    text: question.hint_text,
+                                    class: "govuk-!-margin-bottom-7"
+                                  },
+                                  accept: Question::File::FILE_TYPES.join(", ")
 %>

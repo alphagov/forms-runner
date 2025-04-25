@@ -19,15 +19,36 @@ permissions:
 jobs:
   build_and_test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:13-alpine
+        ports:
+          - "5432:5432"
+        env:
+          POSTGRES_DB: forms_runner_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
     env:
       RAILS_ENV: "test"
+      DATABASE_URL: "postgres://postgres:postgres@localhost:5432/forms_runner_test"
     steps:
+      # TODO: remove these steps once we can use latest Chrome again (see https://github.com/teamcapybara/capybara/issues/2800)
+      - uses: nanasess/setup-chromedriver@v2
+        with:
+          chromedriver-version: '128.0.6613.8600'
+          chromeapp: chrome
+      - run: |
+          sudo apt-get purge google-chrome-stable
+      - uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: 128
+          install-chromedriver: 'false'
       - name: Checkout code
         uses: actions/checkout@v4
       # Add or replace dependency steps here
       - name: Install Ruby and gems
         # The ruby version is taken from the .ruby-version file, no need to specify here.
-        uses: ruby/setup-ruby@4a9ddd6f338a97768b8006bf671dfbad383215f4 # v1.207.0
+        uses: ruby/setup-ruby@2e007403fc1ec238429ecaa57af6f22f019cc135 # v1.234.0
         with:
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
       - name: Install Node.js
@@ -39,6 +60,11 @@ jobs:
         run: npm ci
       - name: Run Frontend build
         run: bin/vite build
+      # Add or replace database setup steps here
+      - name: Create db
+        run: bin/rails db:migrate
+      - name: Set up database schema
+        run: bin/rails db:schema:load
       # Add or replace test runners here
       - name: Run Ruby tests
         run: bundle exec rspec

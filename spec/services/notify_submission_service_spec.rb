@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe NotifySubmissionService do
-  let(:service) { described_class.new(current_context:, notify_email_reference:, mailer_options:) }
+  let(:service) { described_class.new(journey:, form:, notify_email_reference:, mailer_options:) }
   let(:form) do
     build(:form,
           id: 1,
@@ -9,10 +9,11 @@ RSpec.describe NotifySubmissionService do
           submission_email:,
           payment_url:)
   end
-  let(:current_context) { OpenStruct.new(form:, completed_steps: [step], support_details: OpenStruct.new(call_back_url: "http://gov.uk")) }
+  let(:all_steps) { [step] }
+  let(:journey) { instance_double(Flow::Journey, completed_steps: all_steps, all_steps:) }
   let(:question) { build :text, question_text: "What is the meaning of life?", text: "42" }
   let(:step) { build :step, question: }
-  let(:preview_mode) { false }
+  let(:is_preview) { false }
   let(:notify_email_reference) { "ffffffff-submission-email" }
   let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
   let(:payment_url) { nil }
@@ -22,7 +23,7 @@ RSpec.describe NotifySubmissionService do
   let(:timestamp) { Time.zone.now }
   let(:mailer_options) do
     FormSubmissionService::MailerOptions.new(title: form.name,
-                                             preview_mode:,
+                                             is_preview:,
                                              timestamp:,
                                              submission_reference:,
                                              payment_url:)
@@ -84,10 +85,11 @@ RSpec.describe NotifySubmissionService do
         freeze_time do
           service.submit
           expect(CsvGenerator).to have_received(:write_submission)
-            .with(current_context:,
+            .with(all_steps:,
                   submission_reference:,
                   timestamp: Time.zone.now,
-                  output_file_path: an_instance_of(String))
+                  output_file_path: an_instance_of(String),
+                  is_s3_submission: false)
         end
       end
 
@@ -148,7 +150,7 @@ RSpec.describe NotifySubmissionService do
     end
 
     context "when form being submitted is from previewed form" do
-      let(:preview_mode) { true }
+      let(:is_preview) { true }
 
       context "when the submission email is set" do
         it "calls FormSubmissionMailer" do

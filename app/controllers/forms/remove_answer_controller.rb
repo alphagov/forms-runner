@@ -1,17 +1,17 @@
 module Forms
   class RemoveAnswerController < PageController
     def show
-      @remove_answer_input = RemoveAnswerInput.new
+      @remove_input = RemoveInput.new
     end
 
     def delete
-      @remove_answer_input = RemoveAnswerInput.new(remove_answer_input_params)
+      @remove_input = RemoveInput.new(remove_input_params)
 
-      if @remove_answer_input.invalid?
+      if @remove_input.invalid?
         return render :show, status: :unprocessable_entity
       end
 
-      if @remove_answer_input.remove_answer?
+      if @remove_input.remove?
         remove_answer
       end
 
@@ -20,8 +20,8 @@ module Forms
 
   private
 
-    def remove_answer_input_params
-      params.require(:remove_answer_input).permit(:remove_answer)
+    def remove_input_params
+      params.require(:remove_input).permit(:remove)
     end
 
     def remove_answer

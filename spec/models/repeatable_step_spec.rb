@@ -14,21 +14,21 @@ RSpec.describe RepeatableStep, type: :model do
   end
 
   describe "#save_to_context" do
-    let(:form_context) { instance_double(Flow::FormContext) }
+    let(:answer_store) { instance_double(Store::SessionAnswerStore) }
 
     it "calls save_step on the argument" do
-      allow(form_context).to receive(:save_step).with(repeatable_step, [question.serializable_hash])
-      expect(repeatable_step.save_to_context(form_context)).to be(repeatable_step)
+      allow(answer_store).to receive(:save_step).with(repeatable_step, [question.serializable_hash])
+      expect(repeatable_step.save_to_store(answer_store)).to be(repeatable_step)
     end
   end
 
   describe "#load_from_context" do
-    let(:form_context) { instance_double(Flow::FormContext) }
+    let(:answer_store) { instance_double(Store::SessionAnswerStore) }
 
     context "when form context contains a non-array questions attribute" do
       it "raises an argument error" do
-        allow(form_context).to receive(:get_stored_answer).with(repeatable_step).and_return("a string")
-        expect { repeatable_step.load_from_context(form_context) }.to raise_error(ArgumentError)
+        allow(answer_store).to receive(:get_stored_answer).with(repeatable_step).and_return("a string")
+        expect { repeatable_step.load_from_store(answer_store) }.to raise_error(ArgumentError)
       end
     end
 
@@ -40,12 +40,12 @@ RSpec.describe RepeatableStep, type: :model do
       let(:question_dup) { instance_double(Question::QuestionBase) }
 
       it "builds the @questions array" do
-        allow(form_context).to receive(:get_stored_answer).with(repeatable_step).and_return(question_attrs)
+        allow(answer_store).to receive(:get_stored_answer).with(repeatable_step).and_return(question_attrs)
         allow(question).to receive(:dup).and_return(question_dup)
         expect(question_dup).to receive(:assign_attributes).with(first_attribute_hash)
         expect(question_dup).to receive(:assign_attributes).with(second_attribute_hash)
 
-        expect(repeatable_step.load_from_context(form_context).questions).to eq([question_dup, question_dup])
+        expect(repeatable_step.load_from_store(answer_store).questions).to eq([question_dup, question_dup])
       end
     end
   end
@@ -167,7 +167,7 @@ RSpec.describe RepeatableStep, type: :model do
 
       it "returns a hash of all answers with keys containing the answer numbers" do
         # we convert to an array to test the ordering of the hash
-        expect(repeatable_step.show_answer_in_csv.to_a).to eq({
+        expect(repeatable_step.show_answer_in_csv(false).to_a).to eq({
           "What is your name? - First name - Answer 1" => first_question.first_name,
           "What is your name? - Last name - Answer 1" => first_question.last_name,
           "What is your name? - First name - Answer 2" => second_question.first_name,
@@ -186,7 +186,7 @@ RSpec.describe RepeatableStep, type: :model do
 
       it "returns a hash of all answers with keys containing the answer numbers" do
         # we convert to an array to test the ordering of the hash
-        expect(repeatable_step.show_answer_in_csv.to_a).to eq({
+        expect(repeatable_step.show_answer_in_csv(false).to_a).to eq({
           "What is the meaning of life? - Answer 1" => first_question.text,
           "What is the meaning of life? - Answer 2" => second_question.text,
         }.to_a)
@@ -197,7 +197,7 @@ RSpec.describe RepeatableStep, type: :model do
       let(:question) { build :text, is_optional: false }
 
       it "returns a hash containing a key for the first answer with a blank value" do
-        expect(repeatable_step.show_answer_in_csv).to eq({
+        expect(repeatable_step.show_answer_in_csv(false)).to eq({
           "#{question.question_text} - Answer 1" => "",
         })
       end

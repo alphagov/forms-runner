@@ -19,10 +19,65 @@ module Flow
   class Journey
     attr_reader :completed_steps
 
-    def initialize(form_context:, step_factory:)
-      @form_context = form_context
-      @step_factory = step_factory
+    def initialize(answer_store:, form:)
+      @answer_store = answer_store
+      @form = form
+      @step_factory = StepFactory.new(form:)
       @completed_steps = generate_completed_steps
+
+      populate_file_suffixes
+    end
+
+    def find_or_create(page_slug)
+      step = completed_steps.find { |s| s.page_slug == page_slug }
+      step || @step_factory.create_step(page_slug)
+    end
+
+    def previous_step(page_slug)
+      index = completed_steps.find_index { |step| step.page_slug == page_slug }
+      return nil if completed_steps.empty? || index&.zero?
+
+      return completed_steps.last if index.nil?
+
+      completed_steps[index - 1]
+    end
+
+    def next_page_slug
+      return nil if completed_steps.last&.end_page?
+
+      completed_steps.last&.next_page_slug_after_routing || @step_factory.start_step.page_slug
+    end
+
+    def next_step
+      return nil if completed_steps.last&.end_page?
+
+      find_or_create(completed_steps.last&.next_page_slug_after_routing) || @step_factory.start_step
+    end
+
+    def can_visit?(page_slug)
+      (completed_steps.map(&:page_slug).include? page_slug) || page_slug == next_page_slug
+    end
+
+    def all_steps
+      @form.pages.map { |page| find_or_create(page.id.to_s) }
+    end
+
+    def completed_file_upload_questions
+      completed_steps
+              .select { |step| step.question.is_a?(Question::File) && step.question.file_uploaded? }
+              .map(&:question)
+    end
+
+    def populate_file_suffixes
+      completed_file_upload_questions.each_with_index do |question, index|
+        previous_completed_file_questions = completed_file_upload_questions.take(index)
+
+        count = previous_completed_file_questions.filter {
+          it.filename_after_reference_truncation == question.filename_after_reference_truncation
+        }.count
+
+        question.filename_suffix = count.zero? ? "" : "_#{count}"
+      end
     end
 
   private
@@ -48,7 +103,7 @@ module Flow
           break if current_step.is_a? CheckYourAnswersStep # CheckYourAnswers step signals end of steps
 
           # We need to load the answer into the step for next_page_with_routing to give the correct result.
-          current_step = safe_load_from_context(current_step)
+          current_step = safe_load_from_store(current_step)
 
           next_page_slug = current_step.next_page_slug_after_routing
 
@@ -65,13 +120,13 @@ module Flow
       end
     end
 
-    def safe_load_from_context(step)
-      return step unless step.respond_to? :load_from_context # step may be a CheckYourAnswersStep without load_from_context method
+    def safe_load_from_store(step)
+      return step unless step.respond_to? :load_from_store # step may be a CheckYourAnswersStep without load_from_store method
 
-      original_step = step.deep_dup # load_from_context method for RepeatableStep can fail with data half loaded
+      original_step = step.deep_dup # load_from_store method for RepeatableStep can fail with data half loaded
 
       begin
-        step.load_from_context(@form_context)
+        step.load_from_store(@answer_store)
       rescue ActiveModel::UnknownAttributeError, ArgumentError
         original_step
       end

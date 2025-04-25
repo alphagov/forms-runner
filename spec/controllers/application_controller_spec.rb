@@ -50,7 +50,7 @@ RSpec.describe ApplicationController do
 
       expect(log_lines[0].keys).to include("rescued_exception_trace")
       expect(log_lines[0]["rescued_exception_trace"]).to include(
-        "spec/controllers/application_controller_spec.rb:11:in `raise_error'",
+        "spec/controllers/application_controller_spec.rb:11:in 'raise_error'",
       )
     end
 

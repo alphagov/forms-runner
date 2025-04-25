@@ -1,14 +1,17 @@
 module Forms
   class PageController < BaseController
-    before_action :prepare_step, :set_logging_attributes, :changing_existing_answer, :check_goto_page_routing_error
+    before_action :prepare_step, :set_request_logging_attributes, :changing_existing_answer, :check_goto_page_routing_error
 
-    def set_logging_attributes
+    def set_request_logging_attributes
       super
-      CurrentLoggingAttributes.question_number = @step.page_number if @step&.page_number
+      CurrentRequestLoggingAttributes.question_number = @step.page_number if @step&.page_number
+      CurrentRequestLoggingAttributes.answer_type = @step&.page&.answer_type if @step&.page&.answer_type
     end
 
     def show
-      redirect_to form_page_path(@step.form_id, @step.form_slug, current_context.next_page_slug) unless current_context.can_visit?(@step.page_slug)
+      return redirect_to form_page_path(@step.form_id, @step.form_slug, current_context.next_page_slug) unless current_context.can_visit?(@step.page_slug)
+      return redirect_to review_file_page if answered_file_question?
+
       back_link(@step.page_slug)
       setup_instance_vars_for_view
     end
@@ -24,7 +27,7 @@ module Forms
           LogEventService.new(current_context, @step, request, changing_existing_answer, page_params).log_page_save
         end
 
-        redirect_to next_page
+        redirect_post_save
       else
         setup_instance_vars_for_view
         render :show, status: :unprocessable_entity
@@ -66,6 +69,27 @@ module Forms
       elsif previous_step
         @back_link = previous_step.repeatable? ? add_another_answer_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug, page_slug: previous_step.page_slug) : form_page_path(@step.form_id, @step.form_slug, previous_step.page_id)
       end
+    end
+
+    def redirect_post_save
+      return redirect_to review_file_page, success: t("banner.success.file_uploaded") if answered_file_question?
+      return redirect_to exit_page_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug) if @step.exit_page_condition_matches?
+
+      redirect_to next_page
+    end
+
+    def redirect_if_not_answered_file_question
+      unless @step.question.is_a?(Question::File) && @step.question.file_uploaded?
+        redirect_to form_page_path(@step.form_id, @step.form_slug, @step.page_slug)
+      end
+    end
+
+    def answered_file_question?
+      @step.question.is_a?(Question::File) && @step.question.file_uploaded?
+    end
+
+    def review_file_page
+      review_file_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug, changing_existing_answer:)
     end
 
     def next_page

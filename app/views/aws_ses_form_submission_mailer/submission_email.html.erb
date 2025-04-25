@@ -1,28 +1,45 @@
 <p>
-  This is a completed "<%= @mailer_options.title %>" form.
+  <%= if @mailer_options.is_preview
+        I18n.t("mailer.submission.title_preview", title: @mailer_options.title)
+      else
+        I18n.t("mailer.submission.title", title: @mailer_options.title)
+      end
+  %>
 </p>
 <p>
-  This form was submitted at <%= @mailer_options.timestamp.strftime("%l:%M%P").strip %> on <%= @mailer_options.timestamp.strftime("%-d %B %Y") %>
+  <%= I18n.t("mailer.submission.time", time: @mailer_options.timestamp.strftime("%l:%M%P").strip, date: @mailer_options.timestamp.strftime("%-d %B %Y") ) %>
 </p>
 <p>
-  GOV.​UK Forms reference number: <%= @mailer_options.submission_reference %><br>
+  <%= I18n.t("mailer.submission.reference", submission_reference: @mailer_options.submission_reference) %>
 </p>
 
-<hr style="border: 0; height: 1px; background: #B1B4B6; Margin: 30px 0 30px 0;">
+<% if @mailer_options.payment_url.present? %>
+  <p>
+    <%= I18n.t("mailer.submission.payment") %>
+  </p>
+<% end %>
 
-<%= @answer_content.html_safe %>
+<p style="margin: 0 0 20px 0; border-left: 10px solid #B1B4B6; padding: 15px;">
+  <%= I18n.t("mailer.submission.check_before_using") %>
+</p>
 
-<hr style="border: 0; height: 1px; background: #B1B4B6; Margin: 30px 0 30px 0;">
+<hr style="border: 0; height: 1px; background: #B1B4B6; margin: 30px 0 30px 0;">
 
-<blockquote
-  style="Margin: 0 0 20px 0; border-left: 10px solid #B1B4B6;
+<%= @answer_content_html.html_safe %>
+
+<% if @csv_filename.present? %>
+  <hr style="border: 0; height: 1px; background: #B1B4B6; margin: 30px 0 30px 0;">
+  <h2><%= I18n.t("mailer.submission.csv_file") %></h2>
+  <p><%= I18n.t("mailer.submission.file_attached", filename: @csv_filename) %></p>
+<% end %>
+
+<hr style="border: 0; height: 1px; background: #B1B4B6; margin: 30px 0 30px 0;">
+
+<div
+  style="margin: 0 0 20px 0; border-left: 10px solid #B1B4B6;
     padding: 15px 0 0.1px 15px; font-size: 19px; line-height: 25px;"
 >
-  <h2>You cannot reply to this email</h2>
-  <p>
-    If you need to contact the person who completed this form, you’ll need to contact them directly.
-  </p>
-  <p>
-    If you’re experiencing a technical issue with this form, <a href="https://www.forms.service.gov.uk/support">contact the GOV.​UK Forms team</a> with details of the issue and the form it relates to.
-  </p>
-</blockquote>
+  <h2><%= I18n.t("mailer.submission.cannot_reply.heading") %></h2>
+  <%= I18n.t("mailer.submission.cannot_reply.contact_form_filler_html").html_safe %>
+  <%= I18n.t("mailer.submission.cannot_reply.contact_forms_team_html").html_safe %>
+</div>

@@ -1,7 +1,13 @@
 require "rails_helper"
 
 RSpec.describe FormSubmissionService do
-  let(:service) { described_class.call(current_context:, email_confirmation_input:, preview_mode:) }
+  include ActiveJob::TestHelper
+
+  subject(:service) { described_class.call(current_context:, email_confirmation_input:, mode:) }
+
+  let(:mode) { Mode.new }
+  let(:email_confirmation_input) { build :email_confirmation_input_opted_in }
+
   let(:form) do
     build(:form,
           id: 1,
@@ -14,8 +20,10 @@ RSpec.describe FormSubmissionService do
           submission_email:,
           payment_url:,
           submission_type:,
-          pages:)
+          pages:,
+          document_json: form_document)
   end
+  let(:form_document) { build(:v2_form_document).to_h.with_indifferent_access }
   let(:pages) { [build(:page, id: 2, answer_type: "text")] }
   let(:submission_type) { "email" }
   let(:what_happens_next_markdown) { "We usually respond to applications within 10 working days." }
@@ -23,16 +31,25 @@ RSpec.describe FormSubmissionService do
   let(:support_phone) { Faker::Lorem.paragraph(sentence_count: 2, supplemental: true, random_sentences_to_add: 4) }
   let(:support_url) { Faker::Internet.url(host: "gov.uk") }
   let(:support_url_text) { Faker::Lorem.sentence(word_count: 1, random_words_to_add: 4) }
-  let(:current_context) { OpenStruct.new(form:, completed_steps: [step], support_details: OpenStruct.new(call_back_url: "http://gov.uk")) }
-  let(:request) { OpenStruct.new({ url: "url", method: "method" }) }
-  let(:step) { OpenStruct.new({ question_text: "What is the meaning of life?", show_answer_in_email: "42" }) }
-  let(:preview_mode) { false }
-  let(:email_confirmation_input) { build :email_confirmation_input_opted_in }
-  let(:reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
   let(:payment_url) { nil }
   let(:submission_email) { "testing@gov.uk" }
-  let(:submission_email_id) { "id-for-submission-email-notification" }
-  let(:confirmation_email_id) { "id-for-confirmation-email-notification" }
+
+  let(:reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
+
+  let(:step) { OpenStruct.new({ question_text: "What is the meaning of life?", show_answer_in_email: "42" }) }
+  let(:all_steps) { [step] }
+  let(:journey) { instance_double(Flow::Journey, completed_steps: all_steps, all_steps:) }
+  let(:answers) do
+    {
+      "1" => {
+        selection: "Option 1",
+      },
+      "2" => {
+        text: "Example text",
+      },
+    }
+  end
+  let(:current_context) { instance_double(Flow::Context, form:, journey:, completed_steps: all_steps, support_details: OpenStruct.new(call_back_url: "http://gov.uk"), answers:) }
 
   let(:output) { StringIO.new }
   let(:logger) do
@@ -77,85 +94,218 @@ RSpec.describe FormSubmissionService do
         expect(LogEventService).to have_received(:log_submit).with(
           current_context,
           requested_email_confirmation: true,
-          preview: preview_mode,
+          preview: mode.preview?,
           submission_type:,
         )
       end
     end
 
     describe "submitting the form to the processing team" do
-      context "when the submission type is email" do
-        let(:submission_type) { "email" }
+      context "when the SES submissions feature is disabled", feature_ses_submissions: false do
+        context "when the submission type is email" do
+          let(:submission_type) { "email" }
 
-        it "calls NotifySubmissionService to submit the form" do
-          service.submit
-          expect(notify_submission_service_spy).to have_received(:submit)
-        end
-      end
-
-      context "when the submission type is email_with_csv" do
-        let(:submission_type) { "email_with_csv" }
-
-        it "calls NotifySubmissionService to submit the form" do
-          service.submit
-          expect(notify_submission_service_spy).to have_received(:submit)
-        end
-
-        include_examples "logging"
-      end
-
-      context "when the form has a file upload question" do
-        let(:pages) { [build(:page, id: 2, answer_type: "file")] }
-        let(:aws_ses_submission_service_spy) { instance_double(AwsSesSubmissionService) }
-
-        before do
-          allow(AwsSesSubmissionService).to receive(:new).and_return(aws_ses_submission_service_spy)
-          allow(aws_ses_submission_service_spy).to receive(:submit)
-        end
-
-        it "calls AwsSesSubmissionService to submit the form" do
-          service.submit
-          expect(aws_ses_submission_service_spy).to have_received(:submit)
-        end
-      end
-
-      context "when the submission type is s3" do
-        let(:submission_type) { "s3" }
-        let(:s3_submission_service_spy) { instance_double(S3SubmissionService) }
-
-        before do
-          allow(S3SubmissionService).to receive(:new).and_return(s3_submission_service_spy)
-          allow(s3_submission_service_spy).to receive("submit")
-        end
-
-        it "creates a S3SubmissionService instance" do
-          freeze_time do
+          it "calls NotifySubmissionService to submit the form" do
             service.submit
-
-            expect(S3SubmissionService).to have_received(:new).with(
-              current_context:,
-              timestamp: Time.zone.now,
-              submission_reference: reference,
-              preview_mode:,
-            ).once
+            expect(notify_submission_service_spy).to have_received(:submit)
           end
         end
 
-        it "calls upload_submission_csv_to_s3" do
-          service.submit
-          expect(s3_submission_service_spy).to have_received(:submit)
+        context "when the submission type is email_with_csv" do
+          let(:submission_type) { "email_with_csv" }
+
+          it "calls NotifySubmissionService to submit the form" do
+            service.submit
+            expect(notify_submission_service_spy).to have_received(:submit)
+          end
+
+          include_examples "logging"
         end
 
-        it "does not call NotifySubmissionService to submit the form" do
-          service.submit
-          expect(notify_submission_service_spy).not_to have_received(:submit)
+        context "when the form has a file upload question" do
+          let(:pages) { [build(:page, id: 2, answer_type: "file")] }
+          let(:aws_ses_submission_service_spy) { instance_double(AwsSesSubmissionService) }
+          let(:mail_message_id) { "1234" }
+
+          let(:req_headers) do
+            {
+              "X-API-Token" => Settings.forms_api.auth_key,
+              "Accept" => "application/json",
+            }
+          end
+
+          before do
+            ActiveResource::HttpMock.respond_to do |mock|
+              mock.get "/api/v2/forms/1/live", req_headers, form.to_json, 200
+            end
+
+            allow(Flow::Journey).to receive(:new)
+
+            allow(AwsSesSubmissionService).to receive(:new).and_return(aws_ses_submission_service_spy)
+            allow(aws_ses_submission_service_spy).to receive(:submit).and_return(mail_message_id)
+          end
+
+          it "enqueues a job to send the submission" do
+            assert_enqueued_with(job: SendSubmissionJob) do
+              service.submit
+            end
+
+            expect(aws_ses_submission_service_spy).not_to have_received(:submit)
+
+            perform_enqueued_jobs
+
+            expect(aws_ses_submission_service_spy).to have_received(:submit)
+          end
+
+          it "saves the submission data" do
+            expect {
+              service.submit
+            }.to change(Submission, :count).by(1)
+
+            expect(Submission.last).to have_attributes(reference:, form_id: form.id, answers: answers.deep_stringify_keys,
+                                                       mode: "live", mail_message_id: nil, form_document: form_document,
+                                                       sent_at: nil)
+          end
         end
 
-        include_examples "logging"
+        context "when the submission type is s3" do
+          let(:submission_type) { "s3" }
+          let(:s3_submission_service_spy) { instance_double(S3SubmissionService) }
+
+          before do
+            allow(S3SubmissionService).to receive(:new).and_return(s3_submission_service_spy)
+            allow(s3_submission_service_spy).to receive("submit")
+          end
+
+          it "creates a S3SubmissionService instance" do
+            freeze_time do
+              service.submit
+
+              expect(S3SubmissionService).to have_received(:new).with(
+                journey:,
+                form:,
+                timestamp: Time.zone.now,
+                submission_reference: reference,
+                is_preview: mode.preview?,
+              ).once
+            end
+          end
+
+          it "calls upload_submission_csv_to_s3" do
+            service.submit
+            expect(s3_submission_service_spy).to have_received(:submit)
+          end
+
+          it "does not call NotifySubmissionService to submit the form" do
+            service.submit
+            expect(notify_submission_service_spy).not_to have_received(:submit)
+          end
+
+          include_examples "logging"
+        end
+      end
+
+      context "when the SES submissions feature is enabled", :feature_ses_submissions do
+        shared_examples "submits via AWS SES" do
+          let(:aws_ses_submission_service_spy) { instance_double(AwsSesSubmissionService) }
+          let(:mail_message_id) { "1234" }
+
+          let(:req_headers) do
+            {
+              "X-API-Token" => Settings.forms_api.auth_key,
+              "Accept" => "application/json",
+            }
+          end
+
+          before do
+            ActiveResource::HttpMock.respond_to do |mock|
+              mock.get "/api/v2/forms/1/live", req_headers, form.to_json, 200
+            end
+
+            allow(Flow::Journey).to receive(:new)
+
+            allow(AwsSesSubmissionService).to receive(:new).and_return(aws_ses_submission_service_spy)
+            allow(aws_ses_submission_service_spy).to receive(:submit).and_return(mail_message_id)
+          end
+
+          it "enqueues a job to send the submission" do
+            assert_enqueued_with(job: SendSubmissionJob) do
+              service.submit
+            end
+
+            expect(aws_ses_submission_service_spy).not_to have_received(:submit)
+
+            perform_enqueued_jobs
+
+            expect(aws_ses_submission_service_spy).to have_received(:submit)
+          end
+
+          it "saves the submission data" do
+            expect {
+              service.submit
+            }.to change(Submission, :count).by(1)
+
+            expect(Submission.last).to have_attributes(reference:, form_id: form.id, answers: answers.deep_stringify_keys,
+                                                       mode: "live", mail_message_id: nil, form_document: form_document,
+                                                       sent_at: nil)
+          end
+        end
+
+        context "when the submission type is email" do
+          let(:submission_type) { "email" }
+
+          include_examples "submits via AWS SES"
+
+          include_examples "logging"
+        end
+
+        context "when the submission type is email_with_csv" do
+          let(:submission_type) { "email_with_csv" }
+
+          include_examples "submits via AWS SES"
+
+          include_examples "logging"
+        end
+
+        context "when the submission type is s3" do
+          let(:submission_type) { "s3" }
+          let(:s3_submission_service_spy) { instance_double(S3SubmissionService) }
+
+          before do
+            allow(S3SubmissionService).to receive(:new).and_return(s3_submission_service_spy)
+            allow(s3_submission_service_spy).to receive("submit")
+          end
+
+          it "creates a S3SubmissionService instance" do
+            freeze_time do
+              service.submit
+
+              expect(S3SubmissionService).to have_received(:new).with(
+                journey:,
+                form:,
+                timestamp: Time.zone.now,
+                submission_reference: reference,
+                is_preview: mode.preview?,
+              ).once
+            end
+          end
+
+          it "calls upload_submission_csv_to_s3" do
+            service.submit
+            expect(s3_submission_service_spy).to have_received(:submit)
+          end
+
+          it "does not call NotifySubmissionService to submit the form" do
+            service.submit
+            expect(notify_submission_service_spy).not_to have_received(:submit)
+          end
+
+          include_examples "logging"
+        end
       end
 
       context "when form being submitted is from previewed form" do
-        let(:preview_mode) { true }
+        let(:mode) { Mode.new("preview-live") }
 
         include_examples "logging"
       end

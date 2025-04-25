@@ -1,4 +1,5 @@
-features: {}
+features:
+  ses_submissions: false
 
 forms_admin:
   # URL to form-admin
@@ -24,6 +25,9 @@ sentry:
   environment: local
   filter_mask: "[Filtered (client-side)]"
 
+submission_status_api:
+  secret: changeme
+
 aws:
   s3_submission_iam_role_arn: changeme
   file_upload_s3_bucket_name: changeme
@@ -32,6 +36,12 @@ aws:
 ses_submission_email:
   from_email_address: changeme
   reply_to_email_address: changeme
+
+file_upload:
+  poll_scan_status_wait_milliseconds: 500
+  poll_scan_status_max_attempts: 20
+
+retain_submissions_for_seconds: 604800 # 7 days
 
 maintenance_mode:
   # When set to true, All pages will render 'Maintenance mode' message

@@ -1,12 +1,12 @@
 module Flow
   class Context
-    attr_reader :form, :support_details
+    attr_reader :form, :support_details, :journey
 
     def initialize(form:, store:)
       @form = form
-      @form_context = Flow::FormContext.new(store)
-      @step_factory = StepFactory.new(form:)
-      @journey = Journey.new(form_context: @form_context, step_factory: @step_factory)
+      @answer_store = Store::SessionAnswerStore.new(store, form.id)
+      @confirmation_details_store = Store::ConfirmationDetailsStore.new(store, form.id)
+      @journey = Journey.new(answer_store: @answer_store, form:)
 
       @support_details = OpenStruct.new({
         email: form.support_email,
@@ -17,68 +17,18 @@ module Flow
       })
     end
 
-    def find_or_create(page_slug)
-      step = completed_steps.find { |s| s.page_slug == page_slug }
-      step || @step_factory.create_step(page_slug)
-    end
+    delegate :find_or_create, :previous_step, :next_page_slug, :next_step, :can_visit?, :completed_steps, :all_steps, to: :journey
+    delegate :clear_stored_answer, :clear, :form_submitted?, :answers, to: :answer_store
+    delegate :save_submission_details, :get_submission_reference, :requested_email_confirmation?, :clear_submission_details, to: :confirmation_details_store
 
     def save_step(step)
       return false unless step.valid?
 
-      step.save_to_context(@form_context)
+      step.save_to_store(@answer_store)
     end
 
-    def previous_step(page_slug)
-      index = completed_steps.find_index { |step| step.page_slug == page_slug }
-      return nil if completed_steps.empty? || index&.zero?
+  private
 
-      return completed_steps.last if index.nil?
-
-      completed_steps[index - 1]
-    end
-
-    def next_page_slug
-      return nil if completed_steps.last&.end_page?
-
-      completed_steps.last&.next_page_slug_after_routing || @step_factory.start_step.page_slug
-    end
-
-    def next_step
-      return nil if completed_steps.last&.end_page?
-
-      find_or_create(completed_steps.last&.next_page_slug_after_routing) || @step_factory.start_step
-    end
-
-    def can_visit?(page_slug)
-      (completed_steps.map(&:page_slug).include? page_slug) || page_slug == next_page_slug
-    end
-
-    def completed_steps
-      @journey.completed_steps
-    end
-
-    def clear
-      @form_context.clear(form.id)
-    end
-
-    def form_submitted?
-      @form_context.form_submitted?(form.id)
-    end
-
-    def save_submission_details(reference, requested_email_confirmation)
-      @form_context.save_submission_details(form.id, reference, requested_email_confirmation)
-    end
-
-    def get_submission_reference
-      @form_context.get_submission_reference(form.id)
-    end
-
-    def requested_email_confirmation?
-      @form_context.requested_email_confirmation?(form.id)
-    end
-
-    def clear_submission_details
-      @form_context.clear_submission_details(form.id)
-    end
+    attr_reader :answer_store, :confirmation_details_store
   end
 end

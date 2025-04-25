@@ -1,0 +1,19 @@
+<h1 class="govuk-heading-l"><%= question_text_with_extra_suffix %></h1>
+
+<%= hint_text %>
+
+<h2 class="govuk-heading-m">
+  <%= t('forms.review_file.show.check_file') %>
+</h2>
+
+<%= govuk_summary_list(html_attributes: { class: 'review-file-summary-list' }) do |summary_list|
+  summary_list.with_row do |row|
+    row.with_key { t('forms.review_file.show.your_file') }
+    row.with_value { question.original_filename }
+    row.with_action(text: t('forms.review_file.show.remove'), href: @remove_file_confirmation_url, visually_hidden_text: t('forms.review_file.show.your_file'))
+  end
+end %>
+
+<p>
+  <%= t('forms.review_file.show.remove_file_guidance') %>
+</p>

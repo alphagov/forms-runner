@@ -35,8 +35,8 @@ RSpec.describe ApplicationController, type: :request do
       }
     end
 
-    it "includes the host on log lines" do
-      expect(log_lines[0]["host"]).to eq("www.example.com")
+    it "includes the request_host on log lines" do
+      expect(log_lines[0]["request_host"]).to eq("www.example.com")
     end
 
     it "includes the request_id on log lines" do

@@ -19,11 +19,22 @@ RSpec.describe Question::Selection, type: :model do
     let(:only_one_option) { "false" }
     let(:is_optional) { false }
 
-    before do
-      question.selection = []
-    end
-
     it_behaves_like "a question model"
+
+    context "when created without attriibutes" do
+      it "returns invalid" do
+        expect(question).not_to be_valid
+        expect(question.errors[:selection]).to include(I18n.t("activemodel.errors.models.question/selection.attributes.selection.checkbox_blank"))
+      end
+
+      it "shows as a blank string" do
+        expect(question.show_answer).to eq ""
+      end
+
+      it "returns a hash with an blank value for show_answer_in_csv" do
+        expect(question.show_answer_in_csv).to eq(Hash[question_text, ""])
+      end
+    end
 
     context "when selection is blank" do
       before do

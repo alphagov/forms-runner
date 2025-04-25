@@ -5,7 +5,7 @@ describe "forms/remove_answer/show.html.erb" do
   let(:mode) { OpenStruct.new(preview_draft?: false, preview_archived?: false, preview_live?: false) }
   let(:question) { OpenStruct.new({ allow_multiple_answers?: allow_multiple_answers?, has_long_answer?: has_long_answer? }) }
   let(:step) { OpenStruct.new({ form_id: 1, form_slug: "form-1", page_slug: "1", questions:, question:, answer_index: 1, mode: }) }
-  let(:remove_answer_input) { RemoveAnswerInput.new }
+  let(:remove_input) { RemoveInput.new }
   let(:questions) { [{ text: "answer" }] }
   let(:answer_index) { 1 }
   let(:allow_multiple_answers?) { false }
@@ -20,7 +20,7 @@ describe "forms/remove_answer/show.html.erb" do
     assign(:current_context, OpenStruct.new(form:))
     assign(:mode, mode)
     assign(:step, step)
-    assign(:remove_answer_input, remove_answer_input)
+    assign(:remove_input, remove_input)
 
     without_partial_double_verification do
       allow(view).to receive_messages(delete_form_remove_answer_path: "/remove", add_another_answer_path: "/back")
@@ -40,7 +40,7 @@ describe "forms/remove_answer/show.html.erb" do
 
   context "when there are errors" do
     before do
-      remove_answer_input.errors.add(:base, "Error message")
+      remove_input.errors.add(:base, "Error message")
     end
 
     it "renders the error summary" do

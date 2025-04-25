@@ -5,18 +5,18 @@ class FormSubmissionService
     end
   end
 
-  MailerOptions = Data.define(:title, :preview_mode, :timestamp, :submission_reference, :payment_url)
+  MailerOptions = Data.define(:title, :is_preview, :timestamp, :submission_reference, :payment_url)
 
-  def initialize(current_context:, email_confirmation_input:, preview_mode:)
+  def initialize(current_context:, email_confirmation_input:, mode:)
     @current_context = current_context
     @form = current_context.form
     @email_confirmation_input = email_confirmation_input
     @requested_email_confirmation = @email_confirmation_input.send_confirmation == "send_email"
-    @preview_mode = preview_mode
+    @mode = mode
     @timestamp = submission_timestamp
     @submission_reference = ReferenceNumberService.generate
 
-    CurrentLoggingAttributes.submission_reference = @submission_reference
+    CurrentRequestLoggingAttributes.submission_reference = @submission_reference
   end
 
   def submit
@@ -34,15 +34,20 @@ private
     submit_using_form_submission_type
     LogEventService.log_submit(@current_context,
                                requested_email_confirmation: @requested_email_confirmation,
-                               preview: @preview_mode,
+                               preview: @mode.preview?,
                                submission_type: @form.submission_type)
   end
 
   def submit_using_form_submission_type
     return s3_submission_service.submit if @form.submission_type == "s3"
-    return aws_ses_submission_service.submit if @form.has_file_upload_question?
 
-    notify_submission_service.submit
+    if FeatureService.enabled?(:ses_submissions)
+      submit_via_aws_ses
+    else
+      return submit_via_aws_ses if @form.has_file_upload_question?
+
+      notify_submission_service.submit
+    end
   end
 
   def submit_confirmation_email_to_user
@@ -59,12 +64,13 @@ private
       mailer_options:,
     ).deliver_now
 
-    CurrentLoggingAttributes.confirmation_email_id = mail.govuk_notify_response.id
+    CurrentRequestLoggingAttributes.confirmation_email_id = mail.govuk_notify_response.id
   end
 
   def notify_submission_service
     NotifySubmissionService.new(
-      current_context: @current_context,
+      journey: @current_context.journey,
+      form: @form,
       notify_email_reference: @email_confirmation_input.submission_email_reference,
       mailer_options:,
     )
@@ -72,18 +78,24 @@ private
 
   def s3_submission_service
     S3SubmissionService.new(
-      current_context: @current_context,
+      journey: @current_context.journey,
+      form: @form,
       timestamp: @timestamp,
       submission_reference: @submission_reference,
-      preview_mode: @preview_mode,
+      is_preview: @mode.preview?,
     )
   end
 
-  def aws_ses_submission_service
-    AwsSesSubmissionService.new(
-      current_context: @current_context,
-      mailer_options:,
+  def submit_via_aws_ses
+    submission = Submission.create!(
+      reference: @submission_reference,
+      form_id: @form.id,
+      answers: @current_context.answers,
+      mode: @mode,
+      form_document: @form.document_json,
     )
+
+    SendSubmissionJob.perform_later(submission)
   end
 
   def form_title
@@ -131,7 +143,7 @@ private
 
   def mailer_options
     MailerOptions.new(title: form_title,
-                      preview_mode: @preview_mode,
+                      is_preview: @mode.preview?,
                       timestamp: @timestamp,
                       submission_reference: @submission_reference,
                       payment_url: @form.payment_url_with_reference(@submission_reference))

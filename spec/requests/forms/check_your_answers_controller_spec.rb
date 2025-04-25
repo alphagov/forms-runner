@@ -1,6 +1,8 @@
 require "rails_helper"
 
 RSpec.describe Forms::CheckYourAnswersController, type: :request do
+  include Capybara::RSpecMatchers
+
   let(:timestamp_of_request) { Time.utc(2022, 12, 14, 10, 0o0, 0o0) }
 
   let(:form_data) do
@@ -308,6 +310,58 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
             expect(response.body)
               .to include(form_change_answer_path(2, form_data.form_slug, 3))
           end
+        end
+      end
+
+      context "when the form has a file question with a heading" do
+        let(:page_heading) { Faker::Lorem.sentence }
+        let(:store) do
+          {
+            answers: {
+              "2" => {
+                "1" => {
+                  "original_filename" => "file.txt",
+                  "uploaded_file_key" => "some_file_key",
+                },
+              },
+            },
+          }
+        end
+
+        let(:steps_data) do
+          [
+            {
+              id: 1,
+              position: 1,
+              type: "question_page",
+              data: {
+                answer_type: "file",
+                is_optional: nil,
+                page_heading:,
+                question_text: "Question one",
+              },
+            },
+          ]
+        end
+
+        it "returns 'ok' status code" do
+          expect(response).to have_http_status(:ok)
+        end
+
+        it "Displays a back link to the last page of the form" do
+          expect(response.body).to include(form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1))
+        end
+
+        it "Returns the correct X-Robots-Tag header" do
+          expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
+        end
+
+        it "Contains a change link for each page" do
+          expect(response.body).to include(form_change_answer_path(2, form_data.form_slug, 1))
+        end
+
+        it "Contains the guidance page heading in a caption" do
+          expect(response.body).to have_css("span.govuk-caption-m", text: page_heading)
         end
       end
     end

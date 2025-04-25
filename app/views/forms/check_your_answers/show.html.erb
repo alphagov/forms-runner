@@ -50,5 +50,12 @@
 
       <%= form.govuk_submit(@current_context.form.declaration_text.present? ? t('form.check_your_answers.agree_and_submit') : t('form.check_your_answers.submit')) %>
     </div>
+
+
+  </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds-from-desktop">
+      <%= render SupportDetailsComponent::View.new(@support_details) %>
+    </div>
   </div>
 <% end %>

@@ -11,9 +11,9 @@ RSpec.describe Step do
     )
   end
 
-  let(:question) { instance_double(Question::Text, serializable_hash: {}, attribute_names: %w[name], valid?: true) }
+  let(:question) { instance_double(Question::Text, serializable_hash: {}, attribute_names: %w[name], valid?: true, errors: []) }
   let(:page) { build(:page, id: 2, position: 1, routing_conditions: []) }
-  let(:form_context) { instance_double(Flow::FormContext) }
+  let(:answer_store) { instance_double(Store::SessionAnswerStore) }
   let(:form) { build(:form, id: 3, form_slug: "test-form", pages: [page]) }
 
   describe "#initialize" do
@@ -77,16 +77,34 @@ RSpec.describe Step do
   describe "#save_to_context" do
     it "saves the step to the form context" do
       expect(question).to receive(:before_save)
-      expect(form_context).to receive(:save_step).with(step, {})
-      step.save_to_context(form_context)
+      expect(answer_store).to receive(:save_step).with(step, {})
+      step.save_to_store(answer_store)
+    end
+
+    context "when errors are added to the question by before_save" do
+      before do
+        errors = instance_double(ActiveModel::Errors, empty?: false)
+        allow(question).to receive(:errors).and_return(errors)
+        allow(question).to receive(:before_save)
+      end
+
+      it "does not save the step to the form context" do
+        expect(question).to receive(:before_save)
+        expect(answer_store).not_to receive(:save_step)
+        step.save_to_store(answer_store)
+      end
+
+      it "returns false" do
+        expect(step.save_to_store(answer_store)).to be(false)
+      end
     end
   end
 
   describe "#load_from_context" do
     it "loads the step from the form context" do
-      allow(form_context).to receive(:get_stored_answer).with(step).and_return({ name: "Test" })
+      allow(answer_store).to receive(:get_stored_answer).with(step).and_return({ name: "Test" })
       expect(question).to receive(:assign_attributes).with({ name: "Test" })
-      step.load_from_context(form_context)
+      step.load_from_store(answer_store)
     end
   end
 
@@ -155,6 +173,15 @@ RSpec.describe Step do
       context "with a matching condition" do
         let(:selection) { "Yes" }
         let(:routing_conditions) { [OpenStruct.new(answer_value: "Yes", goto_page_id: "5")] }
+
+        it "returns the goto_page_id of the condition" do
+          expect(step.next_page_slug_after_routing).to eq("5")
+        end
+      end
+
+      context "with a matching none_of_the_above condition" do
+        let(:selection) { "None of the above" }
+        let(:routing_conditions) { [OpenStruct.new(answer_value: "none_of_the_above", goto_page_id: "5")] }
 
         it "returns the goto_page_id of the condition" do
           expect(step.next_page_slug_after_routing).to eq("5")
@@ -399,6 +426,51 @@ RSpec.describe Step do
 
       it "returns only conditions with specified errors" do
         expect(step.conditions_with_goto_errors).to contain_exactly(condition_mixed, condition_goto)
+      end
+    end
+  end
+
+  describe "#has_exit_page_condition?" do
+    it "returns false when no routing conditions" do
+      expect(step.has_exit_page_condition?).to be false
+    end
+
+    it "returns false when first routing condition is not exit page" do
+      page.routing_conditions = [OpenStruct.new(answer_value: "Yes", goto_page_id: "5")]
+      expect(step.has_exit_page_condition?).to be false
+    end
+
+    it "returns false when first routing condition contains markdown exit_page_markdown" do
+      page.routing_conditions = [OpenStruct.new(exit_page_markdown: 12)]
+      expect(step.has_exit_page_condition?).to be false
+    end
+
+    it "returns true when first routing condition contains string markdown exit_page_markdown" do
+      page.routing_conditions = [OpenStruct.new(exit_page_markdown: "")]
+      expect(step.has_exit_page_condition?).to be true
+    end
+  end
+
+  describe "#exit_page_condition_matches?" do
+    let(:selection) { "Yes" }
+    let(:question) { instance_double(Question::Selection, selection:) }
+    let(:routing_conditions) { [OpenStruct.new(answer_value: "Yes", exit_page_markdown: "string")] }
+    let(:page) { build(:page, id: 2, position: 1, routing_conditions:) }
+
+    it "returns true when condition matches and condition is an exit page" do
+      expect(step.exit_page_condition_matches?).to be true
+    end
+
+    it "when condition matches but not an exit page it returns false" do
+      routing_conditions.first.exit_page_markdown = nil
+      expect(step.exit_page_condition_matches?).to be false
+    end
+
+    context "when condition doesn't match" do
+      let(:selection) { "No" }
+
+      it "returns false" do
+        expect(step.exit_page_condition_matches?).to be false
       end
     end
   end

@@ -43,6 +43,8 @@
       <%= yield(:before_content) %>
 
       <main class="govuk-main-wrapper" id="main-content">
+        <%= render(SuccessBannerComponent::View.new(success:)) %>
+
         <%= render(PreviewBannerComponent::View.new(mode: @mode)) %>
 
         <%= yield %>

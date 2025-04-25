@@ -10,7 +10,7 @@ describe FormSubmissionConfirmationMailer, type: :mailer do
   end
   let(:mailer_options) do
     FormSubmissionService::MailerOptions.new(title:,
-                                             preview_mode:,
+                                             is_preview:,
                                              timestamp: submission_timestamp,
                                              submission_reference:,
                                              payment_url:)
@@ -18,7 +18,7 @@ describe FormSubmissionConfirmationMailer, type: :mailer do
   let(:title) { "Form 1" }
   let(:what_happens_next_markdown) { "Please wait for a response" }
   let(:support_contact_details) { "Call: 0203 222 2222" }
-  let(:preview_mode) { false }
+  let(:is_preview) { false }
   let(:confirmation_email_address) { "testing@gov.uk" }
   let(:submission_timestamp) { Time.zone.now }
   let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
@@ -114,7 +114,7 @@ describe FormSubmissionConfirmationMailer, type: :mailer do
     end
 
     context "when the submission is from preview mode" do
-      let(:preview_mode) { true }
+      let(:is_preview) { true }
 
       it "uses the preview personalisation" do
         expect(mail.govuk_notify_personalisation[:test]).to eq("yes")

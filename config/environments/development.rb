@@ -52,6 +52,10 @@ Rails.application.configure do
   # Highlight code that enqueued background job in logs.
   config.active_job.verbose_enqueue_logs = true
 
+  # Uncomment the lines below to use Solid Queue as Active Job adapter locally. Then start Solid Queue using ./bin/jobs
+  # config.active_job.queue_adapter = :solid_queue
+  # config.solid_queue.connects_to = { database: { writing: :queue } }
+
   # Raises error for missing translations.
   config.i18n.raise_on_missing_translations = true
 
@@ -70,4 +74,7 @@ Rails.application.configure do
   # Allow storing session in cookies. This should only be allowed in local
   # development and testing. In production redis should be used
   config.unsafe_session_storage = true
+
+  # Configure previews for mailers - https://guides.rubyonrails.org/action_mailer_basics.html#previewing-emails
+  config.action_mailer.preview_paths << Rails.root.join("spec/mailers/").to_s
 end

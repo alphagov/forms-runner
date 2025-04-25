@@ -45,6 +45,10 @@ en:
           attributes:
             file:
               blank: Select a file
+              contains_virus: The selected file contains a virus
+              disallowed_type: The selected file must be a CSV, DOC, DOCX, JPEG, JPG, JSON, ODT, PDF, PNG, RTF, TXT, or XLSX
+              empty: The selected file is empty
+              scan_failure: The selected file could not be uploaded - try again
               too_big: The selected file must be smaller than 7MB
         question/name:
           attributes:
@@ -90,12 +94,17 @@ en:
               blank: Enter an answer
               long_text_too_long: The answer must be shorter than 5000 characters
               single_line_too_long: The answer must be shorter than 500 characters
-        remove_answer_input:
+        remove_input:
           attributes:
-            remove_answer:
+            remove:
               blank: You must select an option
   autocomplete:
     prompt: Select an answer
+  banner:
+    success:
+      file_removed: Your file has been removed
+      file_uploaded: Your file has been uploaded
+      title: Success
   cookie_banner:
     accept: Accept analytics cookies
     content: We’d like to use analytics cookies so we can understand how you use this website and make improvements.
@@ -151,6 +160,16 @@ en:
         phone_number_heading: Remove phone number
         phone_number_radios_legend: Are you sure you want to remove this phone number?
         short_answer_legend: Are you sure you want to remove ‘%{answer_text}’?
+    remove_file:
+      show:
+        radios_legend: Are you sure you want to remove your file?
+        title: Remove your file
+    review_file:
+      show:
+        check_file: Check your uploaded file
+        remove: Remove
+        remove_file_guidance: You can remove this file if you need to upload a different one.
+        your_file: Your file
   helpers:
     hint:
       email_confirmation_input:
@@ -165,7 +184,7 @@ en:
         send_confirmation_options:
           send_email: 'Yes'
           skip_confirmation: 'No'
-      remove_answer_input:
+      remove_input:
         options:
           'no': 'No'
           'yes': 'Yes'
@@ -174,8 +193,23 @@ en:
         send_confirmation: Do you want to get an email confirming your form has been submitted?
   mailer:
     submission:
+      cannot_reply:
+        contact_form_filler_html: "<p>If you need to contact the person who completed this form, you’ll need to contact them directly.</p>"
+        contact_form_filler_plain: If you need to contact the person who completed this form, you’ll need to contact them directly.
+        contact_forms_team_html: <p>If you’re experiencing a technical issue with this form, <a href="https://www.forms.service.gov.uk/support">contact the GOV.​UK Forms team</a> with details of the issue and the form it relates to.</p>
+        contact_forms_team_plain: If you’re experiencing a technical issue with this form, contact the GOV.​UK Forms team (https://www.forms.service.gov.uk/support) with details of the issue and the form it relates to.
+        heading: You cannot reply to this email
+      check_before_using: Check that this data looks safe before you use it
+      csv_file: CSV file of these answers
+      file_attached: "%{filename} (attached to this email)"
       from: GOV.UK Forms <%{email_address}>
+      payment: You can check that a payment has been made by using this reference number to search transactions within GOV.​UK Pay.
+      reference: 'GOV.​UK Forms reference number: %{submission_reference}'
       subject: 'Form submission: %{form_title} - reference: %{reference}'
+      subject_preview: 'TEST FORM SUBMISSION: %{form_title} - reference: %{reference}'
+      time: This form was submitted at %{time} on %{date}
+      title: This is a completed “%{title}” form.
+      title_preview: This is a test of the “%{title}” form.
   mode:
     phase_banner_tag_preview-archived: Archived preview
     phase_banner_tag_preview-draft: Draft preview
@@ -198,6 +232,20 @@ en:
   preview_banner:
     heading: This is a preview of this form. Do not enter personal information.
     title: Important
+  question/file:
+    file_requirements:
+      body_html: |
+        <p>You can upload the following file types:</p>
+        <ul class="govuk-list govuk-list--bullet">
+          <li>CSV (.csv)</li>
+          <li>image (.jpeg, .jpg, .png)</li>
+          <li>Microsoft Excel Spreadsheet (.xlsx)</li>
+          <li>Microsoft Word Document (.doc, .docx)</li>
+          <li>PDF (.pdf)</li>
+          <li>text (.json, .odt, .rtf, .txt)</li>
+        </ul>
+        <p>Your file must be smaller than 7MB.</p>
+      summary: What files can I upload?
   question/name:
     label:
       first_name: First name

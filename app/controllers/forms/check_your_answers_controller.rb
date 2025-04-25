@@ -1,10 +1,10 @@
 module Forms
   class CheckYourAnswersController < BaseController
-    def set_logging_attributes
+    def set_request_logging_attributes
       super
       if params[:email_confirmation_input].present?
-        CurrentLoggingAttributes.confirmation_email_reference = email_confirmation_input_params[:confirmation_email_reference] if email_confirmation_input_params[:send_confirmation] == "send_email"
-        CurrentLoggingAttributes.submission_email_reference = email_confirmation_input_params[:submission_email_reference]
+        CurrentRequestLoggingAttributes.confirmation_email_reference = email_confirmation_input_params[:confirmation_email_reference] if email_confirmation_input_params[:send_confirmation] == "send_email"
+        CurrentRequestLoggingAttributes.submission_email_reference = email_confirmation_input_params[:submission_email_reference]
       end
     end
 
@@ -14,10 +14,13 @@ module Forms
       setup_check_your_answers
       email_confirmation_input = EmailConfirmationInput.new
 
+      @support_details = current_context.support_details
+
       render template: "forms/check_your_answers/show", locals: { email_confirmation_input: }
     end
 
     def submit_answers
+      @support_details = current_context.support_details
       email_confirmation_input = EmailConfirmationInput.new(email_confirmation_input_params)
       requested_email_confirmation = email_confirmation_input.send_confirmation == "send_email"
 
@@ -36,7 +39,7 @@ module Forms
 
       submission_reference = FormSubmissionService.call(current_context:,
                                                         email_confirmation_input:,
-                                                        preview_mode: mode.preview?).submit
+                                                        mode:).submit
 
       current_context.save_submission_details(submission_reference, requested_email_confirmation)
 
@@ -50,18 +53,18 @@ module Forms
   private
 
     def page_to_row(page)
-      change_link = if page.repeatable? && page.show_answer.present?
-                      change_add_another_answer_path(page.form_id, page.form_slug, page.page_id)
-                    else
-                      form_change_answer_path(page.form_id, page.form_slug, page.page_id)
-                    end
-
-      question_name = helpers.question_text_with_optional_suffix_inc_mode(page, @mode)
+      question_name = page.question.question_text_for_check_your_answers
       {
-        key: { text: question_name },
+        key: { text: helpers.sanitize(question_name) },
         value: { text: page.show_answer },
-        actions: [{ href: change_link, visually_hidden_text: question_name }],
+        actions: [{ href: change_link(page), visually_hidden_text: helpers.strip_tags(question_name) }],
       }
+    end
+
+    def change_link(page)
+      return change_add_another_answer_path(page.form_id, page.form_slug, page.page_id) if page.repeatable? && page.show_answer.present?
+
+      form_change_answer_path(page.form_id, page.form_slug, page.page_id)
     end
 
     def check_your_answers_rows

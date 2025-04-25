@@ -49,6 +49,19 @@ npm run dev
 
 You will also need to run the [forms-api service](https://github.com/alphagov/forms-api), as this app needs the API to create and access forms.
 
+#### Getting AWS credentials
+
+If you have access to the `readonly` role in the development environment can start the Rails server, locally, with the same set of permissions in use in the development AWS account. This allows you to test features like file upload to AWS S3 and sending emails via AWS SES.
+
+1. Assume the `readonly` role in the development AWS account:
+    ```
+    gds aws forms-dev-readonly --shell
+    ```
+2. Start the Rails server with the `ASSUME_DEV_IAM_ROLE` environment variable
+    ```
+    ASSUME_DEV_IAM_ROLE=true ./bin/rails server
+    ```
+
 ## Development tools
 
 ### Running the tests
@@ -214,6 +227,35 @@ sentry:
 If you want to deliberately raise an exception to test, uncomment out the triggers in the [Sentry initializer script](config/initializers/sentry.rb). Whenever you run the app, errors will be raised and should also come through on Sentry.
 
 [Sentry]: https://sentry.io
+
+### Configuring Solid Queue
+
+We use [Solid Queue] as an adapter for Active Job in deployed environments to run delayed and recurring jobs. Locally, Active Job will use the Async adapter by default, which supports running delayed jobs such as sending submission emails, but not recurring jobs.
+
+In order to test recurring jobs, uncomment the lines in [development.rb](config/environments/development.rb) that set Solid Queue as the Active Job adapter:
+
+```rb
+  config.active_job.queue_adapter = :solid_queue
+  config.solid_queue.connects_to = { database: { writing: :queue } }
+```
+
+Then start Solid queue by running
+
+```bash
+./bin/jobs
+```
+
+On a Mac, you may encounter the process crashing with the error `[__NSCFConstantString initialize] may have been in progress in another thread when fork() was called.`
+
+To fix, this you can set `PGGSSENCMODE=disable` - see this [GitHub rails issue](https://github.com/rails/rails/issues/38560#issuecomment-1881733872).
+
+```bash
+PGGSSENCMODE=disable ./bin/jobs
+```
+
+If the jobs you need to test interact with AWS, follow the instructions for [Getting AWS credentials](#getting-aws-credentials)
+
+[Solid Queue]: https://github.com/rails/solid_queue
 
 ## Deploying apps
 

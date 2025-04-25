@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   get "/help/cookies" => "application#cookies", as: :cookies
 
   get "/security.txt" => redirect("https://vdp.cabinetoffice.gov.uk/.well-known/security.txt")
+  get "/submission" => "submission_status#status", as: :status
   get "/.well-known/security.txt" => redirect("https://vdp.cabinetoffice.gov.uk/.well-known/security.txt")
 
   scope "/:mode", mode: /preview-draft|preview-archived|preview-live|form/ do
@@ -27,6 +28,10 @@ Rails.application.routes.draw do
       answer_constraints = { answer_index: /\d+/ }
       page_answer_defaults = { answer_index: 1 }
 
+      get "/:page_slug/exit" => "forms/exit_pages#show",
+          as: :exit_page,
+          constraints: page_constraints
+
       get "/:page_slug/add-another-answer/change" => "forms/add_another_answer#show",
           as: :change_add_another_answer,
           constraints: page_constraints,
@@ -37,6 +42,21 @@ Rails.application.routes.draw do
       post "/:page_slug/add-another-answer" => "forms/add_another_answer#save",
            as: :save_add_another_answer,
            constraints: page_constraints
+
+      # We don't currently support adding another answer for file upload questions, so these routes don't include an
+      # `answer_index` param
+      get "/:page_slug/review-file" => "forms/review_file#show",
+          as: :review_file,
+          constraints: page_constraints
+      post "/:page_slug/review-file" => "forms/review_file#continue",
+           as: :review_file_continue,
+           constraints: page_constraints
+      get "/:page_slug/remove-file" => "forms/remove_file#show",
+          as: :remove_file_confirmation,
+          constraints: page_constraints
+      delete "/:page_slug/remove-file" => "forms/remove_file#destroy",
+             as: :remove_file,
+             constraints: page_constraints
 
       get "/:page_slug/(/:answer_index)/change" => "forms/page#show",
           as: :form_change_answer,

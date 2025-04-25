@@ -27,7 +27,9 @@ class Api::V1::FormSnapshotRepository
       v2_blob = v2_form_document.as_json
 
       v1_blob = converter.to_api_v1_form_snapshot(v2_blob)
-      Form.new(v1_blob, true)
+      form = Form.new(v1_blob, true)
+      form.document_json = v2_blob
+      form
     end
   end
 end

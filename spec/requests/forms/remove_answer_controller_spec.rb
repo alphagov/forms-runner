@@ -7,7 +7,7 @@ RSpec.describe Forms::RemoveAnswerController, type: :request do
 
   let(:steps) { [first_step_in_form, second_step_in_form] }
   let(:is_optional) { false }
-  let(:remove_answer) { "yes" }
+  let(:remove) { "yes" }
 
   let(:first_step_in_form) do
     build :v2_question_page_step,
@@ -40,11 +40,11 @@ RSpec.describe Forms::RemoveAnswerController, type: :request do
       mock.get "/api/v2/forms/#{form.id}#{api_url_suffix}", req_headers, form.to_json, 200
     end
 
-    form_context = instance_double(Flow::FormContext)
-    allow(Flow::FormContext).to receive(:new).and_return(form_context)
-    allow(form_context).to receive(:clear_stored_answer)
-    allow(form_context).to receive(:get_stored_answer).and_return(stored_answers)
-    allow(form_context).to receive(:save_step)
+    answer_store = instance_double(Store::SessionAnswerStore)
+    allow(Store::SessionAnswerStore).to receive(:new).and_return(answer_store)
+    allow(answer_store).to receive(:clear_stored_answer)
+    allow(answer_store).to receive(:get_stored_answer).and_return(stored_answers)
+    allow(answer_store).to receive(:save_step)
   end
 
   describe "GET #show" do
@@ -53,34 +53,34 @@ RSpec.describe Forms::RemoveAnswerController, type: :request do
       expect(response).to render_template(:show)
     end
 
-    it "initializes @remove_answer_input" do
+    it "initializes @remove_input" do
       get "/preview-draft/#{form.id}/#{form.form_slug}/#{first_step_in_form.id}/1/remove"
-      expect(assigns(:remove_answer_input)).to be_a(RemoveAnswerInput)
+      expect(assigns(:remove_input)).to be_a(RemoveInput)
     end
   end
 
   describe "DELETE #delete" do
     context "with valid params" do
       it "redirects to add another answer" do
-        delete "/preview-draft/#{form.id}/#{form.form_slug}/#{first_step_in_form.id}/1/remove", params: { remove_answer_input: { remove_answer: } }
+        delete "/preview-draft/#{form.id}/#{form.form_slug}/#{first_step_in_form.id}/1/remove", params: { remove_input: { remove: } }
         expect(response).to redirect_to("/preview-draft/#{form.id}/#{form.form_slug}/#{first_step_in_form.id}/add-another-answer")
       end
 
       context "when not removing answer" do
-        let(:remove_answer) { "no" }
+        let(:remove) { "no" }
 
         it "redirects to add another answer" do
-          delete "/preview-draft/#{form.id}/#{form.form_slug}/#{first_step_in_form.id}/1/remove", params: { remove_answer_input: { remove_answer: } }
+          delete "/preview-draft/#{form.id}/#{form.form_slug}/#{first_step_in_form.id}/1/remove", params: { remove_input: { remove: } }
           expect(response).to redirect_to("/preview-draft/#{form.id}/#{form.form_slug}/#{first_step_in_form.id}/add-another-answer")
         end
       end
     end
 
     context "with invalid params" do
-      let(:remove_answer) { "invalid" }
+      let(:remove) { "invalid" }
 
       it "renders the show template" do
-        delete "/preview-draft/#{form.id}/#{form.form_slug}/#{first_step_in_form.id}/1/remove", params: { remove_answer_input: { remove_answer: } }
+        delete "/preview-draft/#{form.id}/#{form.form_slug}/#{first_step_in_form.id}/1/remove", params: { remove_input: { remove: } }
         expect(response).to render_template(:show)
         expect(response).to have_http_status(:unprocessable_entity)
       end
@@ -91,7 +91,7 @@ RSpec.describe Forms::RemoveAnswerController, type: :request do
       let(:is_optional) { true }
 
       it "redirects to the next question page" do
-        delete "/preview-draft/#{form.id}/#{form.form_slug}/#{first_step_in_form.id}/1/remove", params: { remove_answer_input: { remove_answer: } }
+        delete "/preview-draft/#{form.id}/#{form.form_slug}/#{first_step_in_form.id}/1/remove", params: { remove_input: { remove: } }
         expect(response).to redirect_to("/preview-draft/#{form.id}/#{form.form_slug}/#{first_step_in_form.id}")
       end
     end

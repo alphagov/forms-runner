@@ -43,14 +43,16 @@ class Step
     instance_variables.map { |variable| instance_variable_get variable }
   end
 
-  def save_to_context(form_context)
+  def save_to_store(answer_store)
     question.before_save
-    form_context.save_step(self, question.serializable_hash)
+    return false unless question.errors.empty?
+
+    answer_store.save_step(self, question.serializable_hash)
     self
   end
 
-  def load_from_context(form_context)
-    attrs = form_context.get_stored_answer(self)
+  def load_from_store(answer_store)
+    attrs = answer_store.get_stored_answer(self)
     question.assign_attributes(attrs || {})
     self
   end
@@ -77,6 +79,10 @@ class Step
   end
 
   def next_page_slug_after_routing
+    if exit_page_condition_matches?
+      return nil
+    end
+
     if first_condition_default?
       return goto_condition_page_slug(routing_conditions.first)
     end
@@ -104,6 +110,16 @@ class Step
     end
   end
 
+  def has_exit_page_condition?
+    return false unless routing_conditions&.first.respond_to?(:exit_page_markdown)
+
+    routing_conditions.first.exit_page_markdown.is_a?(String)
+  end
+
+  def exit_page_condition_matches?
+    first_condition_matches? && has_exit_page_condition?
+  end
+
 private
 
   def goto_condition_page_slug(condition)
@@ -117,10 +133,16 @@ private
   def first_condition_matches?
     return unless question.respond_to?(:selection)
 
+    return question.selection == I18n.t("page.none_of_the_above") if routing_condition_none_of_the_above
+
     routing_conditions.any? && (routing_conditions.first.answer_value == question.selection)
   end
 
   def first_condition_default?
     routing_conditions.any? && routing_conditions.first.answer_value.blank?
+  end
+
+  def routing_condition_none_of_the_above
+    routing_conditions.any? && routing_conditions.first.answer_value == :none_of_the_above.to_s
   end
 end

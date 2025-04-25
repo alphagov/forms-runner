@@ -27,8 +27,8 @@ RSpec.describe Question::FileComponent::View, type: :component do
       expect(page.find("h1")).to have_text(question.question_text_with_optional_suffix)
     end
 
-    it "renders a file input field" do
-      expect(page).to have_css("input[type='file'][name='form[file]']")
+    it "renders a file input field with the correct accept attribute" do
+      expect(page).to have_css("input[type='file'][name='form[file]'][accept='#{Question::File::FILE_TYPES.join(', ')}']")
     end
 
     context "when the question has hint text" do

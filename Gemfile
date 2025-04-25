@@ -4,10 +4,10 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby file: ".ruby-version"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem "rails", "8.0.1"
+gem "rails", "8.0.2"
 
 # Use the Puma web server [https://github.com/puma/puma]
-gem "puma", "~> 6.5.0"
+gem "puma", "~> 6.6.0"
 
 # Use Sentry (https://sentry.io/for/ruby/?platform=sentry.ruby.rails#)
 gem "sentry-rails"
@@ -21,6 +21,9 @@ gem "govuk_notify_rails"
 # Use Redis for session storage
 gem "redis"
 gem "redis-session-store"
+
+# Use SolidQueue for ActiveJob
+gem "solid_queue", "~> 1.1"
 
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
 # gem "kredis"
@@ -37,6 +40,9 @@ gem "bootsnap", require: false
 
 # For forms-api
 gem "activeresource"
+
+# Use postgresql as the database for Active Record
+gem "pg", "~> 1.5"
 
 # For GOV.UK branding
 gem "govuk-components"
@@ -56,16 +62,18 @@ gem "lograge"
 
 # For AWS interactions
 gem "aws-sdk-cloudwatch"
-gem "aws-sdk-codepipeline", "~> 1.92"
+gem "aws-sdk-codepipeline", "~> 1.96"
 gem "aws-sdk-s3"
 gem "aws-sdk-sesv2"
+gem "aws-sdk-sqs"
+gem "aws-sdk-sts"
 
 # For sending submissions as CSV
 gem "csv"
 
 # The autocomplete component is not currently published as a gem, if changing
 # the hash, also change in package.json
-gem "dfe-autocomplete", require: "dfe/autocomplete", github: "DFE-Digital/dfe-autocomplete", ref: "11738c0e25778162e26eb7ab5e22a6ffce671b08"
+gem "dfe-autocomplete", require: "dfe/autocomplete", github: "DFE-Digital/dfe-autocomplete", ref: "1d4cc65039e11cc3ba9e7217a719b8128d0e4d53"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -75,7 +83,7 @@ group :development, :test do
   gem "faker"
 
   # Support for locale tasks tests
-  gem "i18n-tasks", "~> 1.0.14"
+  gem "i18n-tasks", "~> 1.0.15"
 
   gem "rspec-rails"
   gem "rubocop-govuk", require: false
@@ -84,7 +92,7 @@ group :development, :test do
   gem "bundler-audit", "~> 0.9.2"
 
   # For detecting security vulnerabilities in Ruby on Rails applications via static analysis.
-  gem "brakeman", "~> 6.2"
+  gem "brakeman", "~> 7.0"
 end
 
 group :test do

@@ -21,22 +21,22 @@
     "dev": "vite dev"
   },
   "devDependencies": {
-    "autoprefixer": "^10.4.20",
+    "autoprefixer": "^10.4.21",
     "cssnano": "^7.0.6",
-    "jsdom": "^25.0.0",
-    "postcss": "^8.4.49",
-    "sass": "^1.83.0",
+    "jsdom": "^26.1.0",
+    "postcss": "^8.5.3",
+    "sass": "^1.87.0",
     "snazzy": "^9.0.0",
     "standard": "^17.1.2",
-    "stylelint": "^16.12.0",
+    "stylelint": "^16.19.0",
     "stylelint-config-gds": "^2.0.0",
-    "vite": "^5.4.11",
+    "vite": "^6.3.3",
     "vite-plugin-ruby": "^5.1.1",
-    "vitest": "^2.1.8"
+    "vitest": "^3.1.2"
   },
   "dependencies": {
-    "dfe-autocomplete": "github:DFE-Digital/dfe-autocomplete#8e7389ff62a38bc8880323f6c58eed9c8d10f080",
-    "govuk-frontend": "^5.7.1"
+    "dfe-autocomplete": "github:DFE-Digital/dfe-autocomplete#1d4cc65039e11cc3ba9e7217a719b8128d0e4d53",
+    "govuk-frontend": "^5.9.0"
   },
   "standard": {
     "globals": [

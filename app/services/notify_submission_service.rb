@@ -1,17 +1,17 @@
 class NotifySubmissionService
-  def initialize(current_context:, notify_email_reference:, mailer_options:)
-    @current_context = current_context
-    @form = current_context.form
+  def initialize(journey:, form:, notify_email_reference:, mailer_options:)
+    @journey = journey
+    @form = form
     @notify_email_reference = notify_email_reference
     @mailer_options = mailer_options
   end
 
   def submit
-    if !@mailer_options.preview_mode && @form.submission_email.blank?
+    if !@mailer_options.is_preview && @form.submission_email.blank?
       raise StandardError, "Form id(#{@form.id}) is missing a submission email address"
     end
 
-    if @form.submission_email.blank? && @mailer_options.preview_mode
+    if @form.submission_email.blank? && @mailer_options.is_preview
       Rails.logger.info "Skipping sending submission email for preview submission, as the submission email address has not been set"
       return
     end
@@ -40,7 +40,7 @@ private
                                 mailer_options: @mailer_options,
                                 csv_file:).deliver_now
 
-    CurrentLoggingAttributes.submission_email_id = mail.govuk_notify_response.id
+    CurrentRequestLoggingAttributes.submission_email_id = mail.govuk_notify_response.id
   end
 
   def deliver_submission_email_with_csv_attachment_with_fallback
@@ -55,14 +55,15 @@ private
 
   def write_submission_csv(file)
     CsvGenerator.write_submission(
-      current_context: @current_context,
+      all_steps: @journey.all_steps,
       submission_reference: @mailer_options.submission_reference,
       timestamp: @mailer_options.timestamp,
       output_file_path: file.path,
+      is_s3_submission: false,
     )
   end
 
   def email_body
-    NotifyTemplateFormatter.new.build_question_answers_section(@current_context)
+    NotifyTemplateFormatter.new.build_question_answers_section(@journey.completed_steps)
   end
 end

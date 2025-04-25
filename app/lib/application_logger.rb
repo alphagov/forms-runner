@@ -32,7 +32,11 @@ private
     msg = yield if block_given?
 
     begin
-      message_to_hash(msg).merge(attribs || {}).merge(CurrentLoggingAttributes.as_hash).compact
+      message_to_hash(msg)
+        .merge(attribs || {})
+        .merge(CurrentRequestLoggingAttributes.as_hash)
+        .merge(CurrentJobLoggingAttributes.as_hash)
+        .compact
     rescue NameError
       # if we log during startup for tests, CurrentLoggingAttributes will be uninitialized
       message_to_hash(msg).merge(attribs || {})

@@ -4,7 +4,7 @@ require "rails"
 # Pick the frameworks you want:
 require "active_model/railtie"
 require "active_job/railtie"
-# require "active_record/railtie"
+require "active_record/railtie"
 # require "active_storage/engine"
 require "action_controller/railtie"
 require "action_mailer/railtie"
@@ -66,7 +66,7 @@ module FormsRunner
     config.lograge.keep_original_rails_log = false
 
     config.lograge.custom_options = lambda do |event|
-      CurrentLoggingAttributes.as_hash.merge(exception: event.payload[:exception]).compact
+      CurrentRequestLoggingAttributes.as_hash.merge(exception: event.payload[:exception]).compact
     end
 
     # Use custom logger and formatter to log in JSON with request context fields. To use conventional
@@ -76,5 +76,8 @@ module FormsRunner
 
     # custom configuration for the SES mailer delivery method
     config.x.aws_ses_form_submission_mailer.delivery_method = :aws_ses
+
+    # Prevent ActiveRecord::PreparedStatementCacheExpired errors when adding columns
+    config.active_record.enumerate_columns_in_select_statements = true
   end
 end

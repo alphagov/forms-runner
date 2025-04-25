@@ -1,0 +1,26 @@
+production:
+  delete_submissions_job:
+    class: DeleteSubmissionsJob
+    schedule: every hour
+  queue_metrics_job:
+    class: QueueMetricsJob
+    schedule: every minute
+  receive_submission_bounces_and_complaints_job:
+    class: ReceiveSubmissionBouncesAndComplaintsJob
+    schedule: every 10 minutes
+  receive_submission_deliveries_job:
+    class: ReceiveSubmissionDeliveriesJob
+    schedule: every 10 minutes
+development:
+  delete_submissions_job:
+    class: DeleteSubmissionsJob
+    schedule: every minute
+  queue_metrics_job:
+    class: QueueMetricsJob
+    schedule: every minute
+  receive_submission_bounces_and_complaints_job:
+    class: ReceiveSubmissionBouncesAndComplaintsJob
+    schedule: every minute
+  receive_submission_deliveries_job:
+    class: ReceiveSubmissionDeliveriesJob
+    schedule: every minute

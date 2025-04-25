@@ -55,6 +55,9 @@ RSpec.describe Forms::PageController, type: :request do
   let(:logger) { ActiveSupport::Logger.new(output) }
 
   before do
+    # Intercept the request logs so we can do assertions on them
+    allow(Lograge).to receive(:logger).and_return(logger)
+
     ActiveResource::HttpMock.respond_to do |mock|
       mock.get "/api/v2/forms/2#{api_url_suffix}", req_headers, form_data.to_json, 200
     end
@@ -77,9 +80,6 @@ RSpec.describe Forms::PageController, type: :request do
     end
 
     before do
-      # Intercept the request logs so we can do assertions on them
-      allow(Lograge).to receive(:logger).and_return(logger)
-
       ActiveResource::HttpMock.respond_to do |mock|
         mock.get "/api/v2/forms/200#{api_url_suffix}", req_headers, form_data.to_json, 200
       end
@@ -93,6 +93,10 @@ RSpec.describe Forms::PageController, type: :request do
 
     it "adds the question_number to the instrumentation payload" do
       expect(log_lines[0]["question_number"]).to eq(1)
+    end
+
+    it "adds the answer_type to the instrumentation payload" do
+      expect(log_lines[0]["answer_type"]).to eq("text")
     end
   end
 
@@ -334,6 +338,51 @@ RSpec.describe Forms::PageController, type: :request do
         expect(response).to have_http_status(:not_found)
       end
     end
+
+    context "when the page is a file upload question" do
+      let(:first_step_in_form) do
+        build :v2_question_page_step,
+              id: 1,
+              next_step_id: 2,
+              answer_type: "file",
+              is_optional: true
+      end
+
+      before do
+        allow(Flow::Context).to receive(:new).and_wrap_original do |original_method, *args|
+          context_spy = original_method.call(form: args[0][:form], store:)
+          context_spy
+        end
+        get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
+      end
+
+      context "when the question has already been answered" do
+        let(:store) do
+          {
+            answers: {
+              form_data.id.to_s => {
+                first_step_in_form.id.to_s => {
+                  "original_filename" => "foo.png",
+                  "uploaded_file_key" => "bar",
+                },
+              },
+            },
+          }
+        end
+
+        it "redirects to the review file route" do
+          expect(response).to redirect_to review_file_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
+        end
+      end
+
+      context "when the question hasn't been answered" do
+        let(:store) { { answers: {} } }
+
+        it "renders the show page template" do
+          expect(response).to render_template("forms/page/show")
+        end
+      end
+    end
   end
 
   describe "#save" do
@@ -354,6 +403,10 @@ RSpec.describe Forms::PageController, type: :request do
         it "returns 422" do
           expect(response).to have_http_status(:unprocessable_entity)
         end
+
+        it "adds validation_errors logging attribute" do
+          expect(log_lines[0]["validation_errors"]).to eq(["text: blank"])
+        end
       end
     end
 
@@ -361,6 +414,11 @@ RSpec.describe Forms::PageController, type: :request do
       it "Redirects to the next page" do
         post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
         expect(response).to redirect_to(form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2))
+      end
+
+      it "does not add validation_errors logging attribute" do
+        post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
+        expect(log_lines[0].keys).not_to include("validation_errors")
       end
 
       context "when changing an existing answer" do
@@ -552,6 +610,113 @@ RSpec.describe Forms::PageController, type: :request do
           post save_form_page_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug: first_step_in_form.id, params: { question: { number: nil } })
           expect(response).to redirect_to(form_page_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug: second_step_in_form.id))
         end
+      end
+    end
+
+    context "when the page is a file upload question" do
+      let(:first_step_in_form) do
+        build :v2_question_page_step,
+              id: 1,
+              next_step_id: 2,
+              answer_type: "file",
+              is_optional: true
+      end
+
+      context "when a file was uploaded" do
+        let(:mock_s3_client) { Aws::S3::Client.new(stub_responses: true) }
+        let(:tempfile) { Tempfile.new(%w[temp-file .jpeg]) }
+        let(:content_type) { "image/jpeg" }
+        let(:question) { { file: Rack::Test::UploadedFile.new(tempfile.path, content_type) } }
+
+        before do
+          File.write(tempfile, "some content")
+          allow(Aws::S3::Client).to receive(:new).and_return(mock_s3_client)
+          allow(mock_s3_client).to receive(:get_object_tagging).and_return({ tag_set: [{ key: "GuardDutyMalwareScanStatus", value: "NO_THREATS_FOUND" }] })
+        end
+
+        after do
+          tempfile.unlink
+        end
+
+        it "redirects to the review file route" do
+          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: }
+          expect(response).to redirect_to review_file_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
+        end
+
+        it "displays a success banner" do
+          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: }
+
+          expect(flash[:success]).to eq(I18n.t("banner.success.file_uploaded"))
+        end
+
+        it "adds answer_metadata logging attribute" do
+          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: }
+          expect(log_lines[0]["answer_metadata"]).to eq({
+            "file_size_in_bytes" => tempfile.size,
+            "file_type" => content_type,
+          })
+        end
+
+        context "when changing an existing answer" do
+          it "includes the changing_existing_answer query parameter in the redirect" do
+            post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1, changing_existing_answer: true), params: { question: }
+            expect(response).to redirect_to review_file_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1, changing_existing_answer: true)
+          end
+        end
+      end
+
+      context "when the question was skipped" do
+        let(:question) { { file: nil } }
+
+        it "redirects to the next step in the form" do
+          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: }
+          expect(response).to redirect_to form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2)
+        end
+      end
+
+      context "when there were validation errors" do
+        let(:tempfile) { Tempfile.new(%w[temp-file .gif]) }
+        let(:content_type) { "image/gif" }
+        let(:question) { { file: Rack::Test::UploadedFile.new(tempfile.path, content_type) } }
+
+        before do
+          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: }
+        end
+
+        after do
+          tempfile.unlink
+        end
+
+        it "adds validation_errors logging attribute" do
+          expect(log_lines[0]["validation_errors"]).to eq(["file: disallowed_type", "file: empty"])
+        end
+
+        it "adds answer_metadata logging attribute" do
+          expect(log_lines[0]["answer_metadata"]).to eq({
+            "file_size_in_bytes" => tempfile.size,
+            "file_type" => "image/gif",
+          })
+        end
+      end
+    end
+
+    context "when the page is a an exit question" do
+      let(:first_step_in_form) do
+        build :v2_question_page_step, :with_selections_settings,
+              id: 1,
+              next_step_id: 2,
+              routing_conditions: [DataStruct.new(id: 1, routing_page_id: 1, check_page_id: 1, goto_page_id: nil, answer_value: "Option 1", validation_errors: [], exit_page_markdown: "Exit page markdown", exit_page_heading: "exit page heading")],
+              is_optional: false
+      end
+
+      it "redirects to the exit page when exit page answer given" do
+        post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1, params: { question: { selection: "Option 1" }, changing_existing_answer: false })
+        expect(response).to redirect_to exit_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
+      end
+
+      it "redirects to the next step in the form when any other answer given" do
+        post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1, params: { question: { selection: "Option 2" }, changing_existing_answer: false })
+        expect(response).to redirect_to form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2)
       end
     end
   end

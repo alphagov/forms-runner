@@ -11,7 +11,7 @@ RSpec.describe ApplicationLogger do
 
   context "when CurrentLoggingAttributes has attributes set" do
     before do
-      CurrentLoggingAttributes.request_id = "a-request-id"
+      CurrentRequestLoggingAttributes.request_id = "a-request-id"
       logger.info("A message")
     end
 
@@ -30,7 +30,7 @@ RSpec.describe ApplicationLogger do
 
   context "when a hash is passed as an argument" do
     before do
-      CurrentLoggingAttributes.request_id = "a-request-id"
+      CurrentRequestLoggingAttributes.request_id = "a-request-id"
       logger.info("A message", { foo: "bar" })
     end
 
@@ -49,7 +49,7 @@ RSpec.describe ApplicationLogger do
 
   context "when logged message is a hash" do
     before do
-      CurrentLoggingAttributes.request_id = "a-request-id"
+      CurrentRequestLoggingAttributes.request_id = "a-request-id"
       logger.info({ foo: "bar" })
     end
 

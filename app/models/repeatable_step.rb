@@ -18,13 +18,13 @@ class RepeatableStep < Step
     true
   end
 
-  def save_to_context(form_context)
-    form_context.save_step(self, @questions.map(&:serializable_hash))
+  def save_to_store(answer_store)
+    answer_store.save_step(self, @questions.map(&:serializable_hash))
     self
   end
 
-  def load_from_context(form_context)
-    question_attrs = form_context.get_stored_answer(self)
+  def load_from_store(answer_store)
+    question_attrs = answer_store.get_stored_answer(self)
 
     unless question_attrs.is_a?(Array)
       raise ArgumentError
@@ -85,11 +85,11 @@ class RepeatableStep < Step
     end
   end
 
-  def show_answer_in_csv
+  def show_answer_in_csv(is_s3_submission)
     if questions.present?
       header_values_hash = {}
       questions.each.with_index(1) do |question, index|
-        question.show_answer_in_csv.each do |header, value|
+        question.show_answer_in_csv(is_s3_submission:).each do |header, value|
           header_values_hash["#{header} - Answer #{index}"] = value
         end
       end

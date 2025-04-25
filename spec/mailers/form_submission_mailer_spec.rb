@@ -4,13 +4,13 @@ describe FormSubmissionMailer, type: :mailer do
   let(:mail) { described_class.email_confirmation_input(text_input:, notify_response_id: "for-my-ref", submission_email:, mailer_options:) }
   let(:title) { "Form 1" }
   let(:text_input) { "My question: My answer" }
-  let(:preview_mode) { false }
+  let(:is_preview) { false }
   let(:submission_email) { "testing@gov.uk" }
   let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
   let(:payment_url) { nil }
   let(:mailer_options) do
     FormSubmissionService::MailerOptions.new(title:,
-                                             preview_mode:,
+                                             is_preview:,
                                              timestamp: submission_timestamp,
                                              submission_reference:,
                                              payment_url:)
@@ -167,7 +167,7 @@ describe FormSubmissionMailer, type: :mailer do
     end
 
     context "when the submission is from preview mode" do
-      let(:preview_mode) { true }
+      let(:is_preview) { true }
 
       it "uses the preview personalisation" do
         expect(mail.govuk_notify_personalisation[:test]).to eq("yes")
