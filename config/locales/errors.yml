@@ -3,7 +3,7 @@ en:
   goto_page_routing_error:
     cannot_have_goto_page_before_routing_page:
       body_html: |
-        <p>Question %{question_number} has a route that takes the person to a question that’s before the start of the route, so the route cannot work.</p>
+        <p>Question %{question_number} has a route that takes the person to a question that’s before the question it skips from, so the route cannot work.</p>
         <p>To fix this <a href="%{link_url}">edit or delete question %{question_number}’s route</a>.</p>
     goto_page_doesnt_exist:
       body_html: |
