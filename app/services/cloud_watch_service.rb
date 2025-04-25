@@ -4,7 +4,7 @@ class CloudWatchService
   JOBS_METRICS_NAMESPACE = "Forms/Jobs".freeze
   SERVICE_NAME = "forms-runner".freeze
 
-  def self.log_form_submission(form_id:)
+  def self.record_form_submission_metric(form_id:)
     return unless Settings.cloudwatch_metrics_enabled
 
     cloudwatch_client.put_metric_data(
@@ -23,7 +23,7 @@ class CloudWatchService
     )
   end
 
-  def self.log_form_start(form_id:)
+  def self.record_form_start_metric(form_id:)
     return unless Settings.cloudwatch_metrics_enabled
 
     cloudwatch_client.put_metric_data(
@@ -42,7 +42,7 @@ class CloudWatchService
     )
   end
 
-  def self.log_submission_sent(milliseconds_since_scheduled)
+  def self.record_submission_sent_metric(milliseconds_since_scheduled)
     return unless Settings.cloudwatch_metrics_enabled
 
     cloudwatch_client.put_metric_data(
@@ -62,7 +62,7 @@ class CloudWatchService
     )
   end
 
-  def self.log_job_failure(job_name)
+  def self.record_job_failure_metric(job_name)
     return unless Settings.cloudwatch_metrics_enabled
 
     cloudwatch_client.put_metric_data(
@@ -82,7 +82,7 @@ class CloudWatchService
     )
   end
 
-  def self.log_job_started(job_name)
+  def self.record_job_started_metric(job_name)
     return unless Settings.cloudwatch_metrics_enabled
 
     cloudwatch_client.put_metric_data(
@@ -102,7 +102,7 @@ class CloudWatchService
     )
   end
 
-  def self.log_queue_length(queue_name, length)
+  def self.record_queue_length_metric(queue_name, length)
     return unless Settings.cloudwatch_metrics_enabled
 
     cloudwatch_client.put_metric_data(

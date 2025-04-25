@@ -50,7 +50,7 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
         messages.shift
       end
 
-      allow(CloudWatchService).to receive(:log_job_started)
+      allow(CloudWatchService).to receive(:record_job_started_metric)
 
       Rails.logger.broadcast_to logger
     end
@@ -76,7 +76,7 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
 
       it "sends cloudwatch metric" do
         perform_enqueued_jobs
-        expect(CloudWatchService).to have_received(:log_job_started).with("ReceiveSubmissionDeliveriesJob")
+        expect(CloudWatchService).to have_received(:record_job_started_metric).with("ReceiveSubmissionDeliveriesJob")
       end
     end
 

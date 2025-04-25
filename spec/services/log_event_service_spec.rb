@@ -33,18 +33,18 @@ RSpec.describe LogEventService do
         allow(Sentry).to receive(:capture_exception)
       end
 
-      it "calls the CloudWatchService with .log_form_start" do
-        allow(CloudWatchService).to receive(:log_form_start).and_return(true)
+      it "calls the CloudWatchService with .record_form_start_metric" do
+        allow(CloudWatchService).to receive(:record_form_start_metric).and_return(true)
 
         log_event_service = described_class.new(current_context, step, request, changing_answers, answers)
 
         log_event_service.log_page_save
 
-        expect(CloudWatchService).to have_received(:log_form_start).with(form_id: current_context.form.id)
+        expect(CloudWatchService).to have_received(:record_form_start_metric).with(form_id: current_context.form.id)
       end
 
       it "Sentry doesn't receive an error" do
-        allow(CloudWatchService).to receive(:log_form_start).and_return(true)
+        allow(CloudWatchService).to receive(:record_form_start_metric).and_return(true)
 
         log_event_service = described_class.new(current_context, step, request, changing_answers, answers)
 
@@ -55,7 +55,7 @@ RSpec.describe LogEventService do
 
       context "when CloudWatchService returns an error" do
         it "raises the error to Sentry" do
-          allow(CloudWatchService).to receive(:log_form_start).and_raise(StandardError)
+          allow(CloudWatchService).to receive(:record_form_start_metric).and_raise(StandardError)
 
           log_event_service = described_class.new(current_context, step, request, changing_answers, answers)
 
@@ -73,7 +73,7 @@ RSpec.describe LogEventService do
 
     before do
       allow(EventLogger).to receive(:log_form_event).and_return(true)
-      allow(CloudWatchService).to receive(:log_form_submission).and_return(true)
+      allow(CloudWatchService).to receive(:record_form_submission_metric).and_return(true)
       described_class.log_submit(current_context, requested_email_confirmation:, preview:, submission_type: "email")
     end
 
@@ -85,7 +85,7 @@ RSpec.describe LogEventService do
       end
 
       it "does not call the cloud watch service" do
-        expect(CloudWatchService).not_to have_received(:log_form_submission)
+        expect(CloudWatchService).not_to have_received(:record_form_submission_metric)
       end
     end
 
@@ -96,8 +96,8 @@ RSpec.describe LogEventService do
         expect(EventLogger).to have_received(:log_form_event).with("submission", { submission_type: "email" })
       end
 
-      it "calls the cloud watch service with .log_form_submission" do
-        expect(CloudWatchService).to have_received(:log_form_submission).with(form_id: current_context.form.id)
+      it "calls the cloud watch service with .record_form_submission_metric" do
+        expect(CloudWatchService).to have_received(:record_form_submission_metric).with(form_id: current_context.form.id)
       end
 
       context "when email confirmation is requested" do
@@ -118,7 +118,7 @@ RSpec.describe LogEventService do
 
       context "when CloudWatchService returns an error" do
         it "raises the error to Sentry" do
-          allow(CloudWatchService).to receive(:log_form_submission).and_raise(StandardError)
+          allow(CloudWatchService).to receive(:record_form_submission_metric).and_raise(StandardError)
           allow(Sentry).to receive(:capture_exception)
 
           described_class.log_submit(current_context, requested_email_confirmation:, preview:, submission_type: "email")
