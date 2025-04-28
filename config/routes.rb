@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-  
+
   mount MissionControl::Jobs::Engine, at: "/jobs"
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -86,6 +86,7 @@ Rails.application.routes.draw do
 
   get "/maintenance" => "errors#maintenance", as: :maintenance_page
   get "/404", to: "errors#not_found", as: :error_404, via: :all
+  get "/401", to: "errors#unauthorized", as: :error_401, via: :all
   get "/500", to: "errors#internal_server_error", as: :error_500, via: :all
   get "/deprecated", to: "errors#deprecated"
   match "*path", to: "errors#not_found", via: :all

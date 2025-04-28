@@ -260,3 +260,5 @@ en:
     link_text: "%{link} (opens in new tab)"
     online: Online
     phone: Phone
+  unauthorized_error:
+    title: You are not authorised to view this page
