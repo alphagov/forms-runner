@@ -13,12 +13,16 @@ module FormHeaderComponent
       if @current_context.present?
         homepage_url = @mode.preview? ? Settings.forms_admin.base_url : GOVUK_BASE_URL
 
-        govuk_header(homepage_url:,
-                     service_name: form_name,
-                     service_url: form_start_page_url,
-                     classes:) do |header|
-          header.with_product_name(name: product_name_with_tag)
-        end
+        safe_join([
+          govuk_header(homepage_url:,
+                       classes:) do |header|
+            header.with_product_name(name: product_name_with_tag)
+          end,
+          govuk_service_navigation(
+            service_name: form_name,
+            service_url: form_start_page_url,
+          ),
+        ], "\n")
       else
         govuk_header(homepage_url: GOVUK_BASE_URL, classes:) do |header|
           header.with_product_name(name: product_name_with_tag)
@@ -50,7 +54,7 @@ module FormHeaderComponent
     end
 
     def classes
-      ["app-header", "app-header--#{@mode}"]
+      ["govuk-header--full-width-border", "app-header", "app-header--#{@mode}"]
     end
 
     def form_name
