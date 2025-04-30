@@ -79,6 +79,13 @@ gem "dfe-autocomplete", require: "dfe/autocomplete", github: "DFE-Digital/dfe-au
 gem "mission_control-jobs"
 gem "propshaft" # needed as we use vite_rails
 
+# Authentication for accessing Mission Control route
+gem "omniauth-auth0"
+gem "omniauth-rails_csrf_protection"
+
+# For getting auth0 user information to check their role
+gem "auth0"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[mri mingw x64_mingw]

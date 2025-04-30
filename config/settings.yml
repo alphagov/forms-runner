@@ -41,6 +41,12 @@ file_upload:
   poll_scan_status_wait_milliseconds: 500
   poll_scan_status_max_attempts: 20
 
+auth0:
+  client_id: changeme
+  client_secret:
+  domain: changeme.uk.auth0.com
+  mission_control_role_id: changeme
+
 retain_submissions_for_seconds: 604800 # 7 days
 
 maintenance_mode:

@@ -1,8 +1,6 @@
 Rails.application.routes.draw do
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
-  mount MissionControl::Jobs::Engine, at: "/jobs"
-
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "/up" => "rails/health#show", as: :rails_health_check
@@ -16,6 +14,15 @@ Rails.application.routes.draw do
   get "/security.txt" => redirect("https://vdp.cabinetoffice.gov.uk/.well-known/security.txt")
   get "/submission" => "submission_status#status", as: :status
   get "/.well-known/security.txt" => redirect("https://vdp.cabinetoffice.gov.uk/.well-known/security.txt")
+
+  # Register Mission control routes
+  mount MissionControl::Jobs::Engine, at: "/jobs"
+
+  # Only used for authenticating users for Mission Control routes
+  get "/auth/sign-in" => "auth0#sign_in", as: :sign_in
+  get "/auth/auth0/callback" => "auth0#callback"
+  get "/auth/failure" => "auth0#failure"
+  get "/auth/logout" => "auth0#logout"
 
   scope "/:mode", mode: /preview-draft|preview-archived|preview-live|form/ do
     get "/:form_id" => "forms/base#redirect_to_friendly_url_start", as: :form_id

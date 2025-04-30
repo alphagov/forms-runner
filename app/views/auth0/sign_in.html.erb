@@ -1,0 +1,15 @@
+<% set_page_title(t("sign_in.title")) %>
+
+<%= govuk_button_to t("sign_in.button"), '/auth/auth0', data: { module: "sign-in-button" }, id: 'login_button' %>
+
+<% content_for :body_end do %>
+  <script>
+    (function() {
+      var loginButton = document.querySelector('[data-module="sign-in-button"]');
+      if (loginButton && typeof loginButton.click === 'function') {
+        loginButton.click();
+      }
+    })();
+  </script>
+<% end %>
+
