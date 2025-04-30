@@ -1,12 +1,12 @@
-.app-header--preview-draft .govuk-header__container {
+.app-header--preview-draft {
   border-bottom-color: govuk-colour("yellow");
 }
 
-.app-header--preview-archived .govuk-header__container {
+.app-header--preview-archived {
   border-bottom-color: govuk-colour("orange");
 }
 
-.app-header--preview-live .govuk-header__container {
+.app-header--preview-live {
   border-bottom-color: govuk-colour("turquoise");
 }
 
