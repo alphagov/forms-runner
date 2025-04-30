@@ -79,5 +79,8 @@ module FormsRunner
 
     # Prevent ActiveRecord::PreparedStatementCacheExpired errors when adding columns
     config.active_record.enumerate_columns_in_select_statements = true
+
+    MissionControl::Jobs.base_controller_class = "AdminController"
+    config.mission_control.jobs.http_basic_auth_enabled = false
   end
 end
