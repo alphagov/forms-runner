@@ -163,7 +163,7 @@ RSpec.describe FormSubmissionService do
             }.to change(Submission, :count).by(1)
 
             expect(Submission.last).to have_attributes(reference:, form_id: form.id, answers: answers.deep_stringify_keys,
-                                                       mode: "live", mail_message_id: nil, form_document: form_document,
+                                                       mode: "form", mail_message_id: nil, form_document: form_document,
                                                        sent_at: nil)
           end
         end
@@ -246,7 +246,7 @@ RSpec.describe FormSubmissionService do
             }.to change(Submission, :count).by(1)
 
             expect(Submission.last).to have_attributes(reference:, form_id: form.id, answers: answers.deep_stringify_keys,
-                                                       mode: "live", mail_message_id: nil, form_document: form_document,
+                                                       mode: "form", mail_message_id: nil, form_document: form_document,
                                                        sent_at: nil)
           end
         end

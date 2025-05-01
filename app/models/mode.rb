@@ -1,10 +1,10 @@
 class Mode
-  def initialize(mode_string = "live")
+  def initialize(mode_string = "form")
     @mode_string = mode_string
   end
 
   def live?
-    !preview?
+    @mode_string == "form" || !preview?
   end
 
   def preview?
@@ -25,5 +25,9 @@ class Mode
 
   def to_s
     @mode_string
+  end
+
+  def to_param
+    live? ? "form" : @mode_string
   end
 end
