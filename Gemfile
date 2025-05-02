@@ -45,7 +45,7 @@ gem "activeresource"
 gem "pg", "~> 1.5"
 
 # For GOV.UK branding
-gem "govuk-components"
+gem "govuk-components", github: "x-govuk/govuk-components", ref: "f0bfa9bd6b15a5e3f719987c7329e2b6a9f5d30d"
 gem "govuk_design_system_formbuilder"
 
 # Our own custom markdown renderer
