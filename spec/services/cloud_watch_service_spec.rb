@@ -45,22 +45,6 @@ RSpec.describe CloudWatchService do
           },
         ],
       )
-      expect(cloudwatch_client).to receive(:put_metric_data).once.with(
-        namespace: "forms/#{forms_env}",
-        metric_data: [
-          {
-            metric_name: "submitted",
-            dimensions: [
-              {
-                name: "form_id",
-                value: form_id.to_s,
-              },
-            ],
-            value: 1,
-            unit: "Count",
-          },
-        ],
-      )
 
       described_class.log_form_submission(form_id:)
     end
@@ -90,22 +74,6 @@ RSpec.describe CloudWatchService do
               },
               {
                 name: "FormId",
-                value: form_id.to_s,
-              },
-            ],
-            value: 1,
-            unit: "Count",
-          },
-        ],
-      )
-      expect(cloudwatch_client).to receive(:put_metric_data).once.with(
-        namespace: "forms/#{forms_env}",
-        metric_data: [
-          {
-            metric_name: "started",
-            dimensions: [
-              {
-                name: "form_id",
                 value: form_id.to_s,
               },
             ],
