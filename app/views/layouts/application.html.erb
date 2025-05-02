@@ -13,6 +13,9 @@
 
 <% content_for :footer do %>
 
+  <%# TODO: add crown SVG to footer %>
+  <%# To do that, we'll either need an update to govuk-components to apply the crown automatically, or we can replace the component with HTML and add the crown ourselves %>
+
   <% meta_links = {t("footer.accessibility_statement") => accessibility_statement_path, t("footer.cookies") => cookies_path} %>
   <% if @current_context.present? %>
     <% meta_links[t("footer.privacy_policy")] = form_privacy_path(@current_context.form.id) %>
