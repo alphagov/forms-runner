@@ -80,10 +80,6 @@ module FormsRunner
     # Prevent ActiveRecord::PreparedStatementCacheExpired errors when adding columns
     config.active_record.enumerate_columns_in_select_statements = true
 
-    # Set ActiveRecord Encryption keys
-    config.active_record.encryption.primary_key = Settings.active_record_encryption.primary_key
-    config.active_record.encryption.deterministic_key = Settings.active_record_encryption.deterministic_key
-    config.active_record.encryption.key_derivation_salt = Settings.active_record_encryption.key_derivation_salt
     # TODO: remove this when all sensitive data is encrypted
     # See https://guides.rubyonrails.org/active_record_encryption.html#support-for-unencrypted-data
     config.active_record.encryption.support_unencrypted_data = true

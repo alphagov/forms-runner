@@ -83,4 +83,7 @@ Rails.application.configure do
   #
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+
+  # Set ActiveRecord Encryption keys
+  config.active_record.encryption.key_provider = ActiveKms::AwsKeyProvider.new(key_id: ENV["KMS_KEY_ID"])
 end

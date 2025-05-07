@@ -64,6 +64,8 @@ GEM
       erubi (~> 1.11)
       rails-dom-testing (~> 2.2)
       rails-html-sanitizer (~> 1.6)
+    active_kms (0.2.0)
+      activerecord (>= 7.1)
     activejob (8.0.2)
       activesupport (= 8.0.2)
       globalid (>= 0.3.6)
@@ -509,9 +511,11 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
+  active_kms
   activeresource
   aws-sdk-cloudwatch
   aws-sdk-codepipeline (~> 1.97)
+  aws-sdk-kms
   aws-sdk-s3
   aws-sdk-sesv2
   aws-sdk-sqs
