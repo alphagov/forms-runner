@@ -22,7 +22,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.21",
-    "cssnano": "^7.0.6",
+    "cssnano": "^7.0.7",
     "jsdom": "^26.1.0",
     "postcss": "^8.5.3",
     "sass": "^1.87.0",
