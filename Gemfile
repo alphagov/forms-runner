@@ -63,10 +63,14 @@ gem "lograge"
 # For AWS interactions
 gem "aws-sdk-cloudwatch"
 gem "aws-sdk-codepipeline", "~> 1.97"
+gem "aws-sdk-kms"
 gem "aws-sdk-s3"
 gem "aws-sdk-sesv2"
 gem "aws-sdk-sqs"
 gem "aws-sdk-sts"
+
+# For managing KMS keys in production
+gem "active_kms"
 
 # For sending submissions as CSV
 gem "csv"
