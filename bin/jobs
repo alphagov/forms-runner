@@ -3,4 +3,16 @@
 require_relative "../config/environment"
 require "solid_queue/cli"
 
+HEALTHCHECK_FILE = Rails.root.join('tmp/healthcheck').freeze
+
+SolidQueue.on_start do |_supervisor|
+  Rails.logger.info "[SolidQueue] Writing lifecycle file for healthcheck..."
+  FileUtils.touch(Rails.root.join(HEALTHCHECK_FILE))
+end
+
+SolidQueue.on_stop do |_supervisor|
+  Rails.logger.info "[SolidQueue] Removing lifecycle file for healthcheck..."
+  FileUtils.rm_f(Rails.root.join(HEALTHCHECK_FILE))
+end
+
 SolidQueue::Cli.start(ARGV)
