@@ -74,4 +74,9 @@ Rails.application.configure do
   # The :test delivery method accumulates sent emails in the
   # ActionMailer::Base.deliveries array.
   config.x.aws_ses_form_submission_mailer.delivery_method = :test
+
+  # Set ActiveRecord Encryption keys - this is overriding the default which is to use active_kms gem in application.rb
+  config.active_record.encryption.primary_key = Settings.active_record_encryption.primary_key
+  config.active_record.encryption.deterministic_key = Settings.active_record_encryption.deterministic_key
+  config.active_record.encryption.key_derivation_salt = Settings.active_record_encryption.key_derivation_salt
 end
