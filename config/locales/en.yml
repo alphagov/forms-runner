@@ -170,6 +170,11 @@ en:
         remove: Remove
         remove_file_guidance: You can remove this file if you need to upload a different one.
         your_file: Your file
+  govuk_design_system_formbuilder:
+    default_check_box_divider_text: or
+    default_error_summary_title: There is a problem
+    default_radio_divider_text: or
+    default_submit_button_text: Continue
   helpers:
     hint:
       email_confirmation_input:
