@@ -57,7 +57,7 @@ module Forms
       {
         key: { text: helpers.sanitize(question_name) },
         value: { text: page.show_answer },
-        actions: [{ href: change_link(page), visually_hidden_text: helpers.strip_tags(question_name) }],
+        actions: [{ text: I18n.t("govuk_components.govuk_summary_list.change"), href: change_link(page), visually_hidden_text: helpers.strip_tags(question_name) }],
       }
     end
 

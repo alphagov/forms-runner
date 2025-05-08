@@ -107,6 +107,7 @@ en:
       title: Success
   cookie_banner:
     accept: Accept analytics cookies
+    aria_label: Cookie banner
     content: We’d like to use analytics cookies so we can understand how you use this website and make improvements.
     heading: Cookies on GOV.UK Forms
     policy_link: How we use cookies
@@ -138,6 +139,7 @@ en:
   forms:
     add_another_answer:
       rows:
+        action_visually_hidden_text: answer %{answer_index}
         change: Change
         remove: Remove
       show:
@@ -170,6 +172,9 @@ en:
         remove: Remove
         remove_file_guidance: You can remove this file if you need to upload a different one.
         your_file: Your file
+  govuk_components:
+    govuk_summary_list:
+      change: Change
   helpers:
     hint:
       email_confirmation_input:
