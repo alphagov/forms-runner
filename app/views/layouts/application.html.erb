@@ -18,7 +18,10 @@
     <% meta_links[t("footer.privacy_policy")] = form_privacy_path(@current_context.form.id) %>
   <% end -%>
 
-  <%= govuk_footer meta_items_title: t("footer.helpful_links"), meta_items: meta_links %>
+  <%= govuk_footer meta_items_title: t("footer.helpful_links"), meta_items: meta_links do |footer|
+    footer.with_meta_licence_html do %>
+      Some custom text in the license. All content is available under the <%= govuk_footer_link_to("Open Government Licence v3.0", "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/") %>, except where otherwise stated
+    <% end; end %>
 <% end %>
 
 <%= render template: "layouts/base" %>
