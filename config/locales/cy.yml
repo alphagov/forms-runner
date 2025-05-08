@@ -316,7 +316,11 @@ cy:
   footer:
     accessibility_statement: Datganiad hygyrchedd
     cookies: Cwcis
+    copyright: "© Hawlfraint y Goron"
     helpful_links: Helpful links
+    licence: Mae’r holl gynnwys ar gael o dan y %{link}, ac eithrio lle nodir yn wahanol
+    licence_link_text: Trwydded Llywodraeth Agored v3.0
+    licence_link_url: https://www.nationalarchives.gov.uk/doc/open-government-licence-cymraeg/version/3/
     privacy_policy: Preifatrwydd
   form:
     check_your_answers:
