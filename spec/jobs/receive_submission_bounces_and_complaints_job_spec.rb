@@ -9,7 +9,8 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
   let(:sqs_message_id) { "sqs-message-id" }
   let(:sqs_message) { instance_double(Aws::SQS::Types::Message, message_id: sqs_message_id, receipt_handle:, body: sns_message_body) }
   let(:messages) { [] }
-  let(:sns_message_body) { { "Message" => ses_message_body.to_json }.to_json }
+  let(:sns_message_timestamp) { "2025-05-09T10:25:43.972Z" }
+  let(:sns_message_body) { { "Message" => ses_message_body.to_json, "Timestamp" => sns_message_timestamp }.to_json }
   let(:event_type) { "Bounce" }
   let(:ses_message_body) { { "mail" => { "messageId" => mail_message_id }, "eventType": event_type } }
   let(:file_upload_steps) do
@@ -106,6 +107,9 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
                                        "event" => "form_submission_bounced",
                                        "form_id" => form_with_file_upload.id,
                                        "submission_reference" => reference,
+                                       "mail_message_id" => mail_message_id,
+                                       "sqs_message_id" => sqs_message_id,
+                                       "sns_message_timestamp" => sns_message_timestamp,
                                        "job_id" => @job_id,
                                      ))
       end
@@ -168,6 +172,7 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
                                          "level" => "WARN",
                                          "mail_message_id" => mail_message_id,
                                          "sqs_message_id" => sqs_message_id,
+                                         "sns_message_timestamp" => sns_message_timestamp,
                                          "message" => "Error processing message - StandardError: Test error",
                                          "job_id" => @job_id,
                                        ))
@@ -211,6 +216,7 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
                                        "submission_reference" => reference,
                                        "mail_message_id" => mail_message_id,
                                        "sqs_message_id" => sqs_message_id,
+                                       "sns_message_timestamp" => sns_message_timestamp,
                                        "message" => "Form event",
                                        "event" => "form_submission_complaint",
                                        "job_id" => @job_id,
