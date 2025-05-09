@@ -65,8 +65,11 @@ gem "aws-sdk-cloudwatch"
 gem "aws-sdk-codepipeline", "~> 1.97"
 gem "aws-sdk-s3"
 gem "aws-sdk-sesv2"
-gem "aws-sdk-sqs"
-gem "aws-sdk-sts"
+
+# TODO: Install gem from RubyGems when events support is released
+# https://github.com/aws/aws-activejob-sqs-ruby/pull/22
+gem "aws-activejob-sqs"
+gem "aws-sdk-rails"
 
 # For sending submissions as CSV
 gem "csv"

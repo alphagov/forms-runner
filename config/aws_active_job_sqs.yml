@@ -1,0 +1,9 @@
+backpressure: 5 # configure global options for poller
+max_messages: 3
+queues:
+  deliveries:
+    event_message_class: "ReceiveSubmissionDeliveriesJob"
+    # Set the sqs url via the AWS_ACTIVE_JOB_SQS_DELIVERIES_URL env var
+  bounces_and_complaints: # You can name this queue as you see fit
+    event_message_class: "ReceiveSubmissionBouncesAndComplaintsJob"
+    # Set the sqs url via the AWS_ACTIVE_JOB_SQS_BOUNCES_AND_COMPLAINTS_URL env var
