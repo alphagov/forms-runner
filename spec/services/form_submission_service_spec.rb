@@ -49,7 +49,7 @@ RSpec.describe FormSubmissionService do
       },
     }
   end
-  let(:current_context) { instance_double(Flow::Context, form:, journey:, completed_steps: all_steps, support_details: OpenStruct.new(call_back_url: "http://gov.uk"), answers:) }
+  let(:current_context) { instance_double(Flow::Context, form:, journey:, completed_steps: all_steps, support_details: OpenStruct.new(call_charges_url: "http://gov.uk"), answers:) }
 
   let(:output) { StringIO.new }
   let(:logger) do
