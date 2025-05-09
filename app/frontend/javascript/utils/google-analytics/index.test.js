@@ -6,7 +6,8 @@ import {
   installAnalyticsScript,
   deleteGoogleAnalyticsCookies,
   sendPageViewEvent,
-  attachExternalLinkTracker
+  attachExternalLinkTracker,
+  attachDetailsOpenTracker
 } from '.'
 import { describe, beforeEach, afterEach, it, expect } from 'vitest'
 
@@ -145,6 +146,58 @@ describe('google_tag.mjs', () => {
           type: 'generic link',
           url: targetLinkUrl
         }
+      })
+    })
+  })
+
+  describe('attachDetailsOpenTracker()', () => {
+    const summaryText = 'Help with this form'
+
+    const existingDataLayerObject = {
+      data: 'Some existing data in the dataLayer'
+    }
+
+    beforeEach(() => {
+      window.dataLayer = [existingDataLayerObject]
+    })
+
+    describe('when the user closes an open details component', () => {
+      beforeEach(() => {
+        window.document.body.innerHTML = `<details open="true"><summary>${summaryText}</summary></details>`
+        attachDetailsOpenTracker()
+      })
+
+      it('the existing dataLayer content is preserved', () => {
+        document.querySelector('details').querySelector('summary').click()
+        expect(window.dataLayer).toContainEqual(existingDataLayerObject)
+      })
+
+      it('the details_opened event is not pushed to the dataLayer', () => {
+        document.querySelector('details').querySelector('summary').click()
+        expect(window.dataLayer).toEqual([existingDataLayerObject])
+      })
+    })
+
+    describe('when the user opens a closed details component', () => {
+      beforeEach(() => {
+        window.document.body.innerHTML = `<details><summary>${summaryText}</summary></details>`
+        attachDetailsOpenTracker()
+      })
+
+      it('the existing dataLayer content is preserved', () => {
+        document.querySelector('details').querySelector('summary').click()
+
+        expect(window.dataLayer).toContainEqual(existingDataLayerObject)
+      })
+
+      it('the details_opened event is pushed to the dataLayer', () => {
+        document.querySelector('details').querySelector('summary').click()
+
+        expect(window.dataLayer).toContainEqual({
+          event: 'details_opened',
+          url: document.location,
+          text: summaryText
+        })
       })
     })
   })

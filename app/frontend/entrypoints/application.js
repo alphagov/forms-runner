@@ -9,7 +9,8 @@ import {
   installAnalyticsScript,
   setDefaultConsent,
   sendPageViewEvent,
-  attachExternalLinkTracker
+  attachExternalLinkTracker,
+  attachDetailsOpenTracker
 } from '../javascript/utils/google-analytics'
 import { CookieBanner } from '../../components/cookie_banner_component/cookie-banner'
 import { CookiePage } from '../../components/cookie_consent_form_component/cookie-consent-form'
@@ -47,6 +48,7 @@ if (document.body.dataset.googleAnalyticsEnabled === 'true') {
   // will be sent
   sendPageViewEvent()
   attachExternalLinkTracker()
+  attachDetailsOpenTracker()
 }
 
 initAll()
