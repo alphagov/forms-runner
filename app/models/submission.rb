@@ -1,6 +1,8 @@
 class Submission < ApplicationRecord
   delegate :preview?, to: :mode_object
 
+  encrypts :answers
+
   enum :mail_status, {
     pending: "pending",
     delivered: "delivered",
