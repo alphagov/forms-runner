@@ -10,7 +10,8 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
   let(:event_type) { "Delivery" }
   let(:sqs_message) { instance_double(Aws::SQS::Types::Message, message_id: sqs_message_id, receipt_handle:, body: sns_delivery_message_body) }
   let(:messages) { [] }
-  let(:sns_delivery_message_body) { { "Message" => ses_delivery_message_body.to_json }.to_json }
+  let(:sns_message_timestamp) { "2025-05-09T10:25:43.972Z" }
+  let(:sns_delivery_message_body) { { "Message" => ses_delivery_message_body.to_json, "Timestamp" => sns_message_timestamp }.to_json }
   let(:ses_delivery_message_body) { { "mail" => { "messageId" => mail_message_id }, "eventType": event_type } }
   let(:file_upload_steps) do
     [
@@ -106,6 +107,7 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
                                        "event" => "form_submission_delivered",
                                        "form_id" => form_with_file_upload.id,
                                        "submission_reference" => reference,
+                                       "sns_message_timestamp" => sns_message_timestamp,
                                        "job_id" => @job_id,
                                      ))
       end
@@ -162,6 +164,7 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
                                          "level" => "WARN",
                                          "mail_message_id" => mail_message_id,
                                          "sqs_message_id" => sqs_message_id,
+                                         "sns_message_timestamp" => sns_message_timestamp,
                                          "message" => "Error processing message - StandardError: Test error",
                                          "job_id" => @job_id,
                                        ))
