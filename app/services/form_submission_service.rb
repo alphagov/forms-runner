@@ -126,7 +126,7 @@ private
     notify_body = NotifyTemplateFormatter.new
     formatted_phone_number = notify_body.normalize_whitespace(@form.support_phone)
 
-    "#{formatted_phone_number}\n\n[#{I18n.t('support_details.call_charges')}](#{@current_context.support_details.call_back_url})"
+    "#{formatted_phone_number}\n\n[#{I18n.t('support_details.call_charges')}](#{@current_context.support_details.call_charges_url})"
   end
 
   def support_email_details

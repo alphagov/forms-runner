@@ -770,7 +770,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 private
 
   def contact_support_details_format
-    phone_number = "#{form_data.support_phone}\n\n[#{I18n.t('support_details.call_charges')}]()"
+    phone_number = "#{form_data.support_phone}\n\n[#{I18n.t('support_details.call_charges')}](https://www.gov.uk/call-charges)"
     email = "[#{form_data.support_email}](mailto:#{form_data.support_email})"
     online = "[#{form_data.support_url_text}](#{form_data.support_url})"
     [phone_number, email, online].compact_blank.join("\n\n")
