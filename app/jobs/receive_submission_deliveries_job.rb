@@ -47,6 +47,8 @@ private
 
       receipt_handle = message.receipt_handle
       sns_message = JSON.parse(message.body)
+      CurrentJobLoggingAttributes.sns_message_timestamp = sns_message["Timestamp"]
+
       ses_message = JSON.parse(sns_message["Message"])
       ses_message_id = ses_message["mail"]["messageId"]
       CurrentJobLoggingAttributes.mail_message_id = ses_message_id
