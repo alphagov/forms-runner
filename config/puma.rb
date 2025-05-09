@@ -42,3 +42,8 @@ pidfile ENV["PIDFILE"] if ENV["PIDFILE"]
 persistent_timeout ENV.fetch("RAILS_PERSISTENT_TIMEOUT", 75)
 
 plugin :solid_queue if Rails.env.production?
+plugin :aws_activejob_sqs if Rails.env.production?
+
+Puma::Plugins::AwsActiveJobSQS.sqs_poller_options = {
+  queues: %i[deliveries bounces_and_complaints],
+}
