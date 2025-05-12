@@ -11,6 +11,7 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
   let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
   let(:payment_url) { nil }
   let(:csv_filename) { nil }
+  let(:submission_timestamp) { Time.utc(2022, 12, 14, 13, 0o0, 0o0) }
   let(:mailer_options) do
     FormSubmissionService::MailerOptions.new(title:,
                                              is_preview:,
@@ -64,22 +65,18 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
 
         describe "submission date/time" do
           context "with a time in BST" do
-            let(:timestamp) { Time.utc(2022, 9, 14, 8, 0o0, 0o0) }
+            let(:submission_timestamp) { Time.utc(2022, 9, 14, 8, 0o0, 0o0).in_time_zone(submission_timezone) }
 
             it "includes the date and time the user submitted the form" do
-              travel_to timestamp do
-                expect(part.body).to match("This form was submitted at 9:00am on 14 September 2022")
-              end
+              expect(part.body).to match("This form was submitted at 9:00am on 14 September 2022")
             end
           end
 
           context "with a time in GMT" do
-            let(:timestamp) { Time.utc(2022, 12, 14, 13, 0o0, 0o0) }
+            let(:submission_timestamp) { Time.utc(2022, 12, 14, 13, 0o0, 0o0).in_time_zone(submission_timezone) }
 
             it "includes the date and time the user submitted the form" do
-              travel_to timestamp do
-                expect(part.body).to match("This form was submitted at 1:00pm on 14 December 2022")
-              end
+              expect(part.body).to match("This form was submitted at 1:00pm on 14 December 2022")
             end
           end
         end
@@ -116,22 +113,18 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
 
         describe "submission date/time" do
           context "with a time in BST" do
-            let(:timestamp) { Time.utc(2022, 9, 14, 8, 0o0, 0o0) }
+            let(:submission_timestamp) { Time.utc(2022, 9, 14, 8, 0o0, 0o0).in_time_zone(submission_timezone) }
 
             it "includes the date and time the user submitted the form" do
-              travel_to timestamp do
-                expect(part.body).to match("This form was submitted at 9:00am on 14 September 2022")
-              end
+              expect(part.body).to match("This form was submitted at 9:00am on 14 September 2022")
             end
           end
 
           context "with a time in GMT" do
-            let(:timestamp) { Time.utc(2022, 12, 14, 13, 0o0, 0o0) }
+            let(:submission_timestamp) { Time.utc(2022, 12, 14, 13, 0o0, 0o0).in_time_zone(submission_timezone) }
 
             it "includes the date and time the user submitted the form" do
-              travel_to timestamp do
-                expect(part.body).to match("This form was submitted at 1:00pm on 14 December 2022")
-              end
+              expect(part.body).to match("This form was submitted at 1:00pm on 14 December 2022")
             end
           end
         end
@@ -284,9 +277,5 @@ private
 
   def submission_timezone
     Rails.configuration.x.submission.time_zone || "UTC"
-  end
-
-  def submission_timestamp
-    Time.use_zone(submission_timezone) { Time.zone.now }
   end
 end

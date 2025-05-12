@@ -12,7 +12,7 @@ class SendSubmissionJob < ApplicationJob
     form = submission.form
     mailer_options = FormSubmissionService::MailerOptions.new(title: form.name,
                                                               is_preview: submission.preview?,
-                                                              timestamp: submission.created_at,
+                                                              timestamp: submission.submission_time,
                                                               submission_reference: submission.reference,
                                                               payment_url: form.payment_url_with_reference(submission.reference))
 
@@ -35,6 +35,8 @@ class SendSubmissionJob < ApplicationJob
     CloudWatchService.log_job_failure(self.class.name)
     raise
   end
+
+private
 
   def scheduled_at_or_enqueued_at
     scheduled_at || enqueued_at
