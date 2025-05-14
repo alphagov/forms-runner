@@ -6,9 +6,14 @@ import {
   installAnalyticsScript,
   deleteGoogleAnalyticsCookies,
   sendPageViewEvent,
-  attachExternalLinkTracker
+  attachExternalLinkTracker,
+  attachDetailsOpenTracker
 } from '.'
 import { describe, beforeEach, afterEach, it, expect } from 'vitest'
+
+const sleep = milliseconds => {
+  return new Promise(resolve => setTimeout(resolve, milliseconds))
+}
 
 describe('google_tag.mjs', () => {
   afterEach(() => {
@@ -145,6 +150,66 @@ describe('google_tag.mjs', () => {
           type: 'generic link',
           url: targetLinkUrl
         }
+      })
+    })
+  })
+
+  describe('attachDetailsOpenTracker()', () => {
+    const summaryText = 'Help with this form'
+
+    const existingDataLayerObject = {
+      data: 'Some existing data in the dataLayer'
+    }
+
+    beforeEach(() => {
+      window.dataLayer = [existingDataLayerObject]
+    })
+
+    describe('when the user closes an open details component', () => {
+      beforeEach(async () => {
+        window.document.body.innerHTML = `<details open="true"><summary>${summaryText}</summary></details>`
+
+        // wait for HTML parsing and rendering to complete before adding the event listener
+        await sleep(0)
+
+        attachDetailsOpenTracker()
+      })
+
+      it('the existing dataLayer content is preserved', () => {
+        document.querySelector('details').querySelector('summary').click()
+        expect(window.dataLayer).toContainEqual(existingDataLayerObject)
+      })
+
+      it('the details_opened event is not pushed to the dataLayer', () => {
+        document.querySelector('details').querySelector('summary').click()
+        expect(window.dataLayer).toEqual([existingDataLayerObject])
+      })
+    })
+
+    describe('when the user opens a closed details component', () => {
+      beforeEach(async () => {
+        window.document.body.innerHTML = `<details><summary>${summaryText}</summary></details>`
+
+        // wait for HTML parsing and rendering to complete before adding the event listener
+        await sleep(0)
+
+        attachDetailsOpenTracker()
+      })
+
+      it('the existing dataLayer content is preserved', () => {
+        document.querySelector('details').querySelector('summary').click()
+
+        expect(window.dataLayer).toContainEqual(existingDataLayerObject)
+      })
+
+      it('the details_opened event is pushed to the dataLayer', () => {
+        document.querySelector('details').querySelector('summary').click()
+
+        expect(window.dataLayer).toContainEqual({
+          event: 'details_opened',
+          url: document.location,
+          text: summaryText
+        })
       })
     })
   })

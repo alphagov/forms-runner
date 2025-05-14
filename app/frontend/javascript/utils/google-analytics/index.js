@@ -96,3 +96,20 @@ export function attachExternalLinkTracker () {
     })
   })
 }
+
+export function attachDetailsOpenTracker () {
+  const detailsComponents = document.querySelectorAll('details')
+  window.dataLayer = window.dataLayer || []
+  detailsComponents.forEach(function (detailsElement) {
+    detailsElement.addEventListener('toggle', function (event) {
+      const summary = detailsElement.querySelector('summary')
+      if (detailsElement.open) {
+        window.dataLayer.push({
+          event: 'details_opened',
+          url: window.location,
+          text: summary.textContent
+        })
+      }
+    })
+  })
+}
