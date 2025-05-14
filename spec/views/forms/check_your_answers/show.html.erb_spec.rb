@@ -112,6 +112,30 @@ describe "forms/check_your_answers/show.html.erb" do
     it "email field has correct atttributes set" do
       expect(rendered).to have_selector("input[name='email_confirmation_input[confirmation_email_address]'][autocomplete='email'][spellcheck='false']")
     end
+
+    context "when there is an error" do
+      let(:email_confirmation_input) do
+        email_confirmation_input = build(:email_confirmation_input)
+        email_confirmation_input.validate
+        email_confirmation_input
+      end
+
+      it "renders an error message" do
+        expect(rendered).to have_text "Select yes if you want to get an email confirming your form has been submitted"
+      end
+
+      it "renders an error summary" do
+        expect(rendered).to have_css ".govuk-error-summary"
+      end
+
+      it "links from the error summary to the first radio button" do
+        page = Capybara.string(rendered.html)
+        error_summary_link = page.find_link "Select yes if you want to get an email confirming your form has been submitted"
+        first_radio_button = page.first :field, type: :radio
+
+        expect(error_summary_link["href"]).to eq "##{first_radio_button['id']}"
+      end
+    end
   end
 
   # TODO: add view tests for playing back questions and Answers
