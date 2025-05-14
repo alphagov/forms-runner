@@ -4,7 +4,8 @@ require "rails_helper"
 RSpec.describe SendSubmissionJob, type: :job do
   include ActiveJob::TestHelper
 
-  let(:submission) { create :submission, form_document: form, mail_status: :pending }
+  let(:submission_created_at) { Time.utc(2022, 12, 14, 13, 0o0, 0o0) }
+  let(:submission) { create :submission, form_document: form, mail_status: :pending, created_at: submission_created_at }
   let(:form) { build(:form, id: 1, name: "Form 1") }
   let(:question) { build :text, question_text: "What is the meaning of life?", text: "42" }
   let(:step) { build :step, question: }
@@ -57,6 +58,30 @@ RSpec.describe SendSubmissionJob, type: :job do
 
     it "sends cloudwatch metric for the submission being sent" do
       expect(CloudWatchService).to have_received(:log_submission_sent).with(be_within(1000).of(5000))
+    end
+
+    describe "the submission time" do
+      context "with a time in BST" do
+        let(:submission_created_at) { Time.utc(2022, 9, 14, 7, 0o0, 0o0) }
+
+        it "passes the time as BST" do
+          expect(AwsSesSubmissionService).to have_received(:new) do |**args|
+            expect(args[:mailer_options].timestamp.zone).to eq("BST")
+            expect(args[:mailer_options].timestamp.strftime("%-d %B %Y - %l:%M%P")).to eq("14 September 2022 -  8:00am")
+          end
+        end
+      end
+
+      context "with a time in GMT" do
+        let(:submission_created_at) { Time.utc(2022, 12, 14, 13, 0o0, 0o0) }
+
+        it "passes the time as GMT" do
+          expect(AwsSesSubmissionService).to have_received(:new) do |**args|
+            expect(args[:mailer_options].timestamp.zone).to eq("GMT")
+            expect(args[:mailer_options].timestamp.strftime("%-d %B %Y - %l:%M%P")).to eq("14 December 2022 -  1:00pm")
+          end
+        end
+      end
     end
   end
 
