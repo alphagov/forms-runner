@@ -22,7 +22,7 @@ describe "Settings" do
     it "has a default value" do
       features = settings[:features]
 
-      expect(features).to eq({ "ses_submissions" => false })
+      expect(features).to eq({ "ses_submissions" => false, "rebrand" => false })
     end
   end
 
