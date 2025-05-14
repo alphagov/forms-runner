@@ -11,6 +11,10 @@ import {
 } from '.'
 import { describe, beforeEach, afterEach, it, expect } from 'vitest'
 
+const sleep = milliseconds => {
+  return new Promise(resolve => setTimeout(resolve, milliseconds))
+}
+
 describe('google_tag.mjs', () => {
   afterEach(() => {
     document.getElementsByTagName('html')[0].innerHTML = ''
@@ -162,8 +166,12 @@ describe('google_tag.mjs', () => {
     })
 
     describe('when the user closes an open details component', () => {
-      beforeEach(() => {
+      beforeEach(async () => {
         window.document.body.innerHTML = `<details open="true"><summary>${summaryText}</summary></details>`
+
+        // wait for HTML parsing and rendering to complete before adding the event listener
+        await sleep(0)
+
         attachDetailsOpenTracker()
       })
 
@@ -179,8 +187,12 @@ describe('google_tag.mjs', () => {
     })
 
     describe('when the user opens a closed details component', () => {
-      beforeEach(() => {
+      beforeEach(async () => {
         window.document.body.innerHTML = `<details><summary>${summaryText}</summary></details>`
+
+        // wait for HTML parsing and rendering to complete before adding the event listener
+        await sleep(0)
+
         attachDetailsOpenTracker()
       })
 
