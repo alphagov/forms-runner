@@ -1,3 +1,8 @@
+active_record_encryption:
+  primary_key: CC2SOludR0L15FLQkLNv8sbiQ5yNyHiF
+  deterministic_key: vN8HaxVlbWVnohKU0aV8p36nwYEK1hZN
+  key_derivation_salt: k7cODzIzpjWkKKGqVnabRzXtTgLnT813
+
 aws:
   file_upload_s3_bucket_name: govuk-forms-dev-file-upload
   ses_submission_email_configuration_set_name: bounces_and_complaints_handling_rule
