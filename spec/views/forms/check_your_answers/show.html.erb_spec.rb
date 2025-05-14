@@ -83,29 +83,59 @@ describe "forms/check_your_answers/show.html.erb" do
     expect(rendered).to have_field("submission-email-reference", type: :hidden, with: email_confirmation_input.submission_email_reference)
   end
 
-  it "displays the email radio buttons" do
-    expect(rendered).to have_text(I18n.t("helpers.legend.email_confirmation_input.send_confirmation"))
-    expect(rendered).to have_field(I18n.t("helpers.label.email_confirmation_input.send_confirmation_options.send_email"))
-    expect(rendered).to have_field(I18n.t("helpers.label.email_confirmation_input.send_confirmation_options.skip_confirmation"))
-  end
-
-  it "displays the email field" do
-    expect(rendered).to have_field(
-      I18n.t("helpers.label.email_confirmation_input.confirmation_email_address"),
-      type: "email",
-    )
-  end
-
-  it "email field has correct atttributes set" do
-    expect(rendered).to have_selector("input[name='email_confirmation_input[confirmation_email_address]'][autocomplete='email'][spellcheck='false']")
-  end
-
   it "contains a hidden notify reference for the confirmation email" do
     expect(rendered).to have_field("confirmation-email-reference", type: "hidden", with: email_confirmation_input.confirmation_email_reference)
   end
 
   it "displays the help link" do
     expect(rendered).to have_text(I18n.t("support_details.get_help_with_this_form"))
+  end
+
+  describe "email confirmation" do
+    it "renders an email confirmation form" do
+      expect(rendered).to have_css "form .govuk-fieldset", text: "Do you want to get an email confirming your form has been submitted?"
+    end
+
+    it "displays the email radio buttons" do
+      expect(rendered).to have_text(I18n.t("helpers.legend.email_confirmation_input.send_confirmation"))
+      expect(rendered).to have_field(I18n.t("helpers.label.email_confirmation_input.send_confirmation_options.send_email"))
+      expect(rendered).to have_field(I18n.t("helpers.label.email_confirmation_input.send_confirmation_options.skip_confirmation"))
+    end
+
+    it "displays the email field" do
+      expect(rendered).to have_field(
+        I18n.t("helpers.label.email_confirmation_input.confirmation_email_address"),
+        type: "email",
+      )
+    end
+
+    it "email field has correct atttributes set" do
+      expect(rendered).to have_selector("input[name='email_confirmation_input[confirmation_email_address]'][autocomplete='email'][spellcheck='false']")
+    end
+
+    context "when there is an error" do
+      let(:email_confirmation_input) do
+        email_confirmation_input = build(:email_confirmation_input)
+        email_confirmation_input.validate
+        email_confirmation_input
+      end
+
+      it "renders an error message" do
+        expect(rendered).to have_text "Select yes if you want to get an email confirming your form has been submitted"
+      end
+
+      it "renders an error summary" do
+        expect(rendered).to have_css ".govuk-error-summary"
+      end
+
+      it "links from the error summary to the first radio button" do
+        page = Capybara.string(rendered.html)
+        error_summary_link = page.find_link "Select yes if you want to get an email confirming your form has been submitted"
+        first_radio_button = page.first :field, type: :radio
+
+        expect(error_summary_link["href"]).to eq "##{first_radio_button['id']}"
+      end
+    end
   end
 
   # TODO: add view tests for playing back questions and Answers
