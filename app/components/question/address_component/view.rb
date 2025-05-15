@@ -22,18 +22,18 @@ module Question
 
       def fields_for_international_address
         safe_join([
-          form_builder.govuk_text_area(:street_address, label: { text: "Street address" }, rows: 5, autocomplete: "street-address"),
-          form_builder.govuk_text_field(:country, label: { text: "Country" }, width: 20, autocomplete: "country-name"),
+          form_builder.govuk_text_area(:street_address, label: { text: I18n.t("question/address.label.international_address.street_address") }, rows: 5, autocomplete: "street-address"),
+          form_builder.govuk_text_field(:country, label: { text: I18n.t("question/address.label.international_address.country") }, width: 20, autocomplete: "country-name"),
         ])
       end
 
       def fields_for_uk_address
         safe_join([
-          form_builder.govuk_text_field(:address1, label: { text: "Address line 1" }, autocomplete: "address-line1"),
-          form_builder.govuk_text_field(:address2, label: { text: "Address line 2 (optional)" }, autocomplete: "address-line2"),
-          form_builder.govuk_text_field(:town_or_city, label: { text: "Town or City" }, width: "two-thirds", autocomplete: "address-level2"),
-          form_builder.govuk_text_field(:county, label: { text: "County (optional)" }, width: "two-thirds"),
-          form_builder.govuk_text_field(:postcode, label: { text: "Postcode" }, width: 10, autocomplete: "postal-code"),
+          form_builder.govuk_text_field(:address1, label: { text: I18n.t("question/address.label.uk_address.line_1") }, autocomplete: "address-line1"),
+          form_builder.govuk_text_field(:address2, label: { text: I18n.t("question/address.label.uk_address.line_2") }, autocomplete: "address-line2"),
+          form_builder.govuk_text_field(:town_or_city, label: { text: I18n.t("question/address.label.uk_address.town_or_city") }, width: "two-thirds", autocomplete: "address-level2"),
+          form_builder.govuk_text_field(:county, label: { text: I18n.t("question/address.label.uk_address.county") }, width: "two-thirds"),
+          form_builder.govuk_text_field(:postcode, label: { text: I18n.t("question/address.label.uk_address.postcode") }, width: 10, autocomplete: "postal-code"),
         ])
       end
     end

@@ -138,6 +138,7 @@ en:
   forms:
     add_another_answer:
       rows:
+        action_hidden_text: answer %{answer_index}
         change: Change
         remove: Remove
       show:
@@ -170,6 +171,7 @@ en:
         remove: Remove
         remove_file_guidance: You can remove this file if you need to upload a different one.
         your_file: Your file
+  gov_uk_forms: GOV.UK Forms
   govuk_design_system_formbuilder:
     default_check_box_divider_text: or
     default_error_summary_title: There is a problem
@@ -196,6 +198,8 @@ en:
     legend:
       email_confirmation_input:
         send_confirmation: Do you want to get an email confirming your form has been submitted?
+  layout:
+    skip_link: Skip to main content
   mailer:
     submission:
       cannot_reply:
@@ -209,6 +213,7 @@ en:
       file_attached: "%{filename} (attached to this email)"
       from: GOV.UK Forms <%{email_address}>
       payment: You can check that a payment has been made by using this reference number to search transactions within GOV.​UK Pay.
+      question_skipped: This question was skipped
       reference: 'GOV.​UK Forms reference number: %{submission_reference}'
       subject: 'Form submission: %{form_title} - reference: %{reference}'
       subject_preview: 'TEST FORM SUBMISSION: %{form_title} - reference: %{reference}'
@@ -237,6 +242,17 @@ en:
   preview_banner:
     heading: This is a preview of this form. Do not enter personal information.
     title: Important
+  question/address:
+    label:
+      international_address:
+        country: Country
+        street_address: Street address
+      uk_address:
+        county: County (optional)
+        line_1: Address line 1
+        line_2: Address line 2 (optional)
+        postcode: Postcode
+        town_or_city: Town or City
   question/file:
     file_requirements:
       body_html: |
@@ -258,6 +274,9 @@ en:
       last_name: Last name
       middle_names: Middle names
       title: Title
+  submission_csv:
+    reference: Reference
+    submitted_at: Submitted at
   support_details:
     call_charges: Find out about call charges
     email: Email

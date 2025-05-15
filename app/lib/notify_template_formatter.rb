@@ -15,7 +15,7 @@ class NotifyTemplateFormatter
   def prep_answer_text(page)
     answer = page.show_answer_in_email
 
-    return "\\[This question was skipped\\]" if answer.blank?
+    return "\\[#{I18n.t('mailer.submission.question_skipped')}\\]" if answer.blank?
 
     escape(answer)
   rescue StandardError

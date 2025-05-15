@@ -5,7 +5,7 @@ class CsvGenerator
   CSV_FILENAME_PREFIX = "govuk_forms_".freeze
 
   def self.write_submission(all_steps:, submission_reference:, timestamp:, output_file_path:, is_s3_submission:)
-    headers = ["Reference", "Submitted at"]
+    headers = [I18n.t("submission_csv.reference"), I18n.t("submission_csv.submitted_at")]
     values = [submission_reference, timestamp.iso8601]
     all_steps.map do |page|
       answer_parts = page.show_answer_in_csv(is_s3_submission)
