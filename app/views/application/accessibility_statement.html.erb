@@ -1,195 +1,113 @@
-<% set_page_title("Accessibility statement", t("gov_uk_forms")) %>
+<% set_page_title(t('accessibility_statement.title'), t("gov_uk_forms")) %>
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-l">Accessibility statement for this form</h1>
-    <p>
-      This accessibility statement applies to online forms with a URL that starts with https://submit.forms.service.gov.uk.
-    </p>
+    <h1 class="govuk-heading-l"><%=t('accessibility_statement.heading')%></h1>
+    <p><%=t('accessibility_statement.preamble')%></p>
 
-    <p class="govuk-inset-text">
-      This form is part of the wider GOV.UK website. There’s a separate
-      <a href="https://www.gov.uk/help/accessibility-statement"
-        >accessibility statement for the main GOV.UK website</a
-    >.
-    </p>
+    <p class="govuk-inset-text"><%=t('accessibility_statement.inset_text_html')%></p>
 
-    <p>This accessibility statement explains:</p>
+    <p><%=t('accessibility_statement.explains_text')%></p>
 
     <ul class="govuk-list govuk-list--bullet">
-      <li>how accessible the form is</li>
-      <li>what to do if you have difficulty using it</li>
-      <li>how to report any accessibility problems</li>
-      <li>technical information about known problems - and work we’re planning to do to fix these</li>
+      <li><%=t('accessibility_statement.explains_list.list_item_0')%></li>
+      <li><%=t('accessibility_statement.explains_list.list_item_1')%></li>
+      <li><%=t('accessibility_statement.explains_list.list_item_2')%></li>
+      <li><%=t('accessibility_statement.explains_list.list_item_3')%></li>
     </ul>
 
-    <h2 class="govuk-heading-m">Using this form</h2>
+    <h2 class="govuk-heading-m"><%=t('accessibility_statement.usage.heading')%></h2>
 
-    <p>
-      This form was created using a platform called
-      <a href="http://www.gov.uk/forms">GOV.UK Forms</a>. GOV.UK Forms is built
-      by the Government Digital Service (GDS). It is designed to create forms
-      that can be used by as many people as possible.
-    </p>
+    <p><%=t('accessibility_statement.usage.forms_description_html')%></p>
 
-    <p>The text in the form should be clear and simple to understand.</p>
+    <p><%=t('accessibility_statement.usage.content_guidance')%></p>
 
-    <p>You should be able to:</p>
+    <p><%=t('accessibility_statement.usage.accessibility_recommendations_text')%></p>
 
     <ul class="govuk-list govuk-list--bullet">
-      <li>change colours, contrast levels and fonts</li>
-      <li>zoom in up to 300% without the text spilling off the screen</li>
-      <li>get from the start of the form to the end using just a keyboard</li>
-      <li>
-        get from the start of the form to the end using speech recognition
-        software
-      </li>
-      <li>
-        listen to the form using a screen reader (including the most recent
-        versions of JAWS, NVDA and VoiceOver)
-      </li>
+      <li><%=t('accessibility_statement.usage.accessibility_recommendations_list.list_item_0')%></li>
+      <li><%=t('accessibility_statement.usage.accessibility_recommendations_list.list_item_1')%></li>
+      <li><%=t('accessibility_statement.usage.accessibility_recommendations_list.list_item_2')%></li>
+      <li><%=t('accessibility_statement.usage.accessibility_recommendations_list.list_item_3')%></li>
+      <li><%=t('accessibility_statement.usage.accessibility_recommendations_list.list_item_4')%></li>
     </ul>
 
-    <p>
-      <a href="https://mcmw.abilitynet.org.uk/">AbilityNet</a>
-      has advice on making your device easier to use if you have a disability.
-    </p>
+    <p><%=t('accessibility_statement.usage.disability_advice_html')%></p>
 
-    <h2 class="govuk-heading-m">How accessible this form is</h2>
+    <h2 class="govuk-heading-m"><%=t('accessibility_statement.limitations.heading')%></h2>
 
-    <p>Some parts of this form may not be fully accessible.</p>
+    <p><%=t('accessibility_statement.limitations.some_inaccessible_text')%></p>
 
-    <p>Issues relating to the GOV.UK Forms interface are listed in ‘Technical information about this form’s accessibility’ below.</p>
+    <p><%=t('accessibility_statement.limitations.forms_issues')%></p>
 
-    <p>
-      The questions in the form are written by people in government departments
-      and agencies. Each department and agency which publishes content on GOV.UK
-      is responsible for making sure it meets the accessibility regulations.
-      However, the text used in the form might not be plain language and the
-      structure may not be fully accessible.
-    </p>
+    <p><%=t('accessibility_statement.limitations.departmental_responsibility')%></p>
 
-    <p>
-      To encourage accessible content we provide guidance within the GOV.UK
-      Forms platform. We also use feedback and analytics to identify
-      accessibility issues.
-    </p>
+    <p><%=t('accessibility_statement.limitations.guidance')%></p>
 
-    <h2 class="govuk-heading-m">
-      What to do if you have difficulty using this form
-    </h2>
+    <h2 class="govuk-heading-m"><%=t('accessibility_statement.help.heading')%></h2>
 
-    <p>
-      If you have difficulty using this form or need the form in a different
-      format, send an email to
-      <a href="mailto:govuk-forms@digital.cabinet-office.gov.uk"
-        >govuk-forms@digital.cabinet-office.gov.uk</a
-      >
-      - include the name of the form in your email.
-    </p>
+    <p><%=t('accessibility_statement.help.email_html')%></p>
 
-    <h2 class="govuk-heading-m">Reporting accessibility problems</h2>
+    <h2 class="govuk-heading-m"><%=t('accessibility_statement.reporting.heading')%></h2>
 
-    <p>
-      We’re always looking to improve the accessibility of forms made with
-      GOV.UK Forms.
-    </p>
+    <p><%=t('accessibility_statement.reporting.text')%></p>
 
-    <p>
-      If you find any problems, or think we’re not meeting accessibility
-      requirements, email us at
-      <a href="mailto:govuk-forms@digital.cabinet-office.gov.uk"
-        >govuk-forms@digital.cabinet-office.gov.uk</a
-      >.
-    </p>
+    <p><%=t('accessibility_statement.reporting.email_html')%></p>
 
-    <h2 class="govuk-heading-m">If you’re not happy with our response</h2>
+    <h2 class="govuk-heading-m"><%=t('accessibility_statement.complaints.heading')%></h2>
 
-    <p>
-      The Equality and Human Rights Commission (EHRC) is responsible for
-      enforcing the Public Sector Bodies (Websites and Mobile Applications) (No.
-      2) Accessibility Regulations 2018 (the ‘accessibility regulations’).
-    </p>
+    <p><%=t('accessibility_statement.complaints.accessibility_regulations')%></p>
 
-    <p>
-      If you’re not happy with how we respond to your complaint, contact the
-      <a href="https://www.equalityadvisoryservice.com/"
-        >Equality Advisory and Support Service</a
-      >, which is run on behalf of EHRC.
-    </p>
+    <p><%=t('accessibility_statement.complaints.complaints_html')%></p>
 
-    <h2 class="govuk-heading-m">
-      Technical information about this form’s accessibility
-    </h2>
+    <h2 class="govuk-heading-m"><%=t('accessibility_statement.technical_information.heading')%></h2>
 
-    <p>
-      GDS is committed to making this form accessible, in accordance with the
-      Public Sector Bodies (Websites and Mobile Applications) (No. 2)
-      Accessibility Regulations 2018.
-    </p>
+    <p><%=t('accessibility_statement.technical_information.commitment')%></p>
 
-    <h3 class="govuk-heading-s">Compliance status</h3>
+    <h3 class="govuk-heading-s"><%=t('accessibility_statement.technical_information.compliance_status.heading')%></h3>
 
-    <p>
-      This form is partially compliant with the
-      <a href="https://www.w3.org/TR/WCAG22/"
-        >Web Content Accessibility Guidelines version 2.2 AA standard</a>, due to the non-compliances listed below.
-    </p>
+    <p><%=t('accessibility_statement.technical_information.compliance_status.partial_compliance_html')%></p>
 
-    <h2 class="govuk-heading-m">Non accessible content</h2>
+    <h2 class="govuk-heading-m"><%=t('accessibility_statement.non_accessible_content.heading')%></h2>
 
-    <p>The content listed below is non-accessible for the following reasons.</p>
+    <p><%=t('accessibility_statement.non_accessible_content.preamble')%></p>
 
-    <h3 class="govuk-heading-s">
-      Non compliance with the accessibility regulations
-    </h3>
+    <h3 class="govuk-heading-s"><%=t('accessibility_statement.non_accessible_content.non_compliance.heading')%></h3>
 
-    <p>
-      You may be asked for the same personal information more than once. This does not meet WCAG 2.2 success criterion 3.3.7 (redundant entry).
-    </p>
+    <p><%=t('accessibility_statement.non_accessible_content.non_compliance.repeated_questions')%></p>
 
-    <p>
-      We plan to resolve this by the end of 2024.
-    </p>
+    <p><%=t('accessibility_statement.non_accessible_content.non_compliance.resolution_timeline')%></p>
 
-    <h3 class="govuk-heading-s">
-      Other problems using the interface
-    </h3>
+    <h3 class="govuk-heading-s"><%=t('accessibility_statement.non_accessible_content.other_problems.heading')%></h3>
 
-    <p>
-      Although the following issues do not fail WCAG 2.2 AA, we plan to investigate and fix them as soon as possible.
-    </p>
+    <p><%=t('accessibility_statement.non_accessible_content.other_problems.preamble')%></p>
 
     <ol class="govuk-list govuk-list--number">
-      <li>The confirmation email error summary on the ‘Check your answers’ page does not link to the specific field that’s in error. This makes it harder to navigate within the page and to understand how to solve the problem.</li>
-      <li>When there’s a validation error on the ‘Check your answers’ page, the page title does not change to include the word ‘Error’ at the start. If you’re using a screen reader this makes it harder to understand that you’re on an error page when the page refreshes.</li>
-      <li>When you click on ‘Get help with this form’, the contact method headings are H3s, but there are no H2s. Skipping heading levels can be confusing if you’re using a screen reader and is not best practice.</li>
-      <li>On question pages, the back link disappears when there’s an error present. This could make it harder to navigate out of pages when you’ve made a mistake.</li>
-      <li>Where there’s an option to add someone’s title on name questions, the title input is not marked as optional. This could cause you to fill out this field when you do not want or need to.</li>
-      <li>VoiceOver on iOS (iPhone Operating System) 17 reads out some lines of content twice. This happens with:
+      <li><%=t('accessibility_statement.non_accessible_content.other_problems.other_problems_list.list_item_0')%></li>
+      <li><%=t('accessibility_statement.non_accessible_content.other_problems.other_problems_list.list_item_1')%></li>
+      <li><%=t('accessibility_statement.non_accessible_content.other_problems.other_problems_list.list_item_2')%></li>
+      <li><%=t('accessibility_statement.non_accessible_content.other_problems.other_problems_list.list_item_3')%></li>
+      <li><%=t('accessibility_statement.non_accessible_content.other_problems.other_problems_list.list_item_4')%></li>
+      <li>
+        <%=t('accessibility_statement.non_accessible_content.other_problems.other_problems_list.list_item_5.preamble')%>
         <ul>
-          <li>guidance that’s provided before a question</li>
-          <li>summary list content on the ‘Check your answers’ page</li>
-          <li>some of the content on the page confirming that your form’s been submitted</li>
-          <li>some headings on question pages that have multiple fields</li>
+          <li><%=t('accessibility_statement.non_accessible_content.other_problems.other_problems_list.list_item_5.list_item_0')%></li>
+          <li><%=t('accessibility_statement.non_accessible_content.other_problems.other_problems_list.list_item_5.list_item_1')%></li>
+          <li><%=t('accessibility_statement.non_accessible_content.other_problems.other_problems_list.list_item_5.list_item_2')%></li>
+          <li><%=t('accessibility_statement.non_accessible_content.other_problems.other_problems_list.list_item_5.list_item_3')%></li>
         </ul>
       </li>
-      <li>When you click on ‘Get help with this form’, VoiceOver on iOS 17 does not announce that there’s more content to be shown. This could make it harder to get help with the form.</li>
-      <li>On the ‘Check your answers’ page, VoiceOver on iOS 17 does not doesn't always read out the 'Change' link. This could make it harder for you to change your answer.</li>
-      <li>It can be difficult to open the ‘Get help with this form’ link when using the Dragon web extension on Chrome. This could make it harder to get help with the form.</li>
+      <li><%=t('accessibility_statement.non_accessible_content.other_problems.other_problems_list.list_item_6')%></li>
+      <li><%=t('accessibility_statement.non_accessible_content.other_problems.other_problems_list.list_item_7')%></li>
+      <li><%=t('accessibility_statement.non_accessible_content.other_problems.other_problems_list.list_item_8')%></li>
     </ol>
 
-    <h2 class="govuk-heading-m">Preparation of this accessibility statement</h2>
+    <h2 class="govuk-heading-m"><%=t('accessibility_statement.statement_preparation.heading')%></h2>
 
-    <p>This statement was prepared on 20 February 2024.</p>
+    <p><%=t('accessibility_statement.statement_preparation.date')%></p>
 
-    <p>
-      Forms created using the GOV.UK Forms platform were last tested on 9 January 2024. The test was carried out by GDS.
-    </p>
+    <p><%=t('accessibility_statement.statement_preparation.last_tested')%></p>
 
-    <p>
-      GDS assessed the forms against the Web Content Accessibility Guidelines
-      WCAG 2.2.
-    </p>
+    <p><%=t('accessibility_statement.statement_preparation.WCAG_version')%></p>
   </div>
 </div>
