@@ -12,7 +12,6 @@ class CurrentRequestLoggingAttributes < ActiveSupport::CurrentAttributes
             :question_number,
             :submission_reference,
             :submission_email_reference,
-            :submission_email_id,
             :confirmation_email_reference,
             :confirmation_email_id,
             :rescued_exception,
@@ -40,7 +39,6 @@ class CurrentRequestLoggingAttributes < ActiveSupport::CurrentAttributes
       }.compact,
       notification_ids: {
         confirmation_email_id:,
-        submission_email_id:,
       }.compact,
       rescued_exception:,
       rescued_exception_trace:,
