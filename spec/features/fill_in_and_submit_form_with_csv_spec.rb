@@ -77,16 +77,15 @@ feature "Fill in and submit a form with a CSV submission", type: :feature do
   end
 
   def and_an_email_submission_should_have_been_sent
-    expect(ActionMailer::Base.deliveries.first).to be_present
-
-    delivered_email = ActionMailer::Base.deliveries.first
-
-    expected_content = [
-      ["Reference", "Submitted at", "A routing question", "Skipped question"],
-      [reference, "2029-01-24T05:05:50+00:00", "Option 1", ""],
-    ]
-
-    expect(parse_email_csv(delivered_email)).to match_array(expected_content)
+    expect(SendSubmissionJob).to have_been_enqueued.with(an_instance_of(Submission) do |submission|
+      expect(submission.form_id).to eq(form.id)
+      expect(submission.reference).to eq(reference)
+      expect(submission.answers).to eq({ "1" => { "selection" => "Option 1" } })
+      expect(submission.created_at).to eq(Time.zone.parse("2029-01-24T05:05:50+00:00"))
+      expect(submission.form_document["name"]).to eq("Fill in this form")
+      expect(submission.form_document["submission_type"]).to eq("email_with_csv")
+      expect(submission.form_document["submission_email"]).to eq(form.submission_email)
+    end)
   end
 
   def then_my_form_should_be_submitted
@@ -96,13 +95,5 @@ feature "Fill in and submit a form with a CSV submission", type: :feature do
 
   def and_i_should_receive_a_reference_number
     expect(page).to have_text reference
-  end
-
-  def parse_email_csv(email)
-    CSV.parse(
-      Base64.strict_decode64(
-        email.govuk_notify_personalisation[:link_to_file][:file],
-      ),
-    )
   end
 end
