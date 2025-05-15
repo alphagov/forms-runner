@@ -15,7 +15,7 @@ RSpec.describe ApplicationHelper, type: :helper do
 
     context "when set_page_title is supplied with multiple arguments" do
       before do
-        helper.set_page_title("Test", "GOV.UK Forms")
+        helper.set_page_title("Test", t("gov_uk_forms"))
       end
 
       it "returns the title with the GOV.UK suffix" do
