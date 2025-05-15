@@ -88,7 +88,6 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
   let(:repeat_form_submission) { false }
 
   let(:reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
-  let(:submission_email_id) { "1111" }
   let(:confirmation_email_id) { "2222" }
   let(:confirmation_email_reference) { "confirmation-email-ref" }
   let(:submission_email_reference) { "for-my-ref" }
@@ -436,11 +435,6 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
   describe "#submit_answers" do
     before do
       allow_mailer_to_return_mail_with_govuk_notify_response_with(
-        FormSubmissionMailer,
-        :email_confirmation_input,
-        id: submission_email_id,
-      )
-      allow_mailer_to_return_mail_with_govuk_notify_response_with(
         FormSubmissionConfirmationMailer,
         :send_confirmation_email,
         id: confirmation_email_id,
@@ -461,7 +455,9 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
       before do
         travel_to frozen_time do
-          post form_submit_answers_path(2, "form-name", 1, mode:), params: { email_confirmation_input: }
+          perform_enqueued_jobs do
+            post form_submit_answers_path(2, "form-name", 1, mode:), params: { email_confirmation_input: }
+          end
         end
       end
 
@@ -476,27 +472,11 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         mail = deliveries[0]
         expect(mail.to).to eq [submission_email]
 
-        expected_personalisation = {
-          title: form_data.name,
-          text_input: ".*",
-          submission_time: "9:47am",
-          submission_date: "13 March 2023",
-          test: "yes",
-          not_test: "no",
-          submission_reference: reference,
-          include_payment_link: "no",
-          csv_attached: "no",
-          link_to_file: "",
-        }
-
-        expect(mail.body.raw_source).to match(expected_personalisation.to_s)
-
-        expect(mail.govuk_notify_reference).to eq submission_email_reference
+        expect(mail.subject).to match("TEST FORM SUBMISSION: #{form_data.name} - reference: #{reference}")
       end
 
       it "includes the notification IDs in the logging context" do
         expect(log_lines[0]["notification_ids"]).to eq({
-          "submission_email_id" => submission_email_id,
           "confirmation_email_id" => confirmation_email_id,
         })
       end
@@ -509,7 +489,9 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
       before do
         travel_to frozen_time do
-          post form_submit_answers_path(2, "form-name", 1, mode:), params: { email_confirmation_input: }
+          perform_enqueued_jobs do
+            post form_submit_answers_path(2, "form-name", 1, mode:), params: { email_confirmation_input: }
+          end
         end
       end
 
@@ -524,25 +506,11 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         mail = deliveries[0]
         expect(mail.to).to eq [submission_email]
 
-        expected_personalisation = {
-          title: form_data.name,
-          text_input: ".*",
-          submission_time: "9:47am",
-          submission_date: "13 March 2023",
-          test: "no",
-          not_test: "yes",
-          submission_reference: reference,
-          include_payment_link: "no",
-          csv_attached: "no",
-          link_to_file: "",
-        }
-
-        expect(mail.body.raw_source).to match(expected_personalisation.to_s)
+        expect(mail.subject).to match("Form submission: #{form_data.name} - reference: #{reference}")
       end
 
       it "includes the notification IDs in the logging context" do
         expect(log_lines[0]["notification_ids"]).to eq({
-          "submission_email_id" => submission_email_id,
           "confirmation_email_id" => confirmation_email_id,
         })
       end
@@ -661,14 +629,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         expect(response).to redirect_to(form_submitted_path)
       end
 
-      it "includes the submission_email_id in the logging context" do
-        expect(log_lines[0]["notification_ids"]).to eq({
-          "submission_email_id" => submission_email_id,
-        })
-      end
-
       it "does not include the confirmation notification IDs in the logging context" do
-        expect(log_lines[0]["notification_ids"].keys).not_to include("confirmation_email_id")
+        expect(log_lines[0].keys).not_to include("notification_ids")
       end
 
       it "includes submission email reference in logging context" do
@@ -692,7 +654,9 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
       before do
         travel_to timestamp_of_request do
-          post form_submit_answers_path(2, "form-name", 1, mode:), params: { email_confirmation_input: }
+          perform_enqueued_jobs do
+            post form_submit_answers_path(2, "form-name", 1, mode:), params: { email_confirmation_input: }
+          end
         end
       end
 
@@ -726,7 +690,6 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
       it "includes the notification IDs in the logging context" do
         expect(log_lines[0]["notification_ids"]).to eq({
-          "submission_email_id" => submission_email_id,
           "confirmation_email_id" => confirmation_email_id,
         })
       end

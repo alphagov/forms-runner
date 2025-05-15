@@ -41,13 +41,7 @@ private
   def submit_using_form_submission_type
     return s3_submission_service.submit if @form.submission_type == "s3"
 
-    if FeatureService.enabled?(:ses_submissions)
-      submit_via_aws_ses
-    else
-      return submit_via_aws_ses if @form.has_file_upload_question?
-
-      notify_submission_service.submit
-    end
+    submit_via_aws_ses
   end
 
   def submit_confirmation_email_to_user
@@ -65,15 +59,6 @@ private
     ).deliver_now
 
     CurrentRequestLoggingAttributes.confirmation_email_id = mail.govuk_notify_response.id
-  end
-
-  def notify_submission_service
-    NotifySubmissionService.new(
-      journey: @current_context.journey,
-      form: @form,
-      notify_email_reference: @email_confirmation_input.submission_email_reference,
-      mailer_options:,
-    )
   end
 
   def s3_submission_service
