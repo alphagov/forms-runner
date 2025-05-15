@@ -240,6 +240,17 @@ en:
   preview_banner:
     heading: This is a preview of this form. Do not enter personal information.
     title: Important
+  question/address:
+    label:
+      international_address:
+        country: Country
+        street_address: Street address
+      uk_address:
+        county: County (optional)
+        line_1: Address line 1
+        line_2: Address line 2 (optional)
+        postcode: Postcode
+        town_or_city: Town or City
   question/file:
     file_requirements:
       body_html: |
