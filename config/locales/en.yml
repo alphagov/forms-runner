@@ -210,6 +210,7 @@ en:
       file_attached: "%{filename} (attached to this email)"
       from: GOV.UK Forms <%{email_address}>
       payment: You can check that a payment has been made by using this reference number to search transactions within GOV.​UK Pay.
+      question_skipped: This question was skipped
       reference: 'GOV.​UK Forms reference number: %{submission_reference}'
       subject: 'Form submission: %{form_title} - reference: %{reference}'
       subject_preview: 'TEST FORM SUBMISSION: %{form_title} - reference: %{reference}'
