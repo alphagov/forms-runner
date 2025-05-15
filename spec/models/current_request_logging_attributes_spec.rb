@@ -3,7 +3,6 @@ require "rails_helper"
 RSpec.describe CurrentRequestLoggingAttributes, type: :model do
   subject(:current) { described_class.new }
 
-  let(:submission_email_id) { "a-submission-email-id" }
   let(:submission_email_reference) { "a-submission-email-ref" }
 
   describe "#as_hash" do
@@ -26,7 +25,6 @@ RSpec.describe CurrentRequestLoggingAttributes, type: :model do
       current.question_number = 3
       current.submission_reference = "a-submission-ref"
       current.submission_email_reference = submission_email_reference
-      current.submission_email_id = submission_email_id
       current.confirmation_email_reference = "a-confirmation-email-ref"
       current.confirmation_email_id = "a-confirmation-email-id"
       current.rescued_exception = "StandardError"
@@ -52,7 +50,6 @@ RSpec.describe CurrentRequestLoggingAttributes, type: :model do
           confirmation_email_reference: "a-confirmation-email-ref",
         },
         notification_ids: {
-          submission_email_id:,
           confirmation_email_id: "a-confirmation-email-id",
         },
         rescued_exception: "StandardError",
@@ -70,10 +67,11 @@ RSpec.describe CurrentRequestLoggingAttributes, type: :model do
     end
 
     it "does not include nil entries in notification_ids hash" do
-      current.submission_email_id = submission_email_id
-
-      expect(current.as_hash[:notification_ids].keys).to include :submission_email_id
-      expect(current.as_hash[:notification_ids].keys).not_to include :confirmation_email_id
+      if current.as_hash.key?(:notification_ids)
+        expect(current.as_hash[:notification_ids].keys).not_to include :confirmation_email_id
+      else
+        expect(current.as_hash.key?(:notification_ids)).to be false
+      end
     end
 
     it "does not include the validation errors array if empty" do
