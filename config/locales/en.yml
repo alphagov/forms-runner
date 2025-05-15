@@ -138,6 +138,7 @@ en:
   forms:
     add_another_answer:
       rows:
+        action_hidden_text: answer %{answer_index}
         change: Change
         remove: Remove
       show:
