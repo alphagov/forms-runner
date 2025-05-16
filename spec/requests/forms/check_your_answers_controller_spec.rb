@@ -436,10 +436,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
     end
 
     shared_examples "for notification references" do
-      it "includes the notification references in the logging_context" do
-        expect(log_lines[0]["notification_references"]).to eq({
-          "confirmation_email_reference" => confirmation_email_reference,
-        })
+      it "includes the confirmation_email_reference in the logging_context" do
+        expect(log_lines[0]["confirmation_email_reference"]).to eq(confirmation_email_reference)
       end
     end
 
@@ -468,10 +466,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         expect(mail.subject).to match("TEST FORM SUBMISSION: #{form_data.name} - reference: #{reference}")
       end
 
-      it "includes the notification IDs in the logging context" do
-        expect(log_lines[0]["notification_ids"]).to eq({
-          "confirmation_email_id" => confirmation_email_id,
-        })
+      it "includes the confirmation_email_id in the logging context" do
+        expect(log_lines[0]["confirmation_email_id"]).to eq(confirmation_email_id)
       end
 
       include_examples "for notification references"
@@ -502,10 +498,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         expect(mail.subject).to match("Form submission: #{form_data.name} - reference: #{reference}")
       end
 
-      it "includes the notification IDs in the logging context" do
-        expect(log_lines[0]["notification_ids"]).to eq({
-          "confirmation_email_id" => confirmation_email_id,
-        })
+      it "includes the confirmation_email_id in the logging context" do
+        expect(log_lines[0]["confirmation_email_id"]).to eq(confirmation_email_id)
       end
 
       include_examples "for notification references"
@@ -617,12 +611,12 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         expect(response).to redirect_to(form_submitted_path)
       end
 
-      it "does not include the confirmation notification IDs in the logging context" do
-        expect(log_lines[0].keys).not_to include("notification_ids")
+      it "does not include the confirmation_email_id in the logging context" do
+        expect(log_lines[0].keys).not_to include("confirmation_email_id")
       end
 
-      it "does not include confirmation email reference in logging context" do
-        expect(log_lines[0]["notification_references"].keys).not_to include("confirmation_email_reference")
+      it "does not include confirmation_email_reference in logging context" do
+        expect(log_lines[0].keys).not_to include("confirmation_email_reference")
       end
     end
 
@@ -669,10 +663,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         expect(mail.govuk_notify_reference).to eq confirmation_email_reference
       end
 
-      it "includes the notification IDs in the logging context" do
-        expect(log_lines[0]["notification_ids"]).to eq({
-          "confirmation_email_id" => confirmation_email_id,
-        })
+      it "includes the confirmation_email_id in the logging context" do
+        expect(log_lines[0]["confirmation_email_id"]).to eq(confirmation_email_id)
       end
 
       include_examples "for notification references"
