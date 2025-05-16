@@ -186,6 +186,7 @@ en:
       selected_option: "${selectedOption} ${index + 1} of ${length} is highlighted"
   banner:
     success:
+      cookie_preferences_updated: You’ve set your cookie preferences.
       file_removed: Your file has been removed
       file_uploaded: Your file has been uploaded
       title: Success
@@ -196,6 +197,19 @@ en:
     heading: Cookies on GOV.UK Forms
     policy_link: How we use cookies
     reject: Reject analytics cookies
+  cookie_consent:
+    heading: Change your cookie settings
+    no_javascript_html: |
+      <p>We cannot change your cookie settings at the moment because JavaScript is not running in your browser. To fix this, try:</p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>turning on JavaScript in your browser settings</li>
+        <li>reloading this page</li>
+      </ul>
+    options:
+      'no': 'No'
+      'yes': 'Yes'
+    radios_legend: Do you want to accept analytics cookies?
+    save: Save cookie settings
   cookies:
     analytics_cookies:
       heading: Analytics cookies (optional)
