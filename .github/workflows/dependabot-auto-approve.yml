@@ -11,6 +11,8 @@ jobs:
   validate_this_is_an_allowed_dependency:
     needs: validate_dependabot_opened_this_PR
     runs-on: ubuntu-latest
+    outputs:
+      is_allowed_dependency: ${{ steps.check_if_allowed_dependency.outputs.is_allowed_dependency }}
     steps:
       - name: Dependabot metadata
         id: dependabot-metadata
