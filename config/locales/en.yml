@@ -99,7 +99,15 @@ en:
             remove:
               blank: You must select an option
   autocomplete:
+    assistive_hint: When autocomplete results are available use up and down arrows to review and enter to select.  Touch device users, explore by touch or with swipe gestures.
+    no_results: No results found
     prompt: Select an answer
+    status:
+      no_results: No search results
+      query_too_short: Type in ${minQueryLength} or more characters for results
+      results_plural: "${length} results are available. ${contentSelectedOption}"
+      results_single: "${length} result is available. ${contentSelectedOption}"
+      selected_option: "${selectedOption} ${index + 1} of ${length} is highlighted"
   banner:
     success:
       file_removed: Your file has been removed
