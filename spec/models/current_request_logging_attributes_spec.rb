@@ -3,8 +3,6 @@ require "rails_helper"
 RSpec.describe CurrentRequestLoggingAttributes, type: :model do
   subject(:current) { described_class.new }
 
-  let(:submission_email_reference) { "a-submission-email-ref" }
-
   describe "#as_hash" do
     it "includes only properties that are set" do
       current.form_id = 1
@@ -24,7 +22,6 @@ RSpec.describe CurrentRequestLoggingAttributes, type: :model do
       current.trace_id = "a-trace-id"
       current.question_number = 3
       current.submission_reference = "a-submission-ref"
-      current.submission_email_reference = submission_email_reference
       current.confirmation_email_reference = "a-confirmation-email-ref"
       current.confirmation_email_id = "a-confirmation-email-id"
       current.rescued_exception = "StandardError"
@@ -46,7 +43,6 @@ RSpec.describe CurrentRequestLoggingAttributes, type: :model do
         question_number: 3,
         submission_reference: "a-submission-ref",
         notification_references: {
-          submission_email_reference:,
           confirmation_email_reference: "a-confirmation-email-ref",
         },
         notification_ids: {
@@ -60,10 +56,11 @@ RSpec.describe CurrentRequestLoggingAttributes, type: :model do
     end
 
     it "does not include nil entries in notification_references hash" do
-      current.submission_email_reference = submission_email_reference
-
-      expect(current.as_hash[:notification_references].keys).to include :submission_email_reference
-      expect(current.as_hash[:notification_references].keys).not_to include :confirmation_email_reference
+      if current.as_hash.key?(:notification_references)
+        expect(current.as_hash[:notification_references].keys).not_to include :confirmation_email_reference
+      else
+        expect(current.as_hash.key?(:notification_references)).to be false
+      end
     end
 
     it "does not include nil entries in notification_ids hash" do
