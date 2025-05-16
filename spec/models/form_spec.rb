@@ -129,26 +129,5 @@ RSpec.describe Form, type: :model do
         expect(form.live?).to be(false)
       end
     end
-
-    describe "has_file_upload_question?" do
-      context "when the form does not have a file upload question" do
-        it "returns false" do
-          expect(form.has_file_upload_question?).to be false
-        end
-      end
-
-      context "when the form does has a file upload question" do
-        let(:pages) do
-          [
-            { id: 9, next_page: 10, answer_type: "date", question_text: "Question one" },
-            { id: 10, answer_type: "file", question_text: "Question two" },
-          ]
-        end
-
-        it "returns true" do
-          expect(form.has_file_upload_question?).to be true
-        end
-      end
-    end
   end
 end

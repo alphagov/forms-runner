@@ -79,10 +79,6 @@ describe "forms/check_your_answers/show.html.erb" do
     end
   end
 
-  it "contains a hidden notify reference for the submission email" do
-    expect(rendered).to have_field("submission-email-reference", type: :hidden, with: email_confirmation_input.submission_email_reference)
-  end
-
   it "contains a hidden notify reference for the confirmation email" do
     expect(rendered).to have_field("confirmation-email-reference", type: "hidden", with: email_confirmation_input.confirmation_email_reference)
   end
