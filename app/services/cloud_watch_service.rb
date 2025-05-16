@@ -62,6 +62,29 @@ class CloudWatchService
     )
   end
 
+  def self.record_submission_delivery_latency_metric(milliseconds_since_scheduled, delivery_method)
+    return unless Settings.cloudwatch_metrics_enabled
+
+    cloudwatch_client.put_metric_data(
+      namespace: FORM_METRICS_NAMESPACE,
+      metric_data: [
+        {
+          metric_name: "SubmissionDeliveryLatency",
+          dimensions: [
+            environment_dimension,
+            service_name_dimension,
+            {
+              name: "SubmissionDeliveryMethod",
+              value: delivery_method,
+            },
+          ],
+          value: milliseconds_since_scheduled,
+          unit: "Milliseconds",
+        },
+      ],
+    )
+  end
+
   def self.record_job_failure_metric(job_name)
     return unless Settings.cloudwatch_metrics_enabled
 

@@ -44,6 +44,7 @@ RSpec.describe S3SubmissionService do
         allow(Question::FileUploadS3Service).to receive(:new).and_return(mock_file_upload_s3_service)
         allow(mock_file_upload_s3_service).to receive(:delete_from_s3)
         allow(Settings.aws).to receive_messages(s3_submission_iam_role_arn: role_arn, file_upload_s3_bucket_name: file_upload_bucket)
+        allow(CloudWatchService).to receive(:record_submission_delivery_latency_metric)
       end
 
       it "writes a CSV file" do
@@ -135,6 +136,13 @@ RSpec.describe S3SubmissionService do
           expect(mock_file_upload_s3_service).to receive(:delete_from_s3).with(first_file_upload_question.uploaded_file_key)
           expect(mock_file_upload_s3_service).to receive(:delete_from_s3).with(second_file_upload_question.uploaded_file_key)
 
+          service.submit
+        end
+      end
+
+      it "sends cloudwatch metric for submission delivery time" do
+        expect(CloudWatchService).to receive(:record_submission_delivery_latency_metric).with(2000, "S3")
+        travel_to timestamp + 2.seconds do
           service.submit
         end
       end
