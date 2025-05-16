@@ -122,10 +122,6 @@ class CloudWatchService
     )
   end
 
-  def self.old_form_metrics_namespace
-    "forms/#{Settings.forms_env}".downcase
-  end
-
   def self.environment_dimension
     {
       name: "Environment",
