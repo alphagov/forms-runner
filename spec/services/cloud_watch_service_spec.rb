@@ -130,6 +130,83 @@ RSpec.describe CloudWatchService do
     end
   end
 
+  describe ".record_submission_delivery_time_metric" do
+    let(:milliseconds_since_scheduled) { 2000 }
+    let(:delivery_type) { "Email" }
+
+    context "when CloudWatch metrics are disabled" do
+      let(:cloudwatch_metrics_enabled) { false }
+
+      it "does not call the CloudWatch client with .put_metric_data" do
+        expect(cloudwatch_client).not_to receive(:put_metric_data)
+
+        described_class.record_submission_delivery_time_metric(milliseconds_since_scheduled, delivery_type)
+      end
+    end
+
+    it "calls the cloudwatch client with put_metric_data" do
+      expect(cloudwatch_client).to receive(:put_metric_data).with(
+        namespace: "Forms/Jobs",
+        metric_data: [
+          {
+            metric_name: "SubmissionDeliveryTime",
+            dimensions: [
+              {
+                name: "Environment",
+                value: forms_env,
+              },
+              {
+                name: "ServiceName",
+                value: "forms-runner",
+              },
+              {
+                name: "SubmissionDeliveryType",
+                value: delivery_type,
+              },
+            ],
+            value: milliseconds_since_scheduled,
+            unit: "Milliseconds",
+          },
+        ],
+      )
+
+      described_class.record_submission_delivery_time_metric(milliseconds_since_scheduled, delivery_type)
+    end
+
+    context "with different delivery types" do
+      let(:delivery_type) { "S3" }
+
+      it "uses the correct delivery type in the metric dimensions" do
+        expect(cloudwatch_client).to receive(:put_metric_data).with(
+          namespace: "Forms/Jobs",
+          metric_data: [
+            {
+              metric_name: "SubmissionDeliveryTime",
+              dimensions: [
+                {
+                  name: "Environment",
+                  value: forms_env,
+                },
+                {
+                  name: "ServiceName",
+                  value: "forms-runner",
+                },
+                {
+                  name: "SubmissionDeliveryType",
+                  value: delivery_type,
+                },
+              ],
+              value: milliseconds_since_scheduled,
+              unit: "Milliseconds",
+            },
+          ],
+        )
+
+        described_class.record_submission_delivery_time_metric(milliseconds_since_scheduled, delivery_type)
+      end
+    end
+  end
+
   describe ".record_job_failure_metric" do
     context "when CloudWatch metrics are disabled" do
       let(:cloudwatch_metrics_enabled) { false }
