@@ -108,8 +108,7 @@ private
   def support_phone_details
     return nil if @form.support_phone.blank?
 
-    notify_body = NotifyTemplateFormatter.new
-    formatted_phone_number = notify_body.normalize_whitespace(@form.support_phone)
+    formatted_phone_number = normalize_whitespace(@form.support_phone)
 
     "#{formatted_phone_number}\n\n[#{I18n.t('support_details.call_charges')}](#{@current_context.support_details.call_charges_url})"
   end
@@ -132,5 +131,9 @@ private
                       timestamp: @timestamp,
                       submission_reference: @submission_reference,
                       payment_url: @form.payment_url_with_reference(@submission_reference))
+  end
+
+  def normalize_whitespace(text)
+    text.strip.gsub(/\r\n?/, "\n").split(/\n\n+/).map(&:strip).join("\n\n")
   end
 end
