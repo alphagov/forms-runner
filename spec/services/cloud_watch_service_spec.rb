@@ -130,9 +130,9 @@ RSpec.describe CloudWatchService do
     end
   end
 
-  describe ".record_submission_delivery_time_metric" do
+  describe ".record_submission_delivery_latency_metric" do
     let(:milliseconds_since_scheduled) { 2000 }
-    let(:delivery_type) { "Email" }
+    let(:delivery_method) { "Email" }
 
     context "when CloudWatch metrics are disabled" do
       let(:cloudwatch_metrics_enabled) { false }
@@ -140,16 +140,16 @@ RSpec.describe CloudWatchService do
       it "does not call the CloudWatch client with .put_metric_data" do
         expect(cloudwatch_client).not_to receive(:put_metric_data)
 
-        described_class.record_submission_delivery_time_metric(milliseconds_since_scheduled, delivery_type)
+        described_class.record_submission_delivery_latency_metric(milliseconds_since_scheduled, delivery_method)
       end
     end
 
     it "calls the cloudwatch client with put_metric_data" do
       expect(cloudwatch_client).to receive(:put_metric_data).with(
-        namespace: "Forms/Jobs",
+        namespace: "Forms",
         metric_data: [
           {
-            metric_name: "SubmissionDeliveryTime",
+            metric_name: "SubmissionDeliveryLatency",
             dimensions: [
               {
                 name: "Environment",
@@ -160,8 +160,8 @@ RSpec.describe CloudWatchService do
                 value: "forms-runner",
               },
               {
-                name: "SubmissionDeliveryType",
-                value: delivery_type,
+                name: "SubmissionDeliveryMethod",
+                value: delivery_method,
               },
             ],
             value: milliseconds_since_scheduled,
@@ -170,18 +170,18 @@ RSpec.describe CloudWatchService do
         ],
       )
 
-      described_class.record_submission_delivery_time_metric(milliseconds_since_scheduled, delivery_type)
+      described_class.record_submission_delivery_latency_metric(milliseconds_since_scheduled, delivery_method)
     end
 
     context "with different delivery types" do
-      let(:delivery_type) { "S3" }
+      let(:delivery_method) { "S3" }
 
       it "uses the correct delivery type in the metric dimensions" do
         expect(cloudwatch_client).to receive(:put_metric_data).with(
-          namespace: "Forms/Jobs",
+          namespace: "Forms",
           metric_data: [
             {
-              metric_name: "SubmissionDeliveryTime",
+              metric_name: "SubmissionDeliveryLatency",
               dimensions: [
                 {
                   name: "Environment",
@@ -192,8 +192,8 @@ RSpec.describe CloudWatchService do
                   value: "forms-runner",
                 },
                 {
-                  name: "SubmissionDeliveryType",
-                  value: delivery_type,
+                  name: "SubmissionDeliveryMethod",
+                  value: delivery_method,
                 },
               ],
               value: milliseconds_since_scheduled,
@@ -202,7 +202,7 @@ RSpec.describe CloudWatchService do
           ],
         )
 
-        described_class.record_submission_delivery_time_metric(milliseconds_since_scheduled, delivery_type)
+        described_class.record_submission_delivery_latency_metric(milliseconds_since_scheduled, delivery_method)
       end
     end
   end

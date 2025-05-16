@@ -87,7 +87,7 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
       before do
         job = described_class.perform_later
         @job_id = job.job_id
-        allow(CloudWatchService).to receive(:record_submission_delivery_time_metric)
+        allow(CloudWatchService).to receive(:record_submission_delivery_latency_metric)
       end
 
       it "updates the submission mail status to delivered" do
@@ -117,7 +117,7 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
       it "sends cloudwatch metric for submission delivery time" do
         perform_enqueued_jobs
         # latency is ses_delivery_timestamp - submission.created_at
-        expect(CloudWatchService).to have_received(:record_submission_delivery_time_metric).with(6122, "Email")
+        expect(CloudWatchService).to have_received(:record_submission_delivery_latency_metric).with(6122, "Email")
       end
 
       it "deletes the SQS message" do
