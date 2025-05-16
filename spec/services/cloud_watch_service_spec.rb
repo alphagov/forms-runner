@@ -13,14 +13,14 @@ RSpec.describe CloudWatchService do
     allow(Aws::CloudWatch::Client).to receive(:new).and_return(cloudwatch_client)
   end
 
-  describe ".log_form_submission" do
+  describe ".record_form_submission_metric" do
     context "when CloudWatch metrics are disabled" do
       let(:cloudwatch_metrics_enabled) { false }
 
       it "does not call the CloudWatch client with .put_metric_data" do
         expect(cloudwatch_client).not_to receive(:put_metric_data)
 
-        described_class.log_form_submission(form_id:)
+        described_class.record_form_submission_metric(form_id:)
       end
     end
 
@@ -46,18 +46,18 @@ RSpec.describe CloudWatchService do
         ],
       )
 
-      described_class.log_form_submission(form_id:)
+      described_class.record_form_submission_metric(form_id:)
     end
   end
 
-  describe ".log_form_start" do
+  describe ".record_form_start_metric" do
     context "when CloudWatch metrics are disabled" do
       let(:cloudwatch_metrics_enabled) { false }
 
       it "does not call the CloudWatch client with .put_metric_data" do
         expect(cloudwatch_client).not_to receive(:put_metric_data)
 
-        described_class.log_form_start(form_id:)
+        described_class.record_form_start_metric(form_id:)
       end
     end
 
@@ -83,11 +83,11 @@ RSpec.describe CloudWatchService do
         ],
       )
 
-      described_class.log_form_start(form_id:)
+      described_class.record_form_start_metric(form_id:)
     end
   end
 
-  describe ".log_submission_sent" do
+  describe ".record_submission_sent_metric" do
     let(:milliseconds_since_scheduled) { 1000 }
 
     context "when CloudWatch metrics are disabled" do
@@ -96,7 +96,7 @@ RSpec.describe CloudWatchService do
       it "does not call the CloudWatch client with .put_metric_data" do
         expect(cloudwatch_client).not_to receive(:put_metric_data)
 
-        described_class.log_submission_sent(milliseconds_since_scheduled)
+        described_class.record_submission_sent_metric(milliseconds_since_scheduled)
       end
     end
 
@@ -126,18 +126,18 @@ RSpec.describe CloudWatchService do
         ],
       )
 
-      described_class.log_submission_sent(milliseconds_since_scheduled)
+      described_class.record_submission_sent_metric(milliseconds_since_scheduled)
     end
   end
 
-  describe ".log_job_failure" do
+  describe ".record_job_failure_metric" do
     context "when CloudWatch metrics are disabled" do
       let(:cloudwatch_metrics_enabled) { false }
 
       it "does not call the CloudWatch client with .put_metric_data" do
         expect(cloudwatch_client).not_to receive(:put_metric_data)
 
-        described_class.log_job_failure(job_name)
+        described_class.record_job_failure_metric(job_name)
       end
     end
 
@@ -167,18 +167,18 @@ RSpec.describe CloudWatchService do
         ],
       )
 
-      described_class.log_job_failure(job_name)
+      described_class.record_job_failure_metric(job_name)
     end
   end
 
-  describe ".log_job_started" do
+  describe ".record_job_started_metric" do
     context "when CloudWatch metrics are disabled" do
       let(:cloudwatch_metrics_enabled) { false }
 
       it "does not call the CloudWatch client with .put_metric_data" do
         expect(cloudwatch_client).not_to receive(:put_metric_data)
 
-        described_class.log_job_started(job_name)
+        described_class.record_job_started_metric(job_name)
       end
     end
 
@@ -208,11 +208,11 @@ RSpec.describe CloudWatchService do
         ],
       )
 
-      described_class.log_job_started(job_name)
+      described_class.record_job_started_metric(job_name)
     end
   end
 
-  describe ".log_queue_length" do
+  describe ".record_queue_length_metric" do
     let(:queue_name) { "test-queue" }
     let(:queue_length) { 42 }
 
@@ -222,7 +222,7 @@ RSpec.describe CloudWatchService do
       it "does not call the CloudWatch client with .put_metric_data" do
         expect(cloudwatch_client).not_to receive(:put_metric_data)
 
-        described_class.log_queue_length(queue_name, queue_length)
+        described_class.record_queue_length_metric(queue_name, queue_length)
       end
     end
 
@@ -252,7 +252,7 @@ RSpec.describe CloudWatchService do
         ],
       )
 
-      described_class.log_queue_length(queue_name, queue_length)
+      described_class.record_queue_length_metric(queue_name, queue_length)
     end
   end
 end

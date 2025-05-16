@@ -1,4 +1,4 @@
-<%= govuk_cookie_banner(html_attributes: {hidden: true, data: { module: "cookie-banner" }}) do |banner| %>
+<%= govuk_cookie_banner(html_attributes: {hidden: true, data: { module: "cookie-banner" }}, aria_label: t("cookie_banner.aria_label")) do |banner| %>
   <%= banner.with_message(heading_text: t("cookie_banner.heading")) do |message| %>
     <% message.with_action { content_tag(:button, t("cookie_banner.accept"), type:"button", class:"govuk-button", data: {function: "accept-cookies", module: "govuk-button"}) } %>
     <% message.with_action { content_tag(:button, t("cookie_banner.reject"), type:"button", class:"govuk-button", data: {function: "reject-cookies", module: "govuk-button"}) } %>

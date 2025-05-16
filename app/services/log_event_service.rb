@@ -22,7 +22,7 @@ class LogEventService
 
       # Logging to CloudWatch
       begin
-        CloudWatchService.log_form_submission(form_id: context.form.id)
+        CloudWatchService.record_form_submission_metric(form_id: context.form.id)
       rescue StandardError => e
         Sentry.capture_exception(e)
       end
@@ -33,7 +33,7 @@ class LogEventService
     EventLogger.log_page_event(log_event, @step.question.question_text, skipped_question?)
     if is_starting_form?
       begin
-        CloudWatchService.log_form_start(form_id: @current_context.form.id) # Logging to CloudWatch
+        CloudWatchService.record_form_start_metric(form_id: @current_context.form.id) # Logging to CloudWatch
       rescue StandardError => e
         Sentry.capture_exception(e)
       end

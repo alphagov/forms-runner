@@ -96,4 +96,30 @@ RSpec.describe ApplicationHelper, type: :helper do
       expect(helper.format_paragraphs("Paragraph 1\n\n<h2>paragraph 2</h2>")).to eq "<p>Paragraph 1</p>\n\n<p>&lt;h2&gt;paragraph 2&lt;/h2&gt;</p>"
     end
   end
+
+  describe "#init_autocomplete_script" do
+    before do
+      helper.init_autocomplete_script
+    end
+
+    it "returns the autocomplete script" do
+      expect(view.content_for(:body_end)).to include("
+      document.addEventListener('DOMContentLoaded', function(event) {
+        if(window.dfeAutocomplete !== undefined && typeof window.dfeAutocomplete === 'function') {
+          dfeAutocomplete({
+            showAllValues: true,
+            rawAttribute: false,
+            source: false,
+            autoselect: false,
+            tNoResults: () => 'No results found',
+            tStatusQueryTooShort: (minQueryLength) => `Type in ${minQueryLength} or more characters for results`,
+            tStatusNoResults: () => 'No search results',
+            tStatusSelectedOption: (selectedOption, length, index) => `${selectedOption} ${index + 1} of ${length} is highlighted`,
+            tStatusResults: (length, contentSelectedOption) => (length === 1 ? `${length} result is available. ${contentSelectedOption}` : `${length} results are available. ${contentSelectedOption}`),
+            tAssistiveHint: () => 'When autocomplete results are available use up and down arrows to review and enter to select.  Touch device users, explore by touch or with swipe gestures.',
+          })
+        }
+      });")
+    end
+  end
 end

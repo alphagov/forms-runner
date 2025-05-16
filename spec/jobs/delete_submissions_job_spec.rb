@@ -70,7 +70,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
     Rails.logger.broadcast_to logger
 
     allow(Question::FileUploadS3Service).to receive(:new).and_return(file_upload_s3_service_spy)
-    allow(CloudWatchService).to receive(:log_job_started)
+    allow(CloudWatchService).to receive(:record_job_started_metric)
 
     job = described_class.perform_later
     @job_id = job.job_id
@@ -138,7 +138,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
 
     it "sends cloudwatch metric" do
       perform_enqueued_jobs
-      expect(CloudWatchService).to have_received(:log_job_started).with("DeleteSubmissionsJob")
+      expect(CloudWatchService).to have_received(:record_job_started_metric).with("DeleteSubmissionsJob")
     end
   end
 
@@ -176,7 +176,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
 
     it "sends cloudwatch metric" do
       perform_enqueued_jobs
-      expect(CloudWatchService).to have_received(:log_job_started).with("DeleteSubmissionsJob")
+      expect(CloudWatchService).to have_received(:record_job_started_metric).with("DeleteSubmissionsJob")
     end
   end
 

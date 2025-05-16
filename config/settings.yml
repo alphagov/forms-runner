@@ -1,4 +1,5 @@
 features:
+  rebrand: false
   ses_submissions: false
 
 forms_admin:

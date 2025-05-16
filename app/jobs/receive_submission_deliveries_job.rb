@@ -10,7 +10,7 @@ class ReceiveSubmissionDeliveriesJob < ApplicationJob
   POLLING_PERIOD = 20
 
   def perform
-    CloudWatchService.log_job_started(self.class.name)
+    CloudWatchService.record_job_started_metric(self.class.name)
     CurrentJobLoggingAttributes.job_id = job_id
 
     sts_client = Aws::STS::Client.new(region: REGION)
