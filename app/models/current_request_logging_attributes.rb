@@ -32,12 +32,8 @@ class CurrentRequestLoggingAttributes < ActiveSupport::CurrentAttributes
       trace_id:,
       question_number:,
       submission_reference:,
-      notification_references: {
-        confirmation_email_reference:,
-      }.compact,
-      notification_ids: {
-        confirmation_email_id:,
-      }.compact,
+      confirmation_email_reference:,
+      confirmation_email_id:,
       rescued_exception:,
       rescued_exception_trace:,
       validation_errors:,
