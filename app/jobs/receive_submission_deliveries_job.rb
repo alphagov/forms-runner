@@ -64,7 +64,7 @@ private
 
       delivery_time = Time.zone.parse(ses_message["delivery"]["timestamp"])
       submission_duration_ms = ((delivery_time - submission.created_at) * 1000).round
-      CloudWatchService.record_submission_delivery_time_metric(submission_duration_ms, "Email")
+      CloudWatchService.record_submission_delivery_latency_metric(submission_duration_ms, "Email")
     rescue StandardError => e
       Rails.logger.warn("Error processing message - #{e.class.name}: #{e.message}")
       Sentry.capture_exception(e)

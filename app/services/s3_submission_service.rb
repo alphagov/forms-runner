@@ -78,7 +78,7 @@ private
     Rails.logger.info("Uploaded submission to S3", { key: })
 
     submission_duration_ms = (Time.current - @timestamp).in_milliseconds.round
-    CloudWatchService.record_submission_delivery_time_metric(submission_duration_ms, "S3")
+    CloudWatchService.record_submission_delivery_latency_metric(submission_duration_ms, "S3")
   end
 
   def s3_client
