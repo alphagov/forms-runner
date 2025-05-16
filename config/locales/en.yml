@@ -107,6 +107,7 @@ en:
       title: Success
   cookie_banner:
     accept: Accept analytics cookies
+    aria_label: Cookie banner
     content: We’d like to use analytics cookies so we can understand how you use this website and make improvements.
     heading: Cookies on GOV.UK Forms
     policy_link: How we use cookies
@@ -172,6 +173,9 @@ en:
         remove_file_guidance: You can remove this file if you need to upload a different one.
         your_file: Your file
   gov_uk_forms: GOV.UK Forms
+  govuk_components:
+    govuk_summary_list:
+      change: Change
   govuk_design_system_formbuilder:
     default_check_box_divider_text: or
     default_error_summary_title: There is a problem
