@@ -1,5 +1,81 @@
 ---
 en:
+  accessibility_statement:
+    complaints:
+      accessibility_regulations: The Equality and Human Rights Commission (EHRC) is responsible for enforcing the Public Sector Bodies (Websites and Mobile Applications) (No. 2) Accessibility Regulations 2018 (the ‘accessibility regulations’).
+      complaints_html: If you’re not happy with how we respond to your complaint, contact the <a href="https://www.equalityadvisoryservice.com/">Equality Advisory and Support Service</a>, which is run on behalf of EHRC.
+      heading: If you’re not happy with our response
+    explains_list:
+      list_item_0: how accessible the form is
+      list_item_1: what to do if you have difficulty using it
+      list_item_2: how to report any accessibility problems
+      list_item_3: technical information about known problems - and work we’re planning to do to fix these
+    explains_text: This accessibility statement explains
+    heading: Accessibility statement for this form
+    help:
+      email_html: If you have difficulty using this form or need the form in a different format, send an email to <a href="mailto:govuk-forms@digital.cabinet-office.gov.uk">govuk-forms@digital.cabinet-office.gov.uk</a> - include the name of the form in your email.
+      heading: What to do if you have difficulty using this form
+    inset_text_html: This form is part of the wider GOV.UK website. There’s a separate <a href="https://www.gov.uk/help/accessibility-statement">accessibility statement for the main GOV.UK website</a>.
+    limitations:
+      departmental_responsibility: The questions in the form are written by people in government departments and agencies. Each department and agency which publishes content on GOV.UK is responsible for making sure it meets the accessibility regulations. However, the text used in the form might not be plain language and the structure may not be fully accessible.
+      forms_issues: Issues relating to the GOV.UK Forms interface are listed in ‘Technical information about this form’s accessibility’ below.
+      guidance: To encourage accessible content we provide guidance within the GOV.UK Forms platform. We also use feedback and analytics to identify accessibility issues.
+      heading: How accessible this form is
+      some_inaccessible_text: Some parts of this form may not be fully accessible.
+    non_accessible_content:
+      heading: Non accessible content
+      non_compliance:
+        heading: Non compliance with the accessibility regulations
+        repeated_questions: You may be asked for the same personal information more than once. This does not meet WCAG 2.2 criterion 3.3.7 (redundant entry).
+        resolution_timeline: We plan to resolve this by the end of 2024.
+      other_problems:
+        heading: Other problems using the interface
+        other_problems_list:
+          list_item_0: The confirmation email error summary on the ‘Check your answers’ page does not link to the specific field that’s in error. This makes it harder to navigate within the page and to understand how to solve the problem.
+          list_item_1: When there’s a validation error on the ‘Check your answers’ page, the page title does not change to include the word ‘Error’ at the start. If you’re using a screen reader this makes it harder to understand that you’re on an error page when the page refreshes.
+          list_item_2: When you click on ‘Get help with this form’, the contact method headings are H3s, but there are no H2s. Skipping heading levels can be confusing if you’re using a screen reader and is not best practice.
+          list_item_3: On question pages, the back link disappears when there’s an error present. This could make it harder to navigate out of pages when you’ve made a mistake.
+          list_item_4: Where there’s an option to add someone’s title on name questions, the title input is not marked as optional. This could cause you to fill out this field when you do not want or need to.
+          list_item_5:
+            list_item_0: guidance that’s provided before a question
+            list_item_1: summary list content on the ‘Check your answers’ page
+            list_item_2: some of the content on the page confirming that your form’s been submitted
+            list_item_3: some headings on question pages that have multiple fields
+            preamble: 'VoiceOver on iOS (iPhone Operating System) 17 reads out some lines of content twice. This happens with:'
+          list_item_6: When you click on ‘Get help with this form’, VoiceOver on iOS 17 does not announce that there’s more content to be shown. This could make it harder to get help with the form.
+          list_item_7: On the ‘Check your answers’ page, VoiceOver on iOS 17 does not doesn't always read out the 'Change' link. This could make it harder for you to change your answer.
+          list_item_8: It can be difficult to open the ‘Get help with this form’ link when using the Dragon web extension on Chrome. This could make it harder to get help with the form.
+        preamble: Although the following issues do not fail WCAG 2.2 AA, we plan to investigate and fix them as soon as possible.
+      preamble: The content listed below is non-accessible for the following reasons.
+    preamble: This accessibility statement applies to online forms with a URL that starts with https://submit.forms.service.gov.uk.
+    reporting:
+      email_html: If you find any problems, or think we’re not meeting accessibility requirements, email us at <a href="mailto:govuk-forms@digital.cabinet-office.gov.uk">govuk-forms@digital.cabinet-office.gov.uk</a>.
+      heading: Reporting accessibility problems
+      text: We’re always looking to improve the accessibility of forms made with GOV.UK Forms.
+    statement_preparation:
+      WCAG_version: GDS assessed the forms against the Web Content Accessibility Guidelines WCAG 2.2.
+      date: This statement was prepared on 20 February 2024.
+      heading: Preparation of this accessibility statement
+      last_tested: Forms created using the GOV.UK Forms platform were last tested on 9 January 2024. The test was carried out by GDS.
+    technical_information:
+      commitment: GDS is committed to making this form accessible, in accordance with the Public Sector Bodies (Websites and Mobile Applications) (No. 2) Accessibility Regulations 2018.
+      compliance_status:
+        heading: Compliance status
+        partial_compliance_html: This form is partially compliant with the <a href="https://www.w3.org/TR/WCAG22/">Web Content Accessibility Guidelines version 2.2 AA standard</a>, due to the non-compliances listed below.
+      heading: Technical information about this form’s accessibility
+    title: Accessibility statement
+    usage:
+      accessibility_recommendations_list:
+        list_item_0: change colours, contrast levels and fonts
+        list_item_1: zoom in up to 300% without the text spilling off the screen
+        list_item_2: get from the start of the form to the end using just a keyboard
+        list_item_3: get from the start of the form to the end using speech recognition software
+        list_item_4: listen to the form using a screen reader (including the most recent versions of JAWS, NVDA and VoiceOver)
+      accessibility_recommendations_text: 'You should be able to:'
+      content_guidance: The text in the form should be clear and simple to understand.
+      disability_advice_html: <a href="https://mcmw.abilitynet.org.uk/">AbilityNet</a> has advice on making your device easier to use if you have a disability.
+      forms_description_html: This form was created using a platform called <a href="http://www.gov.uk/forms">GOV.UK Forms</a>. GOV.UK Forms is built by the Government Digital Service (GDS). It is designed to create forms that can be used by as many people as possible.
+      heading: Using this form
   activemodel:
     errors:
       models:
