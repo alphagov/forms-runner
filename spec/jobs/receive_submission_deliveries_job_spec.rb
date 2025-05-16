@@ -11,8 +11,9 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
   let(:sqs_message) { instance_double(Aws::SQS::Types::Message, message_id: sqs_message_id, receipt_handle:, body: sns_delivery_message_body) }
   let(:messages) { [] }
   let(:sns_message_timestamp) { "2025-05-09T10:25:43.972Z" }
+  let(:ses_delivery_timestamp) { "2025-05-09T10:25:41.123Z" }
   let(:sns_delivery_message_body) { { "Message" => ses_delivery_message_body.to_json, "Timestamp" => sns_message_timestamp }.to_json }
-  let(:ses_delivery_message_body) { { "mail" => { "messageId" => mail_message_id }, "eventType": event_type } }
+  let(:ses_delivery_message_body) { { "mail" => { "messageId" => mail_message_id }, "eventType": event_type, "delivery": { "timestamp": ses_delivery_timestamp } } }
   let(:file_upload_steps) do
     [
       build(:v2_question_page_step, answer_type: "file", id: 1, next_step_id: 2),
@@ -28,8 +29,8 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
   end
   let(:mail_message_id) { "mail-message-id" }
   let(:reference) { "submission-reference" }
-  let!(:submission) { create :submission, mail_message_id:, reference:, form_id: form_with_file_upload.id, form_document: form_with_file_upload, answers: form_with_file_upload_answers }
-  let!(:other_submission) { create :submission, mail_message_id: "abc", mail_status: :bounced, reference: "other-submission-reference", form_id: 2, answers: form_with_file_upload_answers }
+  let!(:submission) { create :submission, created_at: Time.zone.parse("2025-05-09T10:25:35.001Z"), mail_message_id:, reference:, form_id: form_with_file_upload.id, form_document: form_with_file_upload, answers: form_with_file_upload_answers }
+  let!(:other_submission) { create :submission, created_at: Time.zone.parse("2025-05-09T10:25:35.001Z"), mail_message_id: "abc", mail_status: :bounced, reference: "other-submission-reference", form_id: 2, answers: form_with_file_upload_answers }
 
   let(:output) { StringIO.new }
   let(:logger) do
@@ -86,6 +87,7 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
       before do
         job = described_class.perform_later
         @job_id = job.job_id
+        allow(CloudWatchService).to receive(:record_submission_delivery_time_metric)
       end
 
       it "updates the submission mail status to delivered" do
@@ -110,6 +112,12 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
                                        "sns_message_timestamp" => sns_message_timestamp,
                                        "job_id" => @job_id,
                                      ))
+      end
+
+      it "sends cloudwatch metric for submission delivery time" do
+        perform_enqueued_jobs
+        # latency is ses_delivery_timestamp - submission.created_at
+        expect(CloudWatchService).to have_received(:record_submission_delivery_time_metric).with(6122, "Email")
       end
 
       it "deletes the SQS message" do

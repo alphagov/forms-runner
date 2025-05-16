@@ -60,8 +60,11 @@ private
       submission = Submission.find_by!(mail_message_id: ses_message_id)
 
       process_delivery(submission)
-
       sqs_client.delete_message(queue_url: queue_url, receipt_handle: receipt_handle)
+
+      delivery_time = Time.zone.parse(ses_message["delivery"]["timestamp"])
+      submission_duration_ms = ((delivery_time - submission.created_at) * 1000).round
+      CloudWatchService.record_submission_delivery_time_metric(submission_duration_ms, "Email")
     rescue StandardError => e
       Rails.logger.warn("Error processing message - #{e.class.name}: #{e.message}")
       Sentry.capture_exception(e)
