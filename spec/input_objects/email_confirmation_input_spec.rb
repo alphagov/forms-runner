@@ -49,40 +49,22 @@ RSpec.describe EmailConfirmationInput, type: :model do
       described_class.new
     end
 
-    let(:submission_email_reference) { email_confirmation_input.submission_email_reference }
     let(:confirmation_email_reference) { email_confirmation_input.confirmation_email_reference }
-
-    it "generates a random submission notification reference" do
-      expect(submission_email_reference)
-        .to match(uuid).and end_with("-submission-email")
-    end
 
     it "generates a random email confirmation notification reference" do
       expect(confirmation_email_reference)
         .to match(uuid).and end_with("-confirmation-email")
     end
 
-    it "generates a different string for all notification references" do
-      expect(submission_email_reference).not_to eq confirmation_email_reference
-    end
-
-    it "includes a common identifier in all notification references" do
-      uuid_in = ->(str) { uuid.match(str).to_s }
-
-      expect(uuid_in[submission_email_reference]).to eq uuid_in[confirmation_email_reference]
-    end
-
     context "when intialised with references" do
       let(:email_confirmation_input) do
         described_class.new(
           confirmation_email_reference: "foo",
-          submission_email_reference: "bar",
         )
       end
 
       it "does not generate new references" do
         expect(confirmation_email_reference).to eq "foo"
-        expect(submission_email_reference).to eq "bar"
       end
     end
   end

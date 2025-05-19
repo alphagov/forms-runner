@@ -30,8 +30,4 @@ class Form < ActiveResource::Base
 
     "#{payment_url}?reference=#{reference}"
   end
-
-  def has_file_upload_question?
-    pages.any? { |p| p.answer_type == "file" }
-  end
 end
