@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::Base
+  before_action :rebrand
   before_action :set_request_id
   before_action :set_request_logging_attributes
   before_action :check_maintenance_mode_is_enabled
@@ -65,6 +66,10 @@ class ApplicationController < ActionController::Base
   end
 
 private
+
+  def rebrand
+    @rebrand = Settings.features.rebrand
+  end
 
   def add_robots_header
     response.headers["X-Robots-Tag"] = "noindex, nofollow"
