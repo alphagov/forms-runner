@@ -186,6 +186,7 @@ en:
       selected_option: "${selectedOption} ${index + 1} of ${length} is highlighted"
   banner:
     success:
+      cookie_preferences_updated: You’ve set your cookie preferences.
       file_removed: Your file has been removed
       file_uploaded: Your file has been uploaded
       title: Success
@@ -196,6 +197,19 @@ en:
     heading: Cookies on GOV.UK Forms
     policy_link: How we use cookies
     reject: Reject analytics cookies
+  cookie_consent:
+    heading: Change your cookie settings
+    no_javascript_html: |
+      <p>We cannot change your cookie settings at the moment because JavaScript is not running in your browser. To fix this, try:</p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>turning on JavaScript in your browser settings</li>
+        <li>reloading this page</li>
+      </ul>
+    options:
+      'no': 'No'
+      'yes': 'Yes'
+    radios_legend: Do you want to accept analytics cookies?
+    save: Save cookie settings
   cookies:
     analytics_cookies:
       heading: Analytics cookies (optional)
@@ -381,6 +395,99 @@ en:
   preview_banner:
     heading: This is a preview of this form. Do not enter personal information.
     title: Important
+  privacy:
+    changes:
+      heading: Changes to this notice
+      section_0: We may modify or amend this privacy notice at our discretion at any time. When we make changes to this notice, we will amend the last modified date at the top of this page. Any modification or amendment to this privacy notice will be applied to you and your data as of that revision date. We encourage you to periodically review this privacy notice to be informed about how we are protecting your data.
+    childrens_privacy:
+      heading: Children’s privacy protection
+      section_0: We understand the importance of protecting children’s privacy online. Our services are not designed for, or intentionally targeted at, children 13 years of age or younger. It is not our policy to intentionally collect or maintain data about anyone under the age of 13.
+    cookies:
+      heading: Cookies
+      section_0: We use cookies to make this form work. %{cookies_link}.
+      section_0_link_text: Read about the cookies we use
+    data_we_collect:
+      heading: Data we collect from you and what we do with it
+      section_0:
+        caption: 'When you use this form your device sends information such as your:'
+        list_item_0: IP address
+        list_item_1: "%{browsers_link} and version number"
+        list_item_1_link_text: web browser
+        list_item_2: time zone and language settings
+      section_1:
+        caption: 'We use this information to:'
+        list_item_0: give you the information and web pages you request
+        list_item_1: monitor the use of the site for security threats
+        list_item_2: monitor the performance of the site to identify inefficiencies and JavaScript errors
+      section_2: We collect this information in system logs. These logs are stored in Amazon Web Services in Ireland.
+      section_3: We move some of this information to our security and network monitoring tools in Ireland and the USA which are provided by companies acting as our data processors.
+      section_4: We may also use this information to produce anonymised reports about the GOV.UK Forms service. This helps us understand where we can make improvements. We may share this information with the data controller of the form.
+      section_5: If you email us feedback about this form, we’ll collect your email address and any other personal information you choose to include in your email.
+      section_6: We may share your data with data controllers where it is appropriate. For example, if you provide feedback that relates to their function or if you make a data protection request.
+      section_7:
+        caption: 'The legal basis for processing this data is that it’s necessary:'
+        list_item_0: to perform a task in the public interest
+        list_item_1: in the exercise of our functions as a government department
+      section_8:
+        caption: 'We will not:'
+        list_item_0: sell or rent your data to third parties
+        list_item_1: share your data with third parties for marketing purposes
+      section_9: We will share your data if we are required to do so by law – for example, by court order, or to prevent fraud or other crime.
+    heading: 'Privacy notice: how we use your data'
+    how_long_we_keep_data:
+      heading: How long we keep your data
+      section_0:
+        caption: 'We will only keep your personal data for as long as:'
+        list_item_0: the law requires us to
+        list_item_1: we need it for the purposes listed above
+      section_1: This means that we will only hold your personal data for one year.
+    how_we_protect_data:
+      heading: How we protect your data and keep it secure
+      section_0: We are committed to doing all that we can to keep your data secure. To prevent unauthorised access or disclosure we have put in place technical and organisational procedures to secure the data we collect about you – for example, we protect your data using varying levels of encryption. We also make sure that any third parties that we deal with have an obligation to keep all personal data they process on our behalf secure.
+    preamble:
+      section_0: 'Last updated: 20 September 2022'
+      section_1: This form was created using GOV.UK Forms. GOV.UK Forms is a product provided by the Government Digital Service (GDS) which is part of the Cabinet Office. It lets UK government teams create online forms to collect information from people and organisations.
+      section_2: The organisation that created this online form using GOV.UK Forms is the data controller of personal data they collect using the form, whilst the Cabinet Office, through GDS, is the data processor. The data controller must tell you about what they are doing with your personal data - %{privacy_policy_link}.
+      section_2_link_text: read the data controller’s privacy information for this form
+      section_3: The Cabinet Office also collects some data as a data controller. This privacy notice explains what personal data the Cabinet Office collects and processes as a data controller through forms made with GOV.UK Forms.
+      section_4: Read %{dppr_link} for more information.
+      section_4_link_text: the Cabinet Office’s entry in the Data Protection Public Register
+    questions_and_complaints:
+      heading: Questions and complaints
+      section_0:
+        caption: 'Contact %{contact_link} if you either:'
+        list_item_0: have questions about anything in this document
+        list_item_1: think that your personal data has been misused or mishandled
+      section_1:
+        line_0: You can also contact the Cabinet Office Data Protection Officer.
+        line_1: Data Protection Officer
+        line_2: Cabinet Office
+        line_3: 70 Whitehall
+        line_4: London SW1A 2AS
+      section_2: If you have a complaint, you can also contact the %{ico_link} (ICO). The ICO is an independent regulator set up to uphold information rights.
+      section_2_link_text: Information Commissioner’s Office
+      section_3:
+        line_0: Information Commissioner’s Office
+        line_1: Wycliffe House
+        line_2: Water Lane
+        line_3: Wilmslow
+        line_4: Cheshire SK9 5AF
+    what_are_your_rights:
+      heading: What are your rights
+      section_0:
+        caption: 'You have the right to request:'
+        list_item_0: information about how your personal data is processed
+        list_item_1: a copy of that personal data - this copy will be provided in a structured, commonly used and machine-readable format
+        list_item_2: that anything inaccurate in your personal data is corrected immediately
+      section_1:
+        caption: 'You can also:'
+        list_item_0: raise an objection about how your personal data is processed
+        list_item_1: request that your personal data is erased if there is no longer a justification for it
+        list_item_2: ask that the processing of your personal data is restricted in certain circumstances
+      section_2: If you have any of these requests, get in contact with our Data Protection Officer - you can find their contact details below.
+    where_data_is_stored:
+      heading: Where your data is processed and stored
+      section_0: Your personal data may be transferred outside the United Kingdom while being processed by GDS. If this happens, we’ll make sure you’re given the same level of technical and legal protection as you are within the United Kingdom by relying on the UK Government’s data adequacy decisions or by including clauses in contracts that require the recipient to protect the data in accordance with UK standards.
   question/address:
     label:
       international_address:

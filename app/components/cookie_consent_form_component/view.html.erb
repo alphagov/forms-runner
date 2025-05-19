@@ -11,12 +11,12 @@
           class="govuk-notification-banner__title"
           id="govuk-notification-banner-title"
         >
-        Success
+        <%= t("banner.success.title") %>
       </h2>
     </div>
     <div class="govuk-notification-banner__content">
       <p class="govuk-notification-banner__heading">
-        You’ve set your cookie preferences.
+        <%= t("banner.success.cookie_preferences_updated") %>
       </p>
     </div>
   </div>
@@ -25,14 +25,10 @@
 
   <% if Settings.analytics_enabled %>
 
-    <h2 class="govuk-heading-l">Change your cookie settings</h2>
+    <h2 class="govuk-heading-l"><%= t("cookie_consent.heading") %></h2>
 
     <div class="js-cookies-page__no-js-message">
-      <p class="govuk-body">We cannot change your cookie settings at the moment because JavaScript is not running in your browser. To fix this, try:</p>
-      <ul class="govuk-list govuk-list--bullet">
-        <li>turning on JavaScript in your browser settings</li>
-        <li>reloading this page</li>
-      </ul>
+      <%= t("cookie_consent.no_javascript_html") %>
     </div>
 
     <form class="js-cookies-page-form" hidden="" >
@@ -42,7 +38,7 @@
           id="analytics"
         >
           <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
-            Do you want to accept analytics cookies?
+            <%= t("cookie_consent.radios_legend") %>
           </legend>
           <div class="govuk-radios" data-module="govuk-radios">
             <div class="govuk-radios__item">
@@ -51,7 +47,7 @@
                 class="govuk-label govuk-radios__label"
                 for="radio-analytics"
                 >
-                Yes
+                <%= t("cookie_consent.options.yes") %>
               </label>
             </div>
             <div class="govuk-radios__item">
@@ -60,7 +56,7 @@
                 class="govuk-label govuk-radios__label"
                 for="radio-analytics-2"
                 >
-                No
+                <%= t("cookie_consent.options.no") %>
               </label>
             </div>
           </div>
@@ -71,7 +67,7 @@
         class="govuk-button js-cookies-form-button"
         data-module="govuk-button"
       >
-        Save cookie settings
+        <%= t("cookie_consent.save") %>
       </button>
 
     </form>
