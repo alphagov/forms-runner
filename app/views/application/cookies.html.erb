@@ -1,4 +1,4 @@
-<% set_page_title("Cookies", t("gov_uk_forms")) %>
+<% set_page_title(t('cookies.title'), t("gov_uk_forms")) %>
 
 <%# Don't show the cookie banner on this page %>
 <% content_for :cookie_banner do %>
@@ -8,55 +8,54 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
     <%= render(CookieConsentFormComponent::View.new) do %>
-      <h1 class="govuk-heading-xl">Cookies</h1>
-      <p>Cookies are small files saved on your phone, tablet or computer when you visit a website.</p>
+      <h1 class="govuk-heading-xl"><%=t('cookies.title')%></h1>
+      <p><%=t('cookies.section_0')%></p>
 
-      <p>We use cookies to make this form work.</p>
+      <p><%=t('cookies.section_1')%></p>
 
-      <p>Find out <a rel="external" href="https://ico.org.uk/your-data-matters/online/cookies/">how to manage cookies</a>.</p>
+      <p><%=t('cookies.section_2_html')%></p>
 
-      <h2 class="govuk-heading-l">Essential cookies</h2>
+      <h2 class="govuk-heading-l"><%=t('cookies.essential_cookies.heading')%></h2>
 
-      <p>We use essential cookies to make forms work.</p>
+      <p><%=t('cookies.essential_cookies.section_0')%></p>
 
       <%= govuk_table(
-        caption: "Essential cookies",
+        caption: t('cookies.essential_cookies.table.caption'),
         rows: [
-          ["Name", "Purpose", "Expires"],
-          ["_forms", "Used to remember your progress through the form", "When the browser is closed or after 20 hours"],
-          ["analytics_consent", "Saves your cookie consent settings", "1 year"],
+          [t('cookies.essential_cookies.table.row_0.column_0'), t('cookies.essential_cookies.table.row_0.column_1'), t('cookies.essential_cookies.table.row_0.column_2')],
+          [t('cookies.essential_cookies.table.row_1.column_0'), t('cookies.essential_cookies.table.row_1.column_1'), t('cookies.essential_cookies.table.row_1.column_2')],
+          [t('cookies.essential_cookies.table.row_2.column_0'), t('cookies.essential_cookies.table.row_2.column_1'), t('cookies.essential_cookies.table.row_2.column_2')],
         ],
         first_cell_is_header: true
       ) %>
 
       <% if Settings.analytics_enabled %>
-        <h2 class="govuk-heading-l">Analytics cookies (optional)</h2>
+        <h2 class="govuk-heading-l"><%=t('cookies.analytics_cookies.heading')%></h2>
 
-        <p>We use Google Analytics software to understand how people use GOV.UK Forms. This information helps us to improve our service.</p>
+        <p><%=t('cookies.analytics_cookies.section_0')%></p>
 
-        <p>Google is not allowed to use or share our analytics data with anyone.</p>
+        <p><%=t('cookies.analytics_cookies.section_1')%></p>
 
-        <p>Google Analytics stores anonymised information about:</p>
+        <p><%=t('cookies.analytics_cookies.section_2.caption')%></p>
 
         <ul class="govuk-list govuk-list--bullet">
-          <li>the pages you visit</li>
-          <li>how long you spend on each page</li>
-          <li>how you arrived at the site</li>
-          <li>what you click on while you visit the site</li>
-          <li>the device and browser you use</li>
+          <li><%=t('cookies.analytics_cookies.section_2.list_item_0')%></li>
+          <li><%=t('cookies.analytics_cookies.section_2.list_item_1')%></li>
+          <li><%=t('cookies.analytics_cookies.section_2.list_item_2')%></li>
+          <li><%=t('cookies.analytics_cookies.section_2.list_item_3')%></li>
+          <li><%=t('cookies.analytics_cookies.section_2.list_item_4')%></li>
         </ul>
 
         <%= govuk_table(
-          caption: "Analytics cookies (optional)",
+          caption: t('cookies.analytics_cookies.table.caption'),
           rows: [
-            ["Name", "Purpose", "Expires"],
-            ["_ga", "Helps us count how many people visit GOV.UK Forms by telling us if you’ve visited before.", "2 years"],
-            ["_gid", "Helps us count how many people visit GOV.UK Forms by telling us if you’ve visited before.", "24 hours"],
-            ["_gat_UA-[random number]", "Helps us reduce the number of unnecessary tracking requests we send to Google Analytics.", "1 minute"],
+            [t('cookies.analytics_cookies.table.row_0.column_0'), t('cookies.analytics_cookies.table.row_0.column_1'), t('cookies.analytics_cookies.table.row_0.column_2')],
+            [t('cookies.analytics_cookies.table.row_1.column_0'), t('cookies.analytics_cookies.table.row_1.column_1'), t('cookies.analytics_cookies.table.row_1.column_2')],
+            [t('cookies.analytics_cookies.table.row_2.column_0'), t('cookies.analytics_cookies.table.row_2.column_1'), t('cookies.analytics_cookies.table.row_2.column_2')],
+            [t('cookies.analytics_cookies.table.row_3.column_0'), t('cookies.analytics_cookies.table.row_3.column_1'), t('cookies.analytics_cookies.table.row_3.column_2')],
           ],
           first_cell_is_header: true
         ) %>
-
       <% end %>
     <% end %>
   </div>
