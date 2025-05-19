@@ -1,0 +1,544 @@
+---
+cy:
+  accessibility_statement:
+    complaints:
+      accessibility_regulations: cy.accessibility_statement.complaints.accessibility_regulations
+      complaints_html: cy.accessibility_statement.complaints.complaints_html
+      heading: cy.accessibility_statement.complaints.heading
+    explains_list:
+      list_item_0: cy.accessibility_statement.explains_list.list_item_0
+      list_item_1: cy.accessibility_statement.explains_list.list_item_1
+      list_item_2: cy.accessibility_statement.explains_list.list_item_2
+      list_item_3: cy.accessibility_statement.explains_list.list_item_3
+    explains_text: cy.accessibility_statement.explains_text
+    heading: cy.accessibility_statement.heading
+    help:
+      email_html: cy.accessibility_statement.help.email_html
+      heading: cy.accessibility_statement.help.heading
+    inset_text_html: cy.accessibility_statement.inset_text_html
+    limitations:
+      departmental_responsibility: cy.accessibility_statement.limitations.departmental_responsibility
+      forms_issues: cy.accessibility_statement.limitations.forms_issues
+      guidance: cy.accessibility_statement.limitations.guidance
+      heading: cy.accessibility_statement.limitations.heading
+      some_inaccessible_text: cy.accessibility_statement.limitations.some_inaccessible_text
+    non_accessible_content:
+      heading: cy.accessibility_statement.non_accessible_content.heading
+      non_compliance:
+        heading: cy.accessibility_statement.non_accessible_content.non_compliance.heading
+        repeated_questions: cy.accessibility_statement.non_accessible_content.non_compliance.repeated_questions
+        resolution_timeline: cy.accessibility_statement.non_accessible_content.non_compliance.resolution_timeline
+      other_problems:
+        heading: cy.accessibility_statement.non_accessible_content.other_problems.heading
+        other_problems_list:
+          list_item_0: cy.accessibility_statement.non_accessible_content.other_problems.other_problems_list.list_item_0
+          list_item_1: cy.accessibility_statement.non_accessible_content.other_problems.other_problems_list.list_item_1
+          list_item_2: cy.accessibility_statement.non_accessible_content.other_problems.other_problems_list.list_item_2
+          list_item_3: cy.accessibility_statement.non_accessible_content.other_problems.other_problems_list.list_item_3
+          list_item_4: cy.accessibility_statement.non_accessible_content.other_problems.other_problems_list.list_item_4
+          list_item_5:
+            list_item_0: cy.accessibility_statement.non_accessible_content.other_problems.other_problems_list.list_item_5.list_item_0
+            list_item_1: cy.accessibility_statement.non_accessible_content.other_problems.other_problems_list.list_item_5.list_item_1
+            list_item_2: cy.accessibility_statement.non_accessible_content.other_problems.other_problems_list.list_item_5.list_item_2
+            list_item_3: cy.accessibility_statement.non_accessible_content.other_problems.other_problems_list.list_item_5.list_item_3
+            preamble: cy.accessibility_statement.non_accessible_content.other_problems.other_problems_list.list_item_5.preamble
+          list_item_6: cy.accessibility_statement.non_accessible_content.other_problems.other_problems_list.list_item_6
+          list_item_7: cy.accessibility_statement.non_accessible_content.other_problems.other_problems_list.list_item_7
+          list_item_8: cy.accessibility_statement.non_accessible_content.other_problems.other_problems_list.list_item_8
+        preamble: cy.accessibility_statement.non_accessible_content.other_problems.preamble
+      preamble: cy.accessibility_statement.non_accessible_content.preamble
+    preamble: cy.accessibility_statement.preamble
+    reporting:
+      email_html: cy.accessibility_statement.reporting.email_html
+      heading: cy.accessibility_statement.reporting.heading
+      text: cy.accessibility_statement.reporting.text
+    statement_preparation:
+      WCAG_version: cy.accessibility_statement.statement_preparation.WCAG_version
+      date: cy.accessibility_statement.statement_preparation.date
+      heading: cy.accessibility_statement.statement_preparation.heading
+      last_tested: cy.accessibility_statement.statement_preparation.last_tested
+    technical_information:
+      commitment: cy.accessibility_statement.technical_information.commitment
+      compliance_status:
+        heading: cy.accessibility_statement.technical_information.compliance_status.heading
+        partial_compliance_html: cy.accessibility_statement.technical_information.compliance_status.partial_compliance_html
+      heading: cy.accessibility_statement.technical_information.heading
+    title: cy.accessibility_statement.title
+    usage:
+      accessibility_recommendations_list:
+        list_item_0: cy.accessibility_statement.usage.accessibility_recommendations_list.list_item_0
+        list_item_1: cy.accessibility_statement.usage.accessibility_recommendations_list.list_item_1
+        list_item_2: cy.accessibility_statement.usage.accessibility_recommendations_list.list_item_2
+        list_item_3: cy.accessibility_statement.usage.accessibility_recommendations_list.list_item_3
+        list_item_4: cy.accessibility_statement.usage.accessibility_recommendations_list.list_item_4
+      accessibility_recommendations_text: cy.accessibility_statement.usage.accessibility_recommendations_text
+      content_guidance: cy.accessibility_statement.usage.content_guidance
+      disability_advice_html: cy.accessibility_statement.usage.disability_advice_html
+      forms_description_html: cy.accessibility_statement.usage.forms_description_html
+      heading: cy.accessibility_statement.usage.heading
+  activemodel:
+    errors:
+      models:
+        add_another_answer_input:
+          attributes:
+            add_another_answer:
+              blank: cy.activemodel.errors.models.add_another_answer_input.attributes.add_another_answer.blank
+              max_answers_reached: cy.activemodel.errors.models.add_another_answer_input.attributes.add_another_answer.max_answers_reached
+        email_confirmation_input:
+          attributes:
+            confirmation_email_address:
+              blank: cy.activemodel.errors.models.email_confirmation_input.attributes.confirmation_email_address.blank
+              invalid_email: cy.activemodel.errors.models.email_confirmation_input.attributes.confirmation_email_address.invalid_email
+            send_confirmation:
+              blank: cy.activemodel.errors.models.email_confirmation_input.attributes.send_confirmation.blank
+        question/address:
+          attributes:
+            address1:
+              blank: cy.activemodel.errors.models.question/address.attributes.address1.blank
+            country:
+              blank: cy.activemodel.errors.models.question/address.attributes.country.blank
+            postcode:
+              blank: cy.activemodel.errors.models.question/address.attributes.postcode.blank
+              invalid_postcode: cy.activemodel.errors.models.question/address.attributes.postcode.invalid_postcode
+            street_address:
+              blank: cy.activemodel.errors.models.question/address.attributes.street_address.blank
+            town_or_city:
+              blank: cy.activemodel.errors.models.question/address.attributes.town_or_city.blank
+        question/date:
+          attributes:
+            date:
+              blank: cy.activemodel.errors.models.question/date.attributes.date.blank
+              blank_date_fields: cy.activemodel.errors.models.question/date.attributes.date.blank_date_fields
+              future_date: cy.activemodel.errors.models.question/date.attributes.date.future_date
+              invalid_date: cy.activemodel.errors.models.question/date.attributes.date.invalid_date
+              invalid_number_of_digits_for_year: cy.activemodel.errors.models.question/date.attributes.date.invalid_number_of_digits_for_year
+        question/email:
+          attributes:
+            email:
+              blank: cy.activemodel.errors.models.question/email.attributes.email.blank
+              invalid_email: cy.activemodel.errors.models.question/email.attributes.email.invalid_email
+        question/file:
+          attributes:
+            file:
+              blank: cy.activemodel.errors.models.question/file.attributes.file.blank
+              contains_virus: cy.activemodel.errors.models.question/file.attributes.file.contains_virus
+              disallowed_type: cy.activemodel.errors.models.question/file.attributes.file.disallowed_type
+              empty: cy.activemodel.errors.models.question/file.attributes.file.empty
+              scan_failure: cy.activemodel.errors.models.question/file.attributes.file.scan_failure
+              too_big: cy.activemodel.errors.models.question/file.attributes.file.too_big
+        question/name:
+          attributes:
+            first_name:
+              blank: cy.activemodel.errors.models.question/name.attributes.first_name.blank
+            full_name:
+              blank: cy.activemodel.errors.models.question/name.attributes.full_name.blank
+            last_name:
+              blank: cy.activemodel.errors.models.question/name.attributes.last_name.blank
+        question/national_insurance_number:
+          attributes:
+            national_insurance_number:
+              blank: cy.activemodel.errors.models.question/national_insurance_number.attributes.national_insurance_number.blank
+              invalid_national_insurance_number: cy.activemodel.errors.models.question/national_insurance_number.attributes.national_insurance_number.invalid_national_insurance_number
+        question/number:
+          attributes:
+            number:
+              blank: cy.activemodel.errors.models.question/number.attributes.number.blank
+              greater_than_or_equal_to: cy.activemodel.errors.models.question/number.attributes.number.greater_than_or_equal_to
+              not_a_number: cy.activemodel.errors.models.question/number.attributes.number.not_a_number
+        question/organisation_name:
+          attributes:
+            text:
+              blank: cy.activemodel.errors.models.question/organisation_name.attributes.text.blank
+              too_long: cy.activemodel.errors.models.question/organisation_name.attributes.text.too_long
+        question/phone_number:
+          attributes:
+            phone_number:
+              blank: cy.activemodel.errors.models.question/phone_number.attributes.phone_number.blank
+              invalid_phone_number: cy.activemodel.errors.models.question/phone_number.attributes.phone_number.invalid_phone_number
+              phone_too_long: cy.activemodel.errors.models.question/phone_number.attributes.phone_number.phone_too_long
+              phone_too_short: cy.activemodel.errors.models.question/phone_number.attributes.phone_number.phone_too_short
+        question/selection:
+          attributes:
+            selection:
+              blank: cy.activemodel.errors.models.question/selection.attributes.selection.blank
+              both_none_and_value_selected: cy.activemodel.errors.models.question/selection.attributes.selection.both_none_and_value_selected
+              checkbox_blank: cy.activemodel.errors.models.question/selection.attributes.selection.checkbox_blank
+              inclusion: cy.activemodel.errors.models.question/selection.attributes.selection.inclusion
+        question/text:
+          attributes:
+            text:
+              blank: cy.activemodel.errors.models.question/text.attributes.text.blank
+              long_text_too_long: cy.activemodel.errors.models.question/text.attributes.text.long_text_too_long
+              single_line_too_long: cy.activemodel.errors.models.question/text.attributes.text.single_line_too_long
+        remove_input:
+          attributes:
+            remove:
+              blank: cy.activemodel.errors.models.remove_input.attributes.remove.blank
+  autocomplete:
+    assistive_hint: cy.autocomplete.assistive_hint
+    no_results: cy.autocomplete.no_results
+    prompt: cy.autocomplete.prompt
+    status:
+      no_results: cy.autocomplete.status.no_results
+      query_too_short: cy.autocomplete.status.query_too_short
+      results_plural: cy.autocomplete.status.results_plural
+      results_single: cy.autocomplete.status.results_single
+      selected_option: cy.autocomplete.status.selected_option
+  banner:
+    success:
+      cookie_preferences_updated: cy.banner.success.cookie_preferences_updated
+      file_removed: cy.banner.success.file_removed
+      file_uploaded: cy.banner.success.file_uploaded
+      title: cy.banner.success.title
+  cookie_banner:
+    accept: cy.cookie_banner.accept
+    aria_label: cy.cookie_banner.aria_label
+    content: cy.cookie_banner.content
+    heading: cy.cookie_banner.heading
+    policy_link: cy.cookie_banner.policy_link
+    reject: cy.cookie_banner.reject
+  cookie_consent:
+    heading: cy.cookie_consent.heading
+    no_javascript_html: cy.cookie_consent.no_javascript_html
+    options:
+      'no': cy.cookie_consent.options.no
+      'yes': cy.cookie_consent.options.yes
+    radios_legend: cy.cookie_consent.radios_legend
+    save: cy.cookie_consent.save
+  cookies:
+    analytics_cookies:
+      heading: cy.cookies.analytics_cookies.heading
+      section_0: cy.cookies.analytics_cookies.section_0
+      section_1: cy.cookies.analytics_cookies.section_1
+      section_2:
+        caption: cy.cookies.analytics_cookies.section_2.caption
+        list_item_0: cy.cookies.analytics_cookies.section_2.list_item_0
+        list_item_1: cy.cookies.analytics_cookies.section_2.list_item_1
+        list_item_2: cy.cookies.analytics_cookies.section_2.list_item_2
+        list_item_3: cy.cookies.analytics_cookies.section_2.list_item_3
+        list_item_4: cy.cookies.analytics_cookies.section_2.list_item_4
+      table:
+        caption: cy.cookies.analytics_cookies.table.caption
+        row_0:
+          column_0: cy.cookies.analytics_cookies.table.row_0.column_0
+          column_1: cy.cookies.analytics_cookies.table.row_0.column_1
+          column_2: cy.cookies.analytics_cookies.table.row_0.column_2
+        row_1:
+          column_0: cy.cookies.analytics_cookies.table.row_1.column_0
+          column_1: cy.cookies.analytics_cookies.table.row_1.column_1
+          column_2: cy.cookies.analytics_cookies.table.row_1.column_2
+        row_2:
+          column_0: cy.cookies.analytics_cookies.table.row_2.column_0
+          column_1: cy.cookies.analytics_cookies.table.row_2.column_1
+          column_2: cy.cookies.analytics_cookies.table.row_2.column_2
+        row_3:
+          column_0: cy.cookies.analytics_cookies.table.row_3.column_0
+          column_1: cy.cookies.analytics_cookies.table.row_3.column_1
+          column_2: cy.cookies.analytics_cookies.table.row_3.column_2
+    essential_cookies:
+      heading: cy.cookies.essential_cookies.heading
+      section_0: cy.cookies.essential_cookies.section_0
+      table:
+        caption: cy.cookies.essential_cookies.table.caption
+        row_0:
+          column_0: cy.cookies.essential_cookies.table.row_0.column_0
+          column_1: cy.cookies.essential_cookies.table.row_0.column_1
+          column_2: cy.cookies.essential_cookies.table.row_0.column_2
+        row_1:
+          column_0: cy.cookies.essential_cookies.table.row_1.column_0
+          column_1: cy.cookies.essential_cookies.table.row_1.column_1
+          column_2: cy.cookies.essential_cookies.table.row_1.column_2
+        row_2:
+          column_0: cy.cookies.essential_cookies.table.row_2.column_0
+          column_1: cy.cookies.essential_cookies.table.row_2.column_1
+          column_2: cy.cookies.essential_cookies.table.row_2.column_2
+    section_0: cy.cookies.section_0
+    section_1: cy.cookies.section_1
+    section_2_html: cy.cookies.section_2_html
+    title: cy.cookies.title
+  environment_names:
+    dev: cy.environment_names.dev
+    local: cy.environment_names.local
+    production: cy.environment_names.production
+    staging: cy.environment_names.staging
+    user-research: cy.environment_names.user-research
+  errors:
+    goto_page_routing_error:
+      cannot_have_goto_page_before_routing_page:
+        body_html: cy.errors.goto_page_routing_error.cannot_have_goto_page_before_routing_page.body_html
+      goto_page_doesnt_exist:
+        body_html: cy.errors.goto_page_routing_error.goto_page_doesnt_exist.body_html
+      title: cy.errors.goto_page_routing_error.title
+    incomplete_submission:
+      body_html: cy.errors.incomplete_submission.body_html
+      title: cy.errors.incomplete_submission.title
+    internal_server_error:
+      body: cy.errors.internal_server_error.body
+      title: cy.errors.internal_server_error.title
+    maintenance:
+      body_html: cy.errors.maintenance.body_html
+      title: cy.errors.maintenance.title
+    not_found:
+      body: cy.errors.not_found.body
+      title: cy.errors.not_found.title
+    repeat_submission:
+      body: cy.errors.repeat_submission.body
+      body_2: cy.errors.repeat_submission.body_2
+      link_text: cy.errors.repeat_submission.link_text
+      title: cy.errors.repeat_submission.title
+    submission_error:
+      body: cy.errors.submission_error.body
+      title: cy.errors.submission_error.title
+  footer:
+    accessibility_statement: cy.footer.accessibility_statement
+    cookies: cy.footer.cookies
+    helpful_links: cy.footer.helpful_links
+    privacy_policy: cy.footer.privacy_policy
+  form:
+    check_your_answers:
+      agree_and_submit: cy.form.check_your_answers.agree_and_submit
+      not_completed: cy.form.check_your_answers.not_completed
+      submit: cy.form.check_your_answers.submit
+      title: cy.form.check_your_answers.title
+    submitted:
+      continue_to_pay: cy.form.submitted.continue_to_pay
+      email_sent: cy.form.submitted.email_sent
+      need_to_pay: cy.form.submitted.need_to_pay
+      title: cy.form.submitted.title
+      what_happens_next: cy.form.submitted.what_happens_next
+      your_reference: cy.form.submitted.your_reference
+  forms:
+    add_another_answer:
+      rows:
+        action_hidden_text: cy.forms.add_another_answer.rows.action_hidden_text
+        change: cy.forms.add_another_answer.rows.change
+        remove: cy.forms.add_another_answer.rows.remove
+      show:
+        heading:
+          one: cy.forms.add_another_answer.show.heading.one
+          other: cy.forms.add_another_answer.show.heading.other
+          zero: cy.forms.add_another_answer.show.heading.zero
+        max_answers: cy.forms.add_another_answer.show.max_answers
+        radios_legend: cy.forms.add_another_answer.show.radios_legend
+        title: cy.forms.add_another_answer.show.title
+    back: cy.forms.back
+    remove_answer:
+      show:
+        address_heading: cy.forms.remove_answer.show.address_heading
+        address_radios_legend: cy.forms.remove_answer.show.address_radios_legend
+        long_answer_heading: cy.forms.remove_answer.show.long_answer_heading
+        long_radios_legend: cy.forms.remove_answer.show.long_radios_legend
+        national_insurance_number_heading: cy.forms.remove_answer.show.national_insurance_number_heading
+        national_insurance_number_radios_legend: cy.forms.remove_answer.show.national_insurance_number_radios_legend
+        phone_number_heading: cy.forms.remove_answer.show.phone_number_heading
+        phone_number_radios_legend: cy.forms.remove_answer.show.phone_number_radios_legend
+        short_answer_legend: cy.forms.remove_answer.show.short_answer_legend
+    remove_file:
+      show:
+        radios_legend: cy.forms.remove_file.show.radios_legend
+        title: cy.forms.remove_file.show.title
+    review_file:
+      show:
+        check_file: cy.forms.review_file.show.check_file
+        remove: cy.forms.review_file.show.remove
+        remove_file_guidance: cy.forms.review_file.show.remove_file_guidance
+        your_file: cy.forms.review_file.show.your_file
+  gov_uk_forms: cy.gov_uk_forms
+  govuk_components:
+    govuk_summary_list:
+      change: cy.govuk_components.govuk_summary_list.change
+  govuk_design_system_formbuilder:
+    default_check_box_divider_text: cy.govuk_design_system_formbuilder.default_check_box_divider_text
+    default_error_summary_title: cy.govuk_design_system_formbuilder.default_error_summary_title
+    default_radio_divider_text: cy.govuk_design_system_formbuilder.default_radio_divider_text
+    default_submit_button_text: cy.govuk_design_system_formbuilder.default_submit_button_text
+  helpers:
+    hint:
+      email_confirmation_input:
+        send_confirmation: cy.helpers.hint.email_confirmation_input.send_confirmation
+    label:
+      add_another_answer_input:
+        options:
+          'no': cy.helpers.label.add_another_answer_input.options.no
+          'yes': cy.helpers.label.add_another_answer_input.options.yes
+      email_confirmation_input:
+        confirmation_email_address: cy.helpers.label.email_confirmation_input.confirmation_email_address
+        send_confirmation_options:
+          send_email: cy.helpers.label.email_confirmation_input.send_confirmation_options.send_email
+          skip_confirmation: cy.helpers.label.email_confirmation_input.send_confirmation_options.skip_confirmation
+      remove_input:
+        options:
+          'no': cy.helpers.label.remove_input.options.no
+          'yes': cy.helpers.label.remove_input.options.yes
+    legend:
+      email_confirmation_input:
+        send_confirmation: cy.helpers.legend.email_confirmation_input.send_confirmation
+  layout:
+    skip_link: cy.layout.skip_link
+  mailer:
+    submission:
+      cannot_reply:
+        contact_form_filler_html: cy.mailer.submission.cannot_reply.contact_form_filler_html
+        contact_form_filler_plain: cy.mailer.submission.cannot_reply.contact_form_filler_plain
+        contact_forms_team_html: cy.mailer.submission.cannot_reply.contact_forms_team_html
+        contact_forms_team_plain: cy.mailer.submission.cannot_reply.contact_forms_team_plain
+        heading: cy.mailer.submission.cannot_reply.heading
+      check_before_using: cy.mailer.submission.check_before_using
+      csv_file: cy.mailer.submission.csv_file
+      file_attached: cy.mailer.submission.file_attached
+      from: cy.mailer.submission.from
+      payment: cy.mailer.submission.payment
+      question_skipped: cy.mailer.submission.question_skipped
+      reference: cy.mailer.submission.reference
+      subject: cy.mailer.submission.subject
+      subject_preview: cy.mailer.submission.subject_preview
+      time: cy.mailer.submission.time
+      title: cy.mailer.submission.title
+      title_preview: cy.mailer.submission.title_preview
+  mode:
+    phase_banner_tag_preview-archived: cy.mode.phase_banner_tag_preview-archived
+    phase_banner_tag_preview-draft: cy.mode.phase_banner_tag_preview-draft
+    phase_banner_tag_preview-live: cy.mode.phase_banner_tag_preview-live
+    phase_banner_text_preview-archived: cy.mode.phase_banner_text_preview-archived
+    phase_banner_text_preview-draft: cy.mode.phase_banner_text_preview-draft
+    phase_banner_text_preview-draft_edit_link: cy.mode.phase_banner_text_preview-draft_edit_link
+    phase_banner_text_preview-live: cy.mode.phase_banner_text_preview-live
+    title_text_preview-archived: cy.mode.title_text_preview-archived
+    title_text_preview-draft: cy.mode.title_text_preview-draft
+    title_text_preview-live: cy.mode.title_text_preview-live
+  page:
+    archived_preview: cy.page.archived_preview
+    draft_preview: cy.page.draft_preview
+    live_preview: cy.page.live_preview
+    none_of_the_above: cy.page.none_of_the_above
+    optional: cy.page.optional
+  page_titles:
+    error_prefix: cy.page_titles.error_prefix
+  preview_banner:
+    heading: cy.preview_banner.heading
+    title: cy.preview_banner.title
+  privacy:
+    changes:
+      heading: cy.privacy.changes.heading
+      section_0: cy.privacy.changes.section_0
+    childrens_privacy:
+      heading: cy.privacy.childrens_privacy.heading
+      section_0: cy.privacy.childrens_privacy.section_0
+    cookies:
+      heading: cy.privacy.cookies.heading
+      section_0: cy.privacy.cookies.section_0
+      section_0_link_text: cy.privacy.cookies.section_0_link_text
+    data_we_collect:
+      heading: cy.privacy.data_we_collect.heading
+      section_0:
+        caption: cy.privacy.data_we_collect.section_0.caption
+        list_item_0: cy.privacy.data_we_collect.section_0.list_item_0
+        list_item_1: cy.privacy.data_we_collect.section_0.list_item_1
+        list_item_1_link_text: cy.privacy.data_we_collect.section_0.list_item_1_link_text
+        list_item_2: cy.privacy.data_we_collect.section_0.list_item_2
+      section_1:
+        caption: cy.privacy.data_we_collect.section_1.caption
+        list_item_0: cy.privacy.data_we_collect.section_1.list_item_0
+        list_item_1: cy.privacy.data_we_collect.section_1.list_item_1
+        list_item_2: cy.privacy.data_we_collect.section_1.list_item_2
+      section_2: cy.privacy.data_we_collect.section_2
+      section_3: cy.privacy.data_we_collect.section_3
+      section_4: cy.privacy.data_we_collect.section_4
+      section_5: cy.privacy.data_we_collect.section_5
+      section_6: cy.privacy.data_we_collect.section_6
+      section_7:
+        caption: cy.privacy.data_we_collect.section_7.caption
+        list_item_0: cy.privacy.data_we_collect.section_7.list_item_0
+        list_item_1: cy.privacy.data_we_collect.section_7.list_item_1
+      section_8:
+        caption: cy.privacy.data_we_collect.section_8.caption
+        list_item_0: cy.privacy.data_we_collect.section_8.list_item_0
+        list_item_1: cy.privacy.data_we_collect.section_8.list_item_1
+      section_9: cy.privacy.data_we_collect.section_9
+    heading: cy.privacy.heading
+    how_long_we_keep_data:
+      heading: cy.privacy.how_long_we_keep_data.heading
+      section_0:
+        caption: cy.privacy.how_long_we_keep_data.section_0.caption
+        list_item_0: cy.privacy.how_long_we_keep_data.section_0.list_item_0
+        list_item_1: cy.privacy.how_long_we_keep_data.section_0.list_item_1
+      section_1: cy.privacy.how_long_we_keep_data.section_1
+    how_we_protect_data:
+      heading: cy.privacy.how_we_protect_data.heading
+      section_0: cy.privacy.how_we_protect_data.section_0
+    preamble:
+      section_0: cy.privacy.preamble.section_0
+      section_1: cy.privacy.preamble.section_1
+      section_2: cy.privacy.preamble.section_2
+      section_2_link_text: cy.privacy.preamble.section_2_link_text
+      section_3: cy.privacy.preamble.section_3
+      section_4: cy.privacy.preamble.section_4
+      section_4_link_text: cy.privacy.preamble.section_4_link_text
+    questions_and_complaints:
+      heading: cy.privacy.questions_and_complaints.heading
+      section_0:
+        caption: cy.privacy.questions_and_complaints.section_0.caption
+        list_item_0: cy.privacy.questions_and_complaints.section_0.list_item_0
+        list_item_1: cy.privacy.questions_and_complaints.section_0.list_item_1
+      section_1:
+        line_0: cy.privacy.questions_and_complaints.section_1.line_0
+        line_1: cy.privacy.questions_and_complaints.section_1.line_1
+        line_2: cy.privacy.questions_and_complaints.section_1.line_2
+        line_3: cy.privacy.questions_and_complaints.section_1.line_3
+        line_4: cy.privacy.questions_and_complaints.section_1.line_4
+      section_2: cy.privacy.questions_and_complaints.section_2
+      section_2_link_text: cy.privacy.questions_and_complaints.section_2_link_text
+      section_3:
+        line_0: cy.privacy.questions_and_complaints.section_3.line_0
+        line_1: cy.privacy.questions_and_complaints.section_3.line_1
+        line_2: cy.privacy.questions_and_complaints.section_3.line_2
+        line_3: cy.privacy.questions_and_complaints.section_3.line_3
+        line_4: cy.privacy.questions_and_complaints.section_3.line_4
+    what_are_your_rights:
+      heading: cy.privacy.what_are_your_rights.heading
+      section_0:
+        caption: cy.privacy.what_are_your_rights.section_0.caption
+        list_item_0: cy.privacy.what_are_your_rights.section_0.list_item_0
+        list_item_1: cy.privacy.what_are_your_rights.section_0.list_item_1
+        list_item_2: cy.privacy.what_are_your_rights.section_0.list_item_2
+      section_1:
+        caption: cy.privacy.what_are_your_rights.section_1.caption
+        list_item_0: cy.privacy.what_are_your_rights.section_1.list_item_0
+        list_item_1: cy.privacy.what_are_your_rights.section_1.list_item_1
+        list_item_2: cy.privacy.what_are_your_rights.section_1.list_item_2
+      section_2: cy.privacy.what_are_your_rights.section_2
+    where_data_is_stored:
+      heading: cy.privacy.where_data_is_stored.heading
+      section_0: cy.privacy.where_data_is_stored.section_0
+  question/address:
+    label:
+      international_address:
+        country: cy.question/address.label.international_address.country
+        street_address: cy.question/address.label.international_address.street_address
+      uk_address:
+        county: cy.question/address.label.uk_address.county
+        line_1: cy.question/address.label.uk_address.line_1
+        line_2: cy.question/address.label.uk_address.line_2
+        postcode: cy.question/address.label.uk_address.postcode
+        town_or_city: cy.question/address.label.uk_address.town_or_city
+  question/file:
+    file_requirements:
+      body_html: cy.question/file.file_requirements.body_html
+      summary: cy.question/file.file_requirements.summary
+  question/name:
+    label:
+      first_name: cy.question/name.label.first_name
+      full_name: cy.question/name.label.full_name
+      last_name: cy.question/name.label.last_name
+      middle_names: cy.question/name.label.middle_names
+      title: cy.question/name.label.title
+  submission_csv:
+    reference: cy.submission_csv.reference
+    submitted_at: cy.submission_csv.submitted_at
+  support_details:
+    call_charges: cy.support_details.call_charges
+    email: cy.support_details.email
+    get_help_with_this_form: cy.support_details.get_help_with_this_form
+    link_text: cy.support_details.link_text
+    online: cy.support_details.online
+    phone: cy.support_details.phone
