@@ -1,11 +1,11 @@
-<% set_page_title(form_title(form_name: @current_context.form.name, page_name: t('repeat_submission.title'), mode: @mode)) %>
+<% set_page_title(form_title(form_name: @current_context.form.name, page_name: t('errors.repeat_submission.title'), mode: @mode)) %>
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-l"><%= t('repeat_submission.title') %></h1>
-    <%= simple_format(t('repeat_submission.body'), class: 'govuk-body') %>
+    <h1 class="govuk-heading-l"><%= t('errors.repeat_submission.title') %></h1>
+    <%= simple_format(t('errors.repeat_submission.body'), class: 'govuk-body') %>
     <p class="govuk-body">
-      <%= t("repeat_submission.body_2") %> <%= govuk_link_to t("repeat_submission.link_text"), form_page_path(current_form.id, current_form.form_slug, current_form.start_page) %>.
+      <%= t("errors.repeat_submission.body_2") %> <%= govuk_link_to t("errors.repeat_submission.link_text"), form_page_path(current_form.id, current_form.form_slug, current_form.start_page) %>.
     </p>
   </div>
 </div>
