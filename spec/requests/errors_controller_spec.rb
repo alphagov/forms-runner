@@ -23,7 +23,7 @@ RSpec.describe ErrorsController, type: :request do
 
     it "renders the not found template" do
       get "/random/string/"
-      expect(response.body).to include(I18n.t("not_found.title"))
+      expect(response.body).to include(I18n.t("errors.not_found.title"))
     end
   end
 

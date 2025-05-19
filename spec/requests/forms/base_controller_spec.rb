@@ -194,7 +194,7 @@ RSpec.describe Forms::BaseController, type: :request do
           end
 
           it "Render the not found page" do
-            expect(response.body).to include(I18n.t("not_found.title"))
+            expect(response.body).to include(I18n.t("errors.not_found.title"))
           end
 
           it "returns 404" do
@@ -210,7 +210,7 @@ RSpec.describe Forms::BaseController, type: :request do
           end
 
           it "Render the not found page" do
-            expect(response.body).to include(I18n.t("not_found.title"))
+            expect(response.body).to include(I18n.t("errors.not_found.title"))
           end
 
           it "returns 404" do
@@ -271,7 +271,7 @@ RSpec.describe Forms::BaseController, type: :request do
           end
 
           it "Render the not found page" do
-            expect(response.body).to include(I18n.t("not_found.title"))
+            expect(response.body).to include(I18n.t("errors.not_found.title"))
           end
 
           it "returns 404" do
@@ -287,7 +287,7 @@ RSpec.describe Forms::BaseController, type: :request do
           end
 
           it "Render the not found page" do
-            expect(response.body).to include(I18n.t("not_found.title"))
+            expect(response.body).to include(I18n.t("errors.not_found.title"))
           end
 
           it "returns 404" do
@@ -340,7 +340,7 @@ RSpec.describe Forms::BaseController, type: :request do
           end
 
           it "Render the not found page" do
-            expect(response.body).to include(I18n.t("not_found.title"))
+            expect(response.body).to include(I18n.t("errors.not_found.title"))
           end
         end
       end
