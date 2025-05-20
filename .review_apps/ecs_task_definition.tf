@@ -25,6 +25,7 @@ locals {
     { name = "SETTINGS__FORMS_API__AUTH_KEY", value = "unsecured_api_key_for_review_apps_only" },
     { name = "SETTINGS__FORMS_API__BASE_URL", value = "http://localhost:9292" },
     { name = "SETTINGS__FORMS_ENV", value = "review" },
+    { name = "SETTINGS__FEATURES__REBRAND", value = "true" },
 
     ##
     # Settings for AWS SES email sending, and S3 CSV submission and file upload
