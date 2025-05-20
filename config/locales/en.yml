@@ -315,6 +315,7 @@ en:
   form:
     check_your_answers:
       agree_and_submit: Agree and submit
+      declaration: Declaration
       not_completed: Not completed
       submit: Submit
       title: Check your answers before submitting your form
