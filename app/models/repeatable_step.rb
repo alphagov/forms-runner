@@ -90,7 +90,7 @@ class RepeatableStep < Step
       header_values_hash = {}
       questions.each.with_index(1) do |question, index|
         question.show_answer_in_csv(is_s3_submission:).each do |header, value|
-          header_values_hash["#{header} - Answer #{index}"] = value
+          header_values_hash[I18n.t("submission_csv.repeatable_answer_header", header:, index:)] = value
         end
       end
       header_values_hash
