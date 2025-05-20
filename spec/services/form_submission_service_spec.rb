@@ -169,21 +169,45 @@ RSpec.describe FormSubmissionService do
                                                      sent_at: nil)
         end
 
-        context "when the submission type is email" do
-          let(:submission_type) { "email" }
+        context "when the job fails to enqueue" do
+          let(:enqueue_error) { nil }
 
-          include_examples "submits via AWS SES"
+          define_negated_matcher :not_change, :change
 
-          include_examples "logging"
+          before do
+            allow(SendSubmissionJob).to receive(:perform_later).and_yield(instance_double(SendSubmissionJob, successfully_enqueued?: false, enqueue_error:))
+          end
+
+          context "and there is no enqueue error" do
+            it "raises an error" do
+              expect { service.submit }.to not_change(Submission, :count).and raise_error(StandardError, "Failed to enqueue submission for reference #{reference}")
+            end
+          end
+
+          context "and there is an enqueue error" do
+            let(:enqueue_error) { ActiveJob::EnqueueError.new("An error occurred enqueueing job") }
+
+            it "raises an error" do
+              expect { service.submit }.to not_change(Submission, :count).and raise_error(StandardError, "Failed to enqueue submission for reference #{reference}: An error occurred enqueueing job")
+            end
+          end
         end
+      end
 
-        context "when the submission type is email_with_csv" do
-          let(:submission_type) { "email_with_csv" }
+      context "when the submission type is email" do
+        let(:submission_type) { "email" }
 
-          include_examples "submits via AWS SES"
+        include_examples "submits via AWS SES"
 
-          include_examples "logging"
-        end
+        include_examples "logging"
+      end
+
+      context "when the submission type is email_with_csv" do
+        let(:submission_type) { "email_with_csv" }
+
+        include_examples "submits via AWS SES"
+
+        include_examples "logging"
       end
 
       context "when form being submitted is from previewed form" do

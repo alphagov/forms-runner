@@ -80,7 +80,13 @@ private
       form_document: @form.document_json,
     )
 
-    SendSubmissionJob.perform_later(submission)
+    SendSubmissionJob.perform_later(submission) do |job|
+      unless job.successfully_enqueued?
+        submission.destroy!
+        message_suffix = ": #{job.enqueue_error&.message}" if job.enqueue_error
+        raise StandardError, "Failed to enqueue submission for reference #{@submission_reference}#{message_suffix}"
+      end
+    end
   end
 
   def form_title
