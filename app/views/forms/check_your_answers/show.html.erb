@@ -13,7 +13,7 @@
         <%= form.govuk_error_summary %>
       <% end %>
 
-      <h1 class="govuk-heading-l">Check your answers before submitting your form</h1>
+      <h1 class="govuk-heading-l"><%= t('form.check_your_answers.title') %></h1>
     </div>
   </div>
 
@@ -42,7 +42,7 @@
       <%= form.hidden_field :confirmation_email_reference, id: 'confirmation-email-reference' %>
 
       <%if @current_context.form.declaration_text.present? %>
-        <h2 class="govuk-heading-m govuk-!-margin-top-7">Declaration</h2>
+        <h2 class="govuk-heading-m govuk-!-margin-top-7"><%= t('form.check_your_answers.declaration') %></h2>
         <%= HtmlMarkdownSanitizer.new.render_scrubbed_html(@current_context.form.declaration_text) %>
       <% end %>
 
