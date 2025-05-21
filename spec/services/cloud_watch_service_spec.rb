@@ -156,10 +156,6 @@ RSpec.describe CloudWatchService do
                 value: forms_env,
               },
               {
-                name: "ServiceName",
-                value: "forms-runner",
-              },
-              {
                 name: "SubmissionDeliveryMethod",
                 value: delivery_method,
               },
@@ -186,10 +182,6 @@ RSpec.describe CloudWatchService do
                 {
                   name: "Environment",
                   value: forms_env,
-                },
-                {
-                  name: "ServiceName",
-                  value: "forms-runner",
                 },
                 {
                   name: "SubmissionDeliveryMethod",
