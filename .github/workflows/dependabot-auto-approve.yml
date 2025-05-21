@@ -85,11 +85,11 @@ jobs:
       - name: Approve a PR if not already approved
         run: |
           # Sets the upstream metadata for `gh pr status`
-          gh pr checkout {"$PR_URL"}
+          gh pr checkout "${PR_URL}"
 
           if [ "$(gh pr status --json reviewDecision -q .currentBranch.reviewDecision)" != "APPROVED" ];
           then
-            gh pr review --approve "$PR_URL"
+            gh pr review --approve "${PR_URL}"
           else
             echo "PR already approved, skipping additional approvals to minimize emails/notification noise.";
           fi
