@@ -19,6 +19,7 @@ FactoryBot.define do
     support_url_text { nil }
     question_section_completed { false }
     what_happens_next_markdown { nil }
+    language { "en" }
 
     trait :with_steps do
       transient do
