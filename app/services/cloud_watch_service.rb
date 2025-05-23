@@ -72,7 +72,6 @@ class CloudWatchService
           metric_name: "SubmissionDeliveryLatency",
           dimensions: [
             environment_dimension,
-            service_name_dimension,
             {
               name: "SubmissionDeliveryMethod",
               value: delivery_method,
