@@ -18,6 +18,16 @@ GIT
     govuk-forms-markdown (0.5.0)
       redcarpet (~> 3.6)
 
+GIT
+  remote: https://github.com/stephencdaly/govuk-components.git
+  revision: 38b75291abc238b5e89762338cd589d2be368615
+  ref: 38b75291abc238b5e89762338cd589d2be368615
+  specs:
+    govuk-components (5.10.0)
+      html-attributes-utils (~> 1.0.0, >= 1.0.0)
+      pagy (>= 6, < 10)
+      view_component (>= 3.18, < 3.22)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -207,11 +217,7 @@ GEM
       raabro (~> 1.4)
     globalid (1.2.1)
       activesupport (>= 6.1)
-    govuk-components (5.10.0)
-      html-attributes-utils (~> 1.0.0, >= 1.0.0)
-      pagy (>= 6, < 10)
-      view_component (>= 3.18, < 3.22)
-    govuk_design_system_formbuilder (5.10.0)
+    govuk_design_system_formbuilder (5.9.0)
       actionview (>= 6.1)
       activemodel (>= 6.1)
       activesupport (>= 6.1)
@@ -531,7 +537,7 @@ DEPENDENCIES
   dfe-autocomplete!
   factory_bot_rails
   faker
-  govuk-components
+  govuk-components!
   govuk-forms-markdown!
   govuk_design_system_formbuilder
   govuk_notify_rails
