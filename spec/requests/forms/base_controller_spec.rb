@@ -14,10 +14,12 @@ RSpec.describe Forms::BaseController, type: :request do
       what_happens_next_markdown: "Good things come to those that wait",
       declaration_text: "agree to the declaration",
       steps: steps_data,
+      language:,
     )
   end
   let(:start_page) { 1 }
   let(:live_at) { "2022-08-18 09:16:50 +0100" }
+  let(:language) { "en" }
 
   let(:no_data_found_response) do
     {
@@ -343,6 +345,51 @@ RSpec.describe Forms::BaseController, type: :request do
             expect(response.body).to include(I18n.t("errors.not_found.title"))
           end
         end
+      end
+    end
+  end
+
+  describe "locale" do
+    before do
+      allow(LogEventService).to receive(:log_form_start)
+      travel_to timestamp_of_request do
+        get form_page_path(mode: "form", form_id: 2, form_slug: form_response_data.form_slug, page_slug: 1)
+      end
+    end
+
+    context "when the form is English" do
+      it "renders content in English" do
+        expect(response.body).to include('<span class="govuk-details__summary-text">Get help with this form</span>')
+      end
+    end
+
+    context "when the form is Welsh" do
+      let(:language) { "cy" }
+
+      it "renders content in Welsh" do
+        expect(response.body).to include('<span class="govuk-details__summary-text">Get help with this form in Welsh</span>')
+      end
+    end
+
+    context "when the language attribute is not set for the form" do
+      let(:form_response_data) do
+        form_document = build(
+          :v2_form_document,
+          :with_support,
+          id: 2,
+          live_at:,
+          start_page:,
+          privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
+          what_happens_next_markdown: "Good things come to those that wait",
+          declaration_text: "agree to the declaration",
+          steps: steps_data,
+        )
+        form_document.delete_field(:language)
+        form_document
+      end
+
+      it "renders content in English" do
+        expect(response.body).to include('<span class="govuk-details__summary-text">Get help with this form</span>')
       end
     end
   end

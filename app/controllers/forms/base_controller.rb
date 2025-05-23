@@ -1,6 +1,7 @@
 module Forms
   class BaseController < ApplicationController
     before_action :check_available
+    around_action :set_locale
 
     def redirect_to_friendly_url_start
       redirect_to form_page_path(params.require(:form_id), current_form.form_slug, current_form.start_page)
@@ -44,6 +45,11 @@ module Forms
       return if current_form.start_page && (mode.preview? || current_form.live?)
 
       raise ActiveResource::ResourceNotFound, "Not Found"
+    end
+
+    def set_locale(&action)
+      locale = current_form.respond_to?(:language) ? current_form.language : I18n.default_locale
+      I18n.with_locale(locale, &action)
     end
   end
 end
