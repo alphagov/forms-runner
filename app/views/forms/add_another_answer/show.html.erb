@@ -10,7 +10,7 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
       <% if @add_another_answer_input&.errors.any? %>
-        <%= f.govuk_error_summary %>
+        <%= f.govuk_error_summary(t("error_summary_title")) %>
       <% end %>
 
       <h1 class="govuk-heading-l"><%= t('.heading', count: @rows.count) %></h1>
@@ -23,13 +23,13 @@
           legend: { text: t('.radios_legend'), size: 'm' },
           inline: true %>
 
-        <%= f.govuk_submit %>
+        <%= f.govuk_submit(t("continue")) %>
       <% else %>
         <div class="govuk-inset-text">
           <%= t('.max_answers', max_answers: RepeatableStep::MAX_ANSWERS) %>
         </div>
         <%= f.hidden_field :add_another_answer, value: "no" %>
-        <%= f.govuk_submit %>
+        <%= f.govuk_submit(t("continue")) %>
       <% end %>
     </div>
   </div>

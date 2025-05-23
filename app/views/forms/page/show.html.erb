@@ -10,7 +10,7 @@
   <div class="govuk-grid-column-two-thirds">
     <%= form_with model: @step.question, url: @save_url, scope: :question, method: :post do |form| %>
       <% if @step.question&.errors&.any? %>
-        <%= form.govuk_error_summary %>
+        <%= form.govuk_error_summary(t("error_summary_title")) %>
       <% end %>
 
       <%= render GuidanceComponent::View.new(@step.question) %>
@@ -18,7 +18,7 @@
       <% view_component = Object.const_get("#{@step.question.class.name}Component::View") %>
       <%= render view_component.new(form_builder: form, question: @step.question, extra_question_text_suffix: hidden_text_mode(@mode).html_safe) %>
 
-      <%= form.govuk_submit %>
+      <%= form.govuk_submit(t("continue")) %>
 
     <% end %>
 
