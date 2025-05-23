@@ -30,7 +30,7 @@ module Question
       end
 
       def divider
-        form_builder.govuk_radio_divider
+        form_builder.govuk_radio_divider I18n.t("question/selection.divider")
       end
 
       def none_of_the_above_radio_button
