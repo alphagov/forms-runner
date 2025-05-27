@@ -294,7 +294,7 @@ resource "aws_ecs_task_definition" "task" {
     {
       name                   = "forms-runner-seeding"
       image                  = var.forms_runner_container_image
-      command                = ["rake", "db:setup"]
+      command                = ["rake", "db:create", "db:migrate", "db:seed"]
       essential              = false
       environment            = local.forms_runner_env_vars
       readonlyRootFilesystem = true
