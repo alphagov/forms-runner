@@ -51,11 +51,6 @@ CMD ["bash"]
 
 FROM base AS app
 
-# Each directory that Rails or our application needs to
-# write to under /app/tmp/ must be added individually
-VOLUME "/tmp/"
-VOLUME "/app/tmp/sockets/"
-
 ENV RAILS_ENV="${RAILS_ENV:-production}" \
     PATH="${PATH}:/home/ruby/.local/bin" \
     USER="ruby"
@@ -76,6 +71,10 @@ RUN chmod 0755 bin/*
 
 COPY --chown=ruby:ruby --from=build /usr/local/bundle /usr/local/bundle
 COPY --chown=ruby:ruby --from=build /app /app
+
+RUN mkdir -p "/app/tmp/" && chown ruby:ruby "/app/tmp/"
+VOLUME "/tmp/"
+VOLUME "/app/tmp/"
 
 EXPOSE 3000
 
