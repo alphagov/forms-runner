@@ -83,5 +83,7 @@ module FormsRunner
     # TODO: remove this when all sensitive data is encrypted
     # See https://guides.rubyonrails.org/active_record_encryption.html#support-for-unencrypted-data
     config.active_record.encryption.support_unencrypted_data = true
+
+    I18n.available_locales = %i[en cy]
   end
 end
