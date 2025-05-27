@@ -105,9 +105,12 @@ export function attachDetailsOpenTracker () {
       const summary = detailsElement.querySelector('summary')
       if (detailsElement.open) {
         window.dataLayer.push({
-          event: 'details_opened',
-          url: window.location,
-          text: summary.textContent
+          event: 'event_data',
+          event_data: {
+            event_name: 'details_opened',
+            url: window.location,
+            text: summary.textContent
+          }
         })
       }
     })

@@ -206,9 +206,12 @@ describe('google_tag.mjs', () => {
         document.querySelector('details').querySelector('summary').click()
 
         expect(window.dataLayer).toContainEqual({
-          event: 'details_opened',
-          url: document.location,
-          text: summaryText
+          event: 'event_data',
+          event_data: {
+            event_name: 'details_opened',
+            url: document.location,
+            text: summaryText
+          }
         })
       })
     })
