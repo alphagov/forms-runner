@@ -2,7 +2,6 @@ namespace :submissions do
   desc "Check submission statuses"
   task check_submission_statuses: :environment do
     Rails.logger.info "#{Submission.pending.count} pending submissions"
-    Rails.logger.info "#{Submission.delivered.count} delivered submissions"
     Rails.logger.info "#{Submission.bounced.count} bounced submissions"
   end
 

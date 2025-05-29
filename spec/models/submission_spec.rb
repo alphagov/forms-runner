@@ -34,11 +34,6 @@ RSpec.describe Submission, type: :model do
         expect(submission).to be_valid
       end
 
-      it "is valid for a submission's mail_status to be delivered" do
-        submission.delivered!
-        expect(submission).to be_valid
-      end
-
       it "is valid for a submission's mail_status to be bounced" do
         submission.bounced!
         expect(submission).to be_valid
@@ -51,8 +46,8 @@ RSpec.describe Submission, type: :model do
 
     describe "mail_status enum" do
       it "returns a list of mail statuses" do
-        expect(described_class.mail_statuses.keys).to eq(%w[pending delivered bounced])
-        expect(described_class.mail_statuses.values).to eq(%w[pending delivered bounced])
+        expect(described_class.mail_statuses.keys).to eq(%w[pending bounced])
+        expect(described_class.mail_statuses.values).to eq(%w[pending bounced])
       end
     end
   end

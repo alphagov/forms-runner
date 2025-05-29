@@ -5,7 +5,6 @@ class Submission < ApplicationRecord
 
   enum :mail_status, {
     pending: "pending",
-    delivered: "delivered",
     bounced: "bounced",
   }
 
