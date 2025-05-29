@@ -9,6 +9,36 @@ RSpec.describe "submissions.rake" do
     Rake::Task.define_task(:environment)
   end
 
+  describe "submissions:check_submission_statuses" do
+    subject(:task) do
+      Rake::Task["submissions:check_submission_statuses"]
+        .tap(&:reenable)
+    end
+
+    before do
+      create :submission,
+             :sent,
+             mail_status: :pending
+
+      create_list :submission, 2,
+                  :sent,
+                  mail_status: :delivered
+
+      create_list :submission, 3,
+                  :sent,
+                  mail_status: :bounced
+    end
+
+    it "logs how many submissions there are for each mail status" do
+      allow(Rails.logger).to receive(:info)
+      expect(Rails.logger).to receive(:info).with("1 pending submissions")
+      expect(Rails.logger).to receive(:info).with("2 delivered submissions")
+      expect(Rails.logger).to receive(:info).with("3 bounced submissions")
+
+      task.invoke
+    end
+  end
+
   describe "submissions:retry_bounced_submissions" do
     subject(:task) do
       Rake::Task["submissions:retry_bounced_submissions"]
