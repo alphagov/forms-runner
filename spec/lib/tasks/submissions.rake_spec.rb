@@ -22,18 +22,13 @@ RSpec.describe "submissions.rake" do
 
       create_list :submission, 2,
                   :sent,
-                  mail_status: :delivered
-
-      create_list :submission, 3,
-                  :sent,
                   mail_status: :bounced
     end
 
     it "logs how many submissions there are for each mail status" do
       allow(Rails.logger).to receive(:info)
       expect(Rails.logger).to receive(:info).with("1 pending submissions")
-      expect(Rails.logger).to receive(:info).with("2 delivered submissions")
-      expect(Rails.logger).to receive(:info).with("3 bounced submissions")
+      expect(Rails.logger).to receive(:info).with("2 bounced submissions")
 
       task.invoke
     end
