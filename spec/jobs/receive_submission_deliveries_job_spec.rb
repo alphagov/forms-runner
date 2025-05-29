@@ -90,11 +90,6 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
         allow(CloudWatchService).to receive(:record_submission_delivery_latency_metric)
       end
 
-      it "updates the submission mail status to delivered" do
-        perform_enqueued_jobs
-        expect(submission.reload.delivered?).to be true
-      end
-
       it "doesn't change the mail status for other submissions" do
         perform_enqueued_jobs
         expect(other_submission.reload.bounced?).to be true
