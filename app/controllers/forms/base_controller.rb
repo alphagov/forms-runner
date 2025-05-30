@@ -9,7 +9,9 @@ module Forms
     end
 
     rescue_from ActiveResource::ResourceNotFound, Flow::StepFactory::PageNotFoundError, RepeatableStep::AnswerIndexError do
-      render template: "errors/not_found", status: :not_found
+      I18n.with_locale(locale) do
+        render template: "errors/not_found", status: :not_found
+      end
     end
 
     def error_repeat_submission
@@ -48,8 +50,13 @@ module Forms
     end
 
     def set_locale(&action)
-      locale = current_form.respond_to?(:language) ? current_form.language : I18n.default_locale
       I18n.with_locale(locale, &action)
+    end
+
+    def locale
+      return @current_form.language if @current_form.present? && @current_form.respond_to?(:language)
+
+      I18n.default_locale
     end
   end
 end
