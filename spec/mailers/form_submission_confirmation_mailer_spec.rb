@@ -25,9 +25,39 @@ describe FormSubmissionConfirmationMailer, type: :mailer do
   let(:payment_url) { nil }
 
   context "when form filler wants an form submission confirmation email" do
-    it "sends an email with the correct template" do
+    before do
       Settings.govuk_notify.form_filler_confirmation_email_template_id = "123456"
-      expect(mail.govuk_notify_template).to eq("123456")
+      Settings.govuk_notify.form_filler_confirmation_email_welsh_template_id = "7891011"
+    end
+
+    context "when the request locale is not set" do
+      it "uses the English language template" do
+        expect(mail.govuk_notify_template).to eq("123456")
+      end
+    end
+
+    context "when the request locale is set to :en" do
+      around do |example|
+        I18n.with_locale(:en) do
+          example.run
+        end
+      end
+
+      it "uses the English language template" do
+        expect(mail.govuk_notify_template).to eq("123456")
+      end
+    end
+
+    context "when the request locale is set to :cy" do
+      around do |example|
+        I18n.with_locale(:cy) do
+          example.run
+        end
+      end
+
+      it "uses the Welsh language template" do
+        expect(mail.govuk_notify_template).to eq("7891011")
+      end
     end
 
     it "sends an email to the form filler's email address" do
