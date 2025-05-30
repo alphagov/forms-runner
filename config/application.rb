@@ -84,14 +84,7 @@ module FormsRunner
     # See https://guides.rubyonrails.org/active_record_encryption.html#support-for-unencrypted-data
     config.active_record.encryption.support_unencrypted_data = true
 
-    config.after_initialize do
-      # Localization isn't available if this is called from an initializer
-      GOVUKDesignSystemFormBuilder.configure do |conf|
-        conf.default_submit_button_text = I18n.t("govuk_design_system_formbuilder.default_submit_button_text")
-        conf.default_error_summary_title = I18n.t("govuk_design_system_formbuilder.default_error_summary_title")
-        conf.default_radio_divider_text = I18n.t("govuk_design_system_formbuilder.default_radio_divider_text")
-        conf.default_check_box_divider_text = I18n.t("govuk_design_system_formbuilder.default_check_box_divider_text")
-      end
-    end
+    I18n.available_locales = %i[en cy]
+    I18n.default_locale = :en
   end
 end

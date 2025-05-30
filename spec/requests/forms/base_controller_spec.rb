@@ -14,10 +14,12 @@ RSpec.describe Forms::BaseController, type: :request do
       what_happens_next_markdown: "Good things come to those that wait",
       declaration_text: "agree to the declaration",
       steps: steps_data,
+      language:,
     )
   end
   let(:start_page) { 1 }
   let(:live_at) { "2022-08-18 09:16:50 +0100" }
+  let(:language) { "en" }
 
   let(:no_data_found_response) do
     {
@@ -342,6 +344,78 @@ RSpec.describe Forms::BaseController, type: :request do
           it "Render the not found page" do
             expect(response.body).to include(I18n.t("errors.not_found.title"))
           end
+        end
+      end
+    end
+  end
+
+  describe "locale" do
+    context "when getting a form page that exists" do
+      before do
+        get form_page_path(mode: "form", form_id: 2, form_slug: form_response_data.form_slug, page_slug: 1)
+      end
+
+      context "when the form is English" do
+        it "renders content in English" do
+          expect(response.body).to include('<span class="govuk-details__summary-text">Get help with this form</span>')
+        end
+      end
+
+      context "when the form is Welsh" do
+        let(:language) { "cy" }
+
+        it "renders content in Welsh" do
+          expect(response.body).to include('<span class="govuk-details__summary-text">Get help with this form in Welsh</span>')
+        end
+      end
+
+      context "when the language attribute is not set for the form" do
+        let(:form_response_data) do
+          form_document = build(
+            :v2_form_document,
+            :with_support,
+            id: 2,
+            live_at:,
+            start_page:,
+            privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
+            what_happens_next_markdown: "Good things come to those that wait",
+            declaration_text: "agree to the declaration",
+            steps: steps_data,
+          )
+          form_document.delete_field(:language)
+          form_document
+        end
+
+        it "renders content in English" do
+          expect(response.body).to include('<span class="govuk-details__summary-text">Get help with this form</span>')
+        end
+      end
+    end
+
+    context "when getting a form page that doesn't exist" do
+      before do
+        get form_page_path(mode: "form", form_id: 2, form_slug: form_response_data.form_slug, page_slug: 42)
+      end
+
+      context "when the form is English" do
+        it "returns 404" do
+          expect(response).to have_http_status(:not_found)
+        end
+
+        it "renders the error page in English" do
+          expect(response.body).to include('<h1 class="govuk-heading-l">Page not found</h1>')
+        end
+      end
+
+      context "when the form is Welsh" do
+        let(:language) { "cy" }
+
+        it "returns 404" do
+          expect(response).to have_http_status(:not_found)
+        end
+
+        it "renders the error page in Welsh" do
+          expect(response.body).to include('<h1 class="govuk-heading-l">Page not found in Welsh</h1>')
         end
       end
     end

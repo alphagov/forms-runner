@@ -190,6 +190,7 @@ en:
       file_removed: Your file has been removed
       file_uploaded: Your file has been uploaded
       title: Success
+  continue: Continue
   cookie_banner:
     accept: Accept analytics cookies
     aria_label: Cookie banner
@@ -267,6 +268,7 @@ en:
     production: Production
     staging: Staging
     user-research: User research
+  error_summary_title: There is a problem
   errors:
     goto_page_routing_error:
       cannot_have_goto_page_before_routing_page:
@@ -366,11 +368,6 @@ en:
   govuk_components:
     govuk_summary_list:
       change: Change
-  govuk_design_system_formbuilder:
-    default_check_box_divider_text: or
-    default_error_summary_title: There is a problem
-    default_radio_divider_text: or
-    default_submit_button_text: Continue
   helpers:
     hint:
       email_confirmation_input:
@@ -562,6 +559,8 @@ en:
       last_name: Last name
       middle_names: Middle names
       title: Title
+  question/selection:
+    divider: or
   submission_csv:
     reference: Reference
     repeatable_answer_header: "%{header} - Answer %{index}"
