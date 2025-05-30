@@ -7,7 +7,7 @@ class EmailConfirmationInput
   validates :send_confirmation, presence: true
   validates :send_confirmation, inclusion: { in: %w[send_email skip_confirmation] }
   validates :confirmation_email_address, presence: true, if: :validate_email?
-  validates :confirmation_email_address, format: { with: URI::MailTo::EMAIL_REGEXP, message: :invalid_email }, allow_blank: true, if: :validate_email?
+  validates :confirmation_email_address, email_address: { message: :invalid_email }, allow_blank: true, if: :validate_email?
 
   def initialize(...)
     super(...)
