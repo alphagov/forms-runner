@@ -85,5 +85,6 @@ module FormsRunner
     config.active_record.encryption.support_unencrypted_data = true
 
     I18n.available_locales = %i[en cy]
+    I18n.default_locale = :en
   end
 end
