@@ -37,11 +37,7 @@ describe FormSubmissionConfirmationMailer, type: :mailer do
     end
 
     context "when the request locale is set to :en" do
-      around do |example|
-        I18n.with_locale(:en) do
-          example.run
-        end
-      end
+      include_context "with locale set to :en"
 
       it "uses the English language template" do
         expect(mail.govuk_notify_template).to eq("123456")
@@ -49,11 +45,7 @@ describe FormSubmissionConfirmationMailer, type: :mailer do
     end
 
     context "when the request locale is set to :cy" do
-      around do |example|
-        I18n.with_locale(:cy) do
-          example.run
-        end
-      end
+      include_context "with locale set to :cy"
 
       it "uses the Welsh language template" do
         expect(mail.govuk_notify_template).to eq("7891011")
@@ -128,12 +120,7 @@ describe FormSubmissionConfirmationMailer, type: :mailer do
         end
 
         context "when the request locale is set to :en" do
-          around do |example|
-            I18n.with_locale(:en) do
-              example.run
-            end
-          end
-
+          include_context "with locale set to :en"
           it "includes the date user submitted the form in English" do
             travel_to timestamp do
               expect(mail.govuk_notify_personalisation[:submission_date]).to eq("14 September 2022")
@@ -142,11 +129,7 @@ describe FormSubmissionConfirmationMailer, type: :mailer do
         end
 
         context "when the request locale is set to :cy" do
-          around do |example|
-            I18n.with_locale(:cy) do
-              example.run
-            end
-          end
+          include_context "with locale set to :cy"
 
           it "includes the date user submitted the form in Welsh" do
             travel_to timestamp do
