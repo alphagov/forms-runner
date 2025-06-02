@@ -10,7 +10,7 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds-from-desktop">
       <% if email_confirmation_input&.errors&.any? %>
-        <%= form.govuk_error_summary %>
+        <%= form.govuk_error_summary(t("error_summary_title")) %>
       <% end %>
 
       <h1 class="govuk-heading-l"><%= t('form.check_your_answers.title') %></h1>

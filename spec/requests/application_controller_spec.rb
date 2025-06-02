@@ -11,12 +11,47 @@ RSpec.describe ApplicationController, type: :request do
       get accessibility_statement_path
       expect(response).to have_http_status(:ok)
     end
+
+    context "when no language query parameter is provided" do
+      it "renders the page in English" do
+        get accessibility_statement_path
+        expect(response.body).to include('<h1 class="govuk-heading-l">Accessibility statement for this form</h1>')
+      end
+    end
+
+    context "when language query parameter is set to English" do
+      it "renders the page in English" do
+        get accessibility_statement_path, params: { locale: "en" }
+        expect(response.body).to include('<h1 class="govuk-heading-l">Accessibility statement for this form</h1>')
+      end
+    end
+
+    context "when language query parameter is set to Welsh" do
+      it "renders the page in Welsh" do
+        get accessibility_statement_path, params: { locale: "cy" }
+        expect(response.body).to include('<h1 class="govuk-heading-l">Accessibility statement for this form in Welsh</h1>')
+      end
+    end
+
+    context "when language query parameter is set to an unsupported locale" do
+      it "renders the page in English" do
+        get accessibility_statement_path, params: { locale: "fr" }
+        expect(response.body).to include('<h1 class="govuk-heading-l">Accessibility statement for this form</h1>')
+      end
+    end
   end
 
   describe "Cookies page" do
     it "returns http code 200" do
       get cookies_path
       expect(response).to have_http_status(:ok)
+    end
+
+    context "when language query parameter is set to Welsh" do
+      it "renders the page in Welsh" do
+        get cookies_path, params: { locale: "cy" }
+        expect(response.body).to include('<h1 class="govuk-heading-xl">Cookies in Welsh</h1>')
+      end
     end
   end
 

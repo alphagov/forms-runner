@@ -14,6 +14,7 @@ FactoryBot.define do
     support_url { nil }
     support_url_text { nil }
     payment_url { nil }
+    language { "en" }
     document_json { build(:v2_form_document).to_h.with_indifferent_access }
 
     declaration_text { nil }

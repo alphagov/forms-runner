@@ -1,7 +1,7 @@
 
 <%= form_with model: @remove_input, url: @remove_file_url, method: :delete do |form| %>
   <% if @remove_input&.errors.any? %>
-    <%= form.govuk_error_summary %>
+    <%= form.govuk_error_summary(t("error_summary_title")) %>
   <% end %>
 
   <h1 class="govuk-heading-l"><%= t('forms.remove_file.show.title') %></h1>

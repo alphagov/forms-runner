@@ -5,6 +5,7 @@ class ApplicationController < ActionController::Base
   before_action :set_request_logging_attributes
   before_action :check_maintenance_mode_is_enabled
   after_action :add_robots_header
+  around_action :set_locale, only: %i[accessibility_statement cookies]
 
   add_flash_types :success
 
@@ -89,5 +90,19 @@ private
 
   def session_id_hash
     SessionHasher.new(request).request_to_session_hash
+  end
+
+  def set_locale(&action)
+    I18n.with_locale(locale, &action)
+  end
+
+  def locale
+    return locale_param if I18n.locale_available?(locale_param)
+
+    I18n.default_locale
+  end
+
+  def locale_param
+    params[:locale]
   end
 end
