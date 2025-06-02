@@ -542,6 +542,7 @@ DEPENDENCIES
   puma (~> 6.6.0)
   rails (= 8.0.2)
   rails-controller-testing
+  rails-i18n (~> 8.0)
   redis
   redis-session-store
   rspec-rails
