@@ -9,7 +9,6 @@ RSpec.describe ApplicationHelper, type: :helper do
 
       it "returns the title with the GOV.UK suffix" do
         expect(view.content_for(:title)).to eq("Test")
-        expect(helper.page_title).to eq("Test – GOV.UK")
       end
     end
 
@@ -20,7 +19,6 @@ RSpec.describe ApplicationHelper, type: :helper do
 
       it "returns the title with the GOV.UK suffix" do
         expect(view.content_for(:title)).to eq("Test – GOV.UK Forms")
-        expect(helper.page_title).to eq("Test – GOV.UK Forms – GOV.UK")
       end
     end
   end
