@@ -94,24 +94,24 @@ cy:
         question/address:
           attributes:
             address1:
-              blank: Enter the first line of the address
+              blank: Rhowch linell gyntaf y cyfeiriad
             country:
-              blank: Enter the country
+              blank: Rhowch y wlad
             postcode:
-              blank: Enter the postcode
-              invalid_postcode: Enter a real postcode
+              blank: Rhowch y cod post
+              invalid_postcode: Rhowch god post gwirioneddol
             street_address:
-              blank: Enter the address
+              blank: Rhowch y cyfeiriad
             town_or_city:
-              blank: Enter the town or city
+              blank: Rhowch y dref neu'r ddinas
         question/date:
           attributes:
             date:
-              blank: Enter a date
-              blank_date_fields: Enter a day, month and year
-              future_date: Enter a date that’s in the past
-              invalid_date: Enter a real date
-              invalid_number_of_digits_for_year: Year must include 4 numbers
+              blank: Rhowch ddyddiad
+              blank_date_fields: Rhowch ddiwrnod, mis a blwyddyn
+              future_date: Rhowch ddyddiad sydd yn y gorffennol
+              invalid_date: Rhowch ddyddiad gwirioneddol
+              invalid_number_of_digits_for_year: Rhaid i'r flwyddyn gynnwys 4 rhif
         question/email:
           attributes:
             email:
@@ -129,16 +129,16 @@ cy:
         question/name:
           attributes:
             first_name:
-              blank: Enter a first name
+              blank: Rhowch enw cyntaf
             full_name:
-              blank: Enter a name
+              blank: Rhowch enw
             last_name:
-              blank: Enter a last name
+              blank: Rhowch enw olaf
         question/national_insurance_number:
           attributes:
             national_insurance_number:
-              blank: Enter a National Insurance number
-              invalid_national_insurance_number: Enter a National Insurance number that is 2 letters, 6 numbers, then A, B, C or D, like QQ 12 34 56 C
+              blank: Rhowch rif Yswiriant Gwladol
+              invalid_national_insurance_number: Rhowch rif Yswiriant Gwladol sy'n 2 lythyren, 6 rhif, yna A, B, C neu D, fel QQ 12 34 56 C
         question/number:
           attributes:
             number:
@@ -427,7 +427,7 @@ cy:
     draft_preview: draft preview
     live_preview: live preview
     none_of_the_above: None of the above
-    optional: "(optional)"
+    optional: "(dewisol)"
   page_titles:
     error_prefix: 'Gwall: '
   preview_banner:
@@ -530,14 +530,14 @@ cy:
   question/address:
     label:
       international_address:
-        country: Country
-        street_address: Street address
+        country: Gwlad
+        street_address: Cyfeiriad stryd
       uk_address:
-        county: County (optional)
-        line_1: Address line 1
-        line_2: Address line 2 (optional)
-        postcode: Postcode
-        town_or_city: Town or City
+        county: Sir (dewisol)
+        line_1: Llinell cyfeiriad 1
+        line_2: Llinell cyfeiriad 2 (dewisol)
+        postcode: Cod post
+        town_or_city: Tref neu Ddinas
   question/file:
     file_requirements:
       body_html: |
@@ -554,11 +554,11 @@ cy:
       summary: What files can I upload?
   question/name:
     label:
-      first_name: First name
-      full_name: Full name
-      last_name: Last name
-      middle_names: Middle names
-      title: Title
+      first_name: Enw cyntaf
+      full_name: Enw llawn
+      last_name: Enw olaf
+      middle_names: Enwau canol
+      title: Teitl
   question/selection:
     divider: or
   submission_csv:
