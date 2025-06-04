@@ -2,10 +2,6 @@
 
 # ApplicationHelper
 module ApplicationHelper
-  def page_title
-    join_title_elements([content_for(:title), "GOV.UK"])
-  end
-
   def set_page_title(*args)
     content_for(:title) { join_title_elements(args) }
   end

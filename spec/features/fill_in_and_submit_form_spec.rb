@@ -49,6 +49,7 @@ feature "Fill in and submit a form", type: :feature do
   end
 
   def then_i_should_see_the_first_question
+    expect(page).to have_title("#{question_text} - #{form.name} – GOV.UK")
     expect(page.find("h1")).to have_text question_text
   end
 
