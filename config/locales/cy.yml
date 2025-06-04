@@ -566,9 +566,9 @@ cy:
     repeatable_answer_header: "%{header} - Answer %{index}"
     submitted_at: Submitted at
   support_details:
-    call_charges: Find out about call charges
-    email: Email
-    get_help_with_this_form: Get help with this form
-    link_text: "%{link} (opens in new tab)"
-    online: Online
-    phone: Phone
+    call_charges: Darganfyddwch am gostau galwadau
+    email: E-bost
+    get_help_with_this_form: Cael help gyda'r ffurflen hon
+    link_text: "%{link} (agor mewn tab newydd)"
+    online: Ar-lein
+    phone: Ffôn
