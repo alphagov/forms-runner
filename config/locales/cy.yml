@@ -322,12 +322,12 @@ cy:
       submit: Cyflwyno
       title: Edrychwch dros eich atebion cyn cyflwyno'ch ffurflen
     submitted:
-      continue_to_pay: Continue to pay
-      email_sent: We’ve sent you a confirmation email.
-      need_to_pay: You still need to pay
-      title: Your form has been submitted
-      what_happens_next: What happens next
-      your_reference: 'Your form reference number is:'
+      continue_to_pay:  Parhau i dalu
+      email_sent: Rydym wedi anfon e-bost cadarnhau atoch.
+      need_to_pay: Mae angen i chi dalu o hyd
+      title: Mae eich ffurflen wedi'i chyflwyno
+      what_happens_next: Beth sy'n digwydd nesaf
+      your_reference: "Rhif cyfeirnod eich ffurflen yw:"
   forms:
     add_another_answer:
       rows:
