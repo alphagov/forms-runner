@@ -357,7 +357,7 @@ RSpec.describe Forms::BaseController, type: :request do
 
       context "when the form is English" do
         it "renders content in English" do
-          expect(response.body).to include('<span class="govuk-details__summary-text">Get help with this form</span>')
+          expect(response.body).to include(I18n.t("support_details.get_help_with_this_form"))
         end
       end
 
@@ -365,7 +365,7 @@ RSpec.describe Forms::BaseController, type: :request do
         let(:language) { "cy" }
 
         it "renders content in Welsh" do
-          expect(response.body).to include('<span class="govuk-details__summary-text">Get help with this form in Welsh</span>')
+          expect(response.body).to include(I18n.t("support_details.get_help_with_this_form", locale: :cy))
         end
       end
 
@@ -387,7 +387,7 @@ RSpec.describe Forms::BaseController, type: :request do
         end
 
         it "renders content in English" do
-          expect(response.body).to include('<span class="govuk-details__summary-text">Get help with this form</span>')
+          expect(response.body).to include(I18n.t("support_details.get_help_with_this_form"))
         end
       end
     end
@@ -403,7 +403,7 @@ RSpec.describe Forms::BaseController, type: :request do
         end
 
         it "renders the error page in English" do
-          expect(response.body).to include('<h1 class="govuk-heading-l">Page not found</h1>')
+          expect(response.body).to include(I18n.t("errors.not_found.title"))
         end
       end
 
@@ -415,7 +415,7 @@ RSpec.describe Forms::BaseController, type: :request do
         end
 
         it "renders the error page in Welsh" do
-          expect(response.body).to include('<h1 class="govuk-heading-l">Page not found in Welsh</h1>')
+          expect(response.body).to include(I18n.t("errors.not_found.title", locale: :cy))
         end
       end
     end
