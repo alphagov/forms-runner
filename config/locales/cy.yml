@@ -186,10 +186,10 @@ cy:
       selected_option: "${selectedOption} ${index + 1} of ${length} is highlighted"
   banner:
     success:
-      cookie_preferences_updated: You’ve set your cookie preferences.
+      cookie_preferences_updated: Rydych wedi gosod eich dewisiadau cwcis.
       file_removed: Your file has been removed
       file_uploaded: Your file has been uploaded
-      title: Success
+      title: Llwyddiant
   continue: Continue
   cookie_banner:
     accept: Accept analytics cookies
@@ -199,69 +199,69 @@ cy:
     policy_link: How we use cookies
     reject: Reject analytics cookies
   cookie_consent:
-    heading: Change your cookie settings
+    heading: Newid eich gosodiadau cwci
     no_javascript_html: |
-      <p>We cannot change your cookie settings at the moment because JavaScript is not running in your browser. To fix this, try:</p>
+      <p>Ni allwn newid eich gosodiadau cwcis ar hyn o bryd oherwydd nad yw JavaScript yn rhedeg yn eich porwr. I ddatrys hyn, ceisiwch:</p>
       <ul class="govuk-list govuk-list--bullet">
-        <li>turning on JavaScript in your browser settings</li>
-        <li>reloading this page</li>
+        <li>droi JavaScript ymlaen yng ngosodiadau eich porwr</li>
+        <li>ail-lwytho'r dudalen hon</li>
       </ul>
     options:
-      'no': 'No'
-      'yes': 'Yes'
-    radios_legend: Do you want to accept analytics cookies?
-    save: Save cookie settings
+      'no': 'Na'
+      'yes': 'Ydw'
+    radios_legend: Ydych chi eisiau derbyn cwcis dadansoddeg?
+    save: Arbed gosodiadau cwcis
   cookies:
     analytics_cookies:
-      heading: Analytics cookies (optional)
-      section_0: We use Google Analytics software to understand how people use GOV.UK Forms. This information helps us to improve our service.
-      section_1: Google is not allowed to use or share our analytics data with anyone.
+      heading: Cwcis dadansoddeg (dewisol)
+      section_0: Rydym yn defnyddio meddalwedd Google Analytics i ddeall sut mae pobl yn defnyddio GOV.UK Forms. Mae'r wybodaeth hon yn ein helpu i wella ein gwasanaeth.
+      section_1: Ni chaniateir i Google ddefnyddio neu rannu ein data dadansoddeg gydag unrhyw un.
       section_2:
-        caption: 'Google Analytics stores anonymised information about:'
-        list_item_0: the pages you visit
-        list_item_1: how long you spend on each page
-        list_item_2: how you arrived at the site
-        list_item_3: what you click on while you visit the site
-        list_item_4: the device and browser you use
+        caption: "Mae Google Analytics yn cadw gwybodaeth ddienw am:"
+        list_item_0: y tudalennau rydych yn ymweld â hwy
+        list_item_1: pa mor hir rydych yn ei dreulio ar bob tudalen
+        list_item_2: sut y cyrhaeddoch chi y safle
+        list_item_3: beth rydych yn clicio arno wrth ymweld â'r wefan
+        list_item_4: y ddyfais a'r porwr rydych yn ei ddefnyddio
       table:
-        caption: Analytics cookies (optional)
+        caption: Cwcis dadansoddeg (dewisol)
         row_0:
-          column_0: Name
-          column_1: Purpose
-          column_2: Expires
+          column_0: Enw
+          column_1: Pwrpas
+          column_2: Yn dod i ben
         row_1:
           column_0: _ga
-          column_1: Helps us count how many people visit GOV.UK Forms by telling us if you’ve visited before.
-          column_2: 2 years
+          column_1: Yn ein helpu i gyfrif faint o bobl sy'n ymweld â GOV.UK Forms trwy ddweud wrthym a ydych wedi ymweld o'r blaen.
+          column_2: 2 flynedd
         row_2:
           column_0: _gid
-          column_1: Helps us count how many people visit GOV.UK Forms by telling us if you’ve visited before.
-          column_2: 24 hours
+          column_1: Yn ein helpu i gyfrif faint o bobl sy'n ymweld â GOV.UK Forms trwy ddweud wrthym a ydych wedi ymweld o'r blaen.
+          column_2: 24 awr
         row_3:
           column_0: _gat_UA-[random number]
-          column_1: Helps us reduce the number of unnecessary tracking requests we send to Google Analytics.
-          column_2: 1 minute
+          column_1: Yn ein helpu i leihau nifer y ceisiadau olrhain diangen rydyn ni'n eu hanfon at Google Analytics.
+          column_2: 1 munud
     essential_cookies:
-      heading: Essential cookies
-      section_0: We use essential cookies to make forms work.
+      heading: Cwcis hanfodol
+      section_0: Rydym yn defnyddio cwcis hanfodol i wneud i ffurflenni weithio.
       table:
-        caption: Essential cookies
+        caption: Cwcis hanfodol
         row_0:
-          column_0: Name
-          column_1: Purpose
-          column_2: Expires
+          column_0: Enw
+          column_1: Pwrpas
+          column_2: Yn dod i ben
         row_1:
           column_0: _forms
-          column_1: Used to remember your progress through the form
-          column_2: When the browser is closed or after 20 hours
+          column_1: Defnyddir i gofio eich cynnydd drwy'r ffurflen
+          column_2: Pan fydd y porwr yn cael ei gau neu ar ôl 20 awr
         row_2:
           column_0: analytics_consent
-          column_1: Saves your cookie consent settings
-          column_2: 1 year
-    section_0: Cookies are small files saved on your phone, tablet or computer when you visit a website.
-    section_1: We use cookies to make this form work.
-    section_2_html: Find out <a rel="external" href="https://cy.ico.org.uk/for-the-public/online/cookies">how to manage cookies</a>.
-    title: Cookies
+          column_1: Yn cadw eich gosodiadau caniatâd cwci
+          column_2: 1 flwyddyn
+    section_0: Mae cwcis yn ffeiliau bach sy'n cael eu cadw ar eich ffôn, tabled neu gyfrifiadur pan fyddwch yn ymweld â gwefan.
+    section_1: Rydym yn defnyddio cwcis i wneud i'r ffurflen hon weithio.
+    section_2_html: Darganfyddwch <a rel="external" href="https://cy.ico.org.uk/for-the-public/online/cookies">sut i reoli cwcis</a>.
+    title: Cwcis
   environment_names:
     dev: Development
     local: Local
@@ -311,7 +311,7 @@ cy:
       title: Sorry, we could not submit your answers
   footer:
     accessibility_statement: Datganiad hygyrchedd
-    cookies: Cookies
+    cookies: Cwcis
     helpful_links: Helpful links
     privacy_policy: Preifatrwydd
   form:
