@@ -28,11 +28,11 @@ RSpec.describe FooterComponent::View, type: :component do
     end
 
     it "includes the accessibility statement link with a language query parameter" do
-      expect(page).to have_link("Accessibility statement", href: accessibility_statement_path(locale: "cy"))
+      expect(page).to have_link(I18n.t("footer.accessibility_statement", locale: :cy), href: accessibility_statement_path(locale: "cy"))
     end
 
     it "includes the cookies link with a language query parameter" do
-      expect(page).to have_link("Cookies", href: cookies_path(locale: "cy"))
+      expect(page).to have_link(I18n.t("footer.cookies", locale: :cy), href: cookies_path(locale: "cy"))
     end
   end
 

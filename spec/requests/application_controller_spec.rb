@@ -15,28 +15,28 @@ RSpec.describe ApplicationController, type: :request do
     context "when no language query parameter is provided" do
       it "renders the page in English" do
         get accessibility_statement_path
-        expect(response.body).to include('<h1 class="govuk-heading-l">Accessibility statement for this form</h1>')
+        expect(response.body).to include(I18n.t("accessibility_statement.heading"))
       end
     end
 
     context "when language query parameter is set to English" do
       it "renders the page in English" do
         get accessibility_statement_path, params: { locale: "en" }
-        expect(response.body).to include('<h1 class="govuk-heading-l">Accessibility statement for this form</h1>')
+        expect(response.body).to include(I18n.t("accessibility_statement.heading"))
       end
     end
 
     context "when language query parameter is set to Welsh" do
       it "renders the page in Welsh" do
         get accessibility_statement_path, params: { locale: "cy" }
-        expect(response.body).to include('<h1 class="govuk-heading-l">Accessibility statement for this form in Welsh</h1>')
+        expect(response.body).to include(I18n.t("accessibility_statement.heading", locale: :cy))
       end
     end
 
     context "when language query parameter is set to an unsupported locale" do
       it "renders the page in English" do
         get accessibility_statement_path, params: { locale: "fr" }
-        expect(response.body).to include('<h1 class="govuk-heading-l">Accessibility statement for this form</h1>')
+        expect(response.body).to include(I18n.t("accessibility_statement.heading"))
       end
     end
   end
@@ -50,7 +50,7 @@ RSpec.describe ApplicationController, type: :request do
     context "when language query parameter is set to Welsh" do
       it "renders the page in Welsh" do
         get cookies_path, params: { locale: "cy" }
-        expect(response.body).to include('<h1 class="govuk-heading-xl">Cookies in Welsh</h1>')
+        expect(response.body).to include(I18n.t("cookies.title", locale: :cy))
       end
     end
   end
