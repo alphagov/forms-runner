@@ -2,52 +2,52 @@
 cy:
   accessibility_statement:
     complaints:
-      accessibility_regulations: Mae'r Comisiwn Cydraddoldeb a Hawliau Dynol (EHRC) yn gyfrifol am orfodi Rheoliadau Hygyrchedd Cyrff y Sector Cyhoeddus (Gwefannau a Chymwysiadau Symudol) (Rhif 2) 2018 (y 'rheoliadau hygyrchedd').
-      complaints_html: Os nad ydych yn hapus â sut rydym yn ymateb i'ch cwyn, cysylltwch â'r <a href="https://www.equalityadvisoryservice.com/">Gwasanaeth Cynghori a Chymorth Cydraddoldeb</a>, sy'n cael ei redeg ar ran EHRC.
-      heading: Os nad ydych yn hapus â'n hymateb
+      accessibility_regulations: Mae’r Comisiwn Cydraddoldeb a Hawliau Dynol (EHRC) yn gyfrifol am orfodi Rheoliadau Hygyrchedd Cyrff y Sector Cyhoeddus (Gwefannau a Chymwysiadau Symudol) (Rhif 2) 2018 (y ‘rheoliadau hygyrchedd’).
+      complaints_html: Os nad ydych yn hapus â sut rydym yn ymateb i’ch cwyn, cysylltwch â’r <a href="https://www.equalityadvisoryservice.com/">Gwasanaeth Cynghori a Chymorth Cydraddoldeb</a>, sy’n cael ei redeg ar ran EHRC.
+      heading: Os nad ydych yn hapus â’n hymateb
     explains_list:
-      list_item_0: pa mor hygyrch yw'r ffurflen
-      list_item_1: beth i'w wneud os ydych yn cael trafferth ei ddefnyddio
+      list_item_0: pa mor hygyrch yw’r ffurflen
+      list_item_1: beth i’w wneud os ydych yn cael trafferth ei ddefnyddio
       list_item_2: sut i roi gwybod am unrhyw broblemau hygyrchedd
-      list_item_3: gwybodaeth dechnegol am broblemau hysbys - a'r gwaith rydym yn bwriadu ei wneud i ddatrys y rhain
-    explains_text: Mae'r datganiad hygyrchedd hwn yn esbonio
+      list_item_3: gwybodaeth dechnegol am broblemau hysbys - a’r gwaith rydym yn bwriadu ei wneud i ddatrys y rhain
+    explains_text: Mae’r datganiad hygyrchedd hwn yn esbonio
     heading: Datganiad hygyrchedd ar gyfer y ffurflen hon
     help:
-      email_html: Os ydych yn cael trafferth defnyddio'r ffurflen hon neu os ydych angen y ffurflen mewn ffurf gwahanol, anfonwch e-bost at <a href="mailto:govuk-forms@digital.cabinet-office.gov.uk">govuk-forms@digital.cabinet-office.gov.uk</a> – dylech gynnwys enw'r ffurflen yn eich e-bost.
-      heading: Beth i'w wneud os ydych yn cael trafferth defnyddio'r ffurflen hon
-    inset_text_html: Mae'r ffurflen hon yn rhan o'r wefan ehangach GOV.UK. Mae <a href="https://www.gov.uk/help/accessibility-statement">datganiad hygyrchedd ar wahân ar gyfer y brif wefan GOV.UK</a>.
+      email_html: Os ydych yn cael trafferth defnyddio’r ffurflen hon neu os ydych angen y ffurflen mewn ffurf gwahanol, anfonwch e-bost at <a href="mailto:govuk-forms@digital.cabinet-office.gov.uk">govuk-forms@digital.cabinet-office.gov.uk</a> – dylech gynnwys enw’r ffurflen yn eich e-bost.
+      heading: Beth i’w wneud os ydych yn cael trafferth defnyddio’r ffurflen hon
+    inset_text_html: Mae’r ffurflen hon yn rhan o’r wefan ehangach GOV.UK. Mae <a href="https://www.gov.uk/help/accessibility-statement">datganiad hygyrchedd ar wahân ar gyfer y brif wefan GOV.UK</a>.
     limitations:
-      departmental_responsibility: Mae'r cwestiynau yn y ffurflen yn cael eu hysgrifennu gan bobl yn adrannau ac asiantaethau'r llywodraeth. Mae pob adran ac asiantaeth sy'n cyhoeddi cynnwys ar GOV.UK yn gyfrifol am sicrhau eu bod yn bodloni'r rheoliadau hygyrchedd. Fodd bynnag, efallai na fydd y testun a ddefnyddir yn y ffurflen yn iaith plaen ac efallai na fydd y strwythur yn gwbl hygyrch.
-      forms_issues: Mae materion sy'n ymwneud â rhyngwyneb GOV.UK Forms wedi'u rhestru yn 'Gwybodaeth dechnegol am hygyrchedd y ffurflen hon' isod.
+      departmental_responsibility: Mae’r cwestiynau yn y ffurflen yn cael eu hysgrifennu gan bobl yn adrannau ac asiantaethau’r llywodraeth. Mae pob adran ac asiantaeth sy’n cyhoeddi cynnwys ar GOV.UK yn gyfrifol am sicrhau eu bod yn bodloni’r rheoliadau hygyrchedd. Fodd bynnag, efallai na fydd y testun a ddefnyddir yn y ffurflen yn iaith plaen ac efallai na fydd y strwythur yn gwbl hygyrch.
+      forms_issues: Mae materion sy’n ymwneud â rhyngwyneb GOV.UK Forms wedi’u rhestru yn ‘Gwybodaeth dechnegol am hygyrchedd y ffurflen hon’ isod.
       guidance: Er mwyn annog cynnwys hygyrch, rydym yn darparu canllawiau o fewn platfform GOV.UK Forms. Rydym hefyd yn defnyddio adborth a dadansoddeg i nodi problemau hygyrchedd.
-      heading: Pa mor hygyrch yw'r ffurflen hon
-      some_inaccessible_text: Efallai na fydd rhai rhannau o'r ffurflen hon yn gwbl hygyrch.
+      heading: Pa mor hygyrch yw’r ffurflen hon
+      some_inaccessible_text: Efallai na fydd rhai rhannau o’r ffurflen hon yn gwbl hygyrch.
     non_accessible_content:
-      heading: Cynnwys nad yw'n hygyrch
+      heading: Cynnwys nad yw’n hygyrch
       non_compliance:
-        heading: Diffyg cydymffurfio â'r rheoliadau hygyrchedd
+        heading: Diffyg cydymffurfio â’r rheoliadau hygyrchedd
         repeated_questions: Efallai y gofynnir i chi am yr un wybodaeth bersonol fwy nag unwaith. Nid yw hyn yn bodloni maen prawf WCAG 2.2 3.3.7 (cofnod diangen).
         resolution_timeline: Rydym yn bwriadu datrys hyn erbyn diwedd 2024.
       other_problems:
-        heading: Problemau eraill wrth ddefnyddio'r rhyngwyneb
+        heading: Problemau eraill wrth ddefnyddio’r rhyngwyneb
         other_problems_list:
-          list_item_0: Nid yw'r crynodeb gwall e-bost cadarnhau ar y dudalen 'Gwirio eich atebion' yn cysylltu â'r maes penodol sydd gyda’r gwall. Mae hyn yn ei gwneud hi'n anoddach llywio o fewn y dudalen ac i ddeall sut i ddatrys y broblem.
-          list_item_1: Pan fydd gwall dilysu ar y dudalen 'Gwirio eich atebion', nid yw teitl y dudalen yn newid i gynnwys y gair 'Gwall' ar y dechrau. Os ydych yn defnyddio darllenydd sgrin mae hyn yn ei gwneud hi'n anoddach deall eich bod ar dudalen gwall pan fydd y dudalen yn adnewyddu.
-          list_item_2: Pan fyddwch yn clicio ar 'Cael help gyda'r ffurflen hon', mae’r penawdau dull cyswllt yn H3s, ond nid oes H2. Gall hepgor lefelau pennawd fod yn ddryslyd os ydych yn defnyddio darllenydd sgrin ac nid yw'n arfer gorau.
-          list_item_3: Ar dudalennau cwestiynau, mae'r ddolen yn ôl yn diflannu pan fydd gwall yn bresennol. Gallai hyn ei gwneud hi'n anoddach llywio allan o dudalennau pan fyddwch wedi gwneud camgymeriad.
-          list_item_4: Lle mae opsiwn i ychwanegu teitl rhywun ar gwestiynau enw, nid yw'r mewnbwn teitl wedi'i farcio fel dewisol. Gallai hyn achosi i chi lenwi'r maes yma pan nad ydych eisiau neu nad oes angen.
+          list_item_0: Nid yw’r crynodeb gwall e-bost cadarnhau ar y dudalen ‘Gwirio eich atebion’ yn cysylltu â’r maes penodol sydd gyda’r gwall. Mae hyn yn ei gwneud hi’n anoddach llywio o fewn y dudalen ac i ddeall sut i ddatrys y broblem.
+          list_item_1: Pan fydd gwall dilysu ar y dudalen ‘Gwirio eich atebion’, nid yw teitl y dudalen yn newid i gynnwys y gair ‘Gwall’ ar y dechrau. Os ydych yn defnyddio darllenydd sgrin mae hyn yn ei gwneud hi’n anoddach deall eich bod ar dudalen gwall pan fydd y dudalen yn adnewyddu.
+          list_item_2: Pan fyddwch yn clicio ar ‘Cael help gyda’r ffurflen hon’, mae’r penawdau dull cyswllt yn H3s, ond nid oes H2. Gall hepgor lefelau pennawd fod yn ddryslyd os ydych yn defnyddio darllenydd sgrin ac nid yw’n arfer gorau.
+          list_item_3: Ar dudalennau cwestiynau, mae’r ddolen yn ôl yn diflannu pan fydd gwall yn bresennol. Gallai hyn ei gwneud hi’n anoddach llywio allan o dudalennau pan fyddwch wedi gwneud camgymeriad.
+          list_item_4: Lle mae opsiwn i ychwanegu teitl rhywun ar gwestiynau enw, nid yw’r mewnbwn teitl wedi’i farcio fel dewisol. Gallai hyn achosi i chi lenwi’r maes yma pan nad ydych eisiau neu nad oes angen.
           list_item_5:
             list_item_0: chanllawiau a ddarperir cyn cwestiwn
-            list_item_1: cynnwys rhestr crynodeb ar y dudalen 'Gwirio eich atebion'
-            list_item_2: peth o'r cynnwys ar y dudalen sy'n cadarnhau bod eich ffurflen wedi'i chyflwyno
+            list_item_1: cynnwys rhestr crynodeb ar y dudalen ‘Gwirio eich atebion’
+            list_item_2: peth o’r cynnwys ar y dudalen sy’n cadarnhau bod eich ffurflen wedi’i chyflwyno
             list_item_3: rhai penawdau ar dudalennau cwestiynau sydd â sawl maes
             preamble: 'Mae VoiceOver ar iOS (System Weithredu iPhone) 17 yn darllen rhai llinellau o gynnwys ddwywaith. Mae hyn yn digwydd gyda:'
-          list_item_6: Pan fyddwch yn clicio ar 'Cael help gyda’r ffurflen hon', nid yw VoiceOver ar iOS 17 yn cyhoeddi bod mwy o gynnwys i'w ddangos. Gallai hyn ei gwneud hi'n anoddach cael help gyda'r ffurflen.
-          list_item_7: Ar y dudalen 'Gwirio eich atebion', nid yw VoiceOver ar iOS 17 bob amser yn darllen y ddolen 'Newid'. Gallai hyn ei gwneud hi'n anoddach i chi newid eich ateb.
-          list_item_8: Gall fod yn anodd agor y ddolen 'Cael help gyda'r ffurflen hon' wrth ddefnyddio estyniad gwe Dragon ar Chrome. Gallai hyn ei gwneud hi'n anoddach cael help gyda'r ffurflen.
-        preamble: Er nad yw'r materion canlynol yn methu WCAG 2.2 AA, rydym yn bwriadu ymchwilio iddynt a'u cywiro cyn gynted â phosibl.
-      preamble: Nid yw'r cynnwys a restrir isod yn hygyrch am y rhesymau canlynol.
-    preamble: Mae'r datganiad hygyrchedd hwn yn berthnasol i ffurflenni ar-lein gydag URL sy'n dechrau gyda https://submit.forms.service.gov.uk.
+          list_item_6: Pan fyddwch yn clicio ar ‘Cael help gyda’r ffurflen hon’, nid yw VoiceOver ar iOS 17 yn cyhoeddi bod mwy o gynnwys i’w ddangos. Gallai hyn ei gwneud hi’n anoddach cael help gyda’r ffurflen.
+          list_item_7: Ar y dudalen ‘Gwirio eich atebion’, nid yw VoiceOver ar iOS 17 bob amser yn darllen y ddolen ‘Newid’. Gallai hyn ei gwneud hi’n anoddach i chi newid eich ateb.
+          list_item_8: Gall fod yn anodd agor y ddolen ‘Cael help gyda’r ffurflen hon’ wrth ddefnyddio estyniad gwe Dragon ar Chrome. Gallai hyn ei gwneud hi’n anoddach cael help gyda’r ffurflen.
+        preamble: Er nad yw’r materion canlynol yn methu WCAG 2.2 AA, rydym yn bwriadu ymchwilio iddynt a’u cywiro cyn gynted â phosibl.
+      preamble: Nid yw’r cynnwys a restrir isod yn hygyrch am y rhesymau canlynol.
+    preamble: Mae’r datganiad hygyrchedd hwn yn berthnasol i ffurflenni ar-lein gydag URL sy’n dechrau gyda https://submit.forms.service.gov.uk.
     reporting:
       email_html: Os ydych yn dod o hyd i unrhyw broblemau, neu os ydych yn meddwl nad ydym yn bodloni gofynion hygyrchedd, anfonwch e-bost atom yn <a href="mailto:govuk-forms@digital.cabinet-office.gov.uk">govuk-forms@digital.cabinet-office.gov.uk</a>.
       heading: Rhoi gwybod am broblemau hygyrchedds
@@ -55,27 +55,27 @@ cy:
     statement_preparation:
       WCAG_version: Asesodd GDS y ffurflenni yn erbyn Canllawiau Hygyrchedd Cynnwys y We WCAG 2.2.
       date: Paratowyd y datganiad hwn ar 20 Chwefror 2024.
-      heading: Paratoi'r datganiad hygyrchedd hwn
+      heading: Paratoi’r datganiad hygyrchedd hwn
       last_tested: Profwyd ffurflenni a grëwyd gan ddefnyddio platfform GOV.UK Forms ddiwethaf ar 9 Ionawr 2024. Cynhaliwyd y prawf gan GDS.
     technical_information:
       commitment: Mae GDS wedi ymrwymo i wneud y ffurflen hon yn hygyrch, yn unol â Rheoliadau Hygyrchedd Cyrff y Sector Cyhoeddus (Gwefannau a Chymwysiadau Symudol) (Rhif 2) 2018.
       compliance_status:
         heading: Statws cydymffurfio
-        partial_compliance_html: Mae'r ffurflen hon yn cydymffurfio'n rhannol â safon <a href="https://www.w3.org/TR/WCAG22/">AA fersiwn 2.2 y Canllawiau Hygyrchedd Cynnwys Gwe</a> oherwydd y diffyg cydymffurfiaeth a restrir isod.
+        partial_compliance_html: Mae’r ffurflen hon yn cydymffurfio’n rhannol â safon <a href="https://www.w3.org/TR/WCAG22/">AA fersiwn 2.2 y Canllawiau Hygyrchedd Cynnwys Gwe</a> oherwydd y diffyg cydymffurfiaeth a restrir isod.
       heading: Gwybodaeth dechnegol am hygyrchedd y ffurflen hon
     title: Datganiad hygyrchedd
     usage:
       accessibility_recommendations_list:
         list_item_0: newid lliwiau, lefelau cyferbyniad a ffontiau
-        list_item_1: chwyddo hyd at 300% heb i'r testun fynd oddi ar y sgrin
-        list_item_2: mynd o ddechrau'r ffurflen i'r diwedd gan ddefnyddio bysellfwrdd yn unig
-        list_item_3: mynd o ddechrau'r ffurflen i'r diwedd gan ddefnyddio meddalwedd adnabod lleferydd
+        list_item_1: chwyddo hyd at 300% heb i’r testun fynd oddi ar y sgrin
+        list_item_2: mynd o ddechrau’r ffurflen i’r diwedd gan ddefnyddio bysellfwrdd yn unig
+        list_item_3: mynd o ddechrau’r ffurflen i’r diwedd gan ddefnyddio meddalwedd adnabod lleferydd
         list_item_4: gwrando ar y ffurflen gan ddefnyddio darllenydd sgrin (gan gynnwys y fersiynau diweddaraf o JAWS, NVDA a VoiceOver)
       accessibility_recommendations_text: 'Dylech allu:'
-      content_guidance: Dylai'r testun yn y ffurflen fod yn glir ac yn syml i'w ddeall.
-      disability_advice_html: <a href="https://mcmw.abilitynet.org.uk/">Mae gan AbilityNet</a> gyngor ar wneud eich dyfais yn haws i'w defnyddio os oes gennych anabledd.
-      forms_description_html: Crëwyd y ffurflen hon gan ddefnyddio platfform o'r enw <a href="http://www.gov.uk/forms">GOV.UK Forms</a>. Mae GOV.UK Forms yn cael ei adeiladu gan Wasanaeth Digidol y Llywodraeth (GDS). Mae wedi'i gynllunio i greu ffurflenni y gellir eu defnyddio gan cyn gymaint o bobl â phosibl.
-      heading: Defnyddio'r ffurflen hon
+      content_guidance: Dylai’r testun yn y ffurflen fod yn glir ac yn syml i’w ddeall.
+      disability_advice_html: <a href="https://mcmw.abilitynet.org.uk/">Mae gan AbilityNet</a> gyngor ar wneud eich dyfais yn haws i’w defnyddio os oes gennych anabledd.
+      forms_description_html: Crëwyd y ffurflen hon gan ddefnyddio platfform o’r enw <a href="http://www.gov.uk/forms">GOV.UK Forms</a>. Mae GOV.UK Forms yn cael ei adeiladu gan Wasanaeth Digidol y Llywodraeth (GDS). Mae wedi’i gynllunio i greu ffurflenni y gellir eu defnyddio gan cyn gymaint o bobl â phosibl.
+      heading: Defnyddio’r ffurflen hon
   activemodel:
     errors:
       models:
@@ -90,7 +90,7 @@ cy:
               blank: Rhowch gyfeiriad e-bost
               invalid_email: Rhowch gyfeiriad e-bost yn y ffurf gywir, fel name@example.com
             send_confirmation:
-              blank: Dewiswch ydw os hoffech dderbyn e-bost yn cadarnhau bod eich ffurflen wedi'i chyflwyno
+              blank: Dewiswch ydw os hoffech dderbyn e-bost yn cadarnhau bod eich ffurflen wedi’i chyflwyno
         question/address:
           attributes:
             address1:
@@ -103,7 +103,7 @@ cy:
             street_address:
               blank: Rhowch y cyfeiriad
             town_or_city:
-              blank: Rhowch y dref neu'r ddinas
+              blank: Rhowch y dref neu’r ddinas
         question/date:
           attributes:
             date:
@@ -111,7 +111,7 @@ cy:
               blank_date_fields: Rhowch ddiwrnod, mis a blwyddyn
               future_date: Rhowch ddyddiad sydd yn y gorffennol
               invalid_date: Rhowch ddyddiad gwirioneddol
-              invalid_number_of_digits_for_year: Rhaid i'r flwyddyn gynnwys 4 rhif
+              invalid_number_of_digits_for_year: Rhaid i’r flwyddyn gynnwys 4 rhif
         question/email:
           attributes:
             email:
@@ -138,7 +138,7 @@ cy:
           attributes:
             national_insurance_number:
               blank: Rhowch rif Yswiriant Gwladol
-              invalid_national_insurance_number: Rhowch rif Yswiriant Gwladol sy'n 2 lythyren, 6 rhif, yna A, B, C neu D, fel QQ 12 34 56 C
+              invalid_national_insurance_number: Rhowch rif Yswiriant Gwladol sy’n 2 lythyren, 6 rhif, yna A, B, C neu D, fel QQ 12 34 56 C
         question/number:
           attributes:
             number:
@@ -194,7 +194,7 @@ cy:
   cookie_banner:
     accept: Derbyn cwcis dadansoddeg
     aria_label: Baner cwci
-    content: Hoffem ddefnyddio cwcis dadansoddeg fel y gallwn ddeall sut rydych yn defnyddio'r wefan hon a gwneud gwelliannau.
+    content: Hoffem ddefnyddio cwcis dadansoddeg fel y gallwn ddeall sut rydych yn defnyddio’r wefan hon a gwneud gwelliannau.
     heading: Cwcis ar GOV.UK Forms
     policy_link: Sut rydym yn defnyddio cwcis
     reject: Gwrthod cwcis dadansoddeg
@@ -204,7 +204,7 @@ cy:
       <p>Ni allwn newid eich gosodiadau cwcis ar hyn o bryd oherwydd nad yw JavaScript yn rhedeg yn eich porwr. I ddatrys hyn, ceisiwch:</p>
       <ul class="govuk-list govuk-list--bullet">
         <li>droi JavaScript ymlaen yng ngosodiadau eich porwr</li>
-        <li>ail-lwytho'r dudalen hon</li>
+        <li>ail-lwytho’r dudalen hon</li>
       </ul>
     options:
       'no': Na
@@ -214,15 +214,15 @@ cy:
   cookies:
     analytics_cookies:
       heading: Cwcis dadansoddeg (dewisol)
-      section_0: Rydym yn defnyddio meddalwedd Google Analytics i ddeall sut mae pobl yn defnyddio GOV.UK Forms. Mae'r wybodaeth hon yn ein helpu i wella ein gwasanaeth.
+      section_0: Rydym yn defnyddio meddalwedd Google Analytics i ddeall sut mae pobl yn defnyddio GOV.UK Forms. Mae’r wybodaeth hon yn ein helpu i wella ein gwasanaeth.
       section_1: Ni chaniateir i Google ddefnyddio neu rannu ein data dadansoddeg gydag unrhyw un.
       section_2:
         caption: 'Mae Google Analytics yn cadw gwybodaeth ddienw am:'
         list_item_0: y tudalennau rydych yn ymweld â hwy
         list_item_1: pa mor hir rydych yn ei dreulio ar bob tudalen
         list_item_2: sut y cyrhaeddoch chi y safle
-        list_item_3: beth rydych yn clicio arno wrth ymweld â'r wefan
-        list_item_4: y ddyfais a'r porwr rydych yn ei ddefnyddio
+        list_item_3: beth rydych yn clicio arno wrth ymweld â’r wefan
+        list_item_4: y ddyfais a’r porwr rydych yn ei ddefnyddio
       table:
         caption: Cwcis dadansoddeg (dewisol)
         row_0:
@@ -231,15 +231,15 @@ cy:
           column_2: Yn dod i ben
         row_1:
           column_0: _ga
-          column_1: Yn ein helpu i gyfrif faint o bobl sy'n ymweld â GOV.UK Forms trwy ddweud wrthym a ydych wedi ymweld o'r blaen.
+          column_1: Yn ein helpu i gyfrif faint o bobl sy’n ymweld â GOV.UK Forms trwy ddweud wrthym a ydych wedi ymweld o’r blaen.
           column_2: 2 flynedd
         row_2:
           column_0: _gid
-          column_1: Yn ein helpu i gyfrif faint o bobl sy'n ymweld â GOV.UK Forms trwy ddweud wrthym a ydych wedi ymweld o'r blaen.
+          column_1: Yn ein helpu i gyfrif faint o bobl sy’n ymweld â GOV.UK Forms trwy ddweud wrthym a ydych wedi ymweld o’r blaen.
           column_2: 24 awr
         row_3:
           column_0: _gat_UA-[random number]
-          column_1: Yn ein helpu i leihau nifer y ceisiadau olrhain diangen rydyn ni'n eu hanfon at Google Analytics.
+          column_1: Yn ein helpu i leihau nifer y ceisiadau olrhain diangen rydyn ni’n eu hanfon at Google Analytics.
           column_2: 1 munud
     essential_cookies:
       heading: Cwcis hanfodol
@@ -252,14 +252,14 @@ cy:
           column_2: Yn dod i ben
         row_1:
           column_0: _forms
-          column_1: Defnyddir i gofio eich cynnydd drwy'r ffurflen
+          column_1: Defnyddir i gofio eich cynnydd drwy’r ffurflen
           column_2: Pan fydd y porwr yn cael ei gau neu ar ôl 20 awr
         row_2:
           column_0: analytics_consent
           column_1: Yn cadw eich gosodiadau caniatâd cwci
           column_2: 1 flwyddyn
-    section_0: Mae cwcis yn ffeiliau bach sy'n cael eu cadw ar eich ffôn, tabled neu gyfrifiadur pan fyddwch yn ymweld â gwefan.
-    section_1: Rydym yn defnyddio cwcis i wneud i'r ffurflen hon weithio.
+    section_0: Mae cwcis yn ffeiliau bach sy’n cael eu cadw ar eich ffôn, tabled neu gyfrifiadur pan fyddwch yn ymweld â gwefan.
+    section_1: Rydym yn defnyddio cwcis i wneud i’r ffurflen hon weithio.
     section_2_html: Darganfyddwch <a rel="external" href="https://cy.ico.org.uk/for-the-public/online/cookies">sut i reoli cwcis</a>.
     title: Cwcis
   environment_names:
@@ -320,13 +320,13 @@ cy:
       declaration: Datganiad
       not_completed: Heb ei gwblhau
       submit: Cyflwyno
-      title: Edrychwch dros eich atebion cyn cyflwyno'ch ffurflen
+      title: Edrychwch dros eich atebion cyn cyflwyno’ch ffurflen
     submitted:
       continue_to_pay: Parhau i dalu
       email_sent: Rydym wedi anfon e-bost cadarnhau atoch.
       need_to_pay: Mae angen i chi dalu o hyd
-      title: Mae eich ffurflen wedi'i chyflwyno
-      what_happens_next: Beth sy'n digwydd nesaf
+      title: Mae eich ffurflen wedi’i chyflwyno
+      what_happens_next: Beth sy’n digwydd nesaf
       your_reference: 'Rhif cyfeirnod eich ffurflen yw:'
   forms:
     add_another_answer:
@@ -339,21 +339,21 @@ cy:
           one: Rydych chi wedi ychwanegu un ateb
           other: Rydych wedi ychwanegu %{count} ateb
           zero: Nid ydych wedi ychwanegu unrhyw atebion
-        max_answers: Ni allwch ychwanegu ateb arall i'r cwestiwn hwn gan eich bod wedi rhoi’r uchafswm o %{max_answers}
+        max_answers: Ni allwch ychwanegu ateb arall i’r cwestiwn hwn gan eich bod wedi rhoi’r uchafswm o %{max_answers}
         radios_legend: Ydych chi angen ychwanegu ateb arall?
         title: Ychwanegu neu ddileu ateb i %{page_title}
     back: Yn ôl
     remove_answer:
       show:
         address_heading: Dileu cyfeiriad
-        address_radios_legend: Ydych chi'n siŵr eich bod chi eisiau dileu'r cyfeiriad hwn?
+        address_radios_legend: Ydych chi’n siŵr eich bod chi eisiau dileu’r cyfeiriad hwn?
         long_answer_heading: Dileu ateb
-        long_radios_legend: Ydych chi'n siŵr eich bod chi eisiau dileu'r ateb hwn?
+        long_radios_legend: Ydych chi’n siŵr eich bod chi eisiau dileu’r ateb hwn?
         national_insurance_number_heading: Dileu rhif Yswiriant Gwladol
-        national_insurance_number_radios_legend: Ydych chi'n siŵr eich bod chi eisiau cael gwared ar y rhif Yswiriant Gwladol hwn?
+        national_insurance_number_radios_legend: Ydych chi’n siŵr eich bod chi eisiau cael gwared ar y rhif Yswiriant Gwladol hwn?
         phone_number_heading: Dileu rhif ffôn
-        phone_number_radios_legend: Ydych chi'n siŵr eich bod chi eisiau dileu'r rhif ffôn hwn?
-        short_answer_legend: Ydych chi'n siŵr eich bod chi eisiau dileu ‘%{answer_text}’?
+        phone_number_radios_legend: Ydych chi’n siŵr eich bod chi eisiau dileu’r rhif ffôn hwn?
+        short_answer_legend: Ydych chi’n siŵr eich bod chi eisiau dileu ‘%{answer_text}’?
     remove_file:
       show:
         radios_legend: Are you sure you want to remove your file?
@@ -371,7 +371,7 @@ cy:
   helpers:
     hint:
       email_confirmation_input:
-        send_confirmation: Byddwn ond yn defnyddio'r cyfeiriad e-bost rydych yn ei ddarparu yma i anfon cadarnhad bod eich ffurflen wedi'i chyflwyno'n llwyddiannus. Ni fydd yn cynnwys copi o'ch atebion.
+        send_confirmation: Byddwn ond yn defnyddio’r cyfeiriad e-bost rydych yn ei ddarparu yma i anfon cadarnhad bod eich ffurflen wedi’i chyflwyno’n llwyddiannus. Ni fydd yn cynnwys copi o’ch atebion.
     label:
       add_another_answer_input:
         options:
@@ -388,9 +388,9 @@ cy:
           'yes': Ydw
     legend:
       email_confirmation_input:
-        send_confirmation: Ydych chi eisiau derbyn e-bost yn cadarnhau bod eich ffurflen wedi'i chyflwyno?
+        send_confirmation: Ydych chi eisiau derbyn e-bost yn cadarnhau bod eich ffurflen wedi’i chyflwyno?
   layout:
-    skip_link: Neidio i'r prif gynnwys
+    skip_link: Neidio i’r prif gynnwys
   mailer:
     submission:
       cannot_reply:
@@ -435,61 +435,61 @@ cy:
     title: Important
   privacy:
     changes:
-      heading: Newidiadau i'r hysbysiad hwn
-      section_0: Gallwn addasu neu ddiwygio'r hysbysiad preifatrwydd hwn yn ôl ein disgresiwn ar unrhyw adeg. Pan fyddwn yn gwneud newidiadau i'r hysbysiad hwn, byddwn yn diwygio'r dyddiad addasu diwethaf ar frig y dudalen hon. Bydd unrhyw addasiad neu ddiwygiad i'r hysbysiad preifatrwydd hwn yn cael ei gymhwyso i chi a'ch data ar y dyddiad adolygu hwnnw. Rydym yn eich annog i adolygu'r hysbysiad preifatrwydd hwn o bryd i'w gilydd i gael gwybod am sut rydym yn diogelu'ch data.
+      heading: Newidiadau i’r hysbysiad hwn
+      section_0: Gallwn addasu neu ddiwygio’r hysbysiad preifatrwydd hwn yn ôl ein disgresiwn ar unrhyw adeg. Pan fyddwn yn gwneud newidiadau i’r hysbysiad hwn, byddwn yn diwygio’r dyddiad addasu diwethaf ar frig y dudalen hon. Bydd unrhyw addasiad neu ddiwygiad i’r hysbysiad preifatrwydd hwn yn cael ei gymhwyso i chi a’ch data ar y dyddiad adolygu hwnnw. Rydym yn eich annog i adolygu’r hysbysiad preifatrwydd hwn o bryd i’w gilydd i gael gwybod am sut rydym yn diogelu’ch data.
     childrens_privacy:
       heading: Diogelu preifatrwydd plant
-      section_0: Rydym yn deall pwysigrwydd diogelu preifatrwydd plant ar-lein. Nid yw ein gwasanaethau wedi'u cynllunio ar gyfer plant 13 oed neu iau, nac wedi'u targedu'n fwriadol atynt. Nid ein polisi ni yw casglu neu gynnal data am unrhyw un o dan 13 oed yn fwriadol.
+      section_0: Rydym yn deall pwysigrwydd diogelu preifatrwydd plant ar-lein. Nid yw ein gwasanaethau wedi’u cynllunio ar gyfer plant 13 oed neu iau, nac wedi’u targedu’n fwriadol atynt. Nid ein polisi ni yw casglu neu gynnal data am unrhyw un o dan 13 oed yn fwriadol.
     cookies:
       heading: Cwcis
-      section_0: Rydym yn defnyddio cwcis i wneud i'r ffurflen hon weithio. %{cookies_link}.
+      section_0: Rydym yn defnyddio cwcis i wneud i’r ffurflen hon weithio. %{cookies_link}.
       section_0_link_text: Darllenwch am y cwcis rydym yn eu defnyddio
     data_we_collect:
-      heading: Data rydyn ni'n ei gasglu gennych a beth rydym yn ei wneud ag ef
+      heading: Data rydyn ni’n ei gasglu gennych a beth rydym yn ei wneud ag ef
       section_0:
-        caption: 'Pan fyddwch yn defnyddio''r ffurflen hon, mae eich dyfais yn anfon gwybodaeth fel:'
+        caption: 'Pan fyddwch yn defnyddio’r ffurflen hon, mae eich dyfais yn anfon gwybodaeth fel:'
         list_item_0: Cyfeiriad IP
         list_item_1: "%{browsers_link} a rhif fersiwn"
         list_item_1_link_text: porwr gwe
         list_item_2: gosodiadau amser ac iaith
       section_1:
-        caption: 'Rydym yn defnyddio''r wybodaeth hon i:'
-        list_item_0: roi'r wybodaeth a'r tudalennau gwe rydych yn gofyn amdanynt
-        list_item_1: monitro'r defnydd o'r wefan ar gyfer bygythiadau diogelwch
+        caption: 'Rydym yn defnyddio’r wybodaeth hon i:'
+        list_item_0: roi’r wybodaeth a’r tudalennau gwe rydych yn gofyn amdanynt
+        list_item_1: monitro’r defnydd o’r wefan ar gyfer bygythiadau diogelwch
         list_item_2: monitro perfformiad y wefan i nodi aneffeithlonrwydd a gwallau JavaScript
-      section_2: Rydym yn casglu'r wybodaeth hon mewn logiau system. Mae'r logiau hyn yn cael eu cadw yn Amazon Web Services yn Iwerddon.
-      section_3: Rydym yn symud rhywfaint o'r wybodaeth hon i'n teclynau monitro diogelwch a rhwydwaith yn Iwerddon ar UDA, sy'n cael eu darparu gan gwmnïau sy'n gweithredu fel ein proseswyr data.
-      section_4: Efallai y byddwn hefyd yn defnyddio'r wybodaeth hon i gynhyrchu adroddiadau dienw am wasanaeth GOV.UK Forms. Mae hyn yn ein helpu i ddeall ble y gallwn wneud gwelliannau. Efallai y byddwn yn rhannu'r wybodaeth hon gyda rheolydd data y ffurflen.
+      section_2: Rydym yn casglu’r wybodaeth hon mewn logiau system. Mae’r logiau hyn yn cael eu cadw yn Amazon Web Services yn Iwerddon.
+      section_3: Rydym yn symud rhywfaint o’r wybodaeth hon i’n teclynau monitro diogelwch a rhwydwaith yn Iwerddon ar UDA, sy’n cael eu darparu gan gwmnïau sy’n gweithredu fel ein proseswyr data.
+      section_4: Efallai y byddwn hefyd yn defnyddio’r wybodaeth hon i gynhyrchu adroddiadau dienw am wasanaeth GOV.UK Forms. Mae hyn yn ein helpu i ddeall ble y gallwn wneud gwelliannau. Efallai y byddwn yn rhannu’r wybodaeth hon gyda rheolydd data y ffurflen.
       section_5: Os byddwch yn anfon adborth atom am y ffurflen hon, byddwn yn casglu eich cyfeiriad e-bost ac unrhyw wybodaeth bersonol arall rydych yn dewis ei chynnwys yn eich e-bost.
-      section_6: Efallai y byddwn yn rhannu eich data gyda rheolwyr data lle mae'n briodol. Er enghraifft, os ydych yn darparu adborth sy'n ymwneud â'u swyddogaeth neu os ydych yn gwneud cais diogelu data.
+      section_6: Efallai y byddwn yn rhannu eich data gyda rheolwyr data lle mae’n briodol. Er enghraifft, os ydych yn darparu adborth sy’n ymwneud â’u swyddogaeth neu os ydych yn gwneud cais diogelu data.
       section_7:
-        caption: 'Y sail gyfreithiol dros brosesu''r data hwn yw ei fod yn angenrheidiol:'
+        caption: 'Y sail gyfreithiol dros brosesu’r data hwn yw ei fod yn angenrheidiol:'
         list_item_0: i gyflawni tasg er budd y cyhoedd
         list_item_1: wrth arfer ein swyddogaethau fel adran y llywodraeth
       section_8:
         caption: 'Ni fyddwn yn:'
         list_item_0: gwerthu neu rentu eich data i drydydd partïon
         list_item_1: rhannu eich data gyda thrydydd partïon at ddibenion marchnata
-      section_9: Byddwn yn rhannu eich data os yw'n ofynnol i ni wneud hynny yn ôl y gyfraith – er enghraifft, trwy orchymyn llys, neu i atal twyll neu droseddau eraill.
-    heading: 'Hysbysiad preifatrwydd: sut rydym yn defnyddio''ch data'
+      section_9: Byddwn yn rhannu eich data os yw’n ofynnol i ni wneud hynny yn ôl y gyfraith – er enghraifft, trwy orchymyn llys, neu i atal twyll neu droseddau eraill.
+    heading: 'Hysbysiad preifatrwydd: sut rydym yn defnyddio’ch data'
     how_long_we_keep_data:
-      heading: Am faint o amser rydym yn cadw'ch data
+      heading: Am faint o amser rydym yn cadw’ch data
       section_0:
         caption: 'Byddwn ond yn cadw eich data personol am gyn hired ag:'
-        list_item_0: mae'r gyfraith yn ei gwneud yn ofynnol i ni
+        list_item_0: mae’r gyfraith yn ei gwneud yn ofynnol i ni
         list_item_1: rydym ei angen at y dibenion a restrir uchod
       section_1: Mae hyn yn golygu mai dim ond am flwyddyn y byddwn yn cadw eich data personol.
     how_we_protect_data:
-      heading: Sut rydym yn diogelu eich data a'i gadw'n ddiogel
-      section_0: Rydym wedi ymrwymo i wneud popeth y gallwn i gadw'ch data yn ddiogel. Er mwyn atal mynediad neu ddatgelu anawdurdodedig, rydym wedi rhoi gweithdrefnau technegol a sefydliadol ar waith i ddiogelu'r data rydym yn ei gasglu amdanoch chi – er enghraifft, rydym yn diogelu'ch data gan ddefnyddio lefelau amrywiol o amgryptio. Rydym hefyd yn sicrhau bod gan unrhyw drydydd partïon rydym yn delio â nhw rwymedigaeth i gadw'r holl ddata personol y maent yn ei brosesu ar ein rhan yn ddiogel.
+      heading: Sut rydym yn diogelu eich data a’i gadw’n ddiogel
+      section_0: Rydym wedi ymrwymo i wneud popeth y gallwn i gadw’ch data yn ddiogel. Er mwyn atal mynediad neu ddatgelu anawdurdodedig, rydym wedi rhoi gweithdrefnau technegol a sefydliadol ar waith i ddiogelu’r data rydym yn ei gasglu amdanoch chi – er enghraifft, rydym yn diogelu’ch data gan ddefnyddio lefelau amrywiol o amgryptio. Rydym hefyd yn sicrhau bod gan unrhyw drydydd partïon rydym yn delio â nhw rwymedigaeth i gadw’r holl ddata personol y maent yn ei brosesu ar ein rhan yn ddiogel.
     preamble:
       section_0: 'Diweddarwyd ddiwethaf: 20 Medi 2022'
-      section_1: Crëwyd y ffurflen hon gan ddefnyddio GOV.UK Forms. Mae GOV.UK Forms yn gynnyrch a ddarperir gan Wasanaeth Digidol y Llywodraeth (GDS) sy'n rhan o Swyddfa'r Cabinet. Mae'n caniatáu i dimau llywodraeth y DU greu ffurflenni ar-lein i gasglu gwybodaeth gan bobl a sefydliadau.
-      section_2: Y sefydliad a greodd y ffurflen ar-lein hon gan ddefnyddio GOV.UK Forms yw rheolydd data y data maent yn ei gasglu gan ddefnyddio'r ffurflen, tra bod Swyddfa'r Cabinet, trwy GDS, yn brosesydd data. Rhaid i'r rheolydd data ddweud wrthych am beth maent yn ei wneud gyda'ch data personol - %{privacy_policy_link}.
+      section_1: Crëwyd y ffurflen hon gan ddefnyddio GOV.UK Forms. Mae GOV.UK Forms yn gynnyrch a ddarperir gan Wasanaeth Digidol y Llywodraeth (GDS) sy’n rhan o Swyddfa’r Cabinet. Mae’n caniatáu i dimau llywodraeth y DU greu ffurflenni ar-lein i gasglu gwybodaeth gan bobl a sefydliadau.
+      section_2: Y sefydliad a greodd y ffurflen ar-lein hon gan ddefnyddio GOV.UK Forms yw rheolydd data y data maent yn ei gasglu gan ddefnyddio’r ffurflen, tra bod Swyddfa’r Cabinet, trwy GDS, yn brosesydd data. Rhaid i’r rheolydd data ddweud wrthych am beth maent yn ei wneud gyda’ch data personol - %{privacy_policy_link}.
       section_2_link_text: darllenwch wybodaeth preifatrwydd y rheolydd data ar gyfer y ffurflen hon
-      section_3: Mae Swyddfa'r Cabinet hefyd yn casglu rhywfaint o ddata fel rheolydd data. Mae'r hysbysiad preifatrwydd hwn yn esbonio pa ddata personol y mae'r Swyddfa'r Cabinet yn ei gasglu a'i brosesu fel rheolydd data trwy ffurflenni a wneir gyda GOV.UK Forms.
+      section_3: Mae Swyddfa’r Cabinet hefyd yn casglu rhywfaint o ddata fel rheolydd data. Mae’r hysbysiad preifatrwydd hwn yn esbonio pa ddata personol y mae’r Swyddfa’r Cabinet yn ei gasglu a’i brosesu fel rheolydd data trwy ffurflenni a wneir gyda GOV.UK Forms.
       section_4: Darllenwch %{dppr_link} i gael rhagor o wybodaeth.
-      section_4_link_text: gofnod Swyddfa'r Cabinet yn y Gofrestr Gyhoeddus Diogelu Data
+      section_4_link_text: gofnod Swyddfa’r Cabinet yn y Gofrestr Gyhoeddus Diogelu Data
     questions_and_complaints:
       heading: Cwestiynau a chwynion
       section_0:
@@ -497,15 +497,15 @@ cy:
         list_item_0: gyda chwestiynau am unrhyw beth yn y ddogfen hon
         list_item_1: yn meddwl bod eich data personol wedi cael ei gamddefnyddio neu ei gam-drin
       section_1:
-        line_0: Gallwch hefyd gysylltu â Swyddog Diogelu Data Swyddfa'r Cabinet.
+        line_0: Gallwch hefyd gysylltu â Swyddog Diogelu Data Swyddfa’r Cabinet.
         line_1: Data Protection Officer
         line_2: Cabinet Office
         line_3: 70 Whitehall
         line_4: London SW1A 2AS
-      section_2: Os oes gennych gŵyn, gallwch hefyd gysylltu â %{ico_link} (ICO). Mae'r ICO yn rheoleiddiwr annibynnol a sefydlwyd i gynnal hawliau gwybodaeth.
-      section_2_link_text: Swyddfa'r Comisiynydd Gwybodaeth
+      section_2: Os oes gennych gŵyn, gallwch hefyd gysylltu â %{ico_link} (ICO). Mae’r ICO yn rheoleiddiwr annibynnol a sefydlwyd i gynnal hawliau gwybodaeth.
+      section_2_link_text: Swyddfa’r Comisiynydd Gwybodaeth
       section_3:
-        line_0: Swyddfa'r Comisiynydd Gwybodaeth
+        line_0: Swyddfa’r Comisiynydd Gwybodaeth
         line_1: Wycliffe House
         line_2: Water Lane
         line_3: Wilmslow
@@ -516,17 +516,17 @@ cy:
       section_0:
         caption: 'Mae gennych yr hawl i ofyn am:'
         list_item_0: wybodaeth am sut mae eich data personol yn cael ei brosesu
-        list_item_1: copi o'r data personol hwnnw - bydd y copi hwn yn cael ei ddarparu mewn ffurf strwythuredig, a ddefnyddir yn gyffredin ac y gellir ei ddarllen gan beiriant
+        list_item_1: copi o’r data personol hwnnw - bydd y copi hwn yn cael ei ddarparu mewn ffurf strwythuredig, a ddefnyddir yn gyffredin ac y gellir ei ddarllen gan beiriant
         list_item_2: bod unrhyw beth anghywir yn eich data personol yn cael ei gywiro ar unwaith
       section_1:
         caption: 'Gallwch hefyd:'
         list_item_0: godi gwrthwynebiad am sut mae eich data personol yn cael ei brosesu
-        list_item_1: gofyn i'ch data personol gael ei ddileu os nad oes cyfiawnhad amdano mwyach
+        list_item_1: gofyn i’ch data personol gael ei ddileu os nad oes cyfiawnhad amdano mwyach
         list_item_2: gofyn i brosesu eich data personol gael ei gyfyngu mewn amgylchiadau penodol
-      section_2: Os oes gennych unrhyw un o'r ceisiadau hyn, cysylltwch â'n Swyddog Diogelu Data - gallwch ddod o hyd i'w manylion cyswllt isod.
+      section_2: Os oes gennych unrhyw un o’r ceisiadau hyn, cysylltwch â’n Swyddog Diogelu Data - gallwch ddod o hyd i’w manylion cyswllt isod.
     where_data_is_stored:
-      heading: Lle mae eich data yn cael ei brosesu a'i gadw
-      section_0: Efallai y bydd eich data personol yn cael ei drosglwyddo y tu allan i'r Deyrnas Unedig wrth gael ei brosesu gan GDS. Os bydd hyn yn digwydd, byddwn yn gwneud yn siŵr eich bod yn cael yr un lefel o amddiffyniad technegol a chyfreithiol ag yr ydych yn y Deyrnas Unedig drwy ddibynnu ar benderfyniadau digonolrwydd data Llywodraeth y DU neu drwy gynnwys cymalau mewn contractau sy'n ei gwneud yn ofynnol i'r derbynnydd ddiogelu'r data yn unol â safonau'r DU.
+      heading: Lle mae eich data yn cael ei brosesu a’i gadw
+      section_0: Efallai y bydd eich data personol yn cael ei drosglwyddo y tu allan i’r Deyrnas Unedig wrth gael ei brosesu gan GDS. Os bydd hyn yn digwydd, byddwn yn gwneud yn siŵr eich bod yn cael yr un lefel o amddiffyniad technegol a chyfreithiol ag yr ydych yn y Deyrnas Unedig drwy ddibynnu ar benderfyniadau digonolrwydd data Llywodraeth y DU neu drwy gynnwys cymalau mewn contractau sy’n ei gwneud yn ofynnol i’r derbynnydd ddiogelu’r data yn unol â safonau’r DU.
   question/address:
     label:
       international_address:
@@ -568,7 +568,7 @@ cy:
   support_details:
     call_charges: Darganfyddwch am gostau galwadau
     email: E-bost
-    get_help_with_this_form: Cael help gyda'r ffurflen hon
+    get_help_with_this_form: Cael help gyda’r ffurflen hon
     link_text: "%{link} (agor mewn tab newydd)"
     online: Ar-lein
     phone: Ffôn
