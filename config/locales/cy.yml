@@ -87,10 +87,10 @@ cy:
         email_confirmation_input:
           attributes:
             confirmation_email_address:
-              blank: Enter an email address
-              invalid_email: Enter an email address in the correct format, like name@example.com
+              blank: Rhowch gyfeiriad e-bost
+              invalid_email: Rhowch gyfeiriad e-bost yn y ffurf gywir, fel name@example.com
             send_confirmation:
-              blank: Select yes if you want to get an email confirming your form has been submitted
+              blank: Dewiswch ydw os hoffech dderbyn e-bost yn cadarnhau bod eich ffurflen wedi'i chyflwyno
         question/address:
           attributes:
             address1:
@@ -316,11 +316,11 @@ cy:
     privacy_policy: Preifatrwydd
   form:
     check_your_answers:
-      agree_and_submit: Agree and submit
-      declaration: Declaration
-      not_completed: Not completed
-      submit: Submit
-      title: Check your answers before submitting your form
+      agree_and_submit: Cytuno a chyflwyno
+      declaration: Datganiad
+      not_completed: Heb ei gwblhau
+      submit: Cyflwyno
+      title: Edrychwch dros eich atebion cyn cyflwyno'ch ffurflen
     submitted:
       continue_to_pay: Continue to pay
       email_sent: We’ve sent you a confirmation email.
@@ -332,7 +332,7 @@ cy:
     add_another_answer:
       rows:
         action_hidden_text: answer %{answer_index}
-        change: Change
+        change: Newid
         remove: Remove
       show:
         heading:
@@ -367,28 +367,28 @@ cy:
   gov_uk_forms: GOV.UK Forms
   govuk_components:
     govuk_summary_list:
-      change: Change
+      change: Newid
   helpers:
     hint:
       email_confirmation_input:
-        send_confirmation: We’ll only use the email address you provide here to send a confirmation that your form’s been successfully submitted. It will not contain a copy of your answers.
+        send_confirmation: Byddwn ond yn defnyddio'r cyfeiriad e-bost rydych yn ei ddarparu yma i anfon cadarnhad bod eich ffurflen wedi'i chyflwyno'n llwyddiannus. Ni fydd yn cynnwys copi o'ch atebion.
     label:
       add_another_answer_input:
         options:
-          'no': 'No'
-          'yes': 'Yes'
+          'no': 'Na'
+          'yes': 'Ydw'
       email_confirmation_input:
-        confirmation_email_address: What email address do you want us to send your confirmation to?
+        confirmation_email_address: Pa gyfeiriad e-bost ydych chi eisiau i ni anfon eich cadarnhad ato?
         send_confirmation_options:
-          send_email: 'Yes'
-          skip_confirmation: 'No'
+          send_email: 'Ydw'
+          skip_confirmation: 'Na'
       remove_input:
         options:
-          'no': 'No'
-          'yes': 'Yes'
+          'no': 'Na'
+          'yes': 'Ydw'
     legend:
       email_confirmation_input:
-        send_confirmation: Do you want to get an email confirming your form has been submitted?
+        send_confirmation: Ydych chi eisiau derbyn e-bost yn cadarnhau bod eich ffurflen wedi'i chyflwyno?
   layout:
     skip_link: Neidio i'r prif gynnwys
   mailer:
