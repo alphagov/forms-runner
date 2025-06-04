@@ -2,552 +2,545 @@
 cy:
   accessibility_statement:
     complaints:
-      accessibility_regulations: The Equality and Human Rights Commission (EHRC) is responsible for enforcing the Public Sector Bodies (Websites and Mobile Applications) (No. 2) Accessibility Regulations 2018 (the ‘accessibility regulations’). in Welsh
-      complaints_html: If you’re not happy with how we respond to your complaint, contact the <a href="https://www.equalityadvisoryservice.com/">Equality Advisory and Support Service</a>, which is run on behalf of EHRC. in Welsh
-      heading: If you’re not happy with our response in Welsh
+      accessibility_regulations: Mae'r Comisiwn Cydraddoldeb a Hawliau Dynol (EHRC) yn gyfrifol am orfodi Rheoliadau Hygyrchedd Cyrff y Sector Cyhoeddus (Gwefannau a Chymwysiadau Symudol) (Rhif 2) 2018 (y 'rheoliadau hygyrchedd').
+      complaints_html: Os nad ydych yn hapus â sut rydym yn ymateb i'ch cwyn, cysylltwch â'r <a href="https://www.equalityadvisoryservice.com/">Gwasanaeth Cynghori a Chymorth Cydraddoldeb</a>, sy'n cael ei redeg ar ran EHRC.
+      heading: Os nad ydych yn hapus â'n hymateb
     explains_list:
-      list_item_0: how accessible the form is in Welsh
-      list_item_1: what to do if you have difficulty using it in Welsh
-      list_item_2: how to report any accessibility problems in Welsh
-      list_item_3: technical information about known problems - and work we’re planning to do to fix these in Welsh
-    explains_text: This accessibility statement explains in Welsh
-    heading: Accessibility statement for this form in Welsh
+      list_item_0: pa mor hygyrch yw'r ffurflen
+      list_item_1: beth i'w wneud os ydych yn cael trafferth ei ddefnyddio
+      list_item_2: sut i roi gwybod am unrhyw broblemau hygyrchedd
+      list_item_3: gwybodaeth dechnegol am broblemau hysbys - a'r gwaith rydym yn bwriadu ei wneud i ddatrys y rhain
+    explains_text: Mae'r datganiad hygyrchedd hwn yn esbonio
+    heading: Datganiad hygyrchedd ar gyfer y ffurflen hon
     help:
-      email_html: If you have difficulty using this form or need the form in a different format, send an email to <a href="mailto:govuk-forms@digital.cabinet-office.gov.uk">govuk-forms@digital.cabinet-office.gov.uk</a> - include the name of the form in your email. in Welsh
-      heading: What to do if you have difficulty using this form in Welsh
-    inset_text_html: This form is part of the wider GOV.UK website. There’s a separate <a href="https://www.gov.uk/help/accessibility-statement">accessibility statement for the main GOV.UK website</a>. in Welsh
+      email_html: Os ydych yn cael trafferth defnyddio'r ffurflen hon neu os ydych angen y ffurflen mewn ffurf gwahanol, anfonwch e-bost at <a href="mailto:govuk-forms@digital.cabinet-office.gov.uk">govuk-forms@digital.cabinet-office.gov.uk</a> – dylech gynnwys enw'r ffurflen yn eich e-bost.
+      heading: Beth i'w wneud os ydych yn cael trafferth defnyddio'r ffurflen hon
+    inset_text_html: Mae'r ffurflen hon yn rhan o'r wefan ehangach GOV.UK. Mae <a href="https://www.gov.uk/help/accessibility-statement">datganiad hygyrchedd ar wahân ar gyfer y brif wefan GOV.UK</a>.
     limitations:
-      departmental_responsibility: The questions in the form are written by people in government departments and agencies. Each department and agency which publishes content on GOV.UK is responsible for making sure it meets the accessibility regulations. However, the text used in the form might not be plain language and the structure may not be fully accessible. in Welsh
-      forms_issues: Issues relating to the GOV.UK Forms interface are listed in ‘Technical information about this form’s accessibility’ below. in Welsh
-      guidance: To encourage accessible content we provide guidance within the GOV.UK Forms platform. We also use feedback and analytics to identify accessibility issues. in Welsh
-      heading: How accessible this form is in Welsh
-      some_inaccessible_text: Some parts of this form may not be fully accessible. in Welsh
+      departmental_responsibility: Mae'r cwestiynau yn y ffurflen yn cael eu hysgrifennu gan bobl yn adrannau ac asiantaethau'r llywodraeth. Mae pob adran ac asiantaeth sy'n cyhoeddi cynnwys ar GOV.UK yn gyfrifol am sicrhau eu bod yn bodloni'r rheoliadau hygyrchedd. Fodd bynnag, efallai na fydd y testun a ddefnyddir yn y ffurflen yn iaith plaen ac efallai na fydd y strwythur yn gwbl hygyrch.
+      forms_issues: Mae materion sy'n ymwneud â rhyngwyneb GOV.UK Forms wedi'u rhestru yn 'Gwybodaeth dechnegol am hygyrchedd y ffurflen hon' isod.
+      guidance: Er mwyn annog cynnwys hygyrch, rydym yn darparu canllawiau o fewn platfform GOV.UK Forms. Rydym hefyd yn defnyddio adborth a dadansoddeg i nodi problemau hygyrchedd.
+      heading: Pa mor hygyrch yw'r ffurflen hon
+      some_inaccessible_text: Efallai na fydd rhai rhannau o'r ffurflen hon yn gwbl hygyrch.
     non_accessible_content:
-      heading: Non accessible content in Welsh
+      heading: Cynnwys nad yw'n hygyrch
       non_compliance:
-        heading: Non compliance with the accessibility regulations in Welsh
-        repeated_questions: You may be asked for the same personal information more than once. This does not meet WCAG 2.2 criterion 3.3.7 (redundant entry). in Welsh
-        resolution_timeline: We plan to resolve this by the end of 2024. in Welsh
+        heading: Diffyg cydymffurfio â'r rheoliadau hygyrchedd
+        repeated_questions: Efallai y gofynnir i chi am yr un wybodaeth bersonol fwy nag unwaith. Nid yw hyn yn bodloni maen prawf WCAG 2.2 3.3.7 (cofnod diangen).
+        resolution_timeline: Rydym yn bwriadu datrys hyn erbyn diwedd 2024.
       other_problems:
-        heading: Other problems using the interface in Welsh
+        heading: Problemau eraill wrth ddefnyddio'r rhyngwyneb
         other_problems_list:
-          list_item_0: The confirmation email error summary on the ‘Check your answers’ page does not link to the specific field that’s in error. This makes it harder to navigate within the page and to understand how to solve the problem. in Welsh
-          list_item_1: When there’s a validation error on the ‘Check your answers’ page, the page title does not change to include the word ‘Error’ at the start. If you’re using a screen reader this makes it harder to understand that you’re on an error page when the page refreshes. in Welsh
-          list_item_2: When you click on ‘Get help with this form’, the contact method headings are H3s, but there are no H2s. Skipping heading levels can be confusing if you’re using a screen reader and is not best practice. in Welsh
-          list_item_3: On question pages, the back link disappears when there’s an error present. This could make it harder to navigate out of pages when you’ve made a mistake. in Welsh
-          list_item_4: Where there’s an option to add someone’s title on name questions, the title input is not marked as optional. This could cause you to fill out this field when you do not want or need to. in Welsh
+          list_item_0: Nid yw'r crynodeb gwall e-bost cadarnhau ar y dudalen 'Gwirio eich atebion' yn cysylltu â'r maes penodol sydd gyda’r gwall. Mae hyn yn ei gwneud hi'n anoddach llywio o fewn y dudalen ac i ddeall sut i ddatrys y broblem.
+          list_item_1: Pan fydd gwall dilysu ar y dudalen 'Gwirio eich atebion', nid yw teitl y dudalen yn newid i gynnwys y gair 'Gwall' ar y dechrau. Os ydych yn defnyddio darllenydd sgrin mae hyn yn ei gwneud hi'n anoddach deall eich bod ar dudalen gwall pan fydd y dudalen yn adnewyddu.
+          list_item_2: Pan fyddwch yn clicio ar 'Cael help gyda'r ffurflen hon', mae’r penawdau dull cyswllt yn H3s, ond nid oes H2. Gall hepgor lefelau pennawd fod yn ddryslyd os ydych yn defnyddio darllenydd sgrin ac nid yw'n arfer gorau.
+          list_item_3: Ar dudalennau cwestiynau, mae'r ddolen yn ôl yn diflannu pan fydd gwall yn bresennol. Gallai hyn ei gwneud hi'n anoddach llywio allan o dudalennau pan fyddwch wedi gwneud camgymeriad.
+          list_item_4: Lle mae opsiwn i ychwanegu teitl rhywun ar gwestiynau enw, nid yw'r mewnbwn teitl wedi'i farcio fel dewisol. Gallai hyn achosi i chi lenwi'r maes yma pan nad ydych eisiau neu nad oes angen.
           list_item_5:
-            list_item_0: guidance that’s provided before a question in Welsh
-            list_item_1: summary list content on the ‘Check your answers’ page in Welsh
-            list_item_2: some of the content on the page confirming that your form’s been submitted in Welsh
-            list_item_3: some headings on question pages that have multiple fields in Welsh
-            preamble: 'VoiceOver on iOS (iPhone Operating System) 17 reads out some lines of content twice. This happens with: in Welsh'
-          list_item_6: When you click on ‘Get help with this form’, VoiceOver on iOS 17 does not announce that there’s more content to be shown. This could make it harder to get help with the form. in Welsh
-          list_item_7: On the ‘Check your answers’ page, VoiceOver on iOS 17 does not doesn't always read out the 'Change' link. This could make it harder for you to change your answer. in Welsh
-          list_item_8: It can be difficult to open the ‘Get help with this form’ link when using the Dragon web extension on Chrome. This could make it harder to get help with the form. in Welsh
-        preamble: Although the following issues do not fail WCAG 2.2 AA, we plan to investigate and fix them as soon as possible. in Welsh
-      preamble: The content listed below is non-accessible for the following reasons. in Welsh
-    preamble: This accessibility statement applies to online forms with a URL that starts with https://submit.forms.service.gov.uk. in Welsh
+            list_item_0: chanllawiau a ddarperir cyn cwestiwn
+            list_item_1: cynnwys rhestr crynodeb ar y dudalen 'Gwirio eich atebion'
+            list_item_2: peth o'r cynnwys ar y dudalen sy'n cadarnhau bod eich ffurflen wedi'i chyflwyno
+            list_item_3: rhai penawdau ar dudalennau cwestiynau sydd â sawl maes
+            preamble: 'Mae VoiceOver ar iOS (System Weithredu iPhone) 17 yn darllen rhai llinellau o gynnwys ddwywaith. Mae hyn yn digwydd gyda:'
+          list_item_6: Pan fyddwch yn clicio ar 'Cael help gyda’r ffurflen hon', nid yw VoiceOver ar iOS 17 yn cyhoeddi bod mwy o gynnwys i'w ddangos. Gallai hyn ei gwneud hi'n anoddach cael help gyda'r ffurflen.
+          list_item_7: Ar y dudalen 'Gwirio eich atebion', nid yw VoiceOver ar iOS 17 bob amser yn darllen y ddolen 'Newid'. Gallai hyn ei gwneud hi'n anoddach i chi newid eich ateb.
+          list_item_8: Gall fod yn anodd agor y ddolen 'Cael help gyda'r ffurflen hon' wrth ddefnyddio estyniad gwe Dragon ar Chrome. Gallai hyn ei gwneud hi'n anoddach cael help gyda'r ffurflen.
+        preamble: Er nad yw'r materion canlynol yn methu WCAG 2.2 AA, rydym yn bwriadu ymchwilio iddynt a'u cywiro cyn gynted â phosibl.
+      preamble: Nid yw'r cynnwys a restrir isod yn hygyrch am y rhesymau canlynol.
+    preamble: Mae'r datganiad hygyrchedd hwn yn berthnasol i ffurflenni ar-lein gydag URL sy'n dechrau gyda https://submit.forms.service.gov.uk.
     reporting:
-      email_html: If you find any problems, or think we’re not meeting accessibility requirements, email us at <a href="mailto:govuk-forms@digital.cabinet-office.gov.uk">govuk-forms@digital.cabinet-office.gov.uk</a>. in Welsh
-      heading: Reporting accessibility problems in Welsh
-      text: We’re always looking to improve the accessibility of forms made with GOV.UK Forms. in Welsh
+      email_html: Os ydych yn dod o hyd i unrhyw broblemau, neu os ydych yn meddwl nad ydym yn bodloni gofynion hygyrchedd, anfonwch e-bost atom yn <a href="mailto:govuk-forms@digital.cabinet-office.gov.uk">govuk-forms@digital.cabinet-office.gov.uk</a>.
+      heading: Rhoi gwybod am broblemau hygyrchedds
+      text: Rydym bob amser yn ceisio gwella hygyrchedd ffurflenni a gynhyrchir gyda GOV.UK Forms.
     statement_preparation:
-      WCAG_version: GDS assessed the forms against the Web Content Accessibility Guidelines WCAG 2.2. in Welsh
-      date: This statement was prepared on 20 February 2024. in Welsh
-      heading: Preparation of this accessibility statement in Welsh
-      last_tested: Forms created using the GOV.UK Forms platform were last tested on 9 January 2024. The test was carried out by GDS. in Welsh
+      WCAG_version: Asesodd GDS y ffurflenni yn erbyn Canllawiau Hygyrchedd Cynnwys y We WCAG 2.2.
+      date: Paratowyd y datganiad hwn ar 20 Chwefror 2024.
+      heading: Paratoi'r datganiad hygyrchedd hwn
+      last_tested: Profwyd ffurflenni a grëwyd gan ddefnyddio platfform GOV.UK Forms ddiwethaf ar 9 Ionawr 2024. Cynhaliwyd y prawf gan GDS.
     technical_information:
-      commitment: GDS is committed to making this form accessible, in accordance with the Public Sector Bodies (Websites and Mobile Applications) (No. 2) Accessibility Regulations 2018. in Welsh
+      commitment: Mae GDS wedi ymrwymo i wneud y ffurflen hon yn hygyrch, yn unol â Rheoliadau Hygyrchedd Cyrff y Sector Cyhoeddus (Gwefannau a Chymwysiadau Symudol) (Rhif 2) 2018.
       compliance_status:
-        heading: Compliance status in Welsh
-        partial_compliance_html: This form is partially compliant with the <a href="https://www.w3.org/TR/WCAG22/">Web Content Accessibility Guidelines version 2.2 AA standard</a>, due to the non-compliances listed below. in Welsh
-      heading: Technical information about this form’s accessibility in Welsh
-    title: Accessibility statement in Welsh
+        heading: Statws cydymffurfio
+        partial_compliance_html: Mae'r ffurflen hon yn cydymffurfio'n rhannol â safon <a href="https://www.w3.org/TR/WCAG22/">AA fersiwn 2.2 y Canllawiau Hygyrchedd Cynnwys Gwe</a> oherwydd y diffyg cydymffurfiaeth a restrir isod.
+      heading: Gwybodaeth dechnegol am hygyrchedd y ffurflen hon
+    title: Datganiad hygyrchedd
     usage:
       accessibility_recommendations_list:
-        list_item_0: change colours, contrast levels and fonts in Welsh
-        list_item_1: zoom in up to 300% without the text spilling off the screen in Welsh
-        list_item_2: get from the start of the form to the end using just a keyboard in Welsh
-        list_item_3: get from the start of the form to the end using speech recognition software in Welsh
-        list_item_4: listen to the form using a screen reader (including the most recent versions of JAWS, NVDA and VoiceOver) in Welsh
-      accessibility_recommendations_text: 'You should be able to: in Welsh'
-      content_guidance: The text in the form should be clear and simple to understand. in Welsh
-      disability_advice_html: <a href="https://mcmw.abilitynet.org.uk/">AbilityNet</a> has advice on making your device easier to use if you have a disability. in Welsh
-      forms_description_html: This form was created using a platform called <a href="http://www.gov.uk/forms">GOV.UK Forms</a>. GOV.UK Forms is built by the Government Digital Service (GDS). It is designed to create forms that can be used by as many people as possible. in Welsh
-      heading: Using this form in Welsh
+        list_item_0: newid lliwiau, lefelau cyferbyniad a ffontiau
+        list_item_1: chwyddo hyd at 300% heb i'r testun fynd oddi ar y sgrin
+        list_item_2: mynd o ddechrau'r ffurflen i'r diwedd gan ddefnyddio bysellfwrdd yn unig
+        list_item_3: mynd o ddechrau'r ffurflen i'r diwedd gan ddefnyddio meddalwedd adnabod lleferydd
+        list_item_4: gwrando ar y ffurflen gan ddefnyddio darllenydd sgrin (gan gynnwys y fersiynau diweddaraf o JAWS, NVDA a VoiceOver)
+      accessibility_recommendations_text: 'Dylech allu:'
+      content_guidance: Dylai'r testun yn y ffurflen fod yn glir ac yn syml i'w ddeall.
+      disability_advice_html: <a href="https://mcmw.abilitynet.org.uk/">Mae gan AbilityNet</a> gyngor ar wneud eich dyfais yn haws i'w defnyddio os oes gennych anabledd.
+      forms_description_html: Crëwyd y ffurflen hon gan ddefnyddio platfform o'r enw <a href="http://www.gov.uk/forms">GOV.UK Forms</a>. Mae GOV.UK Forms yn cael ei adeiladu gan Wasanaeth Digidol y Llywodraeth (GDS). Mae wedi'i gynllunio i greu ffurflenni y gellir eu defnyddio gan cyn gymaint o bobl â phosibl.
+      heading: Defnyddio'r ffurflen hon
   activemodel:
     errors:
       models:
         add_another_answer_input:
           attributes:
             add_another_answer:
-              blank: Select yes if you need to add another answer in Welsh
-              max_answers_reached: You cannot add another answer in Welsh
+              blank: Select yes if you need to add another answer
+              max_answers_reached: You cannot add another answer
         email_confirmation_input:
           attributes:
             confirmation_email_address:
-              blank: Enter an email address in Welsh
-              invalid_email: Enter an email address in the correct format, like name@example.com in Welsh
+              blank: Enter an email address
+              invalid_email: Enter an email address in the correct format, like name@example.com
             send_confirmation:
-              blank: Select yes if you want to get an email confirming your form has been submitted in Welsh
+              blank: Select yes if you want to get an email confirming your form has been submitted
         question/address:
           attributes:
             address1:
-              blank: Enter the first line of the address in Welsh
+              blank: Enter the first line of the address
             country:
-              blank: Enter the country in Welsh
+              blank: Enter the country
             postcode:
-              blank: Enter the postcode in Welsh
-              invalid_postcode: Enter a real postcode in Welsh
+              blank: Enter the postcode
+              invalid_postcode: Enter a real postcode
             street_address:
-              blank: Enter the address in Welsh
+              blank: Enter the address
             town_or_city:
-              blank: Enter the town or city in Welsh
+              blank: Enter the town or city
         question/date:
           attributes:
             date:
-              blank: Enter a date in Welsh
-              blank_date_fields: Enter a day, month and year in Welsh
-              future_date: Enter a date that’s in the past in Welsh
-              invalid_date: Enter a real date in Welsh
-              invalid_number_of_digits_for_year: Year must include 4 numbers in Welsh
+              blank: Enter a date
+              blank_date_fields: Enter a day, month and year
+              future_date: Enter a date that’s in the past
+              invalid_date: Enter a real date
+              invalid_number_of_digits_for_year: Year must include 4 numbers
         question/email:
           attributes:
             email:
-              blank: Enter an email address in Welsh
-              invalid_email: Enter an email address in the correct format, like name@example.com in Welsh
+              blank: Enter an email address
+              invalid_email: Enter an email address in the correct format, like name@example.com
         question/file:
           attributes:
             file:
-              blank: Select a file in Welsh
-              contains_virus: The selected file contains a virus in Welsh
-              disallowed_type: The selected file must be a CSV, DOC, DOCX, JPEG, JPG, JSON, ODT, PDF, PNG, RTF, TXT, or XLSX in Welsh
-              empty: The selected file is empty in Welsh
-              scan_failure: The selected file could not be uploaded - try again in Welsh
-              too_big: The selected file must be smaller than 7MB in Welsh
+              blank: Select a file
+              contains_virus: The selected file contains a virus
+              disallowed_type: The selected file must be a CSV, DOC, DOCX, JPEG, JPG, JSON, ODT, PDF, PNG, RTF, TXT, or XLSX
+              empty: The selected file is empty
+              scan_failure: The selected file could not be uploaded - try again
+              too_big: The selected file must be smaller than 7MB
         question/name:
           attributes:
             first_name:
-              blank: Enter a first name in Welsh
+              blank: Enter a first name
             full_name:
-              blank: Enter a name in Welsh
+              blank: Enter a name
             last_name:
-              blank: Enter a last name in Welsh
+              blank: Enter a last name
         question/national_insurance_number:
           attributes:
             national_insurance_number:
-              blank: Enter a National Insurance number in Welsh
-              invalid_national_insurance_number: Enter a National Insurance number that is 2 letters, 6 numbers, then A, B, C or D, like QQ 12 34 56 C in Welsh
+              blank: Enter a National Insurance number
+              invalid_national_insurance_number: Enter a National Insurance number that is 2 letters, 6 numbers, then A, B, C or D, like QQ 12 34 56 C
         question/number:
           attributes:
             number:
-              blank: Enter a number in Welsh
-              greater_than_or_equal_to: The answer must be greater than or equal to 0 in Welsh
-              not_a_number: The answer must be a number in Welsh
+              blank: Enter a number
+              greater_than_or_equal_to: The answer must be greater than or equal to 0
+              not_a_number: The answer must be a number
         question/organisation_name:
           attributes:
             text:
-              blank: Enter an organisation name in Welsh
-              too_long: The organisation name must be shorter than 500 characters in Welsh
+              blank: Enter an organisation name
+              too_long: The organisation name must be shorter than 500 characters
         question/phone_number:
           attributes:
             phone_number:
-              blank: Enter a phone number in Welsh
-              invalid_phone_number: The phone number can only include numbers, spaces, ‘ext’, ‘-’, ‘+’, ‘(’ and ‘)’ in Welsh
-              phone_too_long: The phone number should have 15 digits or less in Welsh
-              phone_too_short: The phone number should have 8 digits or more in Welsh
+              blank: Enter a phone number
+              invalid_phone_number: The phone number can only include numbers, spaces, ‘ext’, ‘-’, ‘+’, ‘(’ and ‘)’
+              phone_too_long: The phone number should have 15 digits or less
+              phone_too_short: The phone number should have 8 digits or more
         question/selection:
           attributes:
             selection:
-              blank: Select one option in Welsh
-              both_none_and_value_selected: Select one or more options, or select ‘None of the above’ in Welsh
-              checkbox_blank: Select one or more options in Welsh
-              inclusion: Select an answer from the list in Welsh
+              blank: Select one option
+              both_none_and_value_selected: Select one or more options, or select ‘None of the above’
+              checkbox_blank: Select one or more options
+              inclusion: Select an answer from the list
         question/text:
           attributes:
             text:
-              blank: Enter an answer in Welsh
-              long_text_too_long: The answer must be shorter than 5000 characters in Welsh
-              single_line_too_long: The answer must be shorter than 500 characters in Welsh
+              blank: Enter an answer
+              long_text_too_long: The answer must be shorter than 5000 characters
+              single_line_too_long: The answer must be shorter than 500 characters
         remove_input:
           attributes:
             remove:
-              blank: You must select an option in Welsh
+              blank: You must select an option
   autocomplete:
-    assistive_hint: When autocomplete results are available use up and down arrows to review and enter to select.  Touch device users, explore by touch or with swipe gestures. in Welsh
-    no_results: No results found in Welsh
-    prompt: Select an answer in Welsh
+    assistive_hint: When autocomplete results are available use up and down arrows to review and enter to select.  Touch device users, explore by touch or with swipe gestures.
+    no_results: No results found
+    prompt: Select an answer
     status:
-      no_results: No search results in Welsh
-      query_too_short: Type in ${minQueryLength} or more characters for results in Welsh
-      results_plural: "${length} results are available. ${contentSelectedOption} in Welsh"
-      results_single: "${length} result is available. ${contentSelectedOption} in Welsh"
-      selected_option: "${selectedOption} ${index + 1} of ${length} is highlighted in Welsh"
+      no_results: No search results
+      query_too_short: Type in ${minQueryLength} or more characters for results
+      results_plural: "${length} results are available. ${contentSelectedOption}"
+      results_single: "${length} result is available. ${contentSelectedOption}"
+      selected_option: "${selectedOption} ${index + 1} of ${length} is highlighted"
   banner:
     success:
-      cookie_preferences_updated: You’ve set your cookie preferences. in Welsh
-      file_removed: Your file has been removed in Welsh
-      file_uploaded: Your file has been uploaded in Welsh
-      title: Success in Welsh
-  continue: Continue in Welsh
+      cookie_preferences_updated: You’ve set your cookie preferences.
+      file_removed: Your file has been removed
+      file_uploaded: Your file has been uploaded
+      title: Success
+  continue: Continue
   cookie_banner:
-    accept: Accept analytics cookies in Welsh
-    aria_label: Cookie banner in Welsh
-    content: We’d like to use analytics cookies so we can understand how you use this website and make improvements. in Welsh
-    heading: Cookies on GOV.UK Forms in Welsh
-    policy_link: How we use cookies in Welsh
-    reject: Reject analytics cookies in Welsh
+    accept: Accept analytics cookies
+    aria_label: Cookie banner
+    content: We’d like to use analytics cookies so we can understand how you use this website and make improvements.
+    heading: Cookies on GOV.UK Forms
+    policy_link: How we use cookies
+    reject: Reject analytics cookies
   cookie_consent:
-    heading: Change your cookie settings in Welsh
-    no_javascript_html: |-
+    heading: Change your cookie settings
+    no_javascript_html: |
       <p>We cannot change your cookie settings at the moment because JavaScript is not running in your browser. To fix this, try:</p>
       <ul class="govuk-list govuk-list--bullet">
         <li>turning on JavaScript in your browser settings</li>
         <li>reloading this page</li>
       </ul>
-       in Welsh
     options:
-      'no': No in Welsh
-      'yes': Yes in Welsh
-    radios_legend: Do you want to accept analytics cookies? in Welsh
-    save: Save cookie settings in Welsh
+      'no': 'No'
+      'yes': 'Yes'
+    radios_legend: Do you want to accept analytics cookies?
+    save: Save cookie settings
   cookies:
     analytics_cookies:
-      heading: Analytics cookies (optional) in Welsh
-      section_0: We use Google Analytics software to understand how people use GOV.UK Forms. This information helps us to improve our service. in Welsh
-      section_1: Google is not allowed to use or share our analytics data with anyone. in Welsh
+      heading: Analytics cookies (optional)
+      section_0: We use Google Analytics software to understand how people use GOV.UK Forms. This information helps us to improve our service.
+      section_1: Google is not allowed to use or share our analytics data with anyone.
       section_2:
-        caption: 'Google Analytics stores anonymised information about: in Welsh'
-        list_item_0: the pages you visit in Welsh
-        list_item_1: how long you spend on each page in Welsh
-        list_item_2: how you arrived at the site in Welsh
-        list_item_3: what you click on while you visit the site in Welsh
-        list_item_4: the device and browser you use in Welsh
+        caption: 'Google Analytics stores anonymised information about:'
+        list_item_0: the pages you visit
+        list_item_1: how long you spend on each page
+        list_item_2: how you arrived at the site
+        list_item_3: what you click on while you visit the site
+        list_item_4: the device and browser you use
       table:
-        caption: Analytics cookies (optional) in Welsh
+        caption: Analytics cookies (optional)
         row_0:
-          column_0: Name in Welsh
-          column_1: Purpose in Welsh
-          column_2: Expires in Welsh
+          column_0: Name
+          column_1: Purpose
+          column_2: Expires
         row_1:
-          column_0: _ga in Welsh
-          column_1: Helps us count how many people visit GOV.UK Forms by telling us if you’ve visited before. in Welsh
-          column_2: 2 years in Welsh
+          column_0: _ga
+          column_1: Helps us count how many people visit GOV.UK Forms by telling us if you’ve visited before.
+          column_2: 2 years
         row_2:
-          column_0: _gid in Welsh
-          column_1: Helps us count how many people visit GOV.UK Forms by telling us if you’ve visited before. in Welsh
-          column_2: 24 hours in Welsh
+          column_0: _gid
+          column_1: Helps us count how many people visit GOV.UK Forms by telling us if you’ve visited before.
+          column_2: 24 hours
         row_3:
-          column_0: _gat_UA-[random number] in Welsh
-          column_1: Helps us reduce the number of unnecessary tracking requests we send to Google Analytics. in Welsh
-          column_2: 1 minute in Welsh
+          column_0: _gat_UA-[random number]
+          column_1: Helps us reduce the number of unnecessary tracking requests we send to Google Analytics.
+          column_2: 1 minute
     essential_cookies:
-      heading: Essential cookies in Welsh
-      section_0: We use essential cookies to make forms work. in Welsh
+      heading: Essential cookies
+      section_0: We use essential cookies to make forms work.
       table:
-        caption: Essential cookies in Welsh
+        caption: Essential cookies
         row_0:
-          column_0: Name in Welsh
-          column_1: Purpose in Welsh
-          column_2: Expires in Welsh
+          column_0: Name
+          column_1: Purpose
+          column_2: Expires
         row_1:
-          column_0: _forms in Welsh
-          column_1: Used to remember your progress through the form in Welsh
-          column_2: When the browser is closed or after 20 hours in Welsh
+          column_0: _forms
+          column_1: Used to remember your progress through the form
+          column_2: When the browser is closed or after 20 hours
         row_2:
-          column_0: analytics_consent in Welsh
-          column_1: Saves your cookie consent settings in Welsh
-          column_2: 1 year in Welsh
-    section_0: Cookies are small files saved on your phone, tablet or computer when you visit a website. in Welsh
-    section_1: We use cookies to make this form work. in Welsh
-    section_2_html: Find out <a rel="external" href="https://cy.ico.org.uk/for-the-public/online/cookies">how to manage cookies</a>. in Welsh
-    title: Cookies in Welsh
+          column_0: analytics_consent
+          column_1: Saves your cookie consent settings
+          column_2: 1 year
+    section_0: Cookies are small files saved on your phone, tablet or computer when you visit a website.
+    section_1: We use cookies to make this form work.
+    section_2_html: Find out <a rel="external" href="https://cy.ico.org.uk/for-the-public/online/cookies">how to manage cookies</a>.
+    title: Cookies
   environment_names:
-    dev: Development in Welsh
-    local: Local in Welsh
-    production: Production in Welsh
-    staging: Staging in Welsh
-    user-research: User research in Welsh
-  error_summary_title: There is a problem in Welsh
+    dev: Development
+    local: Local
+    production: Production
+    staging: Staging
+    user-research: User research
+  error_summary_title: There is a problem
   errors:
     goto_page_routing_error:
       cannot_have_goto_page_before_routing_page:
-        body_html: |-
+        body_html: |
           <p>Question %{question_number} has a route that takes the person to a question that’s before the question it skips from, so the route cannot work.</p>
           <p>To fix this <a href="%{link_url}">edit or delete question %{question_number}’s route</a>.</p>
-           in Welsh
       goto_page_doesnt_exist:
-        body_html: |-
+        body_html: |
           <p>Question %{question_number} has a route that takes people to a question that has been deleted.</p>
           <p>To fix this <a href="%{link_url}">edit or delete question %{question_number}’s route</a>.</p>
-           in Welsh
-      title: There’s a problem in Welsh
+      title: There’s a problem
     incomplete_submission:
-      body_html: |-
+      body_html: |
         <p>You may have already submitted the form.</p>
         <p><a href="%{link_url}">Complete the remaining questions</a> to continue.</p>
-         in Welsh
-      title: You tried to submit an incomplete form in Welsh
+      title: You tried to submit an incomplete form
     internal_server_error:
-      body: Please try again later. in Welsh
-      title: Sorry, there is a problem with the service in Welsh
+      body: Please try again later.
+      title: Sorry, there is a problem with the service
     maintenance:
-      body_html: |-
+      body_html: |
         <p>You’ll be able to use the service later.</p>
         <p>We have not saved your answers. When the service is available, you’ll have to start again.</p>
-         in Welsh
-      title: Sorry, the service is unavailable in Welsh
+      title: Sorry, the service is unavailable
     not_found:
-      body: |-
+      body: |
         If you typed the web address, check it is correct.
         If you pasted the web address, check you copied the entire address.
-         in Welsh
-      title: Page not found in Welsh
+      title: Page not found
     repeat_submission:
-      body: We deleted your answers because they’ve been submitted successfully already. in Welsh
-      body_2: If you want to submit the form again, you need to in Welsh
-      link_text: go back to the start in Welsh
-      title: For your security, we deleted your answers in Welsh
+      body: We deleted your answers because they’ve been submitted successfully already.
+      body_2: If you want to submit the form again, you need to
+      link_text: go back to the start
+      title: For your security, we deleted your answers
     submission_error:
-      body: |-
+      body: |
         There was a problem with the service and we have been unable to submit your answers.
 
         Please try again later.
-         in Welsh
-      title: Sorry, we could not submit your answers in Welsh
+      title: Sorry, we could not submit your answers
   footer:
-    accessibility_statement: Accessibility statement in Welsh
-    cookies: Cookies in Welsh
-    helpful_links: Helpful links in Welsh
-    privacy_policy: Privacy in Welsh
+    accessibility_statement: Datganiad hygyrchedd
+    cookies: Cookies
+    helpful_links: Helpful links
+    privacy_policy: Privacy
   form:
     check_your_answers:
-      agree_and_submit: Agree and submit in Welsh
-      declaration: Declaration in Welsh
-      not_completed: Not completed in Welsh
-      submit: Submit in Welsh
-      title: Check your answers before submitting your form in Welsh
+      agree_and_submit: Agree and submit
+      declaration: Declaration
+      not_completed: Not completed
+      submit: Submit
+      title: Check your answers before submitting your form
     submitted:
-      continue_to_pay: Continue to pay in Welsh
-      email_sent: We’ve sent you a confirmation email. in Welsh
-      need_to_pay: You still need to pay in Welsh
-      title: Your form has been submitted in Welsh
-      what_happens_next: What happens next in Welsh
-      your_reference: 'Your form reference number is: in Welsh'
+      continue_to_pay: Continue to pay
+      email_sent: We’ve sent you a confirmation email.
+      need_to_pay: You still need to pay
+      title: Your form has been submitted
+      what_happens_next: What happens next
+      your_reference: 'Your form reference number is:'
   forms:
     add_another_answer:
       rows:
-        action_hidden_text: answer %{answer_index} in Welsh
-        change: Change in Welsh
-        remove: Remove in Welsh
+        action_hidden_text: answer %{answer_index}
+        change: Change
+        remove: Remove
       show:
         heading:
-          one: You have added one answer in Welsh
-          other: You have added %{count} answers in Welsh
-          zero: You have added no answers in Welsh
-        max_answers: You cannot add another answer to this question as you’ve entered the maximum of %{max_answers} in Welsh
-        radios_legend: Do you need to add another answer? in Welsh
-        title: Add or remove answer to %{page_title} in Welsh
-    back: Back in Welsh
+          one: You have added one answer
+          other: You have added %{count} answers
+          zero: You have added no answers
+        max_answers: You cannot add another answer to this question as you’ve entered the maximum of %{max_answers}
+        radios_legend: Do you need to add another answer?
+        title: Add or remove answer to %{page_title}
+    back: Back
     remove_answer:
       show:
-        address_heading: Remove an address in Welsh
-        address_radios_legend: Are you sure you want to remove this address? in Welsh
-        long_answer_heading: Remove an answer in Welsh
-        long_radios_legend: Are you sure you want to remove this answer? in Welsh
-        national_insurance_number_heading: Remove National Insurance number in Welsh
-        national_insurance_number_radios_legend: Are you sure you want to remove this National Insurance number? in Welsh
-        phone_number_heading: Remove phone number in Welsh
-        phone_number_radios_legend: Are you sure you want to remove this phone number? in Welsh
-        short_answer_legend: Are you sure you want to remove ‘%{answer_text}’? in Welsh
+        address_heading: Remove an address
+        address_radios_legend: Are you sure you want to remove this address?
+        long_answer_heading: Remove an answer
+        long_radios_legend: Are you sure you want to remove this answer?
+        national_insurance_number_heading: Remove National Insurance number
+        national_insurance_number_radios_legend: Are you sure you want to remove this National Insurance number?
+        phone_number_heading: Remove phone number
+        phone_number_radios_legend: Are you sure you want to remove this phone number?
+        short_answer_legend: Are you sure you want to remove ‘%{answer_text}’?
     remove_file:
       show:
-        radios_legend: Are you sure you want to remove your file? in Welsh
-        title: Remove your file in Welsh
+        radios_legend: Are you sure you want to remove your file?
+        title: Remove your file
     review_file:
       show:
-        check_file: Check your uploaded file in Welsh
-        remove: Remove in Welsh
-        remove_file_guidance: You can remove this file if you need to upload a different one. in Welsh
-        your_file: Your file in Welsh
-  gov_uk_forms: GOV.UK Forms in Welsh
+        check_file: Check your uploaded file
+        remove: Remove
+        remove_file_guidance: You can remove this file if you need to upload a different one.
+        your_file: Your file
+  gov_uk_forms: GOV.UK Forms
   govuk_components:
     govuk_summary_list:
-      change: Change in Welsh
+      change: Change
   helpers:
     hint:
       email_confirmation_input:
-        send_confirmation: We’ll only use the email address you provide here to send a confirmation that your form’s been successfully submitted. It will not contain a copy of your answers. in Welsh
+        send_confirmation: We’ll only use the email address you provide here to send a confirmation that your form’s been successfully submitted. It will not contain a copy of your answers.
     label:
       add_another_answer_input:
         options:
-          'no': No in Welsh
-          'yes': Yes in Welsh
+          'no': 'No'
+          'yes': 'Yes'
       email_confirmation_input:
-        confirmation_email_address: What email address do you want us to send your confirmation to? in Welsh
+        confirmation_email_address: What email address do you want us to send your confirmation to?
         send_confirmation_options:
-          send_email: Yes in Welsh
-          skip_confirmation: No in Welsh
+          send_email: 'Yes'
+          skip_confirmation: 'No'
       remove_input:
         options:
-          'no': No in Welsh
-          'yes': Yes in Welsh
+          'no': 'No'
+          'yes': 'Yes'
     legend:
       email_confirmation_input:
-        send_confirmation: Do you want to get an email confirming your form has been submitted? in Welsh
+        send_confirmation: Do you want to get an email confirming your form has been submitted?
   layout:
-    skip_link: Skip to main content in Welsh
+    skip_link: Skip to main content
   mailer:
     submission:
       cannot_reply:
-        contact_form_filler_html: "<p>If you need to contact the person who completed this form, you’ll need to contact them directly.</p> in Welsh"
-        contact_form_filler_plain: If you need to contact the person who completed this form, you’ll need to contact them directly. in Welsh
-        contact_forms_team_html: <p>If you’re experiencing a technical issue with this form, <a href="https://www.forms.service.gov.uk/support">contact the GOV.​UK Forms team</a> with details of the issue and the form it relates to.</p> in Welsh
-        contact_forms_team_plain: If you’re experiencing a technical issue with this form, contact the GOV.​UK Forms team (https://www.forms.service.gov.uk/support) with details of the issue and the form it relates to. in Welsh
-        heading: You cannot reply to this email in Welsh
-      check_before_using: Check that this data looks safe before you use it in Welsh
-      csv_file: CSV file of these answers in Welsh
-      file_attached: "%{filename} (attached to this email) in Welsh"
-      from: GOV.UK Forms <%{email_address}> in Welsh
-      payment: You can check that a payment has been made by using this reference number to search transactions within GOV.​UK Pay. in Welsh
-      question_skipped: This question was skipped in Welsh
-      reference: 'GOV.​UK Forms reference number: %{submission_reference} in Welsh'
-      subject: 'Form submission: %{form_title} - reference: %{reference} in Welsh'
-      subject_preview: 'TEST FORM SUBMISSION: %{form_title} - reference: %{reference} in Welsh'
-      time: This form was submitted at %{time} on %{date} in Welsh
-      title: This is a completed “%{title}” form. in Welsh
-      title_preview: This is a test of the “%{title}” form. in Welsh
+        contact_form_filler_html: "<p>If you need to contact the person who completed this form, you’ll need to contact them directly.</p>"
+        contact_form_filler_plain: If you need to contact the person who completed this form, you’ll need to contact them directly.
+        contact_forms_team_html: <p>If you’re experiencing a technical issue with this form, <a href="https://www.forms.service.gov.uk/support">contact the GOV.​UK Forms team</a> with details of the issue and the form it relates to.</p>
+        contact_forms_team_plain: If you’re experiencing a technical issue with this form, contact the GOV.​UK Forms team (https://www.forms.service.gov.uk/support) with details of the issue and the form it relates to.
+        heading: You cannot reply to this email
+      check_before_using: Check that this data looks safe before you use it
+      csv_file: CSV file of these answers
+      file_attached: "%{filename} (attached to this email)"
+      from: GOV.UK Forms <%{email_address}>
+      payment: You can check that a payment has been made by using this reference number to search transactions within GOV.​UK Pay.
+      question_skipped: This question was skipped
+      reference: 'GOV.​UK Forms reference number: %{submission_reference}'
+      subject: 'Form submission: %{form_title} - reference: %{reference}'
+      subject_preview: 'TEST FORM SUBMISSION: %{form_title} - reference: %{reference}'
+      time: This form was submitted at %{time} on %{date}
+      title: This is a completed “%{title}” form.
+      title_preview: This is a test of the “%{title}” form.
   mode:
-    phase_banner_tag_preview-archived: Archived preview in Welsh
-    phase_banner_tag_preview-draft: Draft preview in Welsh
-    phase_banner_tag_preview-live: Live preview in Welsh
-    phase_banner_text_preview-archived: You’re previewing the archived version of this form in Welsh
-    phase_banner_text_preview-draft: You’re previewing the draft version of this form in Welsh
-    phase_banner_text_preview-draft_edit_link: Edit this question in Welsh
-    phase_banner_text_preview-live: You’re previewing the live version of this form in Welsh
-    title_text_preview-archived: Archived preview in Welsh
-    title_text_preview-draft: Draft preview in Welsh
-    title_text_preview-live: Live preview in Welsh
+    phase_banner_tag_preview-archived: Archived preview
+    phase_banner_tag_preview-draft: Draft preview
+    phase_banner_tag_preview-live: Live preview
+    phase_banner_text_preview-archived: You’re previewing the archived version of this form
+    phase_banner_text_preview-draft: You’re previewing the draft version of this form
+    phase_banner_text_preview-draft_edit_link: Edit this question
+    phase_banner_text_preview-live: You’re previewing the live version of this form
+    title_text_preview-archived: Archived preview
+    title_text_preview-draft: Draft preview
+    title_text_preview-live: Live preview
   page:
-    archived_preview: archived preview in Welsh
-    draft_preview: draft preview in Welsh
-    live_preview: live preview in Welsh
-    none_of_the_above: None of the above in Welsh
-    optional: "(optional) in Welsh"
+    archived_preview: archived preview
+    draft_preview: draft preview
+    live_preview: live preview
+    none_of_the_above: None of the above
+    optional: "(optional)"
   page_titles:
-    error_prefix: 'Error:  in Welsh'
+    error_prefix: 'Error: '
   preview_banner:
-    heading: This is a preview of this form. Do not enter personal information. in Welsh
-    title: Important in Welsh
+    heading: This is a preview of this form. Do not enter personal information.
+    title: Important
   privacy:
     changes:
-      heading: Changes to this notice in Welsh
-      section_0: We may modify or amend this privacy notice at our discretion at any time. When we make changes to this notice, we will amend the last modified date at the top of this page. Any modification or amendment to this privacy notice will be applied to you and your data as of that revision date. We encourage you to periodically review this privacy notice to be informed about how we are protecting your data. in Welsh
+      heading: Changes to this notice
+      section_0: We may modify or amend this privacy notice at our discretion at any time. When we make changes to this notice, we will amend the last modified date at the top of this page. Any modification or amendment to this privacy notice will be applied to you and your data as of that revision date. We encourage you to periodically review this privacy notice to be informed about how we are protecting your data.
     childrens_privacy:
-      heading: Children’s privacy protection in Welsh
-      section_0: We understand the importance of protecting children’s privacy online. Our services are not designed for, or intentionally targeted at, children 13 years of age or younger. It is not our policy to intentionally collect or maintain data about anyone under the age of 13. in Welsh
+      heading: Children’s privacy protection
+      section_0: We understand the importance of protecting children’s privacy online. Our services are not designed for, or intentionally targeted at, children 13 years of age or younger. It is not our policy to intentionally collect or maintain data about anyone under the age of 13.
     cookies:
-      heading: Cookies in Welsh
-      section_0: We use cookies to make this form work. %{cookies_link}. in Welsh
-      section_0_link_text: Read about the cookies we use in Welsh
+      heading: Cookies
+      section_0: We use cookies to make this form work. %{cookies_link}.
+      section_0_link_text: Read about the cookies we use
     data_we_collect:
-      heading: Data we collect from you and what we do with it in Welsh
+      heading: Data we collect from you and what we do with it
       section_0:
-        caption: 'When you use this form your device sends information such as your: in Welsh'
-        list_item_0: IP address in Welsh
-        list_item_1: "%{browsers_link} and version number in Welsh"
-        list_item_1_link_text: web browser in Welsh
-        list_item_2: time zone and language settings in Welsh
+        caption: 'When you use this form your device sends information such as your:'
+        list_item_0: IP address
+        list_item_1: "%{browsers_link} and version number"
+        list_item_1_link_text: web browser
+        list_item_2: time zone and language settings
       section_1:
-        caption: 'We use this information to: in Welsh'
-        list_item_0: give you the information and web pages you request in Welsh
-        list_item_1: monitor the use of the site for security threats in Welsh
-        list_item_2: monitor the performance of the site to identify inefficiencies and JavaScript errors in Welsh
-      section_2: We collect this information in system logs. These logs are stored in Amazon Web Services in Ireland. in Welsh
-      section_3: We move some of this information to our security and network monitoring tools in Ireland and the USA which are provided by companies acting as our data processors. in Welsh
-      section_4: We may also use this information to produce anonymised reports about the GOV.UK Forms service. This helps us understand where we can make improvements. We may share this information with the data controller of the form. in Welsh
-      section_5: If you email us feedback about this form, we’ll collect your email address and any other personal information you choose to include in your email. in Welsh
-      section_6: We may share your data with data controllers where it is appropriate. For example, if you provide feedback that relates to their function or if you make a data protection request. in Welsh
+        caption: 'We use this information to:'
+        list_item_0: give you the information and web pages you request
+        list_item_1: monitor the use of the site for security threats
+        list_item_2: monitor the performance of the site to identify inefficiencies and JavaScript errors
+      section_2: We collect this information in system logs. These logs are stored in Amazon Web Services in Ireland.
+      section_3: We move some of this information to our security and network monitoring tools in Ireland and the USA which are provided by companies acting as our data processors.
+      section_4: We may also use this information to produce anonymised reports about the GOV.UK Forms service. This helps us understand where we can make improvements. We may share this information with the data controller of the form.
+      section_5: If you email us feedback about this form, we’ll collect your email address and any other personal information you choose to include in your email.
+      section_6: We may share your data with data controllers where it is appropriate. For example, if you provide feedback that relates to their function or if you make a data protection request.
       section_7:
-        caption: 'The legal basis for processing this data is that it’s necessary: in Welsh'
-        list_item_0: to perform a task in the public interest in Welsh
-        list_item_1: in the exercise of our functions as a government department in Welsh
+        caption: 'The legal basis for processing this data is that it’s necessary:'
+        list_item_0: to perform a task in the public interest
+        list_item_1: in the exercise of our functions as a government department
       section_8:
-        caption: 'We will not: in Welsh'
-        list_item_0: sell or rent your data to third parties in Welsh
-        list_item_1: share your data with third parties for marketing purposes in Welsh
-      section_9: We will share your data if we are required to do so by law – for example, by court order, or to prevent fraud or other crime. in Welsh
-    heading: 'Privacy notice: how we use your data in Welsh'
+        caption: 'We will not:'
+        list_item_0: sell or rent your data to third parties
+        list_item_1: share your data with third parties for marketing purposes
+      section_9: We will share your data if we are required to do so by law – for example, by court order, or to prevent fraud or other crime.
+    heading: 'Privacy notice: how we use your data'
     how_long_we_keep_data:
-      heading: How long we keep your data in Welsh
+      heading: How long we keep your data
       section_0:
-        caption: 'We will only keep your personal data for as long as: in Welsh'
-        list_item_0: the law requires us to in Welsh
-        list_item_1: we need it for the purposes listed above in Welsh
-      section_1: This means that we will only hold your personal data for one year. in Welsh
+        caption: 'We will only keep your personal data for as long as:'
+        list_item_0: the law requires us to
+        list_item_1: we need it for the purposes listed above
+      section_1: This means that we will only hold your personal data for one year.
     how_we_protect_data:
-      heading: How we protect your data and keep it secure in Welsh
-      section_0: We are committed to doing all that we can to keep your data secure. To prevent unauthorised access or disclosure we have put in place technical and organisational procedures to secure the data we collect about you – for example, we protect your data using varying levels of encryption. We also make sure that any third parties that we deal with have an obligation to keep all personal data they process on our behalf secure. in Welsh
+      heading: How we protect your data and keep it secure
+      section_0: We are committed to doing all that we can to keep your data secure. To prevent unauthorised access or disclosure we have put in place technical and organisational procedures to secure the data we collect about you – for example, we protect your data using varying levels of encryption. We also make sure that any third parties that we deal with have an obligation to keep all personal data they process on our behalf secure.
     preamble:
-      section_0: 'Last updated: 20 September 2022 in Welsh'
-      section_1: This form was created using GOV.UK Forms. GOV.UK Forms is a product provided by the Government Digital Service (GDS) which is part of the Cabinet Office. It lets UK government teams create online forms to collect information from people and organisations. in Welsh
-      section_2: The organisation that created this online form using GOV.UK Forms is the data controller of personal data they collect using the form, whilst the Cabinet Office, through GDS, is the data processor. The data controller must tell you about what they are doing with your personal data - %{privacy_policy_link}. in Welsh
-      section_2_link_text: read the data controller’s privacy information for this form in Welsh
-      section_3: The Cabinet Office also collects some data as a data controller. This privacy notice explains what personal data the Cabinet Office collects and processes as a data controller through forms made with GOV.UK Forms. in Welsh
-      section_4: Read %{dppr_link} for more information. in Welsh
-      section_4_link_text: the Cabinet Office’s entry in the Data Protection Public Register in Welsh
+      section_0: 'Last updated: 20 September 2022'
+      section_1: This form was created using GOV.UK Forms. GOV.UK Forms is a product provided by the Government Digital Service (GDS) which is part of the Cabinet Office. It lets UK government teams create online forms to collect information from people and organisations.
+      section_2: The organisation that created this online form using GOV.UK Forms is the data controller of personal data they collect using the form, whilst the Cabinet Office, through GDS, is the data processor. The data controller must tell you about what they are doing with your personal data - %{privacy_policy_link}.
+      section_2_link_text: read the data controller’s privacy information for this form
+      section_3: The Cabinet Office also collects some data as a data controller. This privacy notice explains what personal data the Cabinet Office collects and processes as a data controller through forms made with GOV.UK Forms.
+      section_4: Read %{dppr_link} for more information.
+      section_4_link_text: the Cabinet Office’s entry in the Data Protection Public Register
     questions_and_complaints:
-      heading: Questions and complaints in Welsh
+      heading: Questions and complaints
       section_0:
-        caption: 'Contact %{contact_link} if you either: in Welsh'
-        list_item_0: have questions about anything in this document in Welsh
-        list_item_1: think that your personal data has been misused or mishandled in Welsh
+        caption: 'Contact %{contact_link} if you either:'
+        list_item_0: have questions about anything in this document
+        list_item_1: think that your personal data has been misused or mishandled
       section_1:
-        line_0: You can also contact the Cabinet Office Data Protection Officer. in Welsh
-        line_1: Data Protection Officer in Welsh
-        line_2: Cabinet Office in Welsh
-        line_3: 70 Whitehall in Welsh
-        line_4: London SW1A 2AS in Welsh
-      section_2: If you have a complaint, you can also contact the %{ico_link} (ICO). The ICO is an independent regulator set up to uphold information rights. in Welsh
-      section_2_link_text: Information Commissioner’s Office in Welsh
+        line_0: You can also contact the Cabinet Office Data Protection Officer.
+        line_1: Data Protection Officer
+        line_2: Cabinet Office
+        line_3: 70 Whitehall
+        line_4: London SW1A 2AS
+      section_2: If you have a complaint, you can also contact the %{ico_link} (ICO). The ICO is an independent regulator set up to uphold information rights.
+      section_2_link_text: Information Commissioner’s Office
       section_3:
-        line_0: Information Commissioner’s Office in Welsh
-        line_1: Wycliffe House in Welsh
-        line_2: Water Lane in Welsh
-        line_3: Wilmslow in Welsh
-        line_4: Cheshire SK9 5AF in Welsh
-    title: Privacy in Welsh
+        line_0: Information Commissioner’s Office
+        line_1: Wycliffe House
+        line_2: Water Lane
+        line_3: Wilmslow
+        line_4: Cheshire SK9 5AF
+    title: Privacy
     what_are_your_rights:
-      heading: What are your rights in Welsh
+      heading: What are your rights
       section_0:
-        caption: 'You have the right to request: in Welsh'
-        list_item_0: information about how your personal data is processed in Welsh
-        list_item_1: a copy of that personal data - this copy will be provided in a structured, commonly used and machine-readable format in Welsh
-        list_item_2: that anything inaccurate in your personal data is corrected immediately in Welsh
+        caption: 'You have the right to request:'
+        list_item_0: information about how your personal data is processed
+        list_item_1: a copy of that personal data - this copy will be provided in a structured, commonly used and machine-readable format
+        list_item_2: that anything inaccurate in your personal data is corrected immediately
       section_1:
-        caption: 'You can also: in Welsh'
-        list_item_0: raise an objection about how your personal data is processed in Welsh
-        list_item_1: request that your personal data is erased if there is no longer a justification for it in Welsh
-        list_item_2: ask that the processing of your personal data is restricted in certain circumstances in Welsh
-      section_2: If you have any of these requests, get in contact with our Data Protection Officer - you can find their contact details below. in Welsh
+        caption: 'You can also:'
+        list_item_0: raise an objection about how your personal data is processed
+        list_item_1: request that your personal data is erased if there is no longer a justification for it
+        list_item_2: ask that the processing of your personal data is restricted in certain circumstances
+      section_2: If you have any of these requests, get in contact with our Data Protection Officer - you can find their contact details below.
     where_data_is_stored:
-      heading: Where your data is processed and stored in Welsh
-      section_0: Your personal data may be transferred outside the United Kingdom while being processed by GDS. If this happens, we’ll make sure you’re given the same level of technical and legal protection as you are within the United Kingdom by relying on the UK Government’s data adequacy decisions or by including clauses in contracts that require the recipient to protect the data in accordance with UK standards. in Welsh
+      heading: Where your data is processed and stored
+      section_0: Your personal data may be transferred outside the United Kingdom while being processed by GDS. If this happens, we’ll make sure you’re given the same level of technical and legal protection as you are within the United Kingdom by relying on the UK Government’s data adequacy decisions or by including clauses in contracts that require the recipient to protect the data in accordance with UK standards.
   question/address:
     label:
       international_address:
-        country: Country in Welsh
-        street_address: Street address in Welsh
+        country: Country
+        street_address: Street address
       uk_address:
-        county: County (optional) in Welsh
-        line_1: Address line 1 in Welsh
-        line_2: Address line 2 (optional) in Welsh
-        postcode: Postcode in Welsh
-        town_or_city: Town or City in Welsh
+        county: County (optional)
+        line_1: Address line 1
+        line_2: Address line 2 (optional)
+        postcode: Postcode
+        town_or_city: Town or City
   question/file:
     file_requirements:
-      body_html: |-
+      body_html: |
         <p>You can upload the following file types:</p>
         <ul class="govuk-list govuk-list--bullet">
           <li>CSV (.csv)</li>
@@ -558,25 +551,24 @@ cy:
           <li>text (.json, .odt, .rtf, .txt)</li>
         </ul>
         <p>Your file must be smaller than 7MB.</p>
-         in Welsh
-      summary: What files can I upload? in Welsh
+      summary: What files can I upload?
   question/name:
     label:
-      first_name: First name in Welsh
-      full_name: Full name in Welsh
-      last_name: Last name in Welsh
-      middle_names: Middle names in Welsh
-      title: Title in Welsh
+      first_name: First name
+      full_name: Full name
+      last_name: Last name
+      middle_names: Middle names
+      title: Title
   question/selection:
-    divider: or in Welsh
+    divider: or
   submission_csv:
-    reference: Reference in Welsh
-    repeatable_answer_header: "%{header} - Answer %{index} in Welsh"
-    submitted_at: Submitted at in Welsh
+    reference: Reference
+    repeatable_answer_header: "%{header} - Answer %{index}"
+    submitted_at: Submitted at
   support_details:
-    call_charges: Find out about call charges in Welsh
-    email: Email in Welsh
-    get_help_with_this_form: Get help with this form in Welsh
-    link_text: "%{link} (opens in new tab) in Welsh"
-    online: Online in Welsh
-    phone: Phone in Welsh
+    call_charges: Find out about call charges
+    email: Email
+    get_help_with_this_form: Get help with this form
+    link_text: "%{link} (opens in new tab)"
+    online: Online
+    phone: Phone
