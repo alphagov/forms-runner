@@ -207,8 +207,8 @@ cy:
         <li>ail-lwytho'r dudalen hon</li>
       </ul>
     options:
-      'no': 'Na'
-      'yes': 'Ydw'
+      'no': Na
+      'yes': Ydw
     radios_legend: Ydych chi eisiau derbyn cwcis dadansoddeg?
     save: Arbed gosodiadau cwcis
   cookies:
@@ -217,7 +217,7 @@ cy:
       section_0: Rydym yn defnyddio meddalwedd Google Analytics i ddeall sut mae pobl yn defnyddio GOV.UK Forms. Mae'r wybodaeth hon yn ein helpu i wella ein gwasanaeth.
       section_1: Ni chaniateir i Google ddefnyddio neu rannu ein data dadansoddeg gydag unrhyw un.
       section_2:
-        caption: "Mae Google Analytics yn cadw gwybodaeth ddienw am:"
+        caption: 'Mae Google Analytics yn cadw gwybodaeth ddienw am:'
         list_item_0: y tudalennau rydych yn ymweld â hwy
         list_item_1: pa mor hir rydych yn ei dreulio ar bob tudalen
         list_item_2: sut y cyrhaeddoch chi y safle
@@ -322,12 +322,12 @@ cy:
       submit: Cyflwyno
       title: Edrychwch dros eich atebion cyn cyflwyno'ch ffurflen
     submitted:
-      continue_to_pay:  Parhau i dalu
+      continue_to_pay: Parhau i dalu
       email_sent: Rydym wedi anfon e-bost cadarnhau atoch.
       need_to_pay: Mae angen i chi dalu o hyd
       title: Mae eich ffurflen wedi'i chyflwyno
       what_happens_next: Beth sy'n digwydd nesaf
-      your_reference: "Rhif cyfeirnod eich ffurflen yw:"
+      your_reference: 'Rhif cyfeirnod eich ffurflen yw:'
   forms:
     add_another_answer:
       rows:
@@ -375,17 +375,17 @@ cy:
     label:
       add_another_answer_input:
         options:
-          'no': 'Na'
-          'yes': 'Ydw'
+          'no': Na
+          'yes': Ydw
       email_confirmation_input:
         confirmation_email_address: Pa gyfeiriad e-bost ydych chi eisiau i ni anfon eich cadarnhad ato?
         send_confirmation_options:
-          send_email: 'Ydw'
-          skip_confirmation: 'Na'
+          send_email: Ydw
+          skip_confirmation: Na
       remove_input:
         options:
-          'no': 'Na'
-          'yes': 'Ydw'
+          'no': Na
+          'yes': Ydw
     legend:
       email_confirmation_input:
         send_confirmation: Ydych chi eisiau derbyn e-bost yn cadarnhau bod eich ffurflen wedi'i chyflwyno?
@@ -447,13 +447,13 @@ cy:
     data_we_collect:
       heading: Data rydyn ni'n ei gasglu gennych a beth rydym yn ei wneud ag ef
       section_0:
-        caption: "Pan fyddwch yn defnyddio'r ffurflen hon, mae eich dyfais yn anfon gwybodaeth fel:"
+        caption: 'Pan fyddwch yn defnyddio''r ffurflen hon, mae eich dyfais yn anfon gwybodaeth fel:'
         list_item_0: Cyfeiriad IP
         list_item_1: "%{browsers_link} a rhif fersiwn"
         list_item_1_link_text: porwr gwe
         list_item_2: gosodiadau amser ac iaith
       section_1:
-        caption: "Rydym yn defnyddio'r wybodaeth hon i:"
+        caption: 'Rydym yn defnyddio''r wybodaeth hon i:'
         list_item_0: roi'r wybodaeth a'r tudalennau gwe rydych yn gofyn amdanynt
         list_item_1: monitro'r defnydd o'r wefan ar gyfer bygythiadau diogelwch
         list_item_2: monitro perfformiad y wefan i nodi aneffeithlonrwydd a gwallau JavaScript
@@ -463,7 +463,7 @@ cy:
       section_5: Os byddwch yn anfon adborth atom am y ffurflen hon, byddwn yn casglu eich cyfeiriad e-bost ac unrhyw wybodaeth bersonol arall rydych yn dewis ei chynnwys yn eich e-bost.
       section_6: Efallai y byddwn yn rhannu eich data gyda rheolwyr data lle mae'n briodol. Er enghraifft, os ydych yn darparu adborth sy'n ymwneud â'u swyddogaeth neu os ydych yn gwneud cais diogelu data.
       section_7:
-        caption: "Y sail gyfreithiol dros brosesu'r data hwn yw ei fod yn angenrheidiol:"
+        caption: 'Y sail gyfreithiol dros brosesu''r data hwn yw ei fod yn angenrheidiol:'
         list_item_0: i gyflawni tasg er budd y cyhoedd
         list_item_1: wrth arfer ein swyddogaethau fel adran y llywodraeth
       section_8:
@@ -471,11 +471,11 @@ cy:
         list_item_0: gwerthu neu rentu eich data i drydydd partïon
         list_item_1: rhannu eich data gyda thrydydd partïon at ddibenion marchnata
       section_9: Byddwn yn rhannu eich data os yw'n ofynnol i ni wneud hynny yn ôl y gyfraith – er enghraifft, trwy orchymyn llys, neu i atal twyll neu droseddau eraill.
-    heading: "Hysbysiad preifatrwydd: sut rydym yn defnyddio'ch data"
+    heading: 'Hysbysiad preifatrwydd: sut rydym yn defnyddio''ch data'
     how_long_we_keep_data:
       heading: Am faint o amser rydym yn cadw'ch data
       section_0:
-        caption: "Byddwn ond yn cadw eich data personol am gyn hired ag:"
+        caption: 'Byddwn ond yn cadw eich data personol am gyn hired ag:'
         list_item_0: mae'r gyfraith yn ei gwneud yn ofynnol i ni
         list_item_1: rydym ei angen at y dibenion a restrir uchod
       section_1: Mae hyn yn golygu mai dim ond am flwyddyn y byddwn yn cadw eich data personol.
@@ -493,7 +493,7 @@ cy:
     questions_and_complaints:
       heading: Cwestiynau a chwynion
       section_0:
-        caption: "Cysylltwch â %{contact_link} os ydych naill ai:"
+        caption: 'Cysylltwch â %{contact_link} os ydych naill ai:'
         list_item_0: gyda chwestiynau am unrhyw beth yn y ddogfen hon
         list_item_1: yn meddwl bod eich data personol wedi cael ei gamddefnyddio neu ei gam-drin
       section_1:
@@ -514,12 +514,12 @@ cy:
     what_are_your_rights:
       heading: Beth yw eich hawliau
       section_0:
-        caption: "Mae gennych yr hawl i ofyn am:"
+        caption: 'Mae gennych yr hawl i ofyn am:'
         list_item_0: wybodaeth am sut mae eich data personol yn cael ei brosesu
         list_item_1: copi o'r data personol hwnnw - bydd y copi hwn yn cael ei ddarparu mewn ffurf strwythuredig, a ddefnyddir yn gyffredin ac y gellir ei ddarllen gan beiriant
         list_item_2: bod unrhyw beth anghywir yn eich data personol yn cael ei gywiro ar unwaith
       section_1:
-        caption: "Gallwch hefyd:"
+        caption: 'Gallwch hefyd:'
         list_item_0: godi gwrthwynebiad am sut mae eich data personol yn cael ei brosesu
         list_item_1: gofyn i'ch data personol gael ei ddileu os nad oes cyfiawnhad amdano mwyach
         list_item_2: gofyn i brosesu eich data personol gael ei gyfyngu mewn amgylchiadau penodol
