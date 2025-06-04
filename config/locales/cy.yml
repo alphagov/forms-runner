@@ -192,12 +192,12 @@ cy:
       title: Llwyddiant
   continue: Continue
   cookie_banner:
-    accept: Accept analytics cookies
-    aria_label: Cookie banner
-    content: We’d like to use analytics cookies so we can understand how you use this website and make improvements.
-    heading: Cookies on GOV.UK Forms
-    policy_link: How we use cookies
-    reject: Reject analytics cookies
+    accept: Derbyn cwcis dadansoddeg
+    aria_label: Baner cwci
+    content: Hoffem ddefnyddio cwcis dadansoddeg fel y gallwn ddeall sut rydych yn defnyddio'r wefan hon a gwneud gwelliannau.
+    heading: Cwcis ar GOV.UK Forms
+    policy_link: Sut rydym yn defnyddio cwcis
+    reject: Gwrthod cwcis dadansoddeg
   cookie_consent:
     heading: Newid eich gosodiadau cwci
     no_javascript_html: |
