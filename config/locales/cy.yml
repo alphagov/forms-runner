@@ -190,7 +190,7 @@ cy:
       file_removed: Your file has been removed
       file_uploaded: Your file has been uploaded
       title: Llwyddiant
-  continue: Continue
+  continue: Parhau
   cookie_banner:
     accept: Derbyn cwcis dadansoddeg
     aria_label: Baner cwci
@@ -268,7 +268,7 @@ cy:
     production: Production
     staging: Staging
     user-research: User research
-  error_summary_title: There is a problem
+  error_summary_title: Mae problem
   errors:
     goto_page_routing_error:
       cannot_have_goto_page_before_routing_page:
@@ -342,7 +342,7 @@ cy:
         max_answers: You cannot add another answer to this question as you’ve entered the maximum of %{max_answers}
         radios_legend: Do you need to add another answer?
         title: Add or remove answer to %{page_title}
-    back: Back
+    back: Yn ôl
     remove_answer:
       show:
         address_heading: Remove an address
@@ -390,7 +390,7 @@ cy:
       email_confirmation_input:
         send_confirmation: Do you want to get an email confirming your form has been submitted?
   layout:
-    skip_link: Skip to main content
+    skip_link: Neidio i'r prif gynnwys
   mailer:
     submission:
       cannot_reply:
@@ -429,7 +429,7 @@ cy:
     none_of_the_above: None of the above
     optional: "(optional)"
   page_titles:
-    error_prefix: 'Error: '
+    error_prefix: 'Gwall: '
   preview_banner:
     heading: This is a preview of this form. Do not enter personal information.
     title: Important
