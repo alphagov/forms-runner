@@ -1,5 +1,6 @@
 <%= form_builder.govuk_date_field :date,
                                   date_of_birth: date_of_birth?,
                                   legend: { text: question_text_with_extra_suffix, **question_text_size_and_tag },
-                                  hint: { text: question.hint_text }
+                                  hint: { text: question.hint_text },
+                                  segment_names: { day: t("date_segment_names.day"), month: t("date_segment_names.month"), year: t("date_segment_names.year") }
 %>
