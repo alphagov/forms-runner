@@ -116,6 +116,83 @@ RSpec.describe "submissions.rake" do
     end
   end
 
+  describe "submissions:disregard_bounced_submission" do
+    subject(:task) do
+      Rake::Task["submissions:disregard_bounced_submission"]
+        .tap(&:reenable)
+    end
+
+    let(:form_id) { 1 }
+    let(:mail_status) { :bounced }
+    let(:reference) { "submission-reference" }
+    let(:args) { [reference] }
+
+    before do
+      create :submission,
+             :sent,
+             form_id:,
+             mail_status:,
+             reference:
+    end
+
+    context "with valid arguments" do
+      it "logs submission bounce that is being disregarded" do
+        allow(Rails.logger).to receive(:info)
+        expect(Rails.logger).to receive(:info).with("Disregarding bounce of submission with reference #{reference}")
+
+        task.invoke(*args)
+      end
+
+      it "updates mail status to pending for bounced submission" do
+        task.invoke(*args)
+        expect(Submission.first.pending?).to be true
+      end
+
+      context "when no submission exists with that reference" do
+        let(:args) { ["non-existent reference"] }
+
+        it "logs that there is no submission" do
+          allow(Rails.logger).to receive(:info)
+          expect(Rails.logger).to receive(:info).with("No submission found with reference non-existent reference")
+
+          task.invoke(*args)
+        end
+
+        it "does not update the submission mail_status" do
+          task.invoke(*args)
+          expect(Submission.first.bounced?).to be true
+        end
+      end
+
+      context "when the submission has not bounced" do
+        let(:mail_status) { :pending }
+
+        it "logs that there the submission hasn't bounced" do
+          allow(Rails.logger).to receive(:info)
+          expect(Rails.logger).to receive(:info).with("Submission with reference #{reference} hasn't bounced")
+
+          task.invoke(*args)
+        end
+
+        it "does not update the submission mail_status" do
+          task.invoke(*args)
+          expect(Submission.first.pending?).to be true
+        end
+      end
+    end
+
+    context "with invalid arguments" do
+      let(:invalid_args) { [] }
+
+      it "aborts with a usage message" do
+        expect {
+          task.invoke(*invalid_args)
+        }.to raise_error(SystemExit)
+               .and output("usage: rake submissions:disregard_bounced_submission[<reference>]\n").to_stderr
+      end
+    end
+  end
+
   describe "submissions:retry_failed_send_job" do
     subject(:task) do
       Rake::Task["submissions:retry_failed_send_job"]

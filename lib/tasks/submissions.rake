@@ -23,6 +23,16 @@ namespace :submissions do
     end
   end
 
+  desc "Disregard bounced submission"
+  task :disregard_bounced_submission, %i[reference] => :environment do |_, args|
+    reference = args[:reference]
+
+    usage_message = "usage: rake submissions:disregard_bounced_submission[<reference>]".freeze
+    abort usage_message if reference.blank?
+
+    disregard_bounced_submission(reference)
+  end
+
   desc "Retry failed send submission job"
   task :retry_failed_send_job, %i[job_id] => :environment do |_, args|
     job_id = args[:job_id]
@@ -53,4 +63,21 @@ namespace :submissions do
 
     Rails.logger.info "Retried #{failed_jobs.length} failed submission jobs"
   end
+end
+
+def disregard_bounced_submission(reference)
+  submission = Submission.find_by(reference:)
+
+  if submission.blank?
+    Rails.logger.info "No submission found with reference #{reference}"
+    return
+  end
+
+  unless submission.bounced?
+    Rails.logger.info "Submission with reference #{reference} hasn't bounced"
+    return
+  end
+
+  Rails.logger.info "Disregarding bounce of submission with reference #{submission.reference}"
+  submission.pending!
 end
