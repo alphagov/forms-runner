@@ -263,6 +263,10 @@ cy:
     section_1: We use cookies to make this form work. in Welsh
     section_2_html: Find out <a rel="external" href="https://cy.ico.org.uk/for-the-public/online/cookies">how to manage cookies</a>. in Welsh
     title: Cookies in Welsh
+  date_segment_names:
+    day: Diwrnod
+    month: Mis
+    year: Blwyddyn
   environment_names:
     dev: Development in Welsh
     local: Local in Welsh
@@ -376,6 +380,8 @@ cy:
     govuk_summary_list:
       change: Change in Welsh
   helpers:
+    error:
+      message_prefix: Gwall
     hint:
       email_confirmation_input:
         send_confirmation: We’ll only use the email address you provide here to send a confirmation that your form’s been successfully submitted. It will not contain a copy of your answers. in Welsh
