@@ -369,6 +369,8 @@ en:
     govuk_summary_list:
       change: Change
   helpers:
+    error:
+      message_prefix: Error
     hint:
       email_confirmation_input:
         send_confirmation: We’ll only use the email address you provide here to send a confirmation that your form’s been successfully submitted. It will not contain a copy of your answers.
