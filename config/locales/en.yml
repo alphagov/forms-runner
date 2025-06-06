@@ -262,6 +262,10 @@ en:
     section_1: We use cookies to make this form work.
     section_2_html: Find out <a rel="external" href="https://ico.org.uk/for-the-public/online/cookies">how to manage cookies</a>.
     title: Cookies
+  date_segment_names:
+    day: Day
+    month: Month
+    year: Year
   environment_names:
     dev: Development
     local: Local
