@@ -110,8 +110,8 @@ GEM
     aws-sdk-cloudwatch (1.115.0)
       aws-sdk-core (~> 3, >= 3.216.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-codepipeline (1.100.0)
-      aws-sdk-core (~> 3, >= 3.216.0)
+    aws-sdk-codepipeline (1.101.0)
+      aws-sdk-core (~> 3, >= 3.225.0)
       aws-sigv4 (~> 1.5)
     aws-sdk-core (3.225.1)
       aws-eventstream (~> 1, >= 1.3.0)
@@ -515,7 +515,7 @@ DEPENDENCIES
   active_kms
   activeresource
   aws-sdk-cloudwatch
-  aws-sdk-codepipeline (~> 1.100)
+  aws-sdk-codepipeline (~> 1.101)
   aws-sdk-kms
   aws-sdk-s3
   aws-sdk-sesv2
