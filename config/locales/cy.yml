@@ -262,6 +262,10 @@ cy:
     section_1: Rydym yn defnyddio cwcis i wneud i’r ffurflen hon weithio.
     section_2_html: Darganfyddwch <a rel="external" href="https://cy.ico.org.uk/for-the-public/online/cookies">sut i reoli cwcis</a>.
     title: Cwcis
+  date_segment_names:
+    day: Diwrnod
+    month: Mis
+    year: Blwyddyn
   environment_names:
     dev: Development
     local: Local
@@ -369,6 +373,8 @@ cy:
     govuk_summary_list:
       change: Newid
   helpers:
+    error:
+      message_prefix: Gwall
     hint:
       email_confirmation_input:
         send_confirmation: Byddwn ond yn defnyddio’r cyfeiriad e-bost rydych yn ei ddarparu yma i anfon cadarnhad bod eich ffurflen wedi’i chyflwyno’n llwyddiannus. Ni fydd yn cynnwys copi o’ch atebion.
