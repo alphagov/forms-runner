@@ -18,6 +18,10 @@ RSpec.describe FooterComponent::View, type: :component do
     it "includes the cookies link without a language query parameter" do
       expect(page).to have_link("Cookies", href: cookies_path)
     end
+
+    it "includes the licence link" do
+      expect(page).to have_link(I18n.t("footer.licence_link_text"), href: I18n.t("footer.licence_link_url"))
+    end
   end
 
   context "when the locale is cy" do
@@ -33,6 +37,10 @@ RSpec.describe FooterComponent::View, type: :component do
 
     it "includes the cookies link with a language query parameter" do
       expect(page).to have_link(I18n.t("footer.cookies", locale: :cy), href: cookies_path(locale: "cy"))
+    end
+
+    it "includes the licence link in Welsh" do
+      expect(page).to have_link(I18n.t("footer.licence_link_text", locale: :cy), href: I18n.t("footer.licence_link_url", locale: :cy))
     end
   end
 

@@ -316,7 +316,11 @@ en:
   footer:
     accessibility_statement: Accessibility statement
     cookies: Cookies
+    copyright: "© Crown copyright"
     helpful_links: Helpful links
+    licence: All content is available under the %{link}, except where otherwise stated
+    licence_link_text: Open Government Licence v3.0
+    licence_link_url: https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
     privacy_policy: Privacy
   form:
     check_your_answers:
