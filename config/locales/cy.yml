@@ -115,17 +115,17 @@ cy:
         question/email:
           attributes:
             email:
-              blank: Enter an email address
-              invalid_email: Enter an email address in the correct format, like name@example.com
+              blank: Rhowch gyfeiriad ebost
+              invalid_email: Rhowch gyfeiriad ebost yn y fformat cywir, fel enw@enghraifft.com
         question/file:
           attributes:
             file:
-              blank: Select a file
-              contains_virus: The selected file contains a virus
-              disallowed_type: The selected file must be a CSV, DOC, DOCX, JPEG, JPG, JSON, ODT, PDF, PNG, RTF, TXT, or XLSX
-              empty: The selected file is empty
-              scan_failure: The selected file could not be uploaded - try again
-              too_big: The selected file must be smaller than 7MB
+              blank: Dewiswch ffeil
+              contains_virus: Mae’r ffeil a ddewiswyd yn cynnwys feirws
+              disallowed_type: Rhaid i’r ffeil a ddewiswyd fod yn CSV, DOC, DOCX, JPEG, JPG, JSON, ODT, PDF, PNG, RTF, TXT, neu XLSX
+              empty: Mae’r ffeil a ddewiswyd yn wag
+              scan_failure: Doedd dim modd uwchlwytho’r ffeil a ddewiswyd - rhowch gynnig arall arni
+              too_big: Rhaid i’r ffeil a ddewiswyd fod yn llai na 7MB
         question/name:
           attributes:
             first_name:
@@ -142,53 +142,53 @@ cy:
         question/number:
           attributes:
             number:
-              blank: Enter a number
-              greater_than_or_equal_to: The answer must be greater than or equal to 0
-              not_a_number: The answer must be a number
+              blank: Rhowch rif
+              greater_than_or_equal_to: Rhaid i’r ateb fod yn fwy na 10 neu’n hafal i 0
+              not_a_number: Rhaid i’r ateb fod yn rhif
         question/organisation_name:
           attributes:
             text:
-              blank: Enter an organisation name
-              too_long: The organisation name must be shorter than 500 characters
+              blank: Rhowch enw sefydliad
+              too_long: Rhaid i enw’r sefydliad fod yn llai na 500 o gymeriadau
         question/phone_number:
           attributes:
             phone_number:
-              blank: Enter a phone number
-              invalid_phone_number: The phone number can only include numbers, spaces, ‘ext’, ‘-’, ‘+’, ‘(’ and ‘)’
-              phone_too_long: The phone number should have 15 digits or less
-              phone_too_short: The phone number should have 8 digits or more
+              blank: Rhowch rif ffôn
+              invalid_phone_number: 'Mae’r rhif ffôn yn cael cynnwys y canlynol yn unig: rhifau, bylchau, ‘est’, ‘-’, ‘+’, ‘(’ a ‘)’'
+              phone_too_long: Dylai’r rhif ffôn fod â 15 neu lai o ddigidau
+              phone_too_short: Dylai’r rhif ffôn fod ag 8 neu fwy o ddigidau
         question/selection:
           attributes:
             selection:
-              blank: Select one option
-              both_none_and_value_selected: Select one or more options, or select ‘None of the above’
-              checkbox_blank: Select one or more options
-              inclusion: Select an answer from the list
+              blank: Dewiswch un opsiwn
+              both_none_and_value_selected: Dewiswch un neu ragor o opsiynau neu dewiswch 'Dim un o’r uchod'
+              checkbox_blank: Dewiswch un neu ragor o opsiynau
+              inclusion: Dewiswch ateb o blith y rhestr
         question/text:
           attributes:
             text:
-              blank: Enter an answer
-              long_text_too_long: The answer must be shorter than 5000 characters
-              single_line_too_long: The answer must be shorter than 500 characters
+              blank: Rhowch ateb
+              long_text_too_long: Rhaid i’r ateb fod yn llai na 5000 o gymeriadau
+              single_line_too_long: Rhaid i’r ateb fod yn llai na 500 o gymeriadau
         remove_input:
           attributes:
             remove:
               blank: Rhaid i chi ddewis opsiwn
   autocomplete:
-    assistive_hint: When autocomplete results are available use up and down arrows to review and enter to select.  Touch device users, explore by touch or with swipe gestures.
-    no_results: No results found
-    prompt: Select an answer
+    assistive_hint: 'Pan fo canlyniadau awtolenwi ar gael, defnyddiwch y saethau i fyny ac i lawr i adolygu a defnyddiwch ''enter'' i ddewis. Defnyddwyr dyfeisiau cyffwrdd: chwiliwch drwy gyffwrdd neu sweipio'
+    no_results: Dim canlyniadau wedi’u canfod
+    prompt: Dewiswch ateb
     status:
-      no_results: No search results
-      query_too_short: Type in ${minQueryLength} or more characters for results
-      results_plural: "${length} results are available. ${contentSelectedOption}"
-      results_single: "${length} result is available. ${contentSelectedOption}"
-      selected_option: "${selectedOption} ${index + 1} of ${length} is highlighted"
+      no_results: Dim canlyniadau chwilio
+      query_too_short: Teipiwch ${minQueryLength} neu fwy o gymeriadau i gael canlyniadau
+      results_plural: Mae ${length} o ganlyniadau ar gael. ${contentSelectedOption}
+      results_single: Mae ${length} canlyniad ar gael. ${contentSelectedOption}
+      selected_option: Mae ${selectedOption} ${index + 1} o ${length} wedi’u hamlygu
   banner:
     success:
       cookie_preferences_updated: Rydych wedi gosod eich dewisiadau cwcis.
-      file_removed: Your file has been removed
-      file_uploaded: Your file has been uploaded
+      file_removed: Mae eich ffeil wedi’i thynnu
+      file_uploaded: Mae eich ffeil wedi’i huwchlwytho
       title: Llwyddiant
   continue: Parhau
   cookie_banner:
@@ -286,33 +286,33 @@ cy:
       title: There’s a problem
     incomplete_submission:
       body_html: |
-        <p>You may have already submitted the form.</p>
-        <p><a href="%{link_url}">Complete the remaining questions</a> to continue.</p>
-      title: You tried to submit an incomplete form
+        <p>Efallai eich bod chi wedi cyflwyno’r ffurflen yn barod.</p>
+        <p><a href="%{link_url}">Atebwch y cwestiynau sy’n dal ar ôl er mwyn parhau</a> parhau.</p>
+      title: Rydych chi wedi ceisio cyflwyno ffurflen anghyflawn
     internal_server_error:
-      body: Please try again later.
-      title: Sorry, there is a problem with the service
+      body: Rhowch gynnig arall arni yn nes ymlaen.
+      title: Ymddiheuriadau. Mae yna broblem gyda’r gwasanaeth
     maintenance:
       body_html: |
-        <p>You’ll be able to use the service later.</p>
-        <p>We have not saved your answers. When the service is available, you’ll have to start again.</p>
-      title: Sorry, the service is unavailable
+        <p>Byddwch chi’n gallu defnyddio’r gwasanaeth yn nes ymlaen.</p>
+        <p>Dydyn ni ddim wedi cadw’ch atebion. Pan fydd y gwasanaeth ar gael, bydd angen ichi ddechrau eto.</p>
+      title: Ymddiheuriadau. Dyw’r gwasanaeth ddim ar gael
     not_found:
       body: |
-        If you typed the web address, check it is correct.
-        If you pasted the web address, check you copied the entire address.
-      title: Page not found
+        Os mai teipio’r cyfeiriad gwe wnaethoch chi, gwiriwch ei fod yn gywir.
+        Os mai gludo’r cyfeiriad gwe wnaethoch chi, gwiriwch eich bod chi wedi copïo’r cyfeiriad cyfan.
+      title: Y tudalen heb ei ganfod
     repeat_submission:
-      body: We deleted your answers because they’ve been submitted successfully already.
-      body_2: If you want to submit the form again, you need to
-      link_text: go back to the start
-      title: For your security, we deleted your answers
+      body: Rydyn ni wedi dileu’ch atebion am eu bod nhw wedi cael eu cyflwyno’n llwyddiannus yn barod.
+      body_2: Os hoffech chi gyflwyno’r ffurflen eto, mae angen ichi
+      link_text: fynd yn ôl i’r dechrau
+      title: Er lles eich diogelwch, rydyn ni wedi dileu’ch atebion
     submission_error:
       body: |
-        There was a problem with the service and we have been unable to submit your answers.
+        Roedd yna broblem gyda’r gwasanaeth ac rydyn ni wedi methu cyflwyno’ch atebion.
 
-        Please try again later.
-      title: Sorry, we could not submit your answers
+        Rhowch gynnig arall arni yn nes ymlaen.
+      title: Ymddiheuriadau. Rydyn ni wedi methu cyflwyno’ch atebion
   footer:
     accessibility_statement: Datganiad hygyrchedd
     cookies: Cwcis
@@ -364,14 +364,14 @@ cy:
         short_answer_legend: Ydych chi’n siŵr eich bod chi eisiau dileu ‘%{answer_text}’?
     remove_file:
       show:
-        radios_legend: Are you sure you want to remove your file?
-        title: Remove your file
+        radios_legend: Ydych chi’n siŵr yr hoffech chi dynnu’ch ffeil?
+        title: Tynnu’ch ffeil
     review_file:
       show:
-        check_file: Check your uploaded file
-        remove: Dileu
-        remove_file_guidance: You can remove this file if you need to upload a different one.
-        your_file: Your file
+        check_file: Gwiriwch y ffeil sydd wedi’i huwchlwytho
+        remove: Tynnu
+        remove_file_guidance: Cewch dynnu’r ffeil yma os oes angen ichi uwchlwytho un wahanol.
+        your_file: Eich ffeil chi
   gov_uk_forms: GOV.UK Forms
   govuk_components:
     govuk_summary_list:
@@ -436,7 +436,7 @@ cy:
     archived_preview: archived preview
     draft_preview: draft preview
     live_preview: live preview
-    none_of_the_above: None of the above
+    none_of_the_above: Dim un o’r uchod
     optional: "(dewisol)"
   page_titles:
     error_prefix: 'Gwall: '
@@ -551,17 +551,17 @@ cy:
   question/file:
     file_requirements:
       body_html: |
-        <p>You can upload the following file types:</p>
+        <p>Cewch uwchlwytho’r mathau canlynol o ffeil:</p>
         <ul class="govuk-list govuk-list--bullet">
           <li>CSV (.csv)</li>
-          <li>image (.jpeg, .jpg, .png)</li>
-          <li>Microsoft Excel Spreadsheet (.xlsx)</li>
-          <li>Microsoft Word Document (.doc, .docx)</li>
+          <li>delwedd (.jpeg, .jpg, .png)</li>
+          <li>Taenlen Microsoft Excel (.xlsx)</li>
+          <li>Dogfen Microsoft Word (.doc, .docx)</li>
           <li>PDF (.pdf)</li>
-          <li>text (.json, .odt, .rtf, .txt)</li>
+          <li>testun (.json, .odt, .rtf, .txt)</li>
         </ul>
-        <p>Your file must be smaller than 7MB.</p>
-      summary: What files can I upload?
+        <p>Rhaid i’ch ffeil fod yn llai na 7MB.</p>
+      summary: Pa ffeiliau ga i eu huwchlwytho?
   question/name:
     label:
       first_name: Enw cyntaf
@@ -570,7 +570,7 @@ cy:
       middle_names: Enwau canol
       title: Teitl
   question/selection:
-    divider: or
+    divider: neu
   submission_csv:
     reference: Reference
     repeatable_answer_header: "%{header} - Answer %{index}"
