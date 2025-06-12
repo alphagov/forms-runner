@@ -82,8 +82,8 @@ cy:
         add_another_answer_input:
           attributes:
             add_another_answer:
-              blank: Select yes if you need to add another answer
-              max_answers_reached: You cannot add another answer
+              blank: Dewiswch ydw os ydych angen ychwanegu ateb arall
+              max_answers_reached: Dewiswch ydw os ydych angen ychwanegu ateb arall
         email_confirmation_input:
           attributes:
             confirmation_email_address:
