@@ -49,7 +49,7 @@ RSpec.describe FormSubmissionService do
       },
     }
   end
-  let(:current_context) { instance_double(Flow::Context, form:, journey:, completed_steps: all_steps, support_details: OpenStruct.new(call_charges_url: "http://gov.uk"), answers:) }
+  let(:current_context) { instance_double(Flow::Context, form:, journey:, completed_steps: all_steps, answers:) }
 
   let(:output) { StringIO.new }
   let(:logger) do
@@ -235,7 +235,7 @@ RSpec.describe FormSubmissionService do
           service.submit
           expect(FormSubmissionConfirmationMailer).to have_received(:send_confirmation_email).with(
             { what_happens_next_markdown: form.what_happens_next_markdown,
-              support_contact_details: contact_support_details_format,
+              support_contact_details: form.support_details,
               notify_response_id: email_confirmation_input.confirmation_email_reference,
               confirmation_email_address: email_confirmation_input.confirmation_email_address,
               mailer_options: instance_of(FormSubmissionService::MailerOptions) },
@@ -253,13 +253,6 @@ RSpec.describe FormSubmissionService do
         end
       end
     end
-  end
-
-  def contact_support_details_format
-    phone_number = "#{form.support_phone}\n\n[#{I18n.t('support_details.call_charges')}](http://gov.uk)"
-    email = "[#{form.support_email}](mailto:#{form.support_email})"
-    online = "[#{form.support_url_text}](#{form.support_url})"
-    [phone_number, email, online].compact_blank.join("\n\n")
   end
 
   def log_lines
