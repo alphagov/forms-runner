@@ -421,6 +421,9 @@ cy:
       time: This form was submitted at %{time} on %{date}
       title: This is a completed “%{title}” form.
       title_preview: This is a test of the “%{title}” form.
+    submission_confirmation:
+      default_support_contact_details: The form’s contact details for support will appear here once they’ve been added.
+      default_what_happens_next: The form’s information about what happens next will appear here once it has been added.
   mode:
     phase_banner_tag_preview-archived: Archived preview
     phase_banner_tag_preview-draft: Draft preview
