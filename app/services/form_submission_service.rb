@@ -111,7 +111,7 @@ private
 
     formatted_phone_number = normalize_whitespace(@form.support_phone)
 
-    "#{formatted_phone_number}\n\n[#{I18n.t('support_details.call_charges')}](#{@current_context.support_details.call_charges_url})"
+    "#{formatted_phone_number}\n\n[#{I18n.t('support_details.call_charges')}](#{@form.support_details.call_charges_url})"
   end
 
   def support_email_details
