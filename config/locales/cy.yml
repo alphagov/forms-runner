@@ -323,6 +323,10 @@ cy:
     licence_link_url: https://www.nationalarchives.gov.uk/doc/open-government-licence-cymraeg/version/3/
     privacy_policy: Preifatrwydd
   form:
+    archived:
+      heading: Sorry, this service is no longer available
+      service_unavailable: "“%{form_name}” has been archived and is no longer available."
+      title: Form archived
     check_your_answers:
       agree_and_submit: Cytuno a chyflwyno
       declaration: Datganiad

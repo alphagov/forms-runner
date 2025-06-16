@@ -323,6 +323,10 @@ en:
     licence_link_url: https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
     privacy_policy: Privacy
   form:
+    archived:
+      heading: Sorry, this service is no longer available
+      service_unavailable: "“%{form_name}” has been archived and is no longer available."
+      title: Form archived
     check_your_answers:
       agree_and_submit: Agree and submit
       declaration: Declaration
