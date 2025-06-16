@@ -14,6 +14,10 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
           what_happens_next_markdown: "Good things come to those that wait",
           declaration_text: "agree to the declaration",
           steps: steps_data,
+          support_phone: "0203 222 2222",
+          support_email: "help@example.gov.uk",
+          support_url: "https://example.gov.uk/help",
+          support_url_text: "Get help",
           submission_email:)
   end
 

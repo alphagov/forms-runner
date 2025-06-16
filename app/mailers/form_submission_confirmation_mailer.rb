@@ -5,7 +5,7 @@ class FormSubmissionConfirmationMailer < GovukNotifyRails::Mailer
     set_personalisation(
       title: mailer_options.title,
       what_happens_next_text: what_happens_next_markdown.presence || default_what_happens_next_text,
-      support_contact_details: support_contact_details.presence || default_support_contact_details_text,
+      support_contact_details: format_support_details(support_contact_details).presence || default_support_contact_details_text,
       submission_time: mailer_options.timestamp.strftime("%l:%M%P").strip,
       submission_date: I18n.l(mailer_options.timestamp, format: "%-d %B %Y"),
       # GOV.UK Notify's templates have conditionals, but only positive
@@ -22,6 +22,22 @@ class FormSubmissionConfirmationMailer < GovukNotifyRails::Mailer
     set_email_reply_to(Settings.govuk_notify.form_submission_email_reply_to_id)
 
     mail(to: confirmation_email_address)
+  end
+
+  def format_support_details(support_details)
+    phone = support_details.phone
+    call_charges_url = support_details.call_charges_url
+    email = support_details.email
+    url = support_details.url
+    url_text = support_details.url_text
+
+    support_details = []
+    support_details << normalize_whitespace(phone) if phone.present?
+    support_details << "[#{I18n.t('support_details.call_charges')}](#{call_charges_url})" if phone.present?
+    support_details << "[#{email}](mailto:#{email})" if email.present?
+    support_details << "[#{url_text}](#{url})" if url.present? && url_text.present?
+
+    support_details.compact_blank.join("\n\n")
   end
 
 private
@@ -42,5 +58,9 @@ private
     return Settings.govuk_notify.form_filler_confirmation_email_welsh_template_id if I18n.locale == :cy
 
     Settings.govuk_notify.form_filler_confirmation_email_template_id
+  end
+
+  def normalize_whitespace(text)
+    text.strip.gsub(/\r\n?/, "\n").split(/\n\n+/).map(&:strip).join("\n\n")
   end
 end

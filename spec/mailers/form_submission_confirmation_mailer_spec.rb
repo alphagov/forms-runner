@@ -17,7 +17,7 @@ describe FormSubmissionConfirmationMailer, type: :mailer do
   end
   let(:title) { "Form 1" }
   let(:what_happens_next_markdown) { "Please wait for a response" }
-  let(:support_contact_details) { "Call: 0203 222 2222" }
+  let(:support_contact_details) { OpenStruct.new(phone: "0203 222 2222", email: nil, support_url: nil, support_url_text: nil, call_charges_url: "https://www.gov.uk/call-charges") }
   let(:is_preview) { false }
   let(:confirmation_email_address) { "testing@gov.uk" }
   let(:submission_timestamp) { Time.zone.now }
@@ -65,7 +65,7 @@ describe FormSubmissionConfirmationMailer, type: :mailer do
     end
 
     it "includes the forms support contact details" do
-      expect(mail.govuk_notify_personalisation[:support_contact_details]).to eq("Call: 0203 222 2222")
+      expect(mail.govuk_notify_personalisation[:support_contact_details]).to eq("0203 222 2222\n\n[Find out about call charges](https://www.gov.uk/call-charges)")
     end
 
     context "when what happens next is missing" do
@@ -85,7 +85,7 @@ describe FormSubmissionConfirmationMailer, type: :mailer do
     end
 
     context "when support contact details are missing" do
-      let(:support_contact_details) { nil }
+      let(:support_contact_details) { OpenStruct.new(phone: nil, email: nil, url: nil, url_text: nil, call_charges_url: "https://www.gov.uk/call-charges") }
 
       it "uses placeholder text" do
         expect(mail.govuk_notify_personalisation[:support_contact_details]).to eq(I18n.t("mailer.submission_confirmation.default_support_contact_details"))
@@ -93,7 +93,7 @@ describe FormSubmissionConfirmationMailer, type: :mailer do
     end
 
     context "when support contact details are blank" do
-      let(:support_contact_details) { "" }
+      let(:support_contact_details) { OpenStruct.new(phone: "", email: "", url: "", url_text: "", call_charges_url: "https://www.gov.uk/call-charges") }
 
       it "uses placeholder text" do
         expect(mail.govuk_notify_personalisation[:support_contact_details]).to eq(I18n.t("mailer.submission_confirmation.default_support_contact_details"))
@@ -193,6 +193,65 @@ describe FormSubmissionConfirmationMailer, type: :mailer do
 
       it "uses the preview personalisation" do
         expect(mail.govuk_notify_personalisation[:test]).to eq("yes")
+      end
+    end
+  end
+
+  describe "#format_support_details" do
+    let(:mailer) { described_class.new }
+
+    context "with phone number only" do
+      let(:support_contact_details) { OpenStruct.new(phone: "0203 222 2222", email: nil, url: nil, url_text: nil, call_charges_url: "https://www.gov.uk/call-charges") }
+
+      it "formats phone number with call charges link" do
+        result = mailer.format_support_details(support_contact_details)
+        expect(result).to eq("0203 222 2222\n\n[Find out about call charges](https://www.gov.uk/call-charges)")
+      end
+    end
+
+    context "with email only" do
+      let(:support_contact_details) { OpenStruct.new(phone: nil, email: "help@example.gov.uk", url: nil, url_text: nil, call_charges_url: "https://www.gov.uk/call-charges") }
+
+      it "formats email as a mailto link" do
+        result = mailer.format_support_details(support_contact_details)
+        expect(result).to eq("[help@example.gov.uk](mailto:help@example.gov.uk)")
+      end
+    end
+
+    context "with support URL only" do
+      let(:support_contact_details) { OpenStruct.new(phone: nil, email: nil, url: "https://example.gov.uk/help", url_text: "Get help", call_charges_url: "https://www.gov.uk/call-charges") }
+
+      it "formats support URL as a link" do
+        result = mailer.format_support_details(support_contact_details)
+        expect(result).to eq("[Get help](https://example.gov.uk/help)")
+      end
+    end
+
+    context "with all support details" do
+      let(:support_contact_details) { OpenStruct.new(phone: "0203 222 2222", email: "help@example.gov.uk", url: "https://example.gov.uk/help", url_text: "Get help", call_charges_url: "https://www.gov.uk/call-charges") }
+
+      it "formats all details with proper separation" do
+        result = mailer.format_support_details(support_contact_details)
+        expected = "0203 222 2222\n\n[Find out about call charges](https://www.gov.uk/call-charges)\n\n[help@example.gov.uk](mailto:help@example.gov.uk)\n\n[Get help](https://example.gov.uk/help)"
+        expect(result).to eq(expected)
+      end
+    end
+
+    context "with no support details" do
+      let(:support_contact_details) { OpenStruct.new(phone: nil, email: nil, url: nil, url_text: nil, call_charges_url: "https://www.gov.uk/call-charges") }
+
+      it "returns empty string" do
+        result = mailer.format_support_details(support_contact_details)
+        expect(result).to eq("")
+      end
+    end
+
+    context "with phone number that has extra whitespace" do
+      let(:support_contact_details) { OpenStruct.new(phone: "  0203 222 2222\n\n  ", email: nil, url: nil, url_text: nil, call_charges_url: "https://www.gov.uk/call-charges") }
+
+      it "normalizes whitespace" do
+        result = mailer.format_support_details(support_contact_details)
+        expect(result).to eq("0203 222 2222\n\n[Find out about call charges](https://www.gov.uk/call-charges)")
       end
     end
   end
