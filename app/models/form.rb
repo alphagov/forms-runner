@@ -30,4 +30,14 @@ class Form < ActiveResource::Base
 
     "#{payment_url}?reference=#{reference}"
   end
+
+  def support_details
+    OpenStruct.new({
+      email: support_email,
+      phone: support_phone,
+      call_charges_url: "https://www.gov.uk/call-charges",
+      url: support_url,
+      url_text: support_url_text,
+    })
+  end
 end
