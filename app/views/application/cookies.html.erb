@@ -20,6 +20,7 @@
       <p><%=t('cookies.essential_cookies.section_0')%></p>
 
       <%= govuk_table(
+        classes: "govuk-table--small-text-until-tablet",
         caption: t('cookies.essential_cookies.table.caption'),
         rows: [
           [t('cookies.essential_cookies.table.row_0.column_0'), t('cookies.essential_cookies.table.row_0.column_1'), t('cookies.essential_cookies.table.row_0.column_2')],
@@ -47,6 +48,7 @@
         </ul>
 
         <%= govuk_table(
+          classes: "govuk-table--small-text-until-tablet",
           caption: t('cookies.analytics_cookies.table.caption'),
           rows: [
             [t('cookies.analytics_cookies.table.row_0.column_0'), t('cookies.analytics_cookies.table.row_0.column_1'), t('cookies.analytics_cookies.table.row_0.column_2')],
