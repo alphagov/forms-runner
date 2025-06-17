@@ -252,31 +252,6 @@ RSpec.describe FormSubmissionService do
           expect(FormSubmissionConfirmationMailer).not_to have_received(:send_confirmation_email)
         end
       end
-
-      context "when form is draft" do
-        context "when form does not have 'what happens next details'" do
-          let(:what_happens_next_markdown) { nil }
-
-          it "does not call FormSubmissionConfirmationMailer" do
-            allow(FormSubmissionConfirmationMailer).to receive(:send_confirmation_email)
-            service.submit
-            expect(FormSubmissionConfirmationMailer).not_to have_received(:send_confirmation_email)
-          end
-        end
-
-        context "when form does not have any support details" do
-          let(:support_email) { nil }
-          let(:support_phone) { nil }
-          let(:support_url) { nil }
-          let(:support_url_text) { nil }
-
-          it "does not call FormSubmissionConfirmationMailer" do
-            allow(FormSubmissionConfirmationMailer).to receive(:send_confirmation_email)
-            service.submit
-            expect(FormSubmissionConfirmationMailer).not_to have_received(:send_confirmation_email)
-          end
-        end
-      end
     end
   end
 

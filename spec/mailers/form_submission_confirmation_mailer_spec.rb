@@ -68,6 +68,38 @@ describe FormSubmissionConfirmationMailer, type: :mailer do
       expect(mail.govuk_notify_personalisation[:support_contact_details]).to eq("Call: 0203 222 2222")
     end
 
+    context "when what happens next is missing" do
+      let(:what_happens_next_markdown) { nil }
+
+      it "uses placeholder text" do
+        expect(mail.govuk_notify_personalisation[:what_happens_next_text]).to eq(I18n.t("mailer.submission_confirmation.default_what_happens_next"))
+      end
+    end
+
+    context "when what happens next is blank" do
+      let(:what_happens_next_markdown) { "" }
+
+      it "uses placeholder text" do
+        expect(mail.govuk_notify_personalisation[:what_happens_next_text]).to eq(I18n.t("mailer.submission_confirmation.default_what_happens_next"))
+      end
+    end
+
+    context "when support contact details are missing" do
+      let(:support_contact_details) { nil }
+
+      it "uses placeholder text" do
+        expect(mail.govuk_notify_personalisation[:support_contact_details]).to eq(I18n.t("mailer.submission_confirmation.default_support_contact_details"))
+      end
+    end
+
+    context "when support contact details are blank" do
+      let(:support_contact_details) { "" }
+
+      it "uses placeholder text" do
+        expect(mail.govuk_notify_personalisation[:support_contact_details]).to eq(I18n.t("mailer.submission_confirmation.default_support_contact_details"))
+      end
+    end
+
     it "includes an email reference (mostly used to retrieve specific email in notify for e2e tests)" do
       expect(mail.govuk_notify_reference).to eq("for-my-ref")
     end

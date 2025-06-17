@@ -4,8 +4,8 @@ class FormSubmissionConfirmationMailer < GovukNotifyRails::Mailer
 
     set_personalisation(
       title: mailer_options.title,
-      what_happens_next_text: what_happens_next_markdown,
-      support_contact_details:,
+      what_happens_next_text: what_happens_next_markdown.presence || default_what_happens_next_text,
+      support_contact_details: support_contact_details.presence || default_support_contact_details_text,
       submission_time: mailer_options.timestamp.strftime("%l:%M%P").strip,
       submission_date: I18n.l(mailer_options.timestamp, format: "%-d %B %Y"),
       # GOV.UK Notify's templates have conditionals, but only positive
@@ -25,6 +25,14 @@ class FormSubmissionConfirmationMailer < GovukNotifyRails::Mailer
   end
 
 private
+
+  def default_what_happens_next_text
+    I18n.t("mailer.submission_confirmation.default_what_happens_next")
+  end
+
+  def default_support_contact_details_text
+    I18n.t("mailer.submission_confirmation.default_support_contact_details")
+  end
 
   def make_notify_boolean(bool)
     bool ? "yes" : "no"
