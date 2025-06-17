@@ -84,10 +84,6 @@ private
     end
   end
 
-  def form_title
-    @form.name
-  end
-
   def submission_timezone
     Rails.configuration.x.submission.time_zone || "UTC"
   end
@@ -97,7 +93,7 @@ private
   end
 
   def mailer_options
-    MailerOptions.new(title: form_title,
+    MailerOptions.new(title: @form.name,
                       is_preview: @mode.preview?,
                       timestamp: @timestamp,
                       submission_reference: @submission_reference,
