@@ -60,7 +60,7 @@ private
 
       submission = Submission.find_by!(mail_message_id: ses_message_id)
 
-      process_bounce(submission) if ses_event_type == "Bounce"
+      process_bounce(submission, ses_message) if ses_event_type == "Bounce"
       process_complaint(submission) if ses_event_type == "Complaint"
 
       sqs_client.delete_message(queue_url: queue_url, receipt_handle: receipt_handle)
@@ -72,17 +72,37 @@ private
     end
   end
 
-  def process_bounce(submission)
+  def process_bounce(submission, ses_message)
     set_submission_logging_attributes(submission)
 
     submission.bounced!
 
-    EventLogger.log_form_event("submission_bounced")
+    bounce_object = ses_message["bounce"] || {}
+
+    ses_bounce = {
+      bounce_type: bounce_object["bounceType"],
+      bounce_sub_type: bounce_object["bounceSubType"],
+      reporting_mta: bounce_object["reportingMTA"],
+      timestamp: bounce_object["timestamp"],
+      feedback_id: bounce_object["feedbackId"],
+    }
+
+    bounced_recipients = bounce_object["bouncedRecipients"]&.map do |recipient|
+      {
+        email_address: recipient["emailAddress"],
+        action: recipient["action"],
+        status: recipient["status"],
+        diagnostic_code: recipient["diagnosticCode"],
+      }
+    end
+
+    EventLogger.log_form_event("submission_bounced", ses_bounce: ses_bounce.merge(bounced_recipients:))
 
     Sentry.capture_message("Submission email bounced - #{self.class.name}:", extra: {
       form_id: submission.form_id,
       submission_reference: submission.reference,
       job_id:,
+      ses_bounce:,
     })
   end
 
