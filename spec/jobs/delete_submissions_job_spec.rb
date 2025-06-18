@@ -123,6 +123,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
           "form_name" => form_with_file_upload.name,
           "submission_reference" => sent_submission_sent_8_days_ago.reference,
           "job_id" => @job_id,
+          "job_class" => "DeleteSubmissionsJob",
         ),
         hash_including(
           "level" => "INFO",
@@ -132,6 +133,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
           "form_name" => form_without_file_upload.name,
           "submission_reference" => sent_submission_sent_7_days_ago.reference,
           "job_id" => @job_id,
+          "job_class" => "DeleteSubmissionsJob",
         ),
       )
     end
@@ -156,6 +158,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
                                      "form_id" => form_with_file_upload.id,
                                      "submission_reference" => sent_submission_sent_8_days_ago.reference,
                                      "job_id" => @job_id,
+                                     "job_class" => "DeleteSubmissionsJob",
                                    ))
     end
 

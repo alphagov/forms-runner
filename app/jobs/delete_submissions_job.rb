@@ -3,6 +3,7 @@ class DeleteSubmissionsJob < ApplicationJob
 
   def perform(*_args)
     CloudWatchService.record_job_started_metric(self.class.name)
+    CurrentJobLoggingAttributes.job_class = self.class.name
     CurrentJobLoggingAttributes.job_id = job_id
 
     delete_submissions_sent_before_time = Settings.retain_submissions_for_seconds.seconds.ago

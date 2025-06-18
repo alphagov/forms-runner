@@ -111,6 +111,7 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
                                        "sqs_message_id" => sqs_message_id,
                                        "sns_message_timestamp" => sns_message_timestamp,
                                        "job_id" => @job_id,
+                                       "job_class" => "ReceiveSubmissionBouncesAndComplaintsJob",
                                      ))
       end
 
@@ -175,6 +176,7 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
                                          "sns_message_timestamp" => sns_message_timestamp,
                                          "message" => "Error processing message - StandardError: Test error",
                                          "job_id" => @job_id,
+                                         "job_class" => "ReceiveSubmissionBouncesAndComplaintsJob",
                                        ))
         end
 
@@ -220,6 +222,7 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
                                        "message" => "Form event",
                                        "event" => "form_submission_complaint",
                                        "job_id" => @job_id,
+                                       "job_class" => "ReceiveSubmissionBouncesAndComplaintsJob",
                                      ))
       end
 
