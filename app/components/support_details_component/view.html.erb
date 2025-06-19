@@ -1,7 +1,7 @@
 <%= govuk_details(summary_text: t("support_details.get_help_with_this_form")) do %>
   <% if @support_details.email.present? %>
     <h3 class="govuk-heading-s"><%= t("support_details.email") %></h3>
-    <p class="govuk-body">
+    <p class="govuk-body govuk-!-text-break-word">
       <%= govuk_link_to @support_details.email, "mailto:#{@support_details.email}" %>
     </p>
   <% end %>
