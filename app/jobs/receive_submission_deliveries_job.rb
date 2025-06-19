@@ -11,6 +11,7 @@ class ReceiveSubmissionDeliveriesJob < ApplicationJob
 
   def perform
     CloudWatchService.record_job_started_metric(self.class.name)
+    CurrentJobLoggingAttributes.job_class = self.class.name
     CurrentJobLoggingAttributes.job_id = job_id
 
     sts_client = Aws::STS::Client.new(region: REGION)

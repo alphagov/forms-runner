@@ -111,6 +111,7 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
                                        "sqs_message_id" => sqs_message_id,
                                        "sns_message_timestamp" => sns_message_timestamp,
                                        "job_id" => @job_id,
+                                       "job_class" => "ReceiveSubmissionBouncesAndComplaintsJob",
                                      ))
       end
 
@@ -123,6 +124,57 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
       it "deletes the SQS message" do
         perform_enqueued_jobs
         expect(sqs_client).to have_received(:delete_message).with(queue_url: anything, receipt_handle:)
+      end
+
+      context "when there is a bounce object" do
+        let(:ses_message_body) { { "mail" => { "messageId" => mail_message_id }, "eventType" => event_type, "bounce" => bounce } }
+        let(:bounce) { { "bounceType" => "Permanent", "bounceSubType" => "General", "bouncedRecipients" => bounced_recipients } }
+        let(:bounced_recipients) { [{ "emailAddress" => "bounce@example.com" }] }
+
+        it "logs the bounce type" do
+          perform_enqueued_jobs
+
+          expect(log_lines).to include(
+            hash_including(
+              "ses_bounce" => hash_including(
+                "bounce_type" => "Permanent",
+                "bounce_sub_type" => "General",
+                "bounced_recipients" => [
+                  hash_including(
+                    "email_address" => "bounce@example.com",
+                  ),
+                ],
+              ),
+            ),
+          )
+        end
+
+        it "includes the bounce type in the Sentry event" do
+          allow(Sentry).to receive(:capture_message)
+          perform_enqueued_jobs
+          expect(Sentry).to have_received(:capture_message).with(
+            a_string_including("Submission email bounced"),
+            extra: hash_including(
+              ses_bounce: hash_including(
+                bounce_type: "Permanent",
+                bounce_sub_type: "General",
+              ),
+            ),
+          )
+        end
+
+        it "does not include the bounced recipients in the Sentry event" do
+          allow(Sentry).to receive(:capture_message)
+          perform_enqueued_jobs
+          expect(Sentry).not_to have_received(:capture_message).with(
+            anything,
+            extra: hash_including(
+              ses_bounce: hash_including(
+                :bounced_recipients,
+              ),
+            ),
+          )
+        end
       end
 
       context "when there is no submission found" do
@@ -175,6 +227,7 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
                                          "sns_message_timestamp" => sns_message_timestamp,
                                          "message" => "Error processing message - StandardError: Test error",
                                          "job_id" => @job_id,
+                                         "job_class" => "ReceiveSubmissionBouncesAndComplaintsJob",
                                        ))
         end
 
@@ -220,6 +273,7 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
                                        "message" => "Form event",
                                        "event" => "form_submission_complaint",
                                        "job_id" => @job_id,
+                                       "job_class" => "ReceiveSubmissionBouncesAndComplaintsJob",
                                      ))
       end
 

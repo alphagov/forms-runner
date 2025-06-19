@@ -106,6 +106,7 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
                                        "submission_reference" => reference,
                                        "sns_message_timestamp" => sns_message_timestamp,
                                        "job_id" => @job_id,
+                                       "job_class" => "ReceiveSubmissionDeliveriesJob",
                                      ))
       end
 
@@ -170,6 +171,7 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
                                          "sns_message_timestamp" => sns_message_timestamp,
                                          "message" => "Error processing message - StandardError: Test error",
                                          "job_id" => @job_id,
+                                         "job_class" => "ReceiveSubmissionDeliveriesJob",
                                        ))
         end
 
