@@ -130,4 +130,28 @@ RSpec.describe Form, type: :model do
       end
     end
   end
+
+  describe "#support_details" do
+    let(:attributes) do
+      {
+        id: 1,
+        name: "form name",
+        support_email: "help@example.gov.uk",
+        support_phone: "0203 222 2222",
+        support_url: "https://example.gov.uk/help",
+        support_url_text: "Get help with this form",
+        start_page: 1,
+      }
+    end
+
+    it "returns an OpenStruct with support details" do
+      support_details = form.support_details
+
+      expect(support_details.email).to eq("help@example.gov.uk")
+      expect(support_details.phone).to eq("0203 222 2222")
+      expect(support_details.url).to eq("https://example.gov.uk/help")
+      expect(support_details.url_text).to eq("Get help with this form")
+      expect(support_details.call_charges_url).to eq("https://www.gov.uk/call-charges")
+    end
+  end
 end
