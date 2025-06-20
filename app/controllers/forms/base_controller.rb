@@ -1,6 +1,6 @@
 module Forms
   class BaseController < ApplicationController
-    before_action :check_available
+    prepend_before_action :check_available
     around_action :set_locale
 
     def redirect_to_friendly_url_start
@@ -31,6 +31,10 @@ module Forms
       @current_form ||= Api::V1::FormSnapshotRepository.find_with_mode(id: params.require(:form_id), mode:)
     end
 
+    def archived_form
+      Api::V1::FormSnapshotRepository.find_archived(id: params.require(:form_id))
+    end
+
     def current_context
       @current_context ||= Flow::Context.new(form: current_form, store: session)
     end
@@ -44,7 +48,12 @@ module Forms
     end
 
     def check_available
-      return if current_form.start_page && (mode.preview? || current_form.live?)
+      begin
+        return if current_form.start_page && (mode.preview? || current_form.live?)
+      rescue ActiveResource::ResourceNotFound
+        form = archived_form
+        return render template: "forms/archived/show", locals: { form_name: form.name }, status: :gone if form.present?
+      end
 
       raise ActiveResource::ResourceNotFound, "Not Found"
     end

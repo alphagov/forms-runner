@@ -346,6 +346,21 @@ RSpec.describe Forms::BaseController, type: :request do
           end
         end
       end
+
+      context "when the form is archived" do
+        before do
+          ActiveResource::HttpMock.respond_to do |mock|
+            mock.get "/api/v2/forms/2/live", req_headers, nil, 404
+            mock.get "/api/v2/forms/2/archived", req_headers, form_response_data.to_json, 200
+          end
+
+          get form_path(mode: "form", form_id: 2, form_slug: form_response_data.form_slug)
+        end
+
+        it "Renders the form archived page" do
+          expect(response.body).to include(I18n.t("form.archived.title"))
+        end
+      end
     end
   end
 
