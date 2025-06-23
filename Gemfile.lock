@@ -475,7 +475,7 @@ GEM
       unicode-emoji (~> 4.0, >= 4.0.4)
     unicode-emoji (4.0.4)
     uri (1.0.3)
-    uri-idna (0.3.0)
+    uri-idna (0.3.1)
     useragent (0.16.11)
     view_component (3.23.2)
       activesupport (>= 5.2.0, < 8.1)
