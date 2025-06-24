@@ -88,42 +88,91 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
         @job_id = job.job_id
       end
 
-      it "updates the submission mail status to bounced" do
-        perform_enqueued_jobs
-        expect(submission.reload.bounced?).to be true
+      context "when it is for a live submission" do
+        it "updates the submission mail status to bounced" do
+          perform_enqueued_jobs
+          expect(submission.reload.bounced?).to be true
+        end
+
+        it "doesn't change the mail status for other submissions" do
+          perform_enqueued_jobs
+          expect(other_submission.reload.pending?).to be true
+        end
+
+        it "logs at info level" do
+          perform_enqueued_jobs
+
+          expect(log_lines).to include(hash_including(
+                                         "level" => "INFO",
+                                         "message" => "Form event",
+                                         "event" => "form_submission_bounced",
+                                         "form_id" => form_with_file_upload.id,
+                                         "submission_reference" => reference,
+                                         "preview" => "false",
+                                         "mail_message_id" => mail_message_id,
+                                         "sqs_message_id" => sqs_message_id,
+                                         "sns_message_timestamp" => sns_message_timestamp,
+                                         "job_id" => @job_id,
+                                         "job_class" => "ReceiveSubmissionBouncesAndComplaintsJob",
+                                       ))
+        end
+
+        it "alerts to Sentry that there was a bounced delivery" do
+          allow(Sentry).to receive(:capture_message)
+          perform_enqueued_jobs
+          expect(Sentry).to have_received(:capture_message)
+        end
+
+        it "deletes the SQS message" do
+          perform_enqueued_jobs
+          expect(sqs_client).to have_received(:delete_message).with(queue_url: anything, receipt_handle:)
+        end
       end
 
-      it "doesn't change the mail status for other submissions" do
-        perform_enqueued_jobs
-        expect(other_submission.reload.pending?).to be true
-      end
+      context "when it is for a preview submission" do
+        let!(:submission) do
+          create :submission,
+                 mail_message_id:,
+                 reference:,
+                 form_id: form_with_file_upload.id,
+                 form_document: form_with_file_upload,
+                 answers: form_with_file_upload_answers,
+                 mode: "preview-live"
+        end
 
-      it "logs at info level" do
-        perform_enqueued_jobs
+        it "does not update the submission mail status to bounced" do
+          perform_enqueued_jobs
+          expect(submission.reload.bounced?).to be false
+        end
 
-        expect(log_lines).to include(hash_including(
-                                       "level" => "INFO",
-                                       "message" => "Form event",
-                                       "event" => "form_submission_bounced",
-                                       "form_id" => form_with_file_upload.id,
-                                       "submission_reference" => reference,
-                                       "mail_message_id" => mail_message_id,
-                                       "sqs_message_id" => sqs_message_id,
-                                       "sns_message_timestamp" => sns_message_timestamp,
-                                       "job_id" => @job_id,
-                                       "job_class" => "ReceiveSubmissionBouncesAndComplaintsJob",
-                                     ))
-      end
+        it "logs at info level" do
+          perform_enqueued_jobs
 
-      it "alerts to Sentry that there was a bounced delivery" do
-        allow(Sentry).to receive(:capture_message)
-        perform_enqueued_jobs
-        expect(Sentry).to have_received(:capture_message)
-      end
+          expect(log_lines).to include(hash_including(
+                                         "level" => "INFO",
+                                         "message" => "Form event",
+                                         "event" => "form_submission_bounced",
+                                         "form_id" => form_with_file_upload.id,
+                                         "submission_reference" => reference,
+                                         "preview" => "true",
+                                         "mail_message_id" => mail_message_id,
+                                         "sqs_message_id" => sqs_message_id,
+                                         "sns_message_timestamp" => sns_message_timestamp,
+                                         "job_id" => @job_id,
+                                         "job_class" => "ReceiveSubmissionBouncesAndComplaintsJob",
+                                       ))
+        end
 
-      it "deletes the SQS message" do
-        perform_enqueued_jobs
-        expect(sqs_client).to have_received(:delete_message).with(queue_url: anything, receipt_handle:)
+        it "does not alert to Sentry" do
+          allow(Sentry).to receive(:capture_message)
+          perform_enqueued_jobs
+          expect(Sentry).not_to have_received(:capture_message)
+        end
+
+        it "deletes the SQS message" do
+          perform_enqueued_jobs
+          expect(sqs_client).to have_received(:delete_message).with(queue_url: anything, receipt_handle:)
+        end
       end
 
       context "when there is a bounce object" do
@@ -267,6 +316,7 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
                                        "level" => "INFO",
                                        "form_id" => form_with_file_upload.id,
                                        "submission_reference" => reference,
+                                       "preview" => "false",
                                        "mail_message_id" => mail_message_id,
                                        "sqs_message_id" => sqs_message_id,
                                        "sns_message_timestamp" => sns_message_timestamp,
