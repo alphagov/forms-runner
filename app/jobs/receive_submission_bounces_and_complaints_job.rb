@@ -75,7 +75,9 @@ private
   def process_bounce(submission, ses_message)
     set_submission_logging_attributes(submission)
 
-    submission.bounced!
+    # Don't mark preview submissions as bounced, just log that they bounced. We don't need to attempt to resend preview
+    # submissions so these can be deleted as normal by the deletion job.
+    submission.bounced! unless submission.preview?
 
     bounce_object = ses_message["bounce"] || {}
 
@@ -98,12 +100,14 @@ private
 
     EventLogger.log_form_event("submission_bounced", ses_bounce: ses_bounce.merge(bounced_recipients:))
 
-    Sentry.capture_message("Submission email bounced - #{self.class.name}:", extra: {
-      form_id: submission.form_id,
-      submission_reference: submission.reference,
-      job_id:,
-      ses_bounce:,
-    })
+    unless submission.preview?
+      Sentry.capture_message("Submission email bounced - #{self.class.name}:", extra: {
+        form_id: submission.form_id,
+        submission_reference: submission.reference,
+        job_id:,
+        ses_bounce:,
+      })
+    end
   end
 
   def process_complaint(submission)
