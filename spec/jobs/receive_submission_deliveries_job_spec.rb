@@ -104,6 +104,7 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
                                        "event" => "form_submission_delivered",
                                        "form_id" => form_with_file_upload.id,
                                        "submission_reference" => reference,
+                                       "preview" => "false",
                                        "sns_message_timestamp" => sns_message_timestamp,
                                        "job_id" => @job_id,
                                        "job_class" => "ReceiveSubmissionDeliveriesJob",

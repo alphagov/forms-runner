@@ -5,5 +5,6 @@ class ApplicationJob < ActiveJob::Base
     CurrentJobLoggingAttributes.form_id = submission.form.id
     CurrentJobLoggingAttributes.form_name = submission.form.name
     CurrentJobLoggingAttributes.submission_reference = submission.reference
+    CurrentJobLoggingAttributes.preview = submission.preview?
   end
 end

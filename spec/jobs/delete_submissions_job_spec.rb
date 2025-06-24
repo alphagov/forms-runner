@@ -122,6 +122,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
           "form_id" => form_with_file_upload.id,
           "form_name" => form_with_file_upload.name,
           "submission_reference" => sent_submission_sent_8_days_ago.reference,
+          "preview" => "false",
           "job_id" => @job_id,
           "job_class" => "DeleteSubmissionsJob",
         ),
@@ -132,6 +133,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
           "form_id" => form_without_file_upload.id,
           "form_name" => form_without_file_upload.name,
           "submission_reference" => sent_submission_sent_7_days_ago.reference,
+          "preview" => "false",
           "job_id" => @job_id,
           "job_class" => "DeleteSubmissionsJob",
         ),
@@ -157,6 +159,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
                                      "message" => "Error deleting submission - StandardError: Test error",
                                      "form_id" => form_with_file_upload.id,
                                      "submission_reference" => sent_submission_sent_8_days_ago.reference,
+                                     "preview" => "false",
                                      "job_id" => @job_id,
                                      "job_class" => "DeleteSubmissionsJob",
                                    ))
