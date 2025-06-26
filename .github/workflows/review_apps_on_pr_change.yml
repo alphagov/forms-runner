@@ -64,12 +64,11 @@ jobs:
             -no-color \
             -auto-approve
 
-          {
-            echo "REVIEW_APP_URL=$(terraform output -raw review_app_url)" \
-                 "ADMIN_APP_URL=$(terraform output -raw admin_app_url)" \
-                 "ECS_CLUSTER_ID=$(terraform output -raw review_app_ecs_cluster_id)" \
-                 "ECS_SERVICE_NAME=$(terraform output -raw review_app_ecs_service_name)"
-          } >> "$GITHUB_OUTPUT"
+            # shellcheck disable=SC2129 # SC2129 is "mainly a stylistic issue" and it breaks our flow
+            echo "REVIEW_APP_URL=$(terraform output -raw review_app_url)" >> "$GITHUB_OUTPUT"
+            echo "ADMIN_APP_URL=$(terraform output -raw admin_app_url)" >> "$GITHUB_OUTPUT"
+            echo "ECS_CLUSTER_ID=$(terraform output -raw review_app_ecs_cluster_id)" >> "$GITHUB_OUTPUT"
+            echo "ECS_SERVICE_NAME=$(terraform output -raw review_app_ecs_service_name)" >> "$GITHUB_OUTPUT"
 
       - name: Wait for AWS ECS deployments to finish
         run: |
