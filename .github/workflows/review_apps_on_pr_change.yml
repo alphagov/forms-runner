@@ -65,9 +65,9 @@ jobs:
             -auto-approve
 
           {
-            echo "REVIEW_APP_URL=$(terraform output -raw review_app_url)"
-                 "ADMIN_APP_URL=$(terraform output -raw admin_app_url)"
-                 "ECS_CLUSTER_ID=$(terraform output -raw review_app_ecs_cluster_id)"
+            echo "REVIEW_APP_URL=$(terraform output -raw review_app_url)" \
+                 "ADMIN_APP_URL=$(terraform output -raw admin_app_url)" \
+                 "ECS_CLUSTER_ID=$(terraform output -raw review_app_ecs_cluster_id)" \
                  "ECS_SERVICE_NAME=$(terraform output -raw review_app_ecs_service_name)"
           } >> "$GITHUB_OUTPUT"
 
