@@ -12,10 +12,10 @@ GIT
 
 GIT
   remote: https://github.com/alphagov/govuk-forms-markdown.git
-  revision: 09d83e917d333bb656925bf028ce100a0f86e947
-  tag: 0.5.0
+  revision: d6712a441d0958524fcfa9dc78157e82f62469d6
+  tag: 0.6.0
   specs:
-    govuk-forms-markdown (0.5.0)
+    govuk-forms-markdown (0.6.0)
       redcarpet (~> 3.6)
 
 GEM
@@ -368,7 +368,7 @@ GEM
     rdoc (6.14.1)
       erb
       psych (>= 4.0.0)
-    redcarpet (3.6.0)
+    redcarpet (3.6.1)
     redis (4.8.1)
     redis-session-store (0.11.6)
       actionpack (>= 5.2.4.1, < 9)
