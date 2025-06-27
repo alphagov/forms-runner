@@ -45,7 +45,7 @@ jobs:
       - name: Determine Terraform version
         id: terraform-version
         run: |
-          cat .review_apps/.terraform-version | xargs printf "TF_VERSION=%s" >> "$GITHUB_OUTPUT"
+          echo "TF_VERSION=$(< .review_apps/.terraform-version)" >> "$GITHUB_OUTPUT"
 
       - uses: hashicorp/setup-terraform@v3
         with:
@@ -64,10 +64,11 @@ jobs:
             -no-color \
             -auto-approve
 
-          echo "REVIEW_APP_URL=$(terraform output -raw review_app_url)" >> "$GITHUB_OUTPUT"
-          echo "ADMIN_APP_URL=$(terraform output -raw admin_app_url)" >> "$GITHUB_OUTPUT"
-          echo "ECS_CLUSTER_ID=$(terraform output -raw review_app_ecs_cluster_id)" >> "$GITHUB_OUTPUT"
-          echo "ECS_SERVICE_NAME=$(terraform output -raw review_app_ecs_service_name)" >> "$GITHUB_OUTPUT"
+            # shellcheck disable=SC2129 # SC2129 is "mainly a stylistic issue" and it breaks our flow
+            echo "REVIEW_APP_URL=$(terraform output -raw review_app_url)" >> "$GITHUB_OUTPUT"
+            echo "ADMIN_APP_URL=$(terraform output -raw admin_app_url)" >> "$GITHUB_OUTPUT"
+            echo "ECS_CLUSTER_ID=$(terraform output -raw review_app_ecs_cluster_id)" >> "$GITHUB_OUTPUT"
+            echo "ECS_SERVICE_NAME=$(terraform output -raw review_app_ecs_service_name)" >> "$GITHUB_OUTPUT"
 
       - name: Wait for AWS ECS deployments to finish
         run: |
@@ -102,6 +103,8 @@ jobs:
           $COMMENT_MARKER
           EOF
 
+          # shellcheck disable=SC2016
+          # `jq` uses single-quote characters on Unix shells
           old_comment_ids=$(gh api "repos/{owner}/{repo}/issues/${{github.event.pull_request.number}}/comments" --jq 'map(select((.user.login == "github-actions[bot]") and (.body | endswith($ENV.COMMENT_MARKER + "\n")))) | .[].id')
           for comment_id in $old_comment_ids; do
             gh api -X DELETE "repos/{owner}/{repo}/issues/comments/${comment_id}"
