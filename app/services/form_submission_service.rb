@@ -47,7 +47,7 @@ private
   def submit_confirmation_email_to_user
     mail = FormSubmissionConfirmationMailer.send_confirmation_email(
       what_happens_next_markdown: @form.what_happens_next_markdown,
-      support_contact_details: formatted_support_details,
+      support_contact_details: @form.support_details,
       notify_response_id: @email_confirmation_input.confirmation_email_reference,
       confirmation_email_address: @email_confirmation_input.confirmation_email_address,
       mailer_options:,
@@ -84,10 +84,6 @@ private
     end
   end
 
-  def form_title
-    @form.name
-  end
-
   def submission_timezone
     Rails.configuration.x.submission.time_zone || "UTC"
   end
@@ -96,45 +92,11 @@ private
     Time.use_zone(submission_timezone) { Time.zone.now }
   end
 
-  def has_support_contact_details?
-    [@form.support_email, @form.support_phone].any?(&:present?) || [@form.support_url, @form.support_url_text].all?(&:present?)
-  end
-
-  def formatted_support_details
-    return nil unless has_support_contact_details?
-
-    [support_phone_details, support_email_details, support_online_details].compact_blank.join("\n\n")
-  end
-
-  def support_phone_details
-    return nil if @form.support_phone.blank?
-
-    formatted_phone_number = normalize_whitespace(@form.support_phone)
-
-    "#{formatted_phone_number}\n\n[#{I18n.t('support_details.call_charges')}](#{@current_context.support_details.call_charges_url})"
-  end
-
-  def support_email_details
-    return nil if @form.support_email.blank?
-
-    "[#{@form.support_email}](mailto:#{@form.support_email})"
-  end
-
-  def support_online_details
-    return nil if [@form.support_url, @form.support_url_text].all?(&:blank?)
-
-    "[#{@form.support_url_text}](#{@form.support_url})"
-  end
-
   def mailer_options
-    MailerOptions.new(title: form_title,
+    MailerOptions.new(title: @form.name,
                       is_preview: @mode.preview?,
                       timestamp: @timestamp,
                       submission_reference: @submission_reference,
                       payment_url: @form.payment_url_with_reference(@submission_reference))
-  end
-
-  def normalize_whitespace(text)
-    text.strip.gsub(/\r\n?/, "\n").split(/\n\n+/).map(&:strip).join("\n\n")
   end
 end
