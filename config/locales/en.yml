@@ -99,7 +99,7 @@ en:
               blank: Enter the country
             postcode:
               blank: Enter the postcode
-              invalid_postcode: Enter a real postcode
+              invalid_postcode: Enter a full UK postcode
             street_address:
               blank: Enter the address
             town_or_city:
