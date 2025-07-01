@@ -500,13 +500,13 @@ cy:
       heading: Sut rydym yn diogelu eich data a’i gadw’n ddiogel
       section_0: Rydym wedi ymrwymo i wneud popeth y gallwn i gadw’ch data yn ddiogel. Er mwyn atal mynediad neu ddatgelu anawdurdodedig, rydym wedi rhoi gweithdrefnau technegol a sefydliadol ar waith i ddiogelu’r data rydym yn ei gasglu amdanoch chi – er enghraifft, rydym yn diogelu’ch data gan ddefnyddio lefelau amrywiol o amgryptio. Rydym hefyd yn sicrhau bod gan unrhyw drydydd partïon rydym yn delio â nhw rwymedigaeth i gadw’r holl ddata personol y maent yn ei brosesu ar ein rhan yn ddiogel.
     preamble:
-      section_0: 'Diweddarwyd ddiwethaf: 20 Medi 2022'
-      section_1: Crëwyd y ffurflen hon gan ddefnyddio GOV.UK Forms. Mae GOV.UK Forms yn gynnyrch a ddarperir gan Wasanaeth Digidol y Llywodraeth (GDS) sy’n rhan o Swyddfa’r Cabinet. Mae’n caniatáu i dimau llywodraeth y DU greu ffurflenni ar-lein i gasglu gwybodaeth gan bobl a sefydliadau.
-      section_2: Y sefydliad a greodd y ffurflen ar-lein hon gan ddefnyddio GOV.UK Forms yw rheolydd data y data maent yn ei gasglu gan ddefnyddio’r ffurflen, tra bod Swyddfa’r Cabinet, trwy GDS, yn brosesydd data. Rhaid i’r rheolydd data ddweud wrthych am beth maent yn ei wneud gyda’ch data personol - %{privacy_policy_link}.
-      section_2_link_text: darllenwch wybodaeth preifatrwydd y rheolydd data ar gyfer y ffurflen hon
-      section_3: Mae Swyddfa’r Cabinet hefyd yn casglu rhywfaint o ddata fel rheolydd data. Mae’r hysbysiad preifatrwydd hwn yn esbonio pa ddata personol y mae’r Swyddfa’r Cabinet yn ei gasglu a’i brosesu fel rheolydd data trwy ffurflenni a wneir gyda GOV.UK Forms.
+      section_0: 'Last updated: 25 June 2025'
+      section_1: This form was created using GOV.UK Forms. GOV.UK Forms is a product provided by the Government Digital Service (GDS) which is part of the Department for Science, Innovation and Technology. It lets UK government teams create online forms to collect information from people and organisations.
+      section_2: The organisation that created this online form using GOV.UK Forms is the data controller of personal data they collect using the form, whilst the Department for Science, Innovation and Technology, through GDS, is the data processor. The data controller must tell you about what they are doing with your personal data - %{privacy_policy_link}.
+      section_2_link_text: read the data controller’s privacy information for this form
+      section_3: The Department for Science, Innovation and Technology also collects some data as a data controller. This privacy notice explains what personal data the Department for Science, Innovation and Technology collects and processes as a data controller through forms made with GOV.UK Forms.
       section_4: Darllenwch %{dppr_link} i gael rhagor o wybodaeth.
-      section_4_link_text: gofnod Swyddfa’r Cabinet yn y Gofrestr Gyhoeddus Diogelu Data
+      section_4_link_text: the Department for Science, Innovation and Technology’s entry in the Data Protection Public Register
     questions_and_complaints:
       heading: Cwestiynau a chwynion
       section_0:
@@ -514,11 +514,11 @@ cy:
         list_item_0: gyda chwestiynau am unrhyw beth yn y ddogfen hon
         list_item_1: yn meddwl bod eich data personol wedi cael ei gamddefnyddio neu ei gam-drin
       section_1:
-        line_0: Gallwch hefyd gysylltu â Swyddog Diogelu Data Swyddfa’r Cabinet.
-        line_1: Data Protection Officer
-        line_2: Cabinet Office
-        line_3: 70 Whitehall
-        line_4: London SW1A 2AS
+        line_0: You can also contact our Data Protection Officer.
+        line_1: DSIT Data Protection Officer
+        line_2: Department for Science, Innovation and Technology
+        line_3: 22-26 Whitehall
+        line_4: London SW1A 2EG
       section_2: Os oes gennych gŵyn, gallwch hefyd gysylltu â %{ico_link} (ICO). Mae’r ICO yn rheoleiddiwr annibynnol a sefydlwyd i gynnal hawliau gwybodaeth.
       section_2_link_text: Swyddfa’r Comisiynydd Gwybodaeth
       section_3:
