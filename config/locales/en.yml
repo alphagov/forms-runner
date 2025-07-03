@@ -95,15 +95,23 @@ en:
           attributes:
             address1:
               blank: Enter the first line of the address
+              too_long: The first line of the address must be shorter than 500 characters
+            address2:
+              too_long: The second line of the address must be shorter than 500 characters
             country:
               blank: Enter the country
+              too_long: The country must be shorter than 500 characters
+            county:
+              too_long: The county must be shorter than 500 characters
             postcode:
               blank: Enter the postcode
               invalid_postcode: Enter a full UK postcode
             street_address:
               blank: Enter the address
+              too_long: The address must be shorter than 5,000 characters
             town_or_city:
               blank: Enter the town or city
+              too_long: The town or city must be shorter than 500 characters
         question/date:
           attributes:
             date:
