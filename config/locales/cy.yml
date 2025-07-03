@@ -138,10 +138,17 @@ cy:
           attributes:
             first_name:
               blank: Rhowch enw cyntaf
+              too_long: The first name must be shorter than 500 characters
             full_name:
               blank: Rhowch enw
+              too_long: The name must be shorter than 500 characters
             last_name:
               blank: Rhowch enw olaf
+              too_long: The last name must be shorter than 500 characters
+            middle_names:
+              too_long: The middle name must be shorter than 500 characters
+            title:
+              too_long: The title must be shorter than 100 characters
         question/national_insurance_number:
           attributes:
             national_insurance_number:
