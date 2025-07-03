@@ -153,6 +153,7 @@ en:
               blank: Enter a number
               greater_than_or_equal_to: The answer must be greater than or equal to 0
               not_a_number: The answer must be a number
+              too_long: The number must be shorter than 500 digits
         question/organisation_name:
           attributes:
             text:

@@ -159,4 +159,18 @@ RSpec.describe Question::Number, type: :model do
       end
     end
   end
+
+  describe "length validations" do
+    it "is valid with length under 500 characters" do
+      question.number = "1" * 499
+      expect(question).to be_valid
+      expect(question.errors[:number]).to be_empty
+    end
+
+    it "is invalid with length over 499 characters" do
+      question.number = "1" * 500
+      expect(question).not_to be_valid
+      expect(question.errors[:number]).to include(I18n.t("activemodel.errors.models.question/number.attributes.number.too_long"))
+    end
+  end
 end
