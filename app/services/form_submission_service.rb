@@ -19,6 +19,7 @@ class FormSubmissionService
   end
 
   def submit
+    validate_submission
     submit_form_to_processing_team
     submit_confirmation_email_to_user if requested_confirmation?
 
@@ -27,9 +28,11 @@ class FormSubmissionService
 
 private
 
-  def submit_form_to_processing_team
+  def validate_submission
     raise StandardError, "Form id(#{@form.id}) has no completed steps i.e questions/answers to submit" if @current_context.completed_steps.blank?
+  end
 
+  def submit_form_to_processing_team
     submit_using_form_submission_type
     LogEventService.log_submit(@current_context,
                                requested_email_confirmation: requested_confirmation?,
