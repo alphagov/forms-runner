@@ -11,7 +11,6 @@ class FormSubmissionService
     @current_context = current_context
     @form = current_context.form
     @email_confirmation_input = email_confirmation_input
-    @requested_email_confirmation = @email_confirmation_input.send_confirmation == "send_email"
     @mode = mode
     @timestamp = submission_timestamp
     @submission_reference = ReferenceNumberService.generate
@@ -20,53 +19,48 @@ class FormSubmissionService
   end
 
   def submit
-    submit_form_to_processing_team
-    submit_confirmation_email_to_user if @requested_email_confirmation
+    validate_submission
+    deliver_submission
+    send_confirmation_email if requested_confirmation?
 
     @submission_reference
   end
 
 private
 
-  def submit_form_to_processing_team
+  def validate_submission
     raise StandardError, "Form id(#{@form.id}) has no completed steps i.e questions/answers to submit" if @current_context.completed_steps.blank?
-
-    submit_using_form_submission_type
-    LogEventService.log_submit(@current_context,
-                               requested_email_confirmation: @requested_email_confirmation,
-                               preview: @mode.preview?,
-                               submission_type: @form.submission_type)
   end
 
-  def submit_using_form_submission_type
-    return s3_submission_service.submit if @form.submission_type == "s3"
+  def deliver_submission
+    case @form.submission_type
+    when "s3"
+      deliver_submission_via_s3
+    else
+      deliver_submission_via_email
+    end
 
-    submit_via_aws_ses
+    LogEventService.log_submit(
+      @current_context,
+      requested_email_confirmation: requested_confirmation?,
+      preview: @mode.preview?,
+      submission_type: @form.submission_type,
+    )
   end
 
-  def submit_confirmation_email_to_user
-    mail = FormSubmissionConfirmationMailer.send_confirmation_email(
-      what_happens_next_markdown: @form.what_happens_next_markdown,
-      support_contact_details: @form.support_details,
-      notify_response_id: @email_confirmation_input.confirmation_email_reference,
-      confirmation_email_address: @email_confirmation_input.confirmation_email_address,
-      mailer_options:,
-    ).deliver_now
-
-    CurrentRequestLoggingAttributes.confirmation_email_id = mail.govuk_notify_response.id
-  end
-
-  def s3_submission_service
-    S3SubmissionService.new(
+  def deliver_submission_via_s3
+    s3_submission_service = S3SubmissionService.new(
       journey: @current_context.journey,
       form: @form,
       timestamp: @timestamp,
       submission_reference: @submission_reference,
       is_preview: @mode.preview?,
     )
+
+    s3_submission_service.submit
   end
 
-  def submit_via_aws_ses
+  def deliver_submission_via_email
     submission = Submission.create!(
       reference: @submission_reference,
       form_id: @form.id,
@@ -84,12 +78,21 @@ private
     end
   end
 
-  def submission_timezone
-    Rails.configuration.x.submission.time_zone || "UTC"
+  def submission_timestamp
+    time_zone = Rails.configuration.x.submission.time_zone || "UTC"
+    Time.use_zone(time_zone) { Time.zone.now }
   end
 
-  def submission_timestamp
-    Time.use_zone(submission_timezone) { Time.zone.now }
+  def send_confirmation_email
+    mail = FormSubmissionConfirmationMailer.send_confirmation_email(
+      what_happens_next_markdown: @form.what_happens_next_markdown,
+      support_contact_details: @form.support_details,
+      notify_response_id: @email_confirmation_input.confirmation_email_reference,
+      confirmation_email_address: @email_confirmation_input.confirmation_email_address,
+      mailer_options:,
+    ).deliver_now
+
+    CurrentRequestLoggingAttributes.confirmation_email_id = mail.govuk_notify_response.id
   end
 
   def mailer_options
@@ -98,5 +101,9 @@ private
                       timestamp: @timestamp,
                       submission_reference: @submission_reference,
                       payment_url: @form.payment_url_with_reference(@submission_reference))
+  end
+
+  def requested_confirmation?
+    @email_confirmation_input.send_confirmation == "send_email"
   end
 end
