@@ -11,7 +11,6 @@ class FormSubmissionService
     @current_context = current_context
     @form = current_context.form
     @email_confirmation_input = email_confirmation_input
-    @requested_email_confirmation = @email_confirmation_input.send_confirmation == "send_email"
     @mode = mode
     @timestamp = submission_timestamp
     @submission_reference = ReferenceNumberService.generate
@@ -21,7 +20,7 @@ class FormSubmissionService
 
   def submit
     submit_form_to_processing_team
-    submit_confirmation_email_to_user if @requested_email_confirmation
+    submit_confirmation_email_to_user if requested_confirmation?
 
     @submission_reference
   end
@@ -33,7 +32,7 @@ private
 
     submit_using_form_submission_type
     LogEventService.log_submit(@current_context,
-                               requested_email_confirmation: @requested_email_confirmation,
+                               requested_email_confirmation: requested_confirmation?,
                                preview: @mode.preview?,
                                submission_type: @form.submission_type)
   end
@@ -98,5 +97,9 @@ private
                       timestamp: @timestamp,
                       submission_reference: @submission_reference,
                       payment_url: @form.payment_url_with_reference(@submission_reference))
+  end
+
+  def requested_confirmation?
+    @email_confirmation_input.send_confirmation == "send_email"
   end
 end
