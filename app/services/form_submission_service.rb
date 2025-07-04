@@ -21,7 +21,7 @@ class FormSubmissionService
   def submit
     validate_submission
     submit_form_to_processing_team
-    submit_confirmation_email_to_user if requested_confirmation?
+    send_confirmation_email if requested_confirmation?
 
     @submission_reference
   end
@@ -46,7 +46,7 @@ private
     submit_via_aws_ses
   end
 
-  def submit_confirmation_email_to_user
+  def send_confirmation_email
     mail = FormSubmissionConfirmationMailer.send_confirmation_email(
       what_happens_next_markdown: @form.what_happens_next_markdown,
       support_contact_details: @form.support_details,
