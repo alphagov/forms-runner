@@ -20,7 +20,7 @@ class FormSubmissionService
 
   def submit
     validate_submission
-    submit_form_to_processing_team
+    deliver_submission
     send_confirmation_email if requested_confirmation?
 
     @submission_reference
@@ -32,43 +32,35 @@ private
     raise StandardError, "Form id(#{@form.id}) has no completed steps i.e questions/answers to submit" if @current_context.completed_steps.blank?
   end
 
-  def submit_form_to_processing_team
-    submit_using_form_submission_type
-    LogEventService.log_submit(@current_context,
-                               requested_email_confirmation: requested_confirmation?,
-                               preview: @mode.preview?,
-                               submission_type: @form.submission_type)
+  def deliver_submission
+    case @form.submission_type
+    when "s3"
+      deliver_submission_via_s3
+    else
+      deliver_submission_via_email
+    end
+
+    LogEventService.log_submit(
+      @current_context,
+      requested_email_confirmation: requested_confirmation?,
+      preview: @mode.preview?,
+      submission_type: @form.submission_type,
+    )
   end
 
-  def submit_using_form_submission_type
-    return s3_submission_service.submit if @form.submission_type == "s3"
-
-    submit_via_aws_ses
-  end
-
-  def send_confirmation_email
-    mail = FormSubmissionConfirmationMailer.send_confirmation_email(
-      what_happens_next_markdown: @form.what_happens_next_markdown,
-      support_contact_details: @form.support_details,
-      notify_response_id: @email_confirmation_input.confirmation_email_reference,
-      confirmation_email_address: @email_confirmation_input.confirmation_email_address,
-      mailer_options:,
-    ).deliver_now
-
-    CurrentRequestLoggingAttributes.confirmation_email_id = mail.govuk_notify_response.id
-  end
-
-  def s3_submission_service
-    S3SubmissionService.new(
+  def deliver_submission_via_s3
+    s3_submission_service = S3SubmissionService.new(
       journey: @current_context.journey,
       form: @form,
       timestamp: @timestamp,
       submission_reference: @submission_reference,
       is_preview: @mode.preview?,
     )
+
+    s3_submission_service.submit
   end
 
-  def submit_via_aws_ses
+  def deliver_submission_via_email
     submission = Submission.create!(
       reference: @submission_reference,
       form_id: @form.id,
@@ -92,6 +84,18 @@ private
 
   def submission_timestamp
     Time.use_zone(submission_timezone) { Time.zone.now }
+  end
+
+  def send_confirmation_email
+    mail = FormSubmissionConfirmationMailer.send_confirmation_email(
+      what_happens_next_markdown: @form.what_happens_next_markdown,
+      support_contact_details: @form.support_details,
+      notify_response_id: @email_confirmation_input.confirmation_email_reference,
+      confirmation_email_address: @email_confirmation_input.confirmation_email_address,
+      mailer_options:,
+    ).deliver_now
+
+    CurrentRequestLoggingAttributes.confirmation_email_id = mail.govuk_notify_response.id
   end
 
   def mailer_options
