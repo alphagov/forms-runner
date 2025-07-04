@@ -78,12 +78,9 @@ private
     end
   end
 
-  def submission_timezone
-    Rails.configuration.x.submission.time_zone || "UTC"
-  end
-
   def submission_timestamp
-    Time.use_zone(submission_timezone) { Time.zone.now }
+    time_zone = Rails.configuration.x.submission.time_zone || "UTC"
+    Time.use_zone(time_zone) { Time.zone.now }
   end
 
   def send_confirmation_email
