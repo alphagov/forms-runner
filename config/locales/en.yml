@@ -95,15 +95,23 @@ en:
           attributes:
             address1:
               blank: Enter the first line of the address
+              too_long: The first line of the address must be shorter than 500 characters
+            address2:
+              too_long: The second line of the address must be shorter than 500 characters
             country:
               blank: Enter the country
+              too_long: The country must be shorter than 500 characters
+            county:
+              too_long: The county must be shorter than 500 characters
             postcode:
               blank: Enter the postcode
               invalid_postcode: Enter a full UK postcode
             street_address:
               blank: Enter the address
+              too_long: The address must be shorter than 5,000 characters
             town_or_city:
               blank: Enter the town or city
+              too_long: The town or city must be shorter than 500 characters
         question/date:
           attributes:
             date:
@@ -130,10 +138,17 @@ en:
           attributes:
             first_name:
               blank: Enter a first name
+              too_long: The first name must be shorter than 500 characters
             full_name:
               blank: Enter a name
+              too_long: The name must be shorter than 500 characters
             last_name:
               blank: Enter a last name
+              too_long: The last name must be shorter than 500 characters
+            middle_names:
+              too_long: The middle name must be shorter than 500 characters
+            title:
+              too_long: The title must be shorter than 100 characters
         question/national_insurance_number:
           attributes:
             national_insurance_number:
@@ -145,6 +160,7 @@ en:
               blank: Enter a number
               greater_than_or_equal_to: The answer must be greater than or equal to 0
               not_a_number: The answer must be a number
+              too_long: The number must be shorter than 500 digits
         question/organisation_name:
           attributes:
             text:

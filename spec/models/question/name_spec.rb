@@ -12,6 +12,20 @@ RSpec.describe Question::Name, type: :model do
 
   it_behaves_like "a question model"
 
+  shared_examples "title length validation" do
+    it "is valid when the title is less than 100 characters" do
+      question.title = "a" * 99
+      expect(question).to be_valid
+      expect(question.errors).to be_empty
+    end
+
+    it "is invalid when the title is more than 99 characters" do
+      question.title = "a" * 100
+      expect(question).not_to be_valid
+      expect(question.errors[:title]).to include(I18n.t("activemodel.errors.models.question/name.attributes.title.too_long"))
+    end
+  end
+
   context "when the name question is in full name format" do
     context "when the answer is empty" do
       it "returns invalid with blank full_name field" do
@@ -56,6 +70,20 @@ RSpec.describe Question::Name, type: :model do
 
       it "returns a hash with the full name for show_answer_in_csv" do
         expect(question.show_answer_in_csv).to eq({ "#{question_text} - Full name" => name })
+      end
+    end
+
+    describe "length validation" do
+      it "is valid with length under 500 characters" do
+        question.full_name = "a" * 499
+        expect(question).to be_valid
+        expect(question.errors[:full_name]).to be_empty
+      end
+
+      it "is invalid with length over 499 characters" do
+        question.full_name = "a" * 500
+        expect(question).not_to be_valid
+        expect(question.errors[:full_name]).to include(I18n.t("activemodel.errors.models.question/name.attributes.full_name.too_long"))
       end
     end
   end
@@ -147,6 +175,30 @@ RSpec.describe Question::Name, type: :model do
         })
       end
     end
+
+    describe "length validation" do
+      before do
+        question.first_name = "a" * 499
+        question.last_name = "a" * 499
+      end
+
+      it "is valid when all fields have the maximum allowed length" do
+        expect(question).to be_valid
+        expect(question.errors).to be_empty
+      end
+
+      it "is invalid when the first name is over 499 characters" do
+        question.first_name = "a" * 500
+        expect(question).not_to be_valid
+        expect(question.errors[:first_name]).to include(I18n.t("activemodel.errors.models.question/name.attributes.first_name.too_long"))
+      end
+
+      it "is invalid when the last name is over 499 characters" do
+        question.last_name = "a" * 500
+        expect(question).not_to be_valid
+        expect(question.errors[:last_name]).to include(I18n.t("activemodel.errors.models.question/name.attributes.last_name.too_long"))
+      end
+    end
   end
 
   context "when the name question is in first, middle and last name format" do
@@ -213,6 +265,37 @@ RSpec.describe Question::Name, type: :model do
           "#{question_text} - Middle names" => middle_name,
           "#{question_text} - Last name" => last_name,
         })
+      end
+    end
+
+    describe "length validation" do
+      before do
+        question.first_name = "a" * 499
+        question.middle_names = "a" * 499
+        question.last_name = "a" * 499
+      end
+
+      it "is valid when all fields have the maximum allowed length" do
+        expect(question).to be_valid
+        expect(question.errors).to be_empty
+      end
+
+      it "is invalid when the first name is over 499 characters" do
+        question.first_name = "a" * 500
+        expect(question).not_to be_valid
+        expect(question.errors[:first_name]).to include(I18n.t("activemodel.errors.models.question/name.attributes.first_name.too_long"))
+      end
+
+      it "is invalid when the middle name is over 499 characters" do
+        question.middle_names = "a" * 500
+        expect(question).not_to be_valid
+        expect(question.errors[:middle_names]).to include(I18n.t("activemodel.errors.models.question/name.attributes.middle_names.too_long"))
+      end
+
+      it "is invalid when the last name is over 499 characters" do
+        question.last_name = "a" * 500
+        expect(question).not_to be_valid
+        expect(question.errors[:last_name]).to include(I18n.t("activemodel.errors.models.question/name.attributes.last_name.too_long"))
       end
     end
   end
@@ -333,6 +416,8 @@ RSpec.describe Question::Name, type: :model do
             "#{question_text} - Title" => title,
           })
         end
+
+        include_examples "title length validation"
       end
     end
 
@@ -400,6 +485,8 @@ RSpec.describe Question::Name, type: :model do
             "#{question_text} - Title" => title,
           })
         end
+
+        include_examples "title length validation"
       end
     end
   end

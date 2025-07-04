@@ -11,7 +11,7 @@ module Question
 
     validate :uk_address_valid?, unless: :is_international_address?
     validate :postcode, :invalid_postcode?, unless: :is_international_address?
-    validate :international_adress_valid?, if: :is_international_address?
+    validate :international_address_valid?, if: :is_international_address?
 
     def postcode=(str)
       super str.present? ? UKPostcode.parse(str).to_s : str
@@ -41,16 +41,22 @@ module Question
       return if skipping_question?
 
       errors.add(:address1, :blank) if address1.blank?
+      errors.add(:address1, :too_long) if address1.present? && address1.length > 499
+      errors.add(:address2, :too_long) if address2.present? && address2.length > 499
       errors.add(:town_or_city, :blank) if town_or_city.blank?
+      errors.add(:town_or_city, :too_long) if town_or_city.present? && town_or_city.length > 499
+      errors.add(:county, :too_long) if county.present? && county.length > 499
       errors.add(:postcode, :blank) if postcode.blank?
       errors
     end
 
-    def international_adress_valid?
+    def international_address_valid?
       return if skipping_question?
 
       errors.add(:street_address, :blank) if street_address.blank?
+      errors.add(:street_address, :too_long) if street_address.present? && street_address.length > 4999
       errors.add(:country, :blank) if country.blank?
+      errors.add(:country, :too_long) if country.present? && country.length > 499
       errors
     end
   end

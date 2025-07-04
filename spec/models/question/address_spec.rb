@@ -139,6 +139,44 @@ RSpec.describe Question::Address, type: :model do
         end
       end
     end
+
+    describe "length validations" do
+      before do
+        question.address1 = "a" * 499
+        question.address2 = "a" * 499
+        question.town_or_city = "a" * 499
+        question.county = "a" * 499
+        question.postcode = "LS11AF"
+      end
+
+      it "is valid when all fields have the maximum allowed length" do
+        expect(question).to be_valid
+      end
+
+      it "is invalid when the first line is too long" do
+        question.address1 = "a" * 500
+        expect(question).not_to be_valid
+        expect(question.errors[:address1]).to include(I18n.t("activemodel.errors.models.question/address.attributes.address1.too_long"))
+      end
+
+      it "is invalid when the second line is too long" do
+        question.address2 = "a" * 500
+        expect(question).not_to be_valid
+        expect(question.errors[:address2]).to include(I18n.t("activemodel.errors.models.question/address.attributes.address2.too_long"))
+      end
+
+      it "is invalid when the town or city is too long" do
+        question.town_or_city = "a" * 500
+        expect(question).not_to be_valid
+        expect(question.errors[:town_or_city]).to include(I18n.t("activemodel.errors.models.question/address.attributes.town_or_city.too_long"))
+      end
+
+      it "is invalid when the county is too long" do
+        question.county = "a" * 500
+        expect(question).not_to be_valid
+        expect(question.errors[:county]).to include(I18n.t("activemodel.errors.models.question/address.attributes.county.too_long"))
+      end
+    end
   end
 
   context "when the address is an international address" do
@@ -236,6 +274,29 @@ RSpec.describe Question::Address, type: :model do
         it "returns the whole address as one item in show_answer_in_csv" do
           expect(question.show_answer_in_csv).to eq(Hash[question_text, "Laskerstraße 5, 10245 Berlin, Germany"])
         end
+      end
+    end
+
+    describe "length validations" do
+      before do
+        question.street_address = "a" * 4999
+        question.country = "a" * 499
+      end
+
+      it "is valid when all fields have the maximum allowed length" do
+        expect(question).to be_valid
+      end
+
+      it "is invalid when the street address is too long" do
+        question.street_address = "a" * 5000
+        expect(question).not_to be_valid
+        expect(question.errors[:street_address]).to include(I18n.t("activemodel.errors.models.question/address.attributes.street_address.too_long"))
+      end
+
+      it "is invalid when the country is too long" do
+        question.country = "a" * 5000
+        expect(question).not_to be_valid
+        expect(question.errors[:country]).to include(I18n.t("activemodel.errors.models.question/address.attributes.country.too_long"))
       end
     end
   end

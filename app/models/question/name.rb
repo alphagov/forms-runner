@@ -6,12 +6,9 @@ module Question
     attribute :middle_names
     attribute :last_name
 
+    validates :title, length: { maximum: 99 }, allow_blank: true
     validate :full_name_valid?, if: :is_full_name?
-    validate :first_and_last_name_valid?, unless: :is_full_name?
-
-    def validate_title
-      needs_title? && !is_optional?
-    end
+    validate :first_middle_and_last_name_valid?, unless: :is_full_name?
 
     def needs_title?
       answer_settings.present? && answer_settings&.title_needed == "true"
@@ -34,14 +31,18 @@ module Question
       return if skipping_question?
 
       errors.add(:full_name, :blank) if full_name.blank?
+      errors.add(:full_name, :too_long) if full_name.present? && full_name.length > 499
       errors
     end
 
-    def first_and_last_name_valid?
+    def first_middle_and_last_name_valid?
       return if skipping_question?
 
       errors.add(:first_name, :blank) if first_name.blank?
+      errors.add(:first_name, :too_long) if first_name.present? && first_name.length > 499
+      errors.add(:middle_names, :too_long) if include_middle_name? && middle_names.present? && middle_names.length > 499
       errors.add(:last_name, :blank) if last_name.blank?
+      errors.add(:last_name, :too_long) if last_name.present? && last_name.length > 499
       errors
     end
 
