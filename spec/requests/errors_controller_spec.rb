@@ -70,7 +70,7 @@ RSpec.describe ErrorsController, type: :request do
       allow(FormSubmissionService).to receive(:call).and_wrap_original do |original_method, **args|
         form_submission_service = original_method.call(**args)
 
-        allow(form_submission_service).to receive(:submit_form_to_processing_team)
+        allow(form_submission_service).to receive(:deliver_submission)
           .and_raise("Oh no!").with(any_args)
 
         form_submission_service
