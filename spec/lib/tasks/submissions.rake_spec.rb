@@ -9,6 +9,25 @@ RSpec.describe "submissions.rake" do
     Rake::Task.define_task(:environment)
   end
 
+  describe "submissions:inspect_submission_data" do
+    subject(:task) do
+      Rake::Task["submissions:inspect_submission_data"]
+        .tap(&:reenable)
+    end
+
+    before do
+      create :submission, :sent, mail_status: :pending, reference: "test_ref"
+    end
+
+    it "displays submission data when found" do
+      expect { task.invoke("test_ref") }.to output(a_string_including('reference: "test_ref"')).to_stdout
+    end
+
+    it "displays an error message when submission is not found" do
+      expect { task.invoke("non_existent_ref") }.to output("Submission with reference non_existent_ref not found.\n").to_stdout
+    end
+  end
+
   describe "submissions:check_submission_statuses" do
     subject(:task) do
       Rake::Task["submissions:check_submission_statuses"]
