@@ -5,6 +5,17 @@ namespace :submissions do
     Rails.logger.info "#{Submission.bounced.count} bounced submissions"
   end
 
+  desc "Fetch and display all data for a specific submission given a reference"
+  task :inspect_submission_data, [:reference] => :environment do |_t, args|
+    submission = Submission.find_by(reference: args.reference)
+    if submission.nil?
+      puts "Submission with reference #{args.reference} not found."
+    else
+      puts "Data for submission with reference #{args.reference}:"
+      pp submission
+    end
+  end
+
   desc "Retry bounced submissions"
   task :retry_bounced_submissions, %i[form_id] => :environment do |_, args|
     form_id = args[:form_id]
