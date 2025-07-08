@@ -17,6 +17,17 @@ namespace :submissions do
     end
   end
 
+  desc "Resend a submission to the queue"
+  task :retry_submission, [:reference] => :environment do |_t, args|
+    submission = Submission.find_by(reference: args.reference)
+    abort "Submission with reference #{args.reference} not found." if submission.nil?
+
+    Rails.logger.info "Resending submission with reference #{args.reference}"
+    Rails.logger.info "..."
+    SendSubmissionJob.perform_later(submission)
+    Rails.logger.info "Done!"
+  end
+
   desc "Retry bounced submissions"
   task :retry_bounced_submissions, %i[form_id] => :environment do |_, args|
     form_id = args[:form_id]

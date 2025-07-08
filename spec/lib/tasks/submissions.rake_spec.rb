@@ -32,6 +32,27 @@ RSpec.describe "submissions.rake" do
     end
   end
 
+  describe "submissions:retry_submission" do
+    subject(:task) do
+      Rake::Task["submissions:retry_submission"]
+        .tap(&:reenable)
+    end
+
+    it "enqueues the job given a submission reference" do
+      submission = create :submission, :sent, mail_status: :pending, reference: "test_ref"
+      expect { task.invoke("test_ref") }.to have_enqueued_job.with(submission)
+    end
+
+    it "outputs an error message with a non-existent reference" do
+      expect { task.invoke("non_existent_ref") }.to raise_error(SystemExit)
+                                                .and output(a_string_including("Submission with reference non_existent_ref not found.")).to_stderr
+    end
+
+    it "does not enqueue the job with a non-existent reference" do
+      expect { task.invoke("non_existent_ref") }.not_to have_enqueued_job.on_queue(:submissions)
+    end
+  end
+
   describe "submissions:check_submission_statuses" do
     subject(:task) do
       Rake::Task["submissions:check_submission_statuses"]
