@@ -12,6 +12,7 @@ namespace :submissions do
       puts "Submission with reference #{args.reference} not found."
     else
       puts "Data for submission with reference #{args.reference}:"
+      pp submission.answers
       pp submission
     end
   end
