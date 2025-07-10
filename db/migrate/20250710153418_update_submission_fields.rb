@@ -1,10 +1,8 @@
 class UpdateSubmissionFields < ActiveRecord::Migration[8.0]
   def change
     rename_column :submissions, :mail_status, :delivery_status
+    rename_column :submissions, :sent_at, :last_delivery_attempt
 
-    change_table :submissions, bulk: true do |t|
-      t.datetime :last_delivery_attempt, null: true
-      t.datetime :delivered_at, null: true
-    end
+    add_column :submissions, :delivered_at, :datetime, null: true
   end
 end
