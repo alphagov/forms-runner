@@ -12,6 +12,7 @@ module FormHeaderComponent
     def call
       if @current_context.present?
         homepage_url = @mode.preview? ? Settings.forms_admin.base_url : GOVUK_BASE_URL
+        navigation_items = [{ text: "Your questions", href: your_questions_url }]
 
         safe_join([
           govuk_header(homepage_url:,
@@ -21,6 +22,7 @@ module FormHeaderComponent
           govuk_service_navigation(
             service_name: form_name,
             service_url: form_start_page_url,
+            navigation_items: navigation_items,
           ),
         ], "\n")
       else
@@ -63,6 +65,10 @@ module FormHeaderComponent
 
     def form_start_page_url
       form_path(mode: @mode.to_s, form_id: @current_context.form.id, form_slug: @current_context.form.form_slug)
+    end
+
+    def your_questions_url
+      "#{Settings.forms_admin.base_url}/forms/#{@current_context.form.id}/pages/"
     end
   end
 end
