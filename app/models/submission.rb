@@ -3,7 +3,7 @@ class Submission < ApplicationRecord
 
   encrypts :answers
 
-  enum :mail_status, {
+  enum :delivery_status, {
     pending: "pending",
     bounced: "bounced",
   }
