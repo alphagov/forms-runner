@@ -24,6 +24,13 @@ feature "Fill in and submit a form with a file upload question", type: :feature 
   end
 
   let(:test_file) { "tmp/a-file.txt" }
+  let(:test_file_content) { "some content" }
+
+  let(:mock_s3_client) do
+    Aws::S3::Client.new(stub_responses: {
+      get_object: { body: test_file_content },
+    })
+  end
 
   after do
     File.delete(test_file) if File.exist?(test_file)
@@ -36,12 +43,11 @@ feature "Fill in and submit a form with a file upload question", type: :feature 
 
     allow(ReferenceNumberService).to receive(:generate).and_return(reference)
 
-    mock_s3_client = Aws::S3::Client.new(stub_responses: true)
     allow(Aws::S3::Client).to receive(:new).and_return(mock_s3_client)
     allow(mock_s3_client).to receive(:put_object)
     allow(mock_s3_client).to receive(:get_object_tagging).and_return({ tag_set: [{ key: "GuardDutyMalwareScanStatus", value: scan_status }] })
 
-    File.write(test_file, "some content")
+    File.write(test_file, test_file_content)
   end
 
   context "when the file is successfully uploaded" do
