@@ -21,7 +21,7 @@ RSpec.describe FormHeaderComponent::View, type: :component do
   it "links to the form start page" do
     render_inline(described_class.new(current_context:, mode:))
 
-    expect(page).to have_link "test_form_name", href: "/form/1/test"
+    expect(page).to have_link("test_form_name", href: "/form/1/test")
   end
 
   context "when mode is preview_draft" do
@@ -33,6 +33,13 @@ RSpec.describe FormHeaderComponent::View, type: :component do
       expect(page).to have_selector(".govuk-service-navigation .govuk-service-navigation__service-name")
       expect(page).to have_selector(".app-header--preview-draft")
       expect(page).to have_content("test_form_name")
+    end
+
+    it "has a link to 'Add and edit your questions' in admin" do
+      allow(Settings.forms_admin).to receive(:base_url).and_return("http://forms-admin")
+      render_inline(described_class.new(current_context:, mode:))
+
+      expect(page).to have_link("Your questions", href: "#{Settings.forms_admin.base_url}/forms/1/pages/")
     end
 
     it "links to the forms-admin homepage" do
@@ -73,6 +80,18 @@ RSpec.describe FormHeaderComponent::View, type: :component do
       expect(page).to have_selector(".govuk-service-navigation .govuk-service-navigation__service-name")
       expect(page).to have_selector(".app-header--preview-live")
       expect(page).to have_content("test_form_name")
+    end
+
+    it "has a link to 'Your Questions' in admin" do
+      render_inline(described_class.new(current_context:, mode:))
+
+      expect(page).to have_link("Your questions")
+    end
+
+    it "does not have a link to Edit your question" do
+      render_inline(described_class.new(current_context:, mode:))
+
+      expect(page).to have_no_link("Edit your question")
     end
   end
 
