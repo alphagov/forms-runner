@@ -24,6 +24,13 @@ feature "Fill in and submit a form with a file upload question", type: :feature 
   end
 
   let(:test_file) { "tmp/a-file.txt" }
+  let(:test_file_content) { "some content" }
+
+  let(:mock_s3_client) do
+    Aws::S3::Client.new(stub_responses: {
+      get_object: { body: test_file_content },
+    })
+  end
 
   after do
     File.delete(test_file) if File.exist?(test_file)
@@ -36,12 +43,11 @@ feature "Fill in and submit a form with a file upload question", type: :feature 
 
     allow(ReferenceNumberService).to receive(:generate).and_return(reference)
 
-    mock_s3_client = Aws::S3::Client.new(stub_responses: true)
     allow(Aws::S3::Client).to receive(:new).and_return(mock_s3_client)
     allow(mock_s3_client).to receive(:put_object)
     allow(mock_s3_client).to receive(:get_object_tagging).and_return({ tag_set: [{ key: "GuardDutyMalwareScanStatus", value: scan_status }] })
 
-    File.write(test_file, "some content")
+    File.write(test_file, test_file_content)
   end
 
   context "when the file is successfully uploaded" do
@@ -75,6 +81,29 @@ feature "Fill in and submit a form with a file upload question", type: :feature 
       when_i_upload_a_file
       and_i_click_on_continue
       then_i_see_an_error_message_that_the_file_contains_a_virus
+    end
+  end
+
+  context "when the file unexpectedly contains binary" do
+    # A PNG file which has been renamed to look like a TXT
+    let(:test_file_content) { File.read("spec/fixtures/disguised_binary_file.txt") }
+    let(:scan_status) { "NO_THREATS_FOUND" }
+
+    scenario "As a form filler" do
+      when_i_visit_the_form_start_page
+      then_i_should_see_the_first_question
+      then_i_see_the_file_upload_component
+      when_i_upload_a_file
+      and_i_click_on_continue
+      then_i_see_the_review_file_page
+      and_i_click_on_continue
+      then_i_should_see_the_check_your_answers_page
+
+      when_i_opt_out_of_email_confirmation
+      and_i_submit_my_form
+      then_my_form_should_be_submitted
+      and_i_should_receive_a_reference_number
+      and_an_email_submission_should_have_been_sent
     end
   end
 

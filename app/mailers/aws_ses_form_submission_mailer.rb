@@ -11,7 +11,10 @@ class AwsSesFormSubmissionMailer < ApplicationMailer
     @csv_filename = csv_filename
 
     files.each do |name, file|
-      attachments[name] = file
+      attachments[name] = {
+        encoding: "base64",
+        content: Base64.encode64(file),
+      }
     end
 
     mail(to: submission_email_address, subject: @subject)
