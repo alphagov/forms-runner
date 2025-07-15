@@ -467,7 +467,7 @@ cy:
     heading: This is a preview of this form. Do not enter personal information.
     title: Important
   preview_header:
-    your_questions: ''
+    your_questions: Your questions
   privacy:
     changes:
       heading: Newidiadau i’r hysbysiad hwn
