@@ -9,6 +9,8 @@ class SendSubmissionJob < ApplicationJob
   def perform(submission)
     set_submission_logging_attributes(submission)
 
+    return if submission.delivery_status == "delivered"
+
     form = submission.form
     mailer_options = FormSubmissionService::MailerOptions.new(title: form.name,
                                                               is_preview: submission.preview?,
