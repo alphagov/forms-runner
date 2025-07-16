@@ -5,74 +5,41 @@ class FormSubmissionService
     end
   end
 
-  MailerOptions = Data.define(:title, :is_preview, :timestamp, :submission_reference, :payment_url)
-
-  def initialize(current_context:, email_confirmation_input:, mode:)
-    @submission = Submission.create!(
-      reference: ReferenceNumberService.generate,
-      form_id: current_context.form.id,
-      answers: current_context.answers,
-      mode: mode,
-      form_document: current_context.form.document_json,
-    )
-
-    @email_confirmation_input = email_confirmation_input
-
-    CurrentRequestLoggingAttributes.submission_reference = @submission.reference
+  def initialize(submission:)
+    @submission = submission
   end
 
   def submit
+    set_logging_context
+
     deliver_submission
-    send_confirmation_email if requested_confirmation?
+    send_confirmation_email if @submission.confirmation_email.present?
 
     @submission.reference
   end
 
 private
 
+  def set_logging_context
+    CurrentRequestLoggingAttributes.submission_reference = @submission.reference
+  end
+
   def deliver_submission
-    case @submission.delivery_method
-    when "s3"
-      S3SubmissionService.new(submission: @submission).submit
+    if @submission.delivery_method == "s3"
+      S3SubmissionJob.perform_later(@submission)
     else
-      SendSubmissionJob.perform_later(@submission) do |job|
-        unless job.successfully_enqueued?
-          submission.destroy!
-          message_suffix = ": #{job.enqueue_error&.message}" if job.enqueue_error
-          raise StandardError, "Failed to enqueue submission for reference #{@submission.reference}#{message_suffix}"
-        end
-      end
+      SendSubmissionJob.perform_later(@submission)
     end
 
     LogEventService.log_submit(
       @submission.form_id,
-      requested_email_confirmation: requested_confirmation?,
+      requested_email_confirmation: @submission.confirmation_email.present?,
       preview: @submission.preview?,
       submission_type: @submission.delivery_method,
     )
   end
 
   def send_confirmation_email
-    mail = FormSubmissionConfirmationMailer.send_confirmation_email(
-      what_happens_next_markdown: @submission.form.what_happens_next_markdown,
-      support_contact_details: @submission.form.support_details,
-      notify_response_id: @email_confirmation_input.confirmation_email_reference,
-      confirmation_email_address: @email_confirmation_input.confirmation_email_address,
-      mailer_options:,
-    ).deliver_now
-
-    CurrentRequestLoggingAttributes.confirmation_email_id = mail.govuk_notify_response.id
-  end
-
-  def mailer_options
-    MailerOptions.new(title: @submission.form.name,
-                      is_preview: @submission.preview?,
-                      timestamp: @submission.created_at,
-                      submission_reference: @submission.reference,
-                      payment_url: @submission.form.payment_url_with_reference(@submission.reference))
-  end
-
-  def requested_confirmation?
-    @email_confirmation_input.send_confirmation == "send_email"
+    SendConfirmationEmailJob.perform_later(@submission)
   end
 end

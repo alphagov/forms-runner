@@ -29,9 +29,18 @@ module Forms
         return render template: "errors/incomplete_submission", locals: { current_form:, current_context: }
       end
 
-      submission_reference = FormSubmissionService.submit(current_context:, email_confirmation_input:, mode:)
+      submission = Submission.create!(
+        reference: ReferenceNumberService.generate,
+        form_id: current_context.form.id,
+        answers: current_context.answers,
+        mode: mode,
+        form_document: current_context.form.document_json,
+        confirmation_email: (email_confirmation_input.confirmation_email_address if requested_email_confirmation),
+      )
 
-      current_context.save_submission_details(submission_reference, requested_email_confirmation)
+      FormSubmissionService.submit(submission:)
+
+      current_context.save_submission_details(submission.reference, requested_email_confirmation)
 
       redirect_to :form_submitted
     rescue StandardError => e
