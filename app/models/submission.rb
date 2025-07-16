@@ -14,6 +14,12 @@ class Submission < ApplicationRecord
     other: "other",
   }
 
+  validate :validate_has_completed_steps
+
+  def delivery_method
+    form.submission_type
+  end
+
   def journey
     @journey ||= Flow::Journey.new(answer_store:, form:)
   end
@@ -48,5 +54,14 @@ private
 
   def submission_timezone
     Rails.configuration.x.submission.time_zone || "UTC"
+  end
+
+  def validate_has_completed_steps
+    return if answers.blank?
+
+    context = Flow::Context.new(form: form, store: answer_store)
+    if context.completed_steps.blank?
+      errors.add(:base, "Form id(#{form_id}) has no completed steps i.e questions/answers to submit")
+    end
   end
 end

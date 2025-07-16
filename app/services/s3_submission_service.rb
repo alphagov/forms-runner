@@ -1,14 +1,10 @@
 class S3SubmissionService
-  def initialize(journey:,
-                 form:,
-                 timestamp:,
-                 submission_reference:,
-                 is_preview:)
-    @journey = journey
-    @form = form
-    @timestamp = timestamp
-    @submission_reference = submission_reference
-    @is_preview = is_preview
+  def initialize(submission:)
+    @journey = submission.journey
+    @form = submission.form
+    @timestamp = submission.created_at
+    @submission_reference = submission.reference
+    @is_preview = submission.preview?
     @file_upload_bucket_name = Settings.aws.file_upload_s3_bucket_name
   end
 

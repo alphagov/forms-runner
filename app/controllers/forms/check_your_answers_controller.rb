@@ -36,9 +36,7 @@ module Forms
         return render template: "errors/incomplete_submission", locals: { current_form:, current_context: }
       end
 
-      submission_reference = FormSubmissionService.call(current_context:,
-                                                        email_confirmation_input:,
-                                                        mode:).submit
+      submission_reference = FormSubmissionService.submit(current_context:, email_confirmation_input:, mode:)
 
       current_context.save_submission_details(submission_reference, requested_email_confirmation)
 

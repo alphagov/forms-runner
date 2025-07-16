@@ -11,7 +11,7 @@ class LogEventService
     EventLogger.log_form_event("visit")
   end
 
-  def self.log_submit(context, requested_email_confirmation:, preview:, submission_type:)
+  def self.log_submit(form_id, requested_email_confirmation:, preview:, submission_type:)
     if preview
       EventLogger.log_form_event("preview_submission", { submission_type: })
     else
@@ -22,7 +22,7 @@ class LogEventService
 
       # Logging to CloudWatch
       begin
-        CloudWatchService.record_form_submission_metric(form_id: context.form.id)
+        CloudWatchService.record_form_submission_metric(form_id:)
       rescue StandardError => e
         Sentry.capture_exception(e)
       end
