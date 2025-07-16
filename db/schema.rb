@@ -28,6 +28,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_10_153418) do
     t.datetime "delivered_at"
     t.datetime "failed_at"
     t.string "failure_reason"
+    t.string "confirmation_email"
+    t.datetime "confirmation_email_sent_at"
     t.index ["last_delivery_attempt"], name: "index_submissions_on_last_delivery_attempt"
     t.index ["mail_message_id"], name: "index_submissions_on_mail_message_id"
   end
