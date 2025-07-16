@@ -1,12 +1,5 @@
 module Forms
   class CheckYourAnswersController < BaseController
-    def set_request_logging_attributes
-      super
-      if params[:email_confirmation_input].present? && (email_confirmation_input_params[:send_confirmation] == "send_email")
-        CurrentRequestLoggingAttributes.confirmation_email_reference = email_confirmation_input_params[:confirmation_email_reference]
-      end
-    end
-
     def show
       return redirect_to form_page_path(current_context.form.id, current_context.form.form_slug, current_context.next_page_slug, nil) unless current_context.can_visit?(CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG)
 
@@ -73,7 +66,7 @@ module Forms
     end
 
     def email_confirmation_input_params
-      params.require(:email_confirmation_input).permit(:send_confirmation, :confirmation_email_address, :confirmation_email_reference)
+      params.require(:email_confirmation_input).permit(:send_confirmation, :confirmation_email_address)
     end
 
     def setup_check_your_answers
