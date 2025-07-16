@@ -25,7 +25,9 @@ class SendSubmissionJob < ApplicationJob
     submission.update!(
       mail_message_id: message_id,
       delivery_status: :pending,
-      sent_at: Time.zone.now,
+      last_delivery_attempt: Time.zone.now,
+      failed_at: nil,
+      delivered_at: nil,
     )
 
     milliseconds_since_scheduled = (Time.current - scheduled_at_or_enqueued_at).in_milliseconds.round

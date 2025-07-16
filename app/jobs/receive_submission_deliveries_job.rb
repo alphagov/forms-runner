@@ -60,10 +60,16 @@ private
 
       submission = Submission.find_by!(mail_message_id: ses_message_id)
 
-      process_delivery(submission)
+      delivery_time = Time.zone.parse(ses_message["delivery"]["timestamp"])
+
+      submission.update!(delivery_status: :delivered, delivered_at: delivery_time) if submission.delivery_status != "failed"
+
+      set_submission_logging_attributes(submission)
+
+      EventLogger.log_form_event("submission_delivered")
+
       sqs_client.delete_message(queue_url: queue_url, receipt_handle: receipt_handle)
 
-      delivery_time = Time.zone.parse(ses_message["delivery"]["timestamp"])
       submission_duration_ms = ((delivery_time - submission.created_at) * 1000).round
       CloudWatchService.record_submission_delivery_latency_metric(submission_duration_ms, "Email")
     rescue StandardError => e
@@ -72,11 +78,5 @@ private
     ensure
       CurrentJobLoggingAttributes.reset
     end
-  end
-
-  def process_delivery(submission)
-    set_submission_logging_attributes(submission)
-
-    EventLogger.log_form_event("submission_delivered")
   end
 end

@@ -5,7 +5,13 @@ class Submission < ApplicationRecord
 
   enum :delivery_status, {
     pending: "pending",
+    failed: "failed",
+    delivered: "delivered",
+  }
+
+  enum :failure_reason, {
     bounced: "bounced",
+    other: "other",
   }
 
   def journey
