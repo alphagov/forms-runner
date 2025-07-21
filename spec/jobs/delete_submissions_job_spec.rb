@@ -29,7 +29,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
            reference: "SENT8DAYS",
            form_id: form_with_file_upload.id,
            form_document: form_with_file_upload,
-           sent_at: 8.days.ago,
+           last_delivery_attempt: 8.days.ago,
            answers: form_with_file_upload_answers
   end
   let!(:sent_submission_sent_7_days_ago) do
@@ -38,7 +38,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
            reference: "SENT7DAYS",
            form_id: form_without_file_upload.id,
            form_document: form_without_file_upload,
-           sent_at: 7.days.ago
+           last_delivery_attempt: 7.days.ago
   end
   let!(:sent_submission_sent_6_days_ago) do
     create :submission,
@@ -46,7 +46,32 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
            reference: "SENT6DAYS",
            form_id: form_without_file_upload.id,
            form_document: form_without_file_upload,
+           last_delivery_attempt: 6.days.ago
+  end
+  let!(:sent_submission_sent_at_7_days_ago) do
+    create :submission,
+           :sent,
+           reference: "SENT7DAYS",
+           form_id: form_without_file_upload.id,
+           form_document: form_without_file_upload,
+           sent_at: 7.days.ago
+  end
+  let!(:sent_submission_sent_at_6_days_ago) do
+    create :submission,
+           :sent,
+           reference: "SENT6DAYS",
+           form_id: form_without_file_upload.id,
+           form_document: form_without_file_upload,
            sent_at: 6.days.ago
+  end
+  let!(:bounced_submission_mail_status) do
+    create :submission,
+           :sent,
+           reference: "BOUNCED",
+           form_id: form_without_file_upload.id,
+           form_document: form_without_file_upload,
+           last_delivery_attempt: 7.days.ago,
+           mail_status: :bounced
   end
   let!(:bounced_submission) do
     create :submission,
@@ -54,8 +79,8 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
            reference: "BOUNCED",
            form_id: form_without_file_upload.id,
            form_document: form_without_file_upload,
-           sent_at: 7.days.ago,
-           mail_status: :bounced
+           last_delivery_attempt: 7.days.ago,
+           delivery_status: :delivery_bounced
   end
   let!(:unsent_submission) { create :submission, reference: "UNSENT", sent_at: nil }
 
@@ -92,14 +117,16 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
     end
 
     it "destroys the sent submissions updated more than 7 days ago" do
-      expect { perform_enqueued_jobs }.to change(Submission, :count).by(-2)
+      expect { perform_enqueued_jobs }.to change(Submission, :count).by(-3)
       expect(Submission.exists?(sent_submission_sent_8_days_ago.id)).to be false
       expect(Submission.exists?(sent_submission_sent_7_days_ago.id)).to be false
+      expect(Submission.exists?(sent_submission_sent_at_7_days_ago.id)).to be false
     end
 
     it "does not destroy the sent submission updated more recently than 7 days ago" do
       perform_enqueued_jobs
       expect(Submission.exists?(sent_submission_sent_6_days_ago.id)).to be true
+      expect(Submission.exists?(sent_submission_sent_at_6_days_ago.id)).to be true
     end
 
     it "does not destroy the submission that hasn't been sent" do
@@ -110,6 +137,11 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
     it "does not destroy the submission that bounced" do
       perform_enqueued_jobs
       expect(Submission.exists?(bounced_submission.id)).to be true
+    end
+
+    it "does not destroy the submission that marked bounced under mail status" do
+      perform_enqueued_jobs
+      expect(Submission.exists?(bounced_submission_mail_status.id)).to be true
     end
 
     it "logs deletion" do
@@ -176,8 +208,9 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
     end
 
     it "continues to delete the next submission" do
-      expect { perform_enqueued_jobs }.to change(Submission, :count).by(-1)
+      expect { perform_enqueued_jobs }.to change(Submission, :count).by(-2)
       expect(Submission.exists?(sent_submission_sent_7_days_ago.id)).to be false
+      expect(Submission.exists?(sent_submission_sent_at_7_days_ago.id)).to be false
     end
 
     it "sends cloudwatch metric" do

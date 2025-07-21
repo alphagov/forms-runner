@@ -16,7 +16,7 @@ RSpec.describe "submissions.rake" do
     end
 
     before do
-      create :submission, :sent, mail_status: :pending, reference: "test_ref"
+      create :submission, :sent, delivery_status: :delivery_pending, reference: "test_ref"
     end
 
     it "displays submission data when found" do
@@ -41,11 +41,11 @@ RSpec.describe "submissions.rake" do
     before do
       create :submission,
              :sent,
-             mail_status: :pending
+             delivery_status: :delivery_pending
 
       create_list :submission, 2,
                   :sent,
-                  mail_status: :bounced
+                  delivery_status: :delivery_bounced
     end
 
     it "logs how many submissions there are for each mail status" do
@@ -69,20 +69,20 @@ RSpec.describe "submissions.rake" do
       create :submission,
              :sent,
              form_id:,
-             mail_status: :bounced
+             delivery_status: :delivery_bounced
     end
     let!(:pending_submission) do
       create :submission,
              :sent,
              form_id:,
-             mail_status: :pending
+             delivery_status: :delivery_pending
     end
 
     before do
       create :submission,
              :sent,
              form_id: other_form_id,
-             mail_status: :pending
+             delivery_status: :delivery_pending
     end
 
     context "with valid arguments" do
@@ -146,7 +146,7 @@ RSpec.describe "submissions.rake" do
     end
 
     let(:form_id) { 1 }
-    let(:mail_status) { :bounced }
+    let(:delivery_status) { :delivery_bounced }
     let(:reference) { "submission-reference" }
     let(:args) { [reference] }
 
@@ -154,7 +154,7 @@ RSpec.describe "submissions.rake" do
       create :submission,
              :sent,
              form_id:,
-             mail_status:,
+             delivery_status:,
              reference:
     end
 
@@ -181,14 +181,14 @@ RSpec.describe "submissions.rake" do
           task.invoke(*args)
         end
 
-        it "does not update the submission mail_status" do
+        it "does not update the submission delivery_status" do
           task.invoke(*args)
           expect(Submission.first.bounced?).to be true
         end
       end
 
       context "when the submission has not bounced" do
-        let(:mail_status) { :pending }
+        let(:delivery_status) { :delivery_pending }
 
         it "logs that there the submission hasn't bounced" do
           allow(Rails.logger).to receive(:info)
@@ -197,7 +197,7 @@ RSpec.describe "submissions.rake" do
           task.invoke(*args)
         end
 
-        it "does not update the submission mail_status" do
+        it "does not update the submission delivery_status" do
           task.invoke(*args)
           expect(Submission.first.pending?).to be true
         end
