@@ -65,6 +65,10 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
           expect(part.body).to have_css("p", text: I18n.t("mailer.submission.check_before_using"))
         end
 
+        it "includes the answers submitted heading" do
+          expect(part.body).to have_css("h2", text: I18n.t("mailer.submission.answers_submitted"))
+        end
+
         it "includes the warning about not replying" do
           expect(part.body).to have_css("h2", text: I18n.t("mailer.submission.cannot_reply.heading"))
           expect(part.body).to include(I18n.t("mailer.submission.cannot_reply.contact_form_filler_html"))
@@ -115,6 +119,10 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
 
         it "includes text about checking the answers" do
           expect(part.body).to have_text(I18n.t("mailer.submission.check_before_using"))
+        end
+
+        it "includes the answers submitted heading" do
+          expect(part.body).to have_text(I18n.t("mailer.submission.answers_submitted"))
         end
 
         it "includes the warning about not replying" do
