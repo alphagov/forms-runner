@@ -423,6 +423,7 @@ cy:
     skip_link: Neidio i’r prif gynnwys
   mailer:
     submission:
+      answers_submitted: Answers submitted
       cannot_reply:
         contact_form_filler_html: "<p>If you need to contact the person who completed this form, you’ll need to contact them directly.</p>"
         contact_form_filler_plain: If you need to contact the person who completed this form, you’ll need to contact them directly.
