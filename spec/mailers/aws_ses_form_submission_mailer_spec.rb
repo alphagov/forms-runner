@@ -33,6 +33,10 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
       describe "the html part" do
         let(:part) { mail.html_part }
 
+        it "has the email subject as its title" do
+          expect(part.body).to have_title(mail.subject)
+        end
+
         it "has a link to GOV.UK" do
           expect(part.body).to have_link("GOV.UK", href: "https://www.gov.uk")
         end
