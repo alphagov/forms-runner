@@ -49,6 +49,10 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
           expect(part.body).to have_css("p", text: I18n.t("mailer.submission.title", title:))
         end
 
+        it "does not include the form preview text" do
+          expect(part.body).not_to have_css("p", text: I18n.t("mailer.submission.preview"))
+        end
+
         it "includes text about the submission time" do
           expect(part.body).to have_css("p", text: I18n.t("mailer.submission.time", time: submission_timestamp.strftime("%l:%M%P").strip, date: submission_timestamp.strftime("%-d %B %Y")))
         end
@@ -95,6 +99,10 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
 
         it "includes the form title text" do
           expect(part.body).to have_text(I18n.t("mailer.submission.title", title:))
+        end
+
+        it "does not include the form preview text" do
+          expect(part.body).not_to have_text(I18n.t("mailer.submission.preview"))
         end
 
         it "includes text about the submission time" do
@@ -146,7 +154,11 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
         let(:part) { mail.html_part }
 
         it "includes the form title text" do
-          expect(part.body).to have_css("p", text: I18n.t("mailer.submission.title_preview", title:))
+          expect(part.body).to have_css("p", text: I18n.t("mailer.submission.title", title:))
+        end
+
+        it "includes the form preview text" do
+          expect(part.body).to have_css("p", text: I18n.t("mailer.submission.preview"))
         end
       end
 
@@ -154,7 +166,11 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
         let(:part) { mail.text_part }
 
         it "includes the form title text" do
-          expect(part.body).to have_text(I18n.t("mailer.submission.title_preview", title:))
+          expect(part.body).to have_text(I18n.t("mailer.submission.title", title:))
+        end
+
+        it "includes the form preview text" do
+          expect(part.body).to have_text(I18n.t("mailer.submission.preview"))
         end
       end
     end

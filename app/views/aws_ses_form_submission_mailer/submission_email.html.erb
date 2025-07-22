@@ -1,11 +1,11 @@
-<p>
-  <%= if @mailer_options.is_preview
-        I18n.t("mailer.submission.title_preview", title: @mailer_options.title)
-      else
-        I18n.t("mailer.submission.title", title: @mailer_options.title)
-      end
-  %>
-</p>
+<% if @mailer_options.is_preview %>
+  <p>
+    <%= I18n.t("mailer.submission.preview") %>
+  </p>
+<% end %>
+
+<p><%= I18n.t("mailer.submission.title", title: @mailer_options.title) %></p>
+
 <p>
   <%= I18n.t("mailer.submission.time", time: @mailer_options.timestamp.strftime("%l:%M%P").strip, date: @mailer_options.timestamp.strftime("%-d %B %Y") ) %>
 </p>
