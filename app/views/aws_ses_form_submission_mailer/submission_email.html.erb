@@ -27,13 +27,11 @@
 
 <h2><%= I18n.t("mailer.submission.answers_submitted") %></h2>
 
-<%= @answer_content_html.html_safe %>
-
 <% if @csv_filename.present? %>
-  <hr style="border: 0; height: 1px; background: #B1B4B6; margin: 30px 0 30px 0;">
-  <h2><%= I18n.t("mailer.submission.csv_file") %></h2>
-  <p><%= I18n.t("mailer.submission.file_attached", filename: @csv_filename) %></p>
+  <p><%= I18n.t("mailer.submission.csv_file", filename: @csv_filename) %></p>
 <% end %>
+
+<%= @answer_content_html.html_safe %>
 
 <hr style="border: 0; height: 1px; background: #B1B4B6; margin: 30px 0 30px 0;">
 

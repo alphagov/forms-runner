@@ -431,7 +431,7 @@ cy:
         contact_forms_team_plain: If you’re experiencing a technical issue with this form, contact the GOV.​UK Forms team (https://www.forms.service.gov.uk/support) with details of the issue and the form it relates to.
         heading: You cannot reply to this email
       check_before_using: Check that this data looks safe before you use it
-      csv_file: CSV file of these answers
+      csv_file: 'A CSV file of these answers is attached to this email in a file named: %{filename}'
       file_attached: "%{filename} (attached to this email)"
       from: GOV.UK Forms <%{email_address}>
       payment: You can check that a payment has been made by using this reference number to search transactions within GOV.​UK Pay.

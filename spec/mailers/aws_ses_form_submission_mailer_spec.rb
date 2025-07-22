@@ -227,24 +227,16 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
       describe "the html part" do
         let(:part) { mail.html_part }
 
-        it "includes a heading about an answers CSV file" do
-          expect(part.body).to have_css("h2", text: I18n.t("mailer.submission.csv_file"))
-        end
-
-        it "includes the CSV filename" do
-          expect(part.body).to have_css("p", text: I18n.t("mailer.submission.file_attached", filename: csv_filename))
+        it "includes text about the CSV filename" do
+          expect(part.body).to have_css("p", text: I18n.t("mailer.submission.csv_file", filename: csv_filename))
         end
       end
 
       describe "the plaintext part" do
         let(:part) { mail.text_part }
 
-        it "includes text about an answers CSV file" do
-          expect(part.body).to have_text(I18n.t("mailer.submission.csv_file"))
-        end
-
-        it "includes the CSV filename" do
-          expect(part.body).to have_text(I18n.t("mailer.submission.file_attached", filename: csv_filename))
+        it "includes text about the CSV filename" do
+          expect(part.body).to have_text(I18n.t("mailer.submission.csv_file", filename: csv_filename))
         end
       end
     end
@@ -253,24 +245,16 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
       describe "the html part" do
         let(:part) { mail.html_part }
 
-        it "does not include a heading about an answers CSV file" do
-          expect(part.body).not_to have_css("h2", text: I18n.t("mailer.submission.csv_file"))
-        end
-
-        it "does not include the CSV filename" do
-          expect(part.body).not_to have_css("p", text: I18n.t("mailer.submission.file_attached", filename: csv_filename))
+        it "does not include text about the CSV filename" do
+          expect(part.body).not_to have_css("p", text: I18n.t("mailer.submission.csv_file", filename: csv_filename))
         end
       end
 
       describe "the plaintext part" do
         let(:part) { mail.text_part }
 
-        it "does not include text about an answers CSV file" do
-          expect(part.body).not_to have_text(I18n.t("mailer.submission.csv_file"))
-        end
-
-        it "does not include the CSV filename" do
-          expect(part.body).not_to have_text(I18n.t("mailer.submission.file_attached", filename: csv_filename))
+        it "does not include text about the CSV filename" do
+          expect(part.body).not_to have_text(I18n.t("mailer.submission.csv_file", filename: csv_filename))
         end
       end
     end
