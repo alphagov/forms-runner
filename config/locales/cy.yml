@@ -434,13 +434,13 @@ cy:
       file_attached: "%{filename} (attached to this email)"
       from: GOV.UK Forms <%{email_address}>
       payment: You can check that a payment has been made by using this reference number to search transactions within GOV.​UK Pay.
+      preview: This is a test submission from a preview of this form.
       question_skipped: This question was skipped
       reference: 'GOV.​UK Forms reference number: %{submission_reference}'
       subject: 'Form submission: %{form_title} - reference: %{reference}'
       subject_preview: 'TEST FORM SUBMISSION: %{form_title} - reference: %{reference}'
       time: 'Submitted at: %{time} on %{date}'
       title: 'Form name: “%{title}”'
-      title_preview: This is a test of the “%{title}” form.
     submission_confirmation:
       default_support_contact_details: The form’s contact details for support will appear here once they’ve been added.
       default_what_happens_next: The form’s information about what happens next will appear here once it has been added.
