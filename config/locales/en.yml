@@ -430,7 +430,7 @@ en:
         contact_forms_team_html: <p>If you’re experiencing a technical issue with this form, <a href="https://www.forms.service.gov.uk/support">contact the GOV.​UK Forms team</a> with details of the issue and the form it relates to.</p>
         contact_forms_team_plain: If you’re experiencing a technical issue with this form, contact the GOV.​UK Forms team (https://www.forms.service.gov.uk/support) with details of the issue and the form it relates to.
         heading: You cannot reply to this email
-      check_before_using: Check that this data looks safe before you use it
+      check_before_using: Check that these answers look safe before you use them
       csv_file: 'A CSV file of these answers is attached to this email in a file named: %{filename}'
       file_attached: "%{filename} (attached to this email)"
       from: GOV.UK Forms <%{email_address}>
