@@ -438,8 +438,8 @@ en:
       reference: 'GOV.​UK Forms reference number: %{submission_reference}'
       subject: 'Form submission: %{form_title} - reference: %{reference}'
       subject_preview: 'TEST FORM SUBMISSION: %{form_title} - reference: %{reference}'
-      time: This form was submitted at %{time} on %{date}
-      title: This is a completed “%{title}” form.
+      time: 'Submitted at: %{time} on %{date}'
+      title: 'Form name: “%{title}”'
       title_preview: This is a test of the “%{title}” form.
     submission_confirmation:
       default_support_contact_details: The form’s contact details for support will appear here once they’ve been added.

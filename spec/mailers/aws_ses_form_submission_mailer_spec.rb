@@ -72,7 +72,7 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
             let(:submission_timestamp) { Time.utc(2022, 9, 14, 8, 0o0, 0o0).in_time_zone(submission_timezone) }
 
             it "includes the date and time the user submitted the form" do
-              expect(part.body).to match("This form was submitted at 9:00am on 14 September 2022")
+              expect(part.body).to match("Submitted at: 9:00am on 14 September 2022")
             end
           end
 
@@ -80,7 +80,7 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
             let(:submission_timestamp) { Time.utc(2022, 12, 14, 13, 0o0, 0o0).in_time_zone(submission_timezone) }
 
             it "includes the date and time the user submitted the form" do
-              expect(part.body).to match("This form was submitted at 1:00pm on 14 December 2022")
+              expect(part.body).to match("Submitted at: 1:00pm on 14 December 2022")
             end
           end
         end
@@ -120,7 +120,7 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
             let(:submission_timestamp) { Time.utc(2022, 9, 14, 8, 0o0, 0o0).in_time_zone(submission_timezone) }
 
             it "includes the date and time the user submitted the form" do
-              expect(part.body).to match("This form was submitted at 9:00am on 14 September 2022")
+              expect(part.body).to match("Submitted at: 9:00am on 14 September 2022")
             end
           end
 
@@ -128,7 +128,7 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
             let(:submission_timestamp) { Time.utc(2022, 12, 14, 13, 0o0, 0o0).in_time_zone(submission_timezone) }
 
             it "includes the date and time the user submitted the form" do
-              expect(part.body).to match("This form was submitted at 1:00pm on 14 December 2022")
+              expect(part.body).to match("Submitted at: 1:00pm on 14 December 2022")
             end
           end
         end
