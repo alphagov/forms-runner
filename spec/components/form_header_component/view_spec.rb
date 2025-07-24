@@ -24,6 +24,14 @@ RSpec.describe FormHeaderComponent::View, type: :component do
     expect(page).to have_link("test_form_name", href: "/form/1/test")
   end
 
+  it "does not have a link to 'Your Questions' in admin" do
+    allow(Settings.forms_admin).to receive(:base_url).and_return("http://forms-admin")
+    render_inline(described_class.new(current_context:, mode:))
+
+    expect(page).not_to have_link("Your questions")
+    expect(page).not_to have_link(href: /^http:\/\/forms-admin/)
+  end
+
   context "when mode is preview_draft" do
     let(:mode) { Mode.new("preview-draft") }
 

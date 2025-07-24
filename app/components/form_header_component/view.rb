@@ -67,6 +67,8 @@ module FormHeaderComponent
     end
 
     def navigation_items
+      return [] if @mode.live?
+
       [
         {
           text: I18n.t("preview_header.your_questions"),
