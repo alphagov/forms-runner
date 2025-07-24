@@ -29,6 +29,15 @@ RSpec.describe Question::Email, type: :model do
       it "returns the email address in show_answer_in_csv" do
         expect(question.show_answer_in_csv).to eq(Hash[question_text, email])
       end
+
+      context "and the email has surrounding whitespace" do
+        let(:email) { "  email_whitespace@domain.com  " }
+
+        it "the email whitespace is removed" do
+          expect(question).to be_valid
+          expect(question.show_answer).to eq "email_whitespace@domain.com"
+        end
+      end
     end
 
     context "when given an invalid email address" do
