@@ -23,7 +23,6 @@ module NotificationsUtils
         # almost exactly the same as by https://github.com/wtforms/wtforms/blob/master/wtforms/validators.py,
         # with minor tweaks for SES compatibility - to avoid complications we are a lot stricter with the local part
         # than neccessary - we don't allow any double quotes or semicolons to prevent SES Technical Failures
-        email_address = Formatters.strip_and_remove_obscure_whitespace(email_address)
         match = EMAIL_REGEX_PATTERN.match(email_address)
 
         raise InvalidEmailError unless match

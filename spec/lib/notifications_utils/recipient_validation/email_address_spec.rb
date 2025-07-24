@@ -33,17 +33,6 @@ RSpec.describe NotificationsUtils::RecipientValidation::EmailAddress do
   end
 
   [
-    " email@domain.com ",
-    "\temail@domain.com",
-    "\temail@domain.com\n",
-    "\u200bemail@domain.com\u200b",
-  ].each do |email_address|
-    it "strips whitespace" do
-      expect(described_class.validate_email_address(email_address)).to eq_string "email@domain.com"
-    end
-  end
-
-  [
     "email@123.123.123.123",
     "email@[123.123.123.123]",
     "plainaddress",
@@ -74,6 +63,10 @@ RSpec.describe NotificationsUtils::RecipientValidation::EmailAddress do
     "brackets(in)local@domain.com",
     "email-too-long-#{'a' * 320}@example.com",
     "incorrect-punycode@xn---something.com",
+    " email@domain.com ",
+    "\temail@domain.com",
+    "\temail@domain.com\n",
+    "\u200bemail@domain.com\u200b",
   ].each do |invalid_email_address|
     context "with #{invalid_email_address.dump}" do
       it "raises for invalid email address" do
