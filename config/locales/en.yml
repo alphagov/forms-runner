@@ -466,8 +466,6 @@ en:
   preview_banner:
     heading: This is a preview of this form. Do not enter personal information.
     title: Important
-  preview_header:
-    your_questions: Your questions
   privacy:
     changes:
       heading: Changes to this notice
