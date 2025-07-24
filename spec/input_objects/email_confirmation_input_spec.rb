@@ -60,6 +60,14 @@ RSpec.describe EmailConfirmationInput, type: :model do
         expect(email_confirmation_input.errors[:confirmation_email_address]).to include(I18n.t("activemodel.errors.models.email_confirmation_input.attributes.confirmation_email_address.invalid_email"))
       end
     end
+
+    it "removes leading and trailing whitespace" do
+      # "\u00a0" is non breaking space
+      email_confirmation_input = build :email_confirmation_input_opted_in, confirmation_email_address: " \u00a0email@domain.com "
+
+      expect(email_confirmation_input).to be_valid
+      expect(email_confirmation_input.confirmation_email_address).to eq "email@domain.com"
+    end
   end
 
   context "when send_confirmation is false" do
