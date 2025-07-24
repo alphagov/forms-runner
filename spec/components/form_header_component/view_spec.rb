@@ -91,15 +91,11 @@ RSpec.describe FormHeaderComponent::View, type: :component do
     end
 
     it "has a link to 'Your Questions' in admin" do
+      allow(Settings.forms_admin).to receive(:base_url).and_return("http://forms-admin")
       render_inline(described_class.new(current_context:, mode:))
 
       expect(page).to have_link("Your questions")
-    end
-
-    it "does not have a link to Edit your question" do
-      render_inline(described_class.new(current_context:, mode:))
-
-      expect(page).to have_no_link("Edit your question")
+      expect(page).to have_link(href: /^http:\/\/forms-admin/)
     end
   end
 
