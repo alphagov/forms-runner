@@ -21,6 +21,7 @@ module FormHeaderComponent
           govuk_service_navigation(
             service_name: form_name,
             service_url: form_start_page_url,
+            navigation_items: navigation_items,
           ),
         ], "\n")
       else
@@ -63,6 +64,23 @@ module FormHeaderComponent
 
     def form_start_page_url
       form_path(mode: @mode.to_s, form_id: @current_context.form.id, form_slug: @current_context.form.form_slug)
+    end
+
+    def navigation_items
+      return [] if @mode.live?
+
+      [
+        {
+          text: I18n.t("preview_header.your_questions"),
+          href: your_questions_url,
+        },
+      ]
+    end
+
+    def your_questions_url
+      return "#{Settings.forms_admin.base_url}/forms/#{@current_context.form.id}/live/pages" if @mode.preview_live?
+
+      "#{Settings.forms_admin.base_url}/forms/#{@current_context.form.id}/pages/"
     end
   end
 end
