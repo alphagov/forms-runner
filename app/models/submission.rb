@@ -1,35 +1,14 @@
 class Submission < ApplicationRecord
+  self.ignored_columns += %w[mail_status sent_at]
+
   delegate :preview?, to: :mode_object
 
   encrypts :answers
 
-  enum :mail_status, {
+  enum :delivery_status, {
     pending: "pending",
     bounced: "bounced",
   }
-
-  enum :delivery_status, {
-    delivery_pending: "pending",
-    delivery_bounced: "bounced",
-  }
-
-  def pending?
-    mail_status == "pending" || delivery_status == "delivery_pending"
-  end
-
-  def bounced?
-    mail_status == "bounced" || delivery_status == "delivery_bounced"
-  end
-
-  scope :not_bounced, -> { where.not(mail_status: :bounced).and(where.not(delivery_status: :delivery_bounced)) }
-  scope :not_pending, -> { where.not(mail_status: :pending).where.not(delivery_status: :delivery_pending) }
-
-  scope :pending, -> { where(mail_status: :pending, delivery_status: :delivery_pending) }
-  scope :bounced, -> { where(mail_status: :bounced).or(where(delivery_status: :delivery_bounced)) }
-
-  def pending!
-    update(mail_status: "pending", delivery_status: "delivery_pending")
-  end
 
   def journey
     @journey ||= Flow::Journey.new(answer_store:, form:)

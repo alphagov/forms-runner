@@ -30,12 +30,12 @@ RSpec.describe Submission, type: :model do
 
     describe "validations" do
       it "is valid for a submission's delivery_status to be pending" do
-        submission.delivery_pending!
+        submission.pending!
         expect(submission).to be_valid
       end
 
       it "is valid for a submission's delivery_status to be bounced" do
-        submission.delivery_bounced!
+        submission.bounced!
         expect(submission).to be_valid
       end
 
@@ -46,35 +46,8 @@ RSpec.describe Submission, type: :model do
 
     describe "delivery_status enum" do
       it "returns a list of delivery statuses" do
-        expect(described_class.delivery_statuses.keys).to eq(%w[delivery_pending delivery_bounced])
+        expect(described_class.delivery_statuses.keys).to eq(%w[pending bounced])
         expect(described_class.delivery_statuses.values).to eq(%w[pending bounced])
-      end
-    end
-  end
-
-  describe "mail_status" do
-    let(:submission) { create :submission }
-
-    describe "validations" do
-      it "is valid for a submission's mail_status to be pending" do
-        submission.pending!
-        expect(submission).to be_valid
-      end
-
-      it "is valid for a submission's mail_status to be bounced" do
-        submission.bounced!
-        expect(submission).to be_valid
-      end
-
-      it "is not valid for a submission's mail_status to be something else" do
-        expect { submission.mail_status = "some other string" }.to raise_error(ArgumentError).with_message(/is not a valid mail_status/)
-      end
-    end
-
-    describe "mail_status enum" do
-      it "returns a list of mail statuses" do
-        expect(described_class.mail_statuses.keys).to eq(%w[pending bounced])
-        expect(described_class.mail_statuses.values).to eq(%w[pending bounced])
       end
     end
   end
