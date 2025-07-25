@@ -16,7 +16,7 @@ RSpec.describe "submissions.rake" do
     end
 
     before do
-      create :submission, :sent, delivery_status: :delivery_pending, reference: "test_ref"
+      create :submission, :sent, delivery_status: :pending, reference: "test_ref"
     end
 
     it "displays submission data when found" do
@@ -41,11 +41,11 @@ RSpec.describe "submissions.rake" do
     before do
       create :submission,
              :sent,
-             delivery_status: :delivery_pending
+             delivery_status: :pending
 
       create_list :submission, 2,
                   :sent,
-                  delivery_status: :delivery_bounced
+                  delivery_status: :bounced
     end
 
     it "logs how many submissions there are for each mail status" do
@@ -69,20 +69,20 @@ RSpec.describe "submissions.rake" do
       create :submission,
              :sent,
              form_id:,
-             delivery_status: :delivery_bounced
+             delivery_status: :bounced
     end
     let!(:pending_submission) do
       create :submission,
              :sent,
              form_id:,
-             delivery_status: :delivery_pending
+             delivery_status: :pending
     end
 
     before do
       create :submission,
              :sent,
              form_id: other_form_id,
-             delivery_status: :delivery_pending
+             delivery_status: :pending
     end
 
     context "with valid arguments" do
@@ -146,7 +146,7 @@ RSpec.describe "submissions.rake" do
     end
 
     let(:form_id) { 1 }
-    let(:delivery_status) { :delivery_bounced }
+    let(:delivery_status) { :bounced }
     let(:reference) { "submission-reference" }
     let(:args) { [reference] }
 
@@ -188,7 +188,7 @@ RSpec.describe "submissions.rake" do
       end
 
       context "when the submission has not bounced" do
-        let(:delivery_status) { :delivery_pending }
+        let(:delivery_status) { :pending }
 
         it "logs that there the submission hasn't bounced" do
           allow(Rails.logger).to receive(:info)
