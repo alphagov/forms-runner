@@ -5,6 +5,32 @@ namespace :submissions do
     Rails.logger.info "#{Submission.bounced.count} bounced submissions"
   end
 
+  # TODO: Remove this task after mail_status and sent_at are removed from the database
+  desc "Sync mail_status to delivery_status and sent_at to last_delivery_attempt"
+  task migrate_mail_status_to_delivery_status: :environment do
+    Rails.logger.info "Starting sync of mail_status to delivery_status and sent_at to last_delivery_attempt"
+
+    updated_count = 0
+
+    Submission.find_each do |submission|
+      update_attrs = {}
+
+      # Map mail_status to delivery_status
+      expected_delivery_status = "delivery_#{submission.mail_status}"
+
+      update_attrs[:delivery_status] = expected_delivery_status if submission.delivery_status != expected_delivery_status
+      update_attrs[:last_delivery_attempt] = submission.sent_at if submission.last_delivery_attempt != submission.sent_at
+
+      # Only update if there are changes
+      if update_attrs.any?
+        submission.update!(update_attrs)
+        updated_count += 1
+      end
+    end
+
+    Rails.logger.info "Sync completed. Updated #{updated_count} submissions."
+  end
+
   desc "Fetch and display all data for a specific submission given a reference"
   task :inspect_submission_data, [:reference] => :environment do |_t, args|
     submission = Submission.find_by(reference: args.reference)
