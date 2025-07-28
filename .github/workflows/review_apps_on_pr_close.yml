@@ -18,7 +18,7 @@ jobs:
       - name: Determine Terraform version
         id: terraform-version
         run: |
-          cat .review_apps/.terraform-version | xargs printf "TF_VERSION=%s" >> "$GITHUB_OUTPUT"
+          echo "TF_VERSION=$(< .review_apps/.terraform-version)" >> "$GITHUB_OUTPUT"
 
       - uses: hashicorp/setup-terraform@v3
         with:
