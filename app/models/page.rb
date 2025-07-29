@@ -22,4 +22,22 @@ class Page < ActiveResource::Base
   def repeatable?
     @attributes["is_repeatable"] || false
   end
+
+  def question_text(locale)
+    return @attributes["question_text_cy"] if locale == "cy" && @attributes["question_text_cy"]
+
+    @attributes["question_text_en"] || @attributes["question_text"]
+  end
+
+  def page_heading(locale)
+    return @attributes["page_heading_cy"] if locale == "cy" && @attributes["page_heading_cy"]
+
+    @attributes["page_heading_en"] || @attributes["page_heading"] || false
+  end
+
+  def guidance_markdown(locale)
+    return @attributes["guidance_markdown_cy"] if locale == "cy" && @attributes["guidance_markdown_cy"]
+
+    @attributes["guidance_markdown_en"] || @attributes["guidance_markdown"] || false
+  end
 end
