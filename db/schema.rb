@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_10_153418) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_25_142056) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -23,12 +23,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_10_153418) do
     t.jsonb "answers"
     t.string "mode"
     t.jsonb "form_document"
-    t.string "mail_status", default: "pending", null: false
-    t.datetime "sent_at"
     t.string "delivery_status", default: "pending", null: false
     t.datetime "last_delivery_attempt"
     t.datetime "delivered_at"
+    t.index ["last_delivery_attempt"], name: "index_submissions_on_last_delivery_attempt"
     t.index ["mail_message_id"], name: "index_submissions_on_mail_message_id"
-    t.index ["sent_at"], name: "index_submissions_on_sent_at"
   end
 end
