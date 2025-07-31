@@ -11,7 +11,7 @@ RSpec.describe SesEmailFormatter do
     context "when there is one step" do
       it "returns question and and answer HTML" do
         question_answers = described_class.new.build_question_answers_section_html(completed_steps)
-        expect(question_answers).to eq("<h3>What is the meaning of life?</h3><p>42</p>")
+        expect(question_answers).to eq("<h2>What is the meaning of life?</h2><p>42</p>")
       end
     end
 
@@ -20,7 +20,7 @@ RSpec.describe SesEmailFormatter do
 
       it "inserts line breaks between answer attributes" do
         question_answers = described_class.new.build_question_answers_section_html(completed_steps)
-        expect(question_answers).to eq("<h3>What is your name?</h3><p>First name: #{name_question.first_name}<br/><br/>Last name: #{name_question.last_name}</p>")
+        expect(question_answers).to eq("<h2>What is your name?</h2><p>First name: #{name_question.first_name}<br/><br/>Last name: #{name_question.last_name}</p>")
       end
     end
 
@@ -30,7 +30,7 @@ RSpec.describe SesEmailFormatter do
 
       it "returns the blank answer text" do
         question_answers = described_class.new.build_question_answers_section_html(completed_steps)
-        expect(question_answers).to eq("<h3>What is the meaning of life?</h3><p>[This question was skipped]</p>")
+        expect(question_answers).to eq("<h2>What is the meaning of life?</h2><p>[This question was skipped]</p>")
       end
     end
 
@@ -39,7 +39,7 @@ RSpec.describe SesEmailFormatter do
 
       it "returns all question an answers separated by a horizontal rule" do
         question_answers = described_class.new.build_question_answers_section_html(completed_steps)
-        expect(question_answers).to eq("<h3>What is the meaning of life?</h3><p>42</p><hr style=\"border: 0; height: 1px; background: #B1B4B6; Margin: 30px 0 30px 0;\"><h3>What is your name?</h3><p>First name: #{name_question.first_name}<br/><br/>Last name: #{name_question.last_name}</p>")
+        expect(question_answers).to eq("<h2>What is the meaning of life?</h2><p>42</p><hr style=\"border: 0; height: 1px; background: #B1B4B6; Margin: 30px 0 30px 0;\"><h2>What is your name?</h2><p>First name: #{name_question.first_name}<br/><br/>Last name: #{name_question.last_name}</p>")
       end
     end
 
@@ -55,7 +55,7 @@ RSpec.describe SesEmailFormatter do
           text_question.text = test_case[:input]
 
           question_answers = described_class.new.build_question_answers_section_html(completed_steps)
-          expect(question_answers).to eq("<h3>What is the meaning of life?</h3><p>#{test_case[:output]}</p>")
+          expect(question_answers).to eq("<h2>What is the meaning of life?</h2><p>#{test_case[:output]}</p>")
         end
       end
     end

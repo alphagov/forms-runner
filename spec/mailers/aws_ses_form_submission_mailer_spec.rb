@@ -33,10 +33,6 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
       describe "the html part" do
         let(:part) { mail.html_part }
 
-        it "has the email subject as its title" do
-          expect(part.body).to have_title(mail.subject)
-        end
-
         it "has a link to GOV.UK" do
           expect(part.body).to have_link("GOV.UK", href: "https://www.gov.uk")
         end
@@ -47,10 +43,6 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
 
         it "includes the form title text" do
           expect(part.body).to have_css("p", text: I18n.t("mailer.submission.title", title:))
-        end
-
-        it "does not include the form preview text" do
-          expect(part.body).not_to have_css("p", text: I18n.t("mailer.submission.preview"))
         end
 
         it "includes text about the submission time" do
@@ -65,10 +57,6 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
           expect(part.body).to have_css("p", text: I18n.t("mailer.submission.check_before_using"))
         end
 
-        it "includes the answers submitted heading" do
-          expect(part.body).to have_css("h2", text: I18n.t("mailer.submission.answers_submitted"))
-        end
-
         it "includes the warning about not replying" do
           expect(part.body).to have_css("h2", text: I18n.t("mailer.submission.cannot_reply.heading"))
           expect(part.body).to include(I18n.t("mailer.submission.cannot_reply.contact_form_filler_html"))
@@ -80,7 +68,7 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
             let(:submission_timestamp) { Time.utc(2022, 9, 14, 8, 0o0, 0o0).in_time_zone(submission_timezone) }
 
             it "includes the date and time the user submitted the form" do
-              expect(part.body).to match("Submitted at: 9:00am on 14 September 2022")
+              expect(part.body).to match("This form was submitted at 9:00am on 14 September 2022")
             end
           end
 
@@ -88,7 +76,7 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
             let(:submission_timestamp) { Time.utc(2022, 12, 14, 13, 0o0, 0o0).in_time_zone(submission_timezone) }
 
             it "includes the date and time the user submitted the form" do
-              expect(part.body).to match("Submitted at: 1:00pm on 14 December 2022")
+              expect(part.body).to match("This form was submitted at 1:00pm on 14 December 2022")
             end
           end
         end
@@ -105,10 +93,6 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
           expect(part.body).to have_text(I18n.t("mailer.submission.title", title:))
         end
 
-        it "does not include the form preview text" do
-          expect(part.body).not_to have_text(I18n.t("mailer.submission.preview"))
-        end
-
         it "includes text about the submission time" do
           expect(part.body).to have_text(I18n.t("mailer.submission.time", time: submission_timestamp.strftime("%l:%M%P").strip, date: submission_timestamp.strftime("%-d %B %Y")))
         end
@@ -119,10 +103,6 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
 
         it "includes text about checking the answers" do
           expect(part.body).to have_text(I18n.t("mailer.submission.check_before_using"))
-        end
-
-        it "includes the answers submitted heading" do
-          expect(part.body).to have_text(I18n.t("mailer.submission.answers_submitted"))
         end
 
         it "includes the warning about not replying" do
@@ -136,7 +116,7 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
             let(:submission_timestamp) { Time.utc(2022, 9, 14, 8, 0o0, 0o0).in_time_zone(submission_timezone) }
 
             it "includes the date and time the user submitted the form" do
-              expect(part.body).to match("Submitted at: 9:00am on 14 September 2022")
+              expect(part.body).to match("This form was submitted at 9:00am on 14 September 2022")
             end
           end
 
@@ -144,7 +124,7 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
             let(:submission_timestamp) { Time.utc(2022, 12, 14, 13, 0o0, 0o0).in_time_zone(submission_timezone) }
 
             it "includes the date and time the user submitted the form" do
-              expect(part.body).to match("Submitted at: 1:00pm on 14 December 2022")
+              expect(part.body).to match("This form was submitted at 1:00pm on 14 December 2022")
             end
           end
         end
@@ -162,11 +142,7 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
         let(:part) { mail.html_part }
 
         it "includes the form title text" do
-          expect(part.body).to have_css("p", text: I18n.t("mailer.submission.title", title:))
-        end
-
-        it "includes the form preview text" do
-          expect(part.body).to have_css("p", text: I18n.t("mailer.submission.preview"))
+          expect(part.body).to have_css("p", text: I18n.t("mailer.submission.title_preview", title:))
         end
       end
 
@@ -174,11 +150,7 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
         let(:part) { mail.text_part }
 
         it "includes the form title text" do
-          expect(part.body).to have_text(I18n.t("mailer.submission.title", title:))
-        end
-
-        it "includes the form preview text" do
-          expect(part.body).to have_text(I18n.t("mailer.submission.preview"))
+          expect(part.body).to have_text(I18n.t("mailer.submission.title_preview", title:))
         end
       end
     end
@@ -227,16 +199,24 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
       describe "the html part" do
         let(:part) { mail.html_part }
 
-        it "includes text about the CSV filename" do
-          expect(part.body).to have_css("p", text: I18n.t("mailer.submission.csv_file", filename: csv_filename))
+        it "includes a heading about an answers CSV file" do
+          expect(part.body).to have_css("h2", text: I18n.t("mailer.submission.csv_file"))
+        end
+
+        it "includes the CSV filename" do
+          expect(part.body).to have_css("p", text: I18n.t("mailer.submission.file_attached", filename: csv_filename))
         end
       end
 
       describe "the plaintext part" do
         let(:part) { mail.text_part }
 
-        it "includes text about the CSV filename" do
-          expect(part.body).to have_text(I18n.t("mailer.submission.csv_file", filename: csv_filename))
+        it "includes text about an answers CSV file" do
+          expect(part.body).to have_text(I18n.t("mailer.submission.csv_file"))
+        end
+
+        it "includes the CSV filename" do
+          expect(part.body).to have_text(I18n.t("mailer.submission.file_attached", filename: csv_filename))
         end
       end
     end
@@ -245,16 +225,24 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
       describe "the html part" do
         let(:part) { mail.html_part }
 
-        it "does not include text about the CSV filename" do
-          expect(part.body).not_to have_css("p", text: I18n.t("mailer.submission.csv_file", filename: csv_filename))
+        it "does not include a heading about an answers CSV file" do
+          expect(part.body).not_to have_css("h2", text: I18n.t("mailer.submission.csv_file"))
+        end
+
+        it "does not include the CSV filename" do
+          expect(part.body).not_to have_css("p", text: I18n.t("mailer.submission.file_attached", filename: csv_filename))
         end
       end
 
       describe "the plaintext part" do
         let(:part) { mail.text_part }
 
-        it "does not include text about the CSV filename" do
-          expect(part.body).not_to have_text(I18n.t("mailer.submission.csv_file", filename: csv_filename))
+        it "does not include text about an answers CSV file" do
+          expect(part.body).not_to have_text(I18n.t("mailer.submission.csv_file"))
+        end
+
+        it "does not include the CSV filename" do
+          expect(part.body).not_to have_text(I18n.t("mailer.submission.file_attached", filename: csv_filename))
         end
       end
     end

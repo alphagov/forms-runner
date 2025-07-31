@@ -1,11 +1,11 @@
-<% if @mailer_options.is_preview %>
-  <p>
-    <%= I18n.t("mailer.submission.preview") %>
-  </p>
-<% end %>
-
-<p><%= I18n.t("mailer.submission.title", title: @mailer_options.title) %></p>
-
+<p>
+  <%= if @mailer_options.is_preview
+        I18n.t("mailer.submission.title_preview", title: @mailer_options.title)
+      else
+        I18n.t("mailer.submission.title", title: @mailer_options.title)
+      end
+  %>
+</p>
 <p>
   <%= I18n.t("mailer.submission.time", time: @mailer_options.timestamp.strftime("%l:%M%P").strip, date: @mailer_options.timestamp.strftime("%-d %B %Y") ) %>
 </p>
@@ -25,13 +25,13 @@
 
 <hr style="border: 0; height: 1px; background: #B1B4B6; margin: 30px 0 30px 0;">
 
-<h2><%= I18n.t("mailer.submission.answers_submitted") %></h2>
+<%= @answer_content_html.html_safe %>
 
 <% if @csv_filename.present? %>
-  <p><%= I18n.t("mailer.submission.csv_file", filename: @csv_filename) %></p>
+  <hr style="border: 0; height: 1px; background: #B1B4B6; margin: 30px 0 30px 0;">
+  <h2><%= I18n.t("mailer.submission.csv_file") %></h2>
+  <p><%= I18n.t("mailer.submission.file_attached", filename: @csv_filename) %></p>
 <% end %>
-
-<%= @answer_content_html.html_safe %>
 
 <hr style="border: 0; height: 1px; background: #B1B4B6; margin: 30px 0 30px 0;">
 

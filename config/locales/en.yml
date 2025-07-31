@@ -423,25 +423,24 @@ en:
     skip_link: Skip to main content
   mailer:
     submission:
-      answers_submitted: Answers submitted
       cannot_reply:
         contact_form_filler_html: "<p>If you need to contact the person who completed this form, you’ll need to contact them directly.</p>"
         contact_form_filler_plain: If you need to contact the person who completed this form, you’ll need to contact them directly.
         contact_forms_team_html: <p>If you’re experiencing a technical issue with this form, <a href="https://www.forms.service.gov.uk/support">contact the GOV.​UK Forms team</a> with details of the issue and the form it relates to.</p>
         contact_forms_team_plain: If you’re experiencing a technical issue with this form, contact the GOV.​UK Forms team (https://www.forms.service.gov.uk/support) with details of the issue and the form it relates to.
         heading: You cannot reply to this email
-      check_before_using: Check that these answers look safe before you use them
-      csv_file: 'A CSV file of these answers is attached to this email in a file named: %{filename}'
+      check_before_using: Check that this data looks safe before you use it
+      csv_file: CSV file of these answers
       file_attached: "%{filename} (attached to this email)"
       from: GOV.UK Forms <%{email_address}>
       payment: You can check that a payment has been made by using this reference number to search transactions within GOV.​UK Pay.
-      preview: This is a test submission from a preview of this form.
       question_skipped: This question was skipped
       reference: 'GOV.​UK Forms reference number: %{submission_reference}'
       subject: 'Form submission: %{form_title} - reference: %{reference}'
       subject_preview: 'TEST FORM SUBMISSION: %{form_title} - reference: %{reference}'
-      time: 'Submitted at: %{time} on %{date}'
-      title: 'Form name: “%{title}”'
+      time: This form was submitted at %{time} on %{date}
+      title: This is a completed “%{title}” form.
+      title_preview: This is a test of the “%{title}” form.
     submission_confirmation:
       default_support_contact_details: The form’s contact details for support will appear here once they’ve been added.
       default_what_happens_next: The form’s information about what happens next will appear here once it has been added.
