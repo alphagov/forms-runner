@@ -21,7 +21,7 @@ class SesEmailFormatter
 private
 
   def prep_question_title_html(page)
-    "<h3>#{prep_question_title_plain_text(page)}</h3>"
+    "<h2>#{prep_question_title_plain_text(page)}</h2>"
   end
 
   def prep_answer_text_html(page)

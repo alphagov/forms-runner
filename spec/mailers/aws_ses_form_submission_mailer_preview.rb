@@ -1,7 +1,7 @@
 class AwsSesFormSubmissionMailerPreview < ActionMailer::Preview
   def submission_email
-    AwsSesFormSubmissionMailer.submission_email(answer_content_html: "<h3>What's your email address?</h3><p>forms@example.gov.uk</p>",
-                                                answer_content_plain_text: "What's your email address?\n\nforms@example.gov.uk",
+    AwsSesFormSubmissionMailer.submission_email(answer_content_html: "<h2>What's your email address?</h2><p>forms@example.gov.uk</p>",
+                                                answer_content_plain_text: "## What's your email address?\n\nforms@example.gov.uk",
                                                 submission_email_address: "testing@gov.uk",
                                                 mailer_options: FormSubmissionService::MailerOptions.new(title: "Form 1",
                                                                                                          is_preview: false,
@@ -12,8 +12,8 @@ class AwsSesFormSubmissionMailerPreview < ActionMailer::Preview
   end
 
   def preview_submission_email
-    AwsSesFormSubmissionMailer.submission_email(answer_content_html: "<h3>What's your email address?</h3><p>forms@example.gov.uk</p>",
-                                                answer_content_plain_text: "What's your email address?\n\nforms@example.gov.uk",
+    AwsSesFormSubmissionMailer.submission_email(answer_content_html: "<h2>What's your email address?</h2><p>forms@example.gov.uk</p>",
+                                                answer_content_plain_text: "## What's your email address?\n\nforms@example.gov.uk",
                                                 submission_email_address: "testing@gov.uk",
                                                 mailer_options: FormSubmissionService::MailerOptions.new(title: "Form 1",
                                                                                                          is_preview: true,
@@ -24,8 +24,8 @@ class AwsSesFormSubmissionMailerPreview < ActionMailer::Preview
   end
 
   def submission_email_with_payment_link
-    AwsSesFormSubmissionMailer.submission_email(answer_content_html: "<h3>What's your email address?</h3><p>forms@example.gov.uk</p>",
-                                                answer_content_plain_text: "What's your email address?\n\nforms@example.gov.uk",
+    AwsSesFormSubmissionMailer.submission_email(answer_content_html: "<h2>What's your email address?</h2><p>forms@example.gov.uk</p>",
+                                                answer_content_plain_text: "## What's your email address?\n\nforms@example.gov.uk",
                                                 submission_email_address: "testing@gov.uk",
                                                 mailer_options: FormSubmissionService::MailerOptions.new(title: "Form 1",
                                                                                                          is_preview: true,
@@ -36,8 +36,8 @@ class AwsSesFormSubmissionMailerPreview < ActionMailer::Preview
   end
 
   def submission_email_with_csv
-    AwsSesFormSubmissionMailer.submission_email(answer_content_html: "<h3>What's your email address?</h3><p>forms@example.gov.uk</p>",
-                                                answer_content_plain_text: "What's your email address?\n\nforms@example.gov.uk",
+    AwsSesFormSubmissionMailer.submission_email(answer_content_html: "<h2>What's your email address?</h2><p>forms@example.gov.uk</p>",
+                                                answer_content_plain_text: "## What's your email address?\n\nforms@example.gov.uk",
                                                 submission_email_address: "testing@gov.uk",
                                                 mailer_options: FormSubmissionService::MailerOptions.new(title: "Form 1",
                                                                                                          is_preview: true,
