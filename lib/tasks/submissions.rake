@@ -75,6 +75,52 @@ namespace :submissions do
 
     Rails.logger.info "Retried #{failed_jobs.length} failed submission jobs"
   end
+
+  desc "Re-deliver submissions created between two timestamps for a specific form"
+  task :redeliver_submissions_by_date, %i[form_id start_timestamp end_timestamp dry_run] => :environment do |_, args|
+    form_id = args[:form_id]
+    start_timestamp = args[:start_timestamp]
+    end_timestamp = args[:end_timestamp]
+    dry_run = args[:dry_run] == "true"
+
+    usage_message = "usage: rake submissions:redeliver_submissions_by_date[<form_id>,<start_timestamp>,<end_timestamp>,<dry_run>]".freeze
+
+    if form_id.blank? || start_timestamp.blank? || end_timestamp.blank?
+      abort usage_message
+    end
+
+    start_time = Time.zone.parse(start_timestamp)
+    end_time = Time.zone.parse(end_timestamp)
+
+    if start_time.nil? || end_time.nil?
+      abort "Error: Invalid timestamp format. Use ISO 8601 format (e.g. '2024-01-01T00:00:00Z')"
+    end
+
+    if start_time >= end_time
+      abort "Error: Start timestamp must be before end timestamp"
+    end
+
+    submissions_to_redeliver = Submission.where(form_id: form_id)
+                                        .where(created_at: start_time..end_time)
+
+    Rails.logger.info "Time range: #{start_time} to #{end_time}"
+    Rails.logger.info "Dry run mode: #{dry_run ? 'enabled' : 'disabled'}"
+
+    if submissions_to_redeliver.any?
+      Rails.logger.info "Found #{submissions_to_redeliver.count} submissions to re-deliver for form ID: #{form_id}"
+
+      submissions_to_redeliver.each do |submission|
+        if dry_run
+          Rails.logger.info "Would re-deliver submission with reference #{submission.reference}"
+        else
+          Rails.logger.info "Re-delivering submission with reference #{submission.reference}"
+          SendSubmissionJob.perform_later(submission)
+        end
+      end
+    else
+      Rails.logger.info "No submissions found matching the criteria"
+    end
+  end
 end
 
 def disregard_bounced_submission(reference)

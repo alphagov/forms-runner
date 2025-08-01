@@ -304,4 +304,141 @@ RSpec.describe "submissions.rake" do
       task.invoke
     end
   end
+
+  describe "submissions:redeliver_submissions_by_date" do
+    subject(:task) do
+      Rake::Task["submissions:redeliver_submissions_by_date"]
+        .tap(&:reenable)
+    end
+
+    let(:form_id) { 1 }
+    let(:other_form_id) { 2 }
+    let(:start_time) { "2024-01-01T00:00:00Z" }
+    let(:end_time) { "2024-01-02T00:00:00Z" }
+    let(:dry_run) { "false" }
+
+    let!(:early_matching_submission) do
+      create :submission,
+             :sent,
+             form_id:,
+             created_at: Time.parse("2024-01-01T12:00:00Z"),
+             reference: "ref1"
+    end
+
+    let!(:late_matching_submission) do
+      create :submission,
+             :sent,
+             form_id:,
+             created_at: Time.parse("2024-01-01T18:00:00Z"),
+             reference: "ref2"
+    end
+
+    let!(:non_matching_submission_different_form) do
+      create :submission,
+             :sent,
+             form_id: other_form_id,
+             created_at: Time.parse("2024-01-01T12:00:00Z"),
+             reference: "ref3"
+    end
+
+    let!(:non_matching_submission_different_time) do
+      create :submission,
+             :sent,
+             form_id:,
+             created_at: Time.parse("2023-12-31T23:59:59Z"),
+             reference: "ref4"
+    end
+
+    context "with valid arguments" do
+      let(:valid_args) { [form_id, start_time, end_time, dry_run] }
+
+      it "enqueues matching submissions for re-delivery" do
+        expect {
+          task.invoke(*valid_args)
+        }.to have_enqueued_job(SendSubmissionJob).with(early_matching_submission)
+         .and have_enqueued_job(SendSubmissionJob).with(late_matching_submission)
+      end
+
+      it "does not enqueue non-matching submissions" do
+        expect {
+          task.invoke(*valid_args)
+        }.not_to have_enqueued_job(SendSubmissionJob).with(non_matching_submission_different_form)
+
+        expect {
+          task.invoke(*valid_args)
+        }.not_to have_enqueued_job(SendSubmissionJob).with(non_matching_submission_different_time)
+      end
+
+      context "when dry_run is true" do
+        let(:dry_run) { "true" }
+
+        it "does not enqueue any jobs" do
+          expect {
+            task.invoke(*valid_args)
+          }.not_to have_enqueued_job(SendSubmissionJob)
+        end
+      end
+
+      context "when no submissions match the criteria" do
+        let(:valid_args) { [form_id, "2025-01-01T00:00:00Z", "2025-01-02T00:00:00Z", dry_run] }
+
+        it "does not enqueue any jobs" do
+          expect {
+            task.invoke(*valid_args)
+          }.not_to have_enqueued_job(SendSubmissionJob)
+        end
+      end
+    end
+
+    context "with invalid arguments" do
+      it "aborts when form_id is missing" do
+        expect {
+          task.invoke("", start_time, end_time, dry_run)
+        }.to raise_error(SystemExit)
+               .and output("usage: rake submissions:redeliver_submissions_by_date[<form_id>,<start_timestamp>,<end_timestamp>,<dry_run>]\n").to_stderr
+      end
+
+      it "aborts when start_timestamp is missing" do
+        expect {
+          task.invoke(form_id, "", end_time, dry_run)
+        }.to raise_error(SystemExit)
+               .and output("usage: rake submissions:redeliver_submissions_by_date[<form_id>,<start_timestamp>,<end_timestamp>,<dry_run>]\n").to_stderr
+      end
+
+      it "aborts when end_timestamp is missing" do
+        expect {
+          task.invoke(form_id, start_time, "", dry_run)
+        }.to raise_error(SystemExit)
+               .and output("usage: rake submissions:redeliver_submissions_by_date[<form_id>,<start_timestamp>,<end_timestamp>,<dry_run>]\n").to_stderr
+      end
+
+      it "aborts when start_timestamp is invalid" do
+        expect {
+          task.invoke(form_id, "invalid-date", end_time, dry_run)
+        }.to raise_error(SystemExit)
+               .and output("Error: Invalid timestamp format. Use ISO 8601 format (e.g. '2024-01-01T00:00:00Z')\n").to_stderr
+      end
+
+      it "aborts when end_timestamp is invalid" do
+        expect {
+          task.invoke(form_id, start_time, "invalid-date", dry_run)
+        }.to raise_error(SystemExit)
+               .and output("Error: Invalid timestamp format. Use ISO 8601 format (e.g. '2024-01-01T00:00:00Z')\n").to_stderr
+      end
+
+      it "aborts when start_timestamp is after end_timestamp" do
+        expect {
+          task.invoke(form_id, "2024-01-02T00:00:00Z", "2024-01-01T00:00:00Z", dry_run)
+        }.to raise_error(SystemExit)
+               .and output("Error: Start timestamp must be before end timestamp\n").to_stderr
+      end
+
+      it "aborts when start_timestamp equals end_timestamp" do
+        expect {
+          task.invoke(form_id, start_time, start_time, dry_run)
+        }.to raise_error(SystemExit)
+               .and output("Error: Start timestamp must be before end timestamp\n").to_stderr
+      end
+    end
+  end
 end
