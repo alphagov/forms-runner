@@ -12,7 +12,7 @@ class Api::V2::FormDocumentResource < ActiveResource::Base
 
   class << self
     def find(form_id, tag)
-      super(:one, from: document_path(form_id, tag))
+      super(:one, from: document_path(form_id, tag), params: { locale: I18n.locale })
     end
 
   private
