@@ -1,5 +1,7 @@
 <!-- BEGIN app/views/layouts/mailer.html.erb -->
 
+<%# Based on Notify's email template: https://github.com/alphagov/notifications-utils/blob/main/notifications_utils/jinja_templates/email_template.jinja2 %>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,12 +9,20 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta content="telephone=no" name="format-detection"> <!-- need to add formatting for real phone numbers -->
     <meta name="viewport" content="width=device-width">
-    <title>{{ subject }}</title>
+    <title><%= @subject %></title>
 
     <style>
       @media only screen and (min-device-width: 581px) {
         .content {
           width: 580px !important;
+        }
+      }
+      @media only print {
+        .logo__crown { display: none !important; }
+        .logo__text, .logo__dot { color: #000000 !important; }
+        .brand__banner {
+          border-bottom: solid 1pt #000000 !important;
+          background-color: unset !important;
         }
       }
       body { margin:0 !important; }
@@ -36,7 +46,7 @@
   <body style="font-family: Helvetica, Arial, sans-serif;font-size: 16px;margin: 0;color:#0b0c0c;">
     <table role="presentation" width="100%" style="border-collapse: collapse;min-width: 100%;width: 100% !important;" cellpadding="0" cellspacing="0" border="0">
       <tr>
-        <td width="100%" height="53" bgcolor="#0b0c0c">
+        <td width="100%" height="60" bgcolor="#1d70b8" class="brand__banner">
           <!--[if (gte mso 9)|(IE)]>
             <table role="presentation" width="580" align="center" cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse;width: 580px;">
               <tr>
@@ -44,32 +54,70 @@
           <![endif]-->
           <table role="presentation" width="100%" style="border-collapse: collapse;max-width: 580px;" cellpadding="0" cellspacing="0" border="0" align="center">
             <tr>
-              <td width="70" bgcolor="#0b0c0c" valign="middle">
-                <a href="https://www.gov.uk" title="Go to the GOV.UK homepage" style="text-decoration: none;">
-                  <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse;">
-                    <tr>
-                      <td style="padding-left: 10px">
-                        <img src="https://static.notifications.service.gov.uk/images/govuk-logotype-tudor-crown.png"
-                                                alt=""
-                                                height="32"
-                                                border="0"
-                                                style="Margin-top: 2px;"
-                                                >
-                      </td>
-                      <td style="font-size: 28px; line-height: 1.315789474; Margin-top: 4px; padding-left: 8px;">
-                        <span style="
-                                                font-family: Helvetica, Arial, sans-serif;
-                                                font-weight: 700;
-                                                color: #ffffff;
-                                                text-decoration: none;
-                                                vertical-align:middle;
-                                                display: inline-block;
-                                                ">GOV.UK</span>
-                      </td>
-                    </tr>
-                  </table>
-                </a>
-              </td>
+              <!--[if mso]>
+                <td width="70" valign="middle">
+                  <a href="https://www.gov.uk" title="Go to the GOV.UK homepage" style="text-decoration: none;">
+                    <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse;">
+                      <tr>
+                        <td style="padding-left: 10px">
+                          <img src="https://static.notifications.service.gov.uk/images/govuk-logotype-tudor-crown.png" alt="" height="32" border="0" style="Margin-top: 2px;">
+                        </td>
+                        <td style="font-size: 28px; line-height: 1.315789474; padding-left: 8px; padding-bottom: 8px">
+                          <span style="
+                            font-family: Helvetica, Arial, sans-serif;
+                            font-weight: 700;
+                            color: #ffffff;
+                            text-decoration: none;
+                            vertical-align:middle;
+                            display: inline-block"
+                            >GOV<span style="
+                            color: #00ffe0;
+                            font-family: Georgia, Times New Roman, sans-serif;
+                            font-size: 32px;
+                            mso-text-raise:7px">.</span>UK</span>
+                        </td>
+                      </tr>
+                    </table>
+                  </a>
+                </td>
+              <![endif]-->
+              <!--[if !mso]><!-->
+                <td width="70" valign="bottom">
+                  <a href="https://www.gov.uk" title="Go to the GOV.UK homepage" style="text-decoration: none;color: #fff">
+                    <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse;">
+                      <tr>
+                        <td style="font-size: 28px; line-height: 2; padding-left: 10px" valign="bottom" height="60" class="logo__crown">
+                          <img
+                            src="https://static.notifications.service.gov.uk/images/govuk-logotype-tudor-crown.png"
+                            alt=""
+                            height="32"
+                            border="0"
+                            style="Margin-top: 2px; max-height: 32px"
+                            aria-hidden="true"
+                            >
+                        </td>
+                        <td style="font-size: 28px; line-height: 2.1428571429; padding-left: 8px;" valign="bottom" height="60" class="logo__text">
+                          <span aria-label="GOV.UK" style="
+                            font-family: Helvetica, Arial, 'Noto Sans', sans-serif;
+                            font-weight: 700;
+                            text-decoration: none;
+                            vertical-align:middle;
+                            display: inline-block;
+                            ">GOV<span style="
+                            font-family: Georgia, Times New Roman, Times, sans-serif;
+                            color: #00ffe0;
+                            display: inline-block;
+                            text-indent: 0.04em;
+                            font-size: 32px;
+                            line-height: 1.35;
+                            vertical-align: top;
+                            margin-right: 0.05em;" class="logo__dot">.</span>UK</span>
+                        </td>
+                      </tr>
+                    </table>
+                  </a>
+                </td>
+              <!--<![endif]-->
             </tr>
           </table>
           <!--[if (gte mso 9)|(IE)]>
@@ -81,47 +129,15 @@
       </tr>
     </table>
     <table
-         role="presentation"
-         class="content"
-         align="center"
-         cellpadding="0"
-         cellspacing="0"
-         border="0"
-         style="border-collapse: collapse;max-width: 580px; width: 100% !important;"
-         width="100%"
-         >
-      <tr>
-        <td width="10" height="10" valign="middle"></td>
-        <td>
-          <!--[if (gte mso 9)|(IE)]>
-            <table role="presentation" width="560" align="center" cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse;width: 560px;">
-              <tr>
-                <td height="10">
-          <![endif]-->
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse;">
-            <tr>
-              <td bgcolor="#1D70B8" width="100%" height="10"></td>
-            </tr>
-          </table>
-          <!--[if (gte mso 9)|(IE)]>
-          </td>
-        </tr>
-      </table>
-          <![endif]-->
-        </td>
-        <td width="10" valign="middle" height="10"></td>
-      </tr>
-    </table>
-    <table
-         role="presentation"
-         class="content"
-         align="center"
-         cellpadding="0"
-         cellspacing="0"
-         border="0"
-         style="border-collapse: collapse;max-width: 580px; width: 100% !important;"
-         width="100%"
-         >
+      role="presentation"
+      class="content"
+      align="center"
+      cellpadding="0"
+      cellspacing="0"
+      border="0"
+      style="border-collapse: collapse;max-width: 580px; width: 100% !important;"
+      width="100%"
+      >
       <tr>
         <td height="30"><br>
         </td>
@@ -135,9 +151,7 @@
               <tr>
                 <td style="font-family: Helvetica, Arial, sans-serif; font-size: 19px; line-height: 1.315789474;">
           <![endif]-->
-
           <%= yield %>
-
           <!--[if (gte mso 9)|(IE)]>
           </td>
         </tr>
