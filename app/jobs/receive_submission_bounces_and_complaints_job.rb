@@ -101,7 +101,7 @@ private
     EventLogger.log_form_event("submission_bounced", ses_bounce: ses_bounce.merge(bounced_recipients:))
 
     unless submission.preview?
-      Sentry.capture_message("Submission email bounced - #{self.class.name}:", extra: {
+      Sentry.capture_message("Submission email bounced #{submission.form_id} - #{self.class.name}:", extra: {
         form_id: submission.form_id,
         submission_reference: submission.reference,
         job_id:,
