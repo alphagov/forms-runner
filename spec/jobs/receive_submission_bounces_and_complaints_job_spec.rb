@@ -212,6 +212,12 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
           )
         end
 
+        it "includes the form_id in the Sentry message" do
+          allow(Sentry).to receive(:capture_message)
+          perform_enqueued_jobs
+          expect(Sentry).to have_received(:capture_message).with(a_string_including("Submission email bounced 1 - ReceiveSubmissionBouncesAndComplaintsJob"), anything)
+        end
+
         it "does not include the bounced recipients in the Sentry event" do
           allow(Sentry).to receive(:capture_message)
           perform_enqueued_jobs
