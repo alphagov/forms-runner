@@ -36,6 +36,20 @@ While the project is in beta, we're using [the Service Manual's browsers to test
 
 While the project is in beta, we're using [the Service Manual's assistive technologies to test with](https://www.gov.uk/service-manual/technology/testing-with-assistive-technologies). We will reassess this at some point before our next service assessment based on usage data.
 
+## Supported email clients
+
+For our SES emails, any changes to the markup should be tested in the following email clients:
+
+### Desktop clients
+- Microsoft Outlook
+- Microsoft Outlook (Classic)
+
+### Web clients
+- Microsoft Outlook for the Web
+- Gmail
+
+Small visual differences are acceptable, but it's important that the submission data in the email is visible and consistent regardless of client.
+
 ## Commit hygiene
 
 Please see our [Git style guide in the 'How to store source code' page of the GDS Way](https://gds-way.cloudapps.digital/standards/source-code.html#commit-messages), which describes how we prefer Git history and commit messages to read.
