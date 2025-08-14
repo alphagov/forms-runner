@@ -1,4 +1,8 @@
 class FormSubmissionService
+  include RedactionUtils
+
+  class ConfirmationEmailToAddressError < StandardError; end
+
   class << self
     def call(**args)
       new(**args)
@@ -20,8 +24,10 @@ class FormSubmissionService
 
   def submit
     validate_submission
+
+    confirmation_mail = setup_confirmation_email if requested_confirmation?
     deliver_submission
-    send_confirmation_email if requested_confirmation?
+    send_confirmation_email(confirmation_mail) if confirmation_mail.present?
 
     @submission_reference
   end
@@ -83,15 +89,31 @@ private
     Time.use_zone(time_zone) { Time.zone.now }
   end
 
-  def send_confirmation_email
+  def setup_confirmation_email
     mail = FormSubmissionConfirmationMailer.send_confirmation_email(
       what_happens_next_markdown: @form.what_happens_next_markdown,
       support_contact_details: @form.support_details,
       notify_response_id: @email_confirmation_input.confirmation_email_reference,
       confirmation_email_address: @email_confirmation_input.confirmation_email_address,
       mailer_options:,
-    ).deliver_now
+    )
 
+    if mail.message.errors.any?
+      to_address_error = mail.message.errors.select { |error| error[0] == "To" }.first
+      if to_address_error
+        redacted_error = redact_emails_from_sentry_message(to_address_error[2].to_s)
+        Sentry.capture_message("ActionMailer error for To email address in confirmation email", extra: {
+          action_mailer_error: redacted_error,
+        })
+        raise ConfirmationEmailToAddressError
+      end
+    end
+
+    mail
+  end
+
+  def send_confirmation_email(mail)
+    mail.deliver_now
     CurrentRequestLoggingAttributes.confirmation_email_id = mail.govuk_notify_response.id
   end
 
