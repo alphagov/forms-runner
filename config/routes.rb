@@ -85,6 +85,5 @@ Rails.application.routes.draw do
   get "/maintenance" => "errors#maintenance", as: :maintenance_page
   get "/404", to: "errors#not_found", as: :error_404, via: :all
   get "/500", to: "errors#internal_server_error", as: :error_500, via: :all
-  get "/deprecated", to: "errors#deprecated"
   match "*path", to: "errors#not_found", via: :all
 end
