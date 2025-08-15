@@ -30,7 +30,7 @@ module Forms
         redirect_post_save
       else
         setup_instance_vars_for_view
-        render :show, status: :unprocessable_entity
+        render :show, status: :unprocessable_content
       end
     end
 
@@ -152,7 +152,7 @@ module Forms
         error_name: first_goto_error_name,
         link_url: admin_edit_condition_url(@step.form_id, routes_page_id),
         question_number: routes_page.page_number,
-      }, status: :unprocessable_entity
+      }, status: :unprocessable_content
     end
 
     def admin_edit_condition_url(form_id, page_id)

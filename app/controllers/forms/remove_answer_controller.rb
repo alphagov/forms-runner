@@ -8,7 +8,7 @@ module Forms
       @remove_input = RemoveInput.new(remove_input_params)
 
       if @remove_input.invalid?
-        return render :show, status: :unprocessable_entity
+        return render :show, status: :unprocessable_content
       end
 
       if @remove_input.remove?
