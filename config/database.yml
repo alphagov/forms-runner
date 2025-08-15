@@ -40,6 +40,9 @@ test:
   primary: &primary_test
     <<: *default
     database: forms_runner_test
+    username: postgres
+    password: postgres
+    host: localhost
   queue:
     <<: *primary_test
     database: forms_runner_test_queue
