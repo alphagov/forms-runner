@@ -42,7 +42,7 @@ gem "bootsnap", require: false
 gem "activeresource"
 
 # Use postgresql as the database for Active Record
-gem "pg", "~> 1.5"
+gem "pg", "~> 1.6"
 
 # For GOV.UK branding
 gem "govuk-components"
