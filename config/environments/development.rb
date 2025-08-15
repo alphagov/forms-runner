@@ -44,10 +44,7 @@ Rails.application.configure do
   config.active_support.disallowed_deprecation = :raise
 
   # Tell Active Support which deprecation messages to disallow.
-  config.active_support.disallowed_deprecation_warnings = [
-    "/forms/:id endpoint",
-    "/forms/:id/pages endpoint",
-  ]
+  config.active_support.disallowed_deprecation_warnings = []
 
   # Highlight code that enqueued background job in logs.
   config.active_job.verbose_enqueue_logs = true
