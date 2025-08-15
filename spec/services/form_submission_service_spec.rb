@@ -6,7 +6,8 @@ RSpec.describe FormSubmissionService do
   subject(:service) { described_class.call(current_context:, email_confirmation_input:, mode:) }
 
   let(:mode) { Mode.new }
-  let(:email_confirmation_input) { build :email_confirmation_input_opted_in }
+  let(:confirmation_email_address) { "testing@gov.uk" }
+  let(:email_confirmation_input) { build :email_confirmation_input_opted_in, confirmation_email_address: }
 
   let(:form) do
     build(:form,
@@ -240,6 +241,35 @@ RSpec.describe FormSubmissionService do
               confirmation_email_address: email_confirmation_input.confirmation_email_address,
               mailer_options: instance_of(FormSubmissionService::MailerOptions) },
           ).once
+        end
+      end
+
+      context "when the to email address is rejected by ActionMailer" do
+        let(:confirmation_email_address) { "rejected-email@gov.uk\n" }
+
+        it "raises a ConfirmationEmailToAddressError" do
+          expect {
+            service.submit
+          }.to raise_error(FormSubmissionService::ConfirmationEmailToAddressError)
+        end
+
+        it "sends an error to Sentry" do
+          expect(Sentry).to receive(:capture_message).with("ActionMailer error for To email address in confirmation email", {
+            extra: {
+              action_mailer_error: /Mail::AddressList can not parse |r\*\*\*\*\*\*\*-e\*\*\*\*(at)g\*\*.u\*\n|: Only able to parse up to "r\*\*\*\*\*\*\*-e\*\*\*\*@g\*\*.u\*\\/,
+            },
+          })
+          service.submit
+        rescue FormSubmissionService::ConfirmationEmailToAddressError
+          nil
+        end
+
+        it "does not queue sending the submission email" do
+          assert_no_enqueued_jobs do
+            service.submit
+          rescue FormSubmissionService::ConfirmationEmailToAddressError
+            nil
+          end
         end
       end
 
