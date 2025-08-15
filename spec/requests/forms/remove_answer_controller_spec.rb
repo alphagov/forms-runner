@@ -82,7 +82,7 @@ RSpec.describe Forms::RemoveAnswerController, type: :request do
       it "renders the show template" do
         delete "/preview-draft/#{form.id}/#{form.form_slug}/#{first_step_in_form.id}/1/remove", params: { remove_input: { remove: } }
         expect(response).to render_template(:show)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
 

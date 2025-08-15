@@ -558,7 +558,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       end
 
       it "return 422 error code" do
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
 
       it "renders the check your answers page" do
@@ -584,7 +584,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       end
 
       it "return 422 error code" do
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
 
       it "renders the check your answers page" do

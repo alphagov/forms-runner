@@ -12,7 +12,7 @@ module Forms
 
       if @remove_input.invalid?
         setup_urls
-        return render :show, status: :unprocessable_entity
+        return render :show, status: :unprocessable_content
       end
 
       if @remove_input.remove?

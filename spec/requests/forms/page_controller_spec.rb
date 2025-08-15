@@ -284,7 +284,7 @@ RSpec.describe Forms::PageController, type: :request do
 
         it "returns a 422 response" do
           get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
         end
 
         it "shows the error page" do
@@ -313,7 +313,7 @@ RSpec.describe Forms::PageController, type: :request do
 
           it "returns a 422 response" do
             get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 4)
-            expect(response).to have_http_status(:unprocessable_entity)
+            expect(response).to have_http_status(:unprocessable_content)
           end
 
           it "shows the error page" do
@@ -331,7 +331,7 @@ RSpec.describe Forms::PageController, type: :request do
 
         it "returns a 422 response" do
           get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
         end
 
         it "shows the error page" do
@@ -426,7 +426,7 @@ RSpec.describe Forms::PageController, type: :request do
         end
 
         it "returns 422" do
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
         end
 
         it "adds validation_errors logging attribute" do
@@ -601,7 +601,7 @@ RSpec.describe Forms::PageController, type: :request do
 
         it "returns a 422 response" do
           post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: { selection: "Option 2" }, changing_existing_answer: false }
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
         end
 
         it "shows the error page" do

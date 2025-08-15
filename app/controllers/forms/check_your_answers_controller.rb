@@ -26,7 +26,7 @@ module Forms
       unless email_confirmation_input.valid?
         setup_check_your_answers
 
-        return render template: "forms/check_your_answers/show", locals: { email_confirmation_input: }, status: :unprocessable_entity
+        return render template: "forms/check_your_answers/show", locals: { email_confirmation_input: }, status: :unprocessable_content
       end
 
       return redirect_to error_repeat_submission_path(current_form.id) if current_context.form_submitted?
