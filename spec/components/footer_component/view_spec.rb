@@ -7,7 +7,7 @@ RSpec.describe FooterComponent::View, type: :component do
   let(:mode) { Mode.new }
 
   before do
-    render_inline(described_class.new(mode: mode, current_form: form))
+    render_inline(described_class.new(mode: mode, form: form))
   end
 
   context "when the locale is en" do

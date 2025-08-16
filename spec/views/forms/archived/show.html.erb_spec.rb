@@ -5,7 +5,7 @@ describe "forms/archived/show.html.erb" do
   let(:mode) { OpenStruct.new(preview_draft?: false, preview_archived?: false, preview_live?: false) }
 
   before do
-    assign(:current_form, form)
+    assign(:form, form)
     assign(:mode, mode)
 
     render template: "forms/archived/show", locals: { form_name: form.name }, status: :gone

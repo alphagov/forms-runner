@@ -4,7 +4,7 @@ module Forms
     around_action :set_locale
 
     def redirect_to_friendly_url_start
-      redirect_to form_page_path(params.require(:form_id), current_form.form_slug, current_form.start_page)
+      redirect_to form_page_path(params.require(:form_id), form.form_slug, form.start_page)
       LogEventService.log_form_start unless mode.preview?
     end
 
@@ -15,18 +15,18 @@ module Forms
     end
 
     def error_repeat_submission
-      @current_context = Flow::Context.new(form: current_form, store: session)
-      render template: "errors/repeat_submission", locals: { current_form: }
+      @current_context = Flow::Context.new(form: form, store: session)
+      render template: "errors/repeat_submission", locals: { form: }
     end
 
     def set_request_logging_attributes
       super
-      CurrentRequestLoggingAttributes.form_name = current_form.name
+      CurrentRequestLoggingAttributes.form_name = form.name
       CurrentRequestLoggingAttributes.preview = mode.preview?
     end
 
-    def current_form
-      @current_form ||= Api::V1::FormSnapshotRepository.find_with_mode(id: params.require(:form_id), mode:)
+    def form
+      @form ||= Api::V1::FormSnapshotRepository.find_with_mode(id: params.require(:form_id), mode:)
     end
 
   private
@@ -36,7 +36,7 @@ module Forms
     end
 
     def current_context
-      @current_context ||= Flow::Context.new(form: current_form, store: session)
+      @current_context ||= Flow::Context.new(form: form, store: session)
     end
 
     def mode
@@ -49,7 +49,7 @@ module Forms
 
     def check_available
       begin
-        return if current_form.start_page && (mode.preview? || current_form.live?)
+        return if form.start_page && (mode.preview? || form.live?)
       rescue ActiveResource::ResourceNotFound
         form = archived_form
         return render template: "forms/archived/show", locals: { form_name: form.name }, status: :gone if form.present?
@@ -63,7 +63,7 @@ module Forms
     end
 
     def locale
-      return @current_form.language if @current_form.present? && @current_form.respond_to?(:language)
+      return @form.language if @form.present? && @form.respond_to?(:language)
 
       I18n.default_locale
     end
