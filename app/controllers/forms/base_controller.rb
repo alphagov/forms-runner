@@ -1,10 +1,10 @@
 module Forms
   class BaseController < ApplicationController
-    prepend_before_action :check_available
+    prepend_before_action :set_form
     around_action :set_locale
 
     def redirect_to_friendly_url_start
-      redirect_to form_page_path(params.require(:form_id), form.form_slug, form.start_page)
+      redirect_to form_page_path(params.require(:form_id), @form.form_slug, @form.start_page)
       LogEventService.log_form_start unless mode.preview?
     end
 
@@ -15,28 +15,20 @@ module Forms
     end
 
     def error_repeat_submission
-      @current_context = Flow::Context.new(form: form, store: session)
-      render template: "errors/repeat_submission", locals: { form: }
+      @current_context = Flow::Context.new(form: @form, store: session)
+      render template: "errors/repeat_submission", locals: { form: @form }
     end
 
     def set_request_logging_attributes
       super
-      CurrentRequestLoggingAttributes.form_name = form.name
+      CurrentRequestLoggingAttributes.form_name = @form.name
       CurrentRequestLoggingAttributes.preview = mode.preview?
-    end
-
-    def form
-      @form ||= Api::V1::FormSnapshotRepository.find_with_mode(id: params.require(:form_id), mode:)
     end
 
   private
 
-    def archived_form
-      Api::V1::FormSnapshotRepository.find_archived(id: params.require(:form_id))
-    end
-
     def current_context
-      @current_context ||= Flow::Context.new(form: form, store: session)
+      @current_context ||= Flow::Context.new(form: @form, store: session)
     end
 
     def mode
@@ -47,12 +39,13 @@ module Forms
       { mode: }
     end
 
-    def check_available
+    def set_form
       begin
-        return if form.start_page && (mode.preview? || form.live?)
+        @form = Api::V1::FormSnapshotRepository.find_with_mode(id: params.require(:form_id), mode:)
+        return if @form.start_page && (mode.preview? || @form.live?)
       rescue ActiveResource::ResourceNotFound
-        form = archived_form
-        return render template: "forms/archived/show", locals: { form_name: form.name }, status: :gone if form.present?
+        archived_form = Api::V1::FormSnapshotRepository.find_archived(id: params.require(:form_id))
+        return render template: "forms/archived/show", locals: { form_name: archived_form.name }, status: :gone if archived_form.present?
       end
 
       raise ActiveResource::ResourceNotFound, "Not Found"

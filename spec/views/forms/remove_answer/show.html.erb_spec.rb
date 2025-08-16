@@ -18,6 +18,7 @@ describe "forms/remove_answer/show.html.erb" do
 
   before do
     assign(:current_context, OpenStruct.new(form:))
+    assign(:form, form)
     assign(:mode, mode)
     assign(:step, step)
     assign(:remove_input, remove_input)

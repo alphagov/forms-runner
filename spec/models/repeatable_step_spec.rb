@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe RepeatableStep, type: :model do
-  subject(:repeatable_step) { described_class.new(question:, page:, form:, next_page_slug: 2, page_slug: page.id) }
+  subject(:repeatable_step) { described_class.new(question:, page:, next_page_slug: 2, page_slug: page.id) }
 
   let(:form) { build :form, id: 1, form_slug: "form-slug", pages: [page, build(:page, id: 2)] }
   let(:page) { build :page }

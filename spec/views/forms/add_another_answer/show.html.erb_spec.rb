@@ -15,6 +15,7 @@ describe "forms/add_another_answer/show.html.erb" do
 
   before do
     assign(:current_context, OpenStruct.new(form:))
+    assign(:form, form)
     assign(:mode, mode)
     assign(:rows, rows)
     assign(:step, step)

@@ -4,8 +4,8 @@ module Forms
 
     def show
       back_link(@step.page_slug)
-      @remove_file_confirmation_url = remove_file_confirmation_path(form_id: form.id, form_slug: form.form_slug, page_slug: @step.page_slug, changing_existing_answer:)
-      @continue_url = review_file_continue_path(form_id: form.id, form_slug: form.form_slug, page_slug: @step.page_slug, changing_existing_answer:)
+      @remove_file_confirmation_url = remove_file_confirmation_path(form_id: @form.id, form_slug: @form.form_slug, page_slug: @step.page_slug, changing_existing_answer:)
+      @continue_url = review_file_continue_path(form_id: @form.id, form_slug: @form.form_slug, page_slug: @step.page_slug, changing_existing_answer:)
     end
 
     def continue
