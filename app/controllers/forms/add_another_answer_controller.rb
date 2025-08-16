@@ -28,18 +28,18 @@ module Forms
 
     def add_another_path
       if changing_existing_answer
-        form_change_answer_path(@step.form_id, @step.form_slug, @step.page_slug, answer_index: @step.next_answer_index)
+        form_change_answer_path(current_form.id, current_form.form_slug, @step.page_slug, answer_index: @step.next_answer_index)
       else
-        form_page_path(@step.form_id, @step.form_slug, @step.page_slug, answer_index: @step.next_answer_index)
+        form_page_path(current_form.id, current_form.form_slug, @step.page_slug, answer_index: @step.next_answer_index)
       end
     end
 
     def rows
       @step.questions.map.with_index(1) do |question, answer_index|
-        actions = [{ text: t("forms.add_another_answer.rows.change"), href: form_change_answer_path(@step.form_id, @step.form_slug, @step.page_slug, answer_index:), visually_hidden_text: I18n.t("forms.add_another_answer.rows.action_hidden_text", answer_index:) }]
+        actions = [{ text: t("forms.add_another_answer.rows.change"), href: form_change_answer_path(current_form.id, current_form.form_slug, @step.page_slug, answer_index:), visually_hidden_text: I18n.t("forms.add_another_answer.rows.action_hidden_text", answer_index:) }]
 
         unless @step.min_answers?
-          actions << { text: t("forms.add_another_answer.rows.remove"), href: form_remove_answer_path(@step.form_id, @step.form_slug, @step.page_slug, answer_index:, changing_existing_answer:), visually_hidden_text: I18n.t("forms.add_another_answer.rows.action_hidden_text", answer_index:) }
+          actions << { text: t("forms.add_another_answer.rows.remove"), href: form_remove_answer_path(current_form.id, current_form.form_slug, @step.page_slug, answer_index:, changing_existing_answer:), visually_hidden_text: I18n.t("forms.add_another_answer.rows.action_hidden_text", answer_index:) }
         end
 
         {
@@ -61,9 +61,9 @@ module Forms
     def redirect_if_not_repeating
       unless @step.is_a?(RepeatableStep)
         if changing_existing_answer
-          redirect_to form_change_answer_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug)
+          redirect_to form_change_answer_path(form_id: current_form.id, form_slug: current_form.form_slug, page_slug: @step.page_slug)
         else
-          redirect_to form_page_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug)
+          redirect_to form_page_path(form_id: current_form.id, form_slug: current_form.form_slug, page_slug: @step.page_slug)
         end
       end
     end

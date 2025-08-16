@@ -9,7 +9,7 @@ module Forms
     end
 
     def show
-      return redirect_to form_page_path(@step.form_id, @step.form_slug, current_context.next_page_slug) unless current_context.can_visit?(@step.page_slug)
+      return redirect_to form_page_path(current_form.id, current_form.form_slug, current_context.next_page_slug) unless current_context.can_visit?(@step.page_slug)
       return redirect_to review_file_page if answered_file_question?
 
       back_link(@step.page_slug)
@@ -53,7 +53,7 @@ module Forms
 
     def setup_instance_vars_for_view
       @is_question = true
-      @question_edit_link = "#{Settings.forms_admin.base_url}/forms/#{@step.form_id}/pages/#{@step.page_slug}/edit/question"
+      @question_edit_link = "#{Settings.forms_admin.base_url}/forms/#{current_form.id}/pages/#{@step.page_slug}/edit/question"
       @save_url = save_url
     end
 
@@ -67,20 +67,20 @@ module Forms
       if changing_existing_answer
         @back_link = check_your_answers_path(form_id: current_context.form.id)
       elsif previous_step
-        @back_link = previous_step.repeatable? ? add_another_answer_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug, page_slug: previous_step.page_slug) : form_page_path(@step.form_id, @step.form_slug, previous_step.page_id)
+        @back_link = previous_step.repeatable? ? add_another_answer_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug, page_slug: previous_step.page_slug) : form_page_path(current_form.id, current_form.form_slug, previous_step.page_id)
       end
     end
 
     def redirect_post_save
       return redirect_to review_file_page, success: t("banner.success.file_uploaded") if answered_file_question?
-      return redirect_to exit_page_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug) if @step.exit_page_condition_matches?
+      return redirect_to exit_page_path(form_id: current_form.id, form_slug: current_form.form_slug, page_slug: @step.page_slug) if @step.exit_page_condition_matches?
 
       redirect_to next_page
     end
 
     def redirect_if_not_answered_file_question
       unless @step.question.is_a?(Question::File) && @step.question.file_uploaded?
-        redirect_to form_page_path(@step.form_id, @step.form_slug, @step.page_slug)
+        redirect_to form_page_path(current_form.id, current_form.form_slug, @step.page_slug)
       end
     end
 
@@ -89,7 +89,7 @@ module Forms
     end
 
     def review_file_page
-      review_file_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug, changing_existing_answer:)
+      review_file_path(form_id: current_form.id, form_slug: current_form.form_slug, page_slug: @step.page_slug, changing_existing_answer:)
     end
 
     def next_page
@@ -102,7 +102,7 @@ module Forms
 
     def next_step_path
       if should_show_add_another?(@step)
-        return add_another_answer_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug)
+        return add_another_answer_path(form_id: current_form.id, form_slug: current_form.form_slug, page_slug: @step.page_slug)
       end
 
       next_step_in_form_path
@@ -110,14 +110,14 @@ module Forms
 
     def next_step_changing
       if should_show_add_another?(@step)
-        return change_add_another_answer_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug)
+        return change_add_another_answer_path(form_id: current_form.id, form_slug: current_form.form_slug, page_slug: @step.page_slug)
       end
 
       check_answers_path
     end
 
     def next_step_in_form_path
-      form_page_path(@step.form_id, @step.form_slug, @step.next_page_slug_after_routing)
+      form_page_path(current_form.id, current_form.form_slug, @step.next_page_slug_after_routing)
     end
 
     def check_answers_path
@@ -150,7 +150,7 @@ module Forms
 
       render template: "errors/goto_page_routing_error", locals: {
         error_name: first_goto_error_name,
-        link_url: admin_edit_condition_url(@step.form_id, routes_page_id),
+        link_url: admin_edit_condition_url(current_form.id, routes_page_id),
         question_number: routes_page.page_number,
       }, status: :unprocessable_content
     end
@@ -164,7 +164,7 @@ module Forms
     end
 
     def save_url
-      save_form_page_path(@step.form_id, @step.form_slug, @step.id, changing_existing_answer: @changing_existing_answer, answer_index:)
+      save_form_page_path(current_form.id, current_form.form_slug, @step.id, changing_existing_answer: @changing_existing_answer, answer_index:)
     end
   end
 end

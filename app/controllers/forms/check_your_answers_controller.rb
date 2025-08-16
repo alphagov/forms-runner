@@ -61,9 +61,9 @@ module Forms
     end
 
     def change_link(page)
-      return change_add_another_answer_path(page.form_id, page.form_slug, page.page_id) if page.repeatable? && page.show_answer.present?
+      return change_add_another_answer_path(current_form.id, current_form.form_slug, page.page_id) if page.repeatable? && page.show_answer.present?
 
-      form_change_answer_path(page.form_id, page.form_slug, page.page_id)
+      form_change_answer_path(current_form.id, current_form.form_slug, page.page_id)
     end
 
     def check_your_answers_rows

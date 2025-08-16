@@ -1,11 +1,10 @@
 class Step
-  attr_accessor :page, :form, :question
+  attr_accessor :page, :question
   attr_reader :next_page_slug, :page_slug
 
   GOTO_PAGE_ERROR_NAMES = %w[cannot_have_goto_page_before_routing_page goto_page_doesnt_exist].freeze
 
-  def initialize(form:, page:, question:, next_page_slug:, page_slug:)
-    @form = form
+  def initialize(page:, question:, next_page_slug:, page_slug:)
     @page = page
     @question = question
 
@@ -14,14 +13,6 @@ class Step
   end
 
   alias_attribute :id, :page_id
-
-  def form_id
-    form&.id
-  end
-
-  def form_slug
-    form&.form_slug
-  end
 
   def page_id
     page&.id

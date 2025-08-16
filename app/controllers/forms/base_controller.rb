@@ -25,11 +25,11 @@ module Forms
       CurrentRequestLoggingAttributes.preview = mode.preview?
     end
 
-  private
-
     def current_form
       @current_form ||= Api::V1::FormSnapshotRepository.find_with_mode(id: params.require(:form_id), mode:)
     end
+
+  private
 
     def archived_form
       Api::V1::FormSnapshotRepository.find_archived(id: params.require(:form_id))
