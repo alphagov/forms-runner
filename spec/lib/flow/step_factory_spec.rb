@@ -9,7 +9,6 @@ RSpec.describe Flow::StepFactory do
       it "returns a CheckYourAnswersStep instance" do
         step = factory.create_step(CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG)
         expect(step).to be_a(CheckYourAnswersStep)
-        expect(step.form_id).to eq("form-123")
       end
     end
 
@@ -26,8 +25,6 @@ RSpec.describe Flow::StepFactory do
         step = factory.create_step("page-1")
         expect(step).to be_a(Step)
         expect(step.question).to eq(question)
-        expect(step.form_id).to eq("form-123")
-        expect(step.form_slug).to eq("test-form")
         expect(step.next_page_slug).to eq("page-2")
         expect(step.page_slug).to eq("page-1")
       end

@@ -5,7 +5,6 @@ RSpec.describe Step do
     described_class.new(
       question:,
       page:,
-      form:,
       next_page_slug: "next-page",
       page_slug: "current-page",
     )
@@ -21,8 +20,6 @@ RSpec.describe Step do
       expect(step.question).to eq(question)
       expect(step.page_id).to eq(2)
       expect(step.page_slug).to eq("current-page")
-      expect(step.form_id).to eq(3)
-      expect(step.form_slug).to eq("test-form")
       expect(step.next_page_slug).to eq("next-page")
       expect(step.page_number).to eq(1)
       expect(step.routing_conditions).to eq([])
@@ -34,7 +31,6 @@ RSpec.describe Step do
       other_step = described_class.new(
         question:,
         page:,
-        form:,
         next_page_slug: "next-page",
         page_slug: "current-page",
       )
@@ -42,11 +38,9 @@ RSpec.describe Step do
     end
 
     it "returns false for steps with different states" do
-      form = build :form, id: 4, form_slug: "other-form"
       other_step = described_class.new(
         question:,
         page:,
-        form:,
         next_page_slug: "other-page",
         page_slug: "other-current-page",
       )
@@ -57,7 +51,6 @@ RSpec.describe Step do
   describe "#state" do
     it "returns an array of instance variable values" do
       expected_state = [
-        step.form,
         step.page,
         step.question,
         step.next_page_slug,
@@ -69,7 +62,7 @@ RSpec.describe Step do
 
     it "changes when an instance variable is modified" do
       original_state = step.state.dup
-      step.form = build :form, pages: [step.page]
+      step.page = build(:page, id: 999, position: 2)
       expect(step.state).not_to eq(original_state)
     end
   end
@@ -135,7 +128,7 @@ RSpec.describe Step do
   describe "#end_page?" do
     context "when next_page_slug is nil" do
       subject(:step) do
-        described_class.new(question:, page:, form:, next_page_slug: nil, page_slug: "current-page")
+        described_class.new(question:, page:, next_page_slug: nil, page_slug: "current-page")
       end
 
       it { is_expected.to be_end_page }

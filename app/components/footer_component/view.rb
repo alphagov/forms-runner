@@ -2,9 +2,9 @@ module FooterComponent
   class View < ViewComponent::Base
     include Rails.application.routes.url_helpers
 
-    def initialize(mode:, current_form:)
+    def initialize(mode:, form:)
       @mode = mode
-      @current_form = current_form
+      @form = form
       super
     end
 
@@ -14,9 +14,9 @@ module FooterComponent
         I18n.t("footer.cookies") => cookies_path(locale:),
       }
 
-      if @current_form.present?
+      if @form.present?
         links[I18n.t("footer.privacy_policy")] = form_privacy_path(
-          mode: @mode, form_id: @current_form.id, form_slug: @current_form.form_slug,
+          mode: @mode, form_id: @form.id, form_slug: @form.form_slug,
         )
       end
 

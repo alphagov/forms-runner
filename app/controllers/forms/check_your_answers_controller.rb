@@ -29,11 +29,11 @@ module Forms
         return render template: "forms/check_your_answers/show", locals: { email_confirmation_input: }, status: :unprocessable_content
       end
 
-      return redirect_to error_repeat_submission_path(current_form.id) if current_context.form_submitted?
+      return redirect_to error_repeat_submission_path(@form.id) if current_context.form_submitted?
 
       unless current_context.can_visit?(CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG)
         EventLogger.log_form_event("incomplete_or_repeat_submission_error")
-        return render template: "errors/incomplete_submission", locals: { current_form:, current_context: }
+        return render template: "errors/incomplete_submission", locals: { form: @form, current_context: }
       end
 
       submission_reference = FormSubmissionService.call(current_context:,
@@ -61,9 +61,9 @@ module Forms
     end
 
     def change_link(page)
-      return change_add_another_answer_path(page.form_id, page.form_slug, page.page_id) if page.repeatable? && page.show_answer.present?
+      return change_add_another_answer_path(@form.id, @form.form_slug, page.page_id) if page.repeatable? && page.show_answer.present?
 
-      form_change_answer_path(page.form_id, page.form_slug, page.page_id)
+      form_change_answer_path(@form.id, @form.form_slug, page.page_id)
     end
 
     def check_your_answers_rows

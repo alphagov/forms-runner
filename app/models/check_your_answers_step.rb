@@ -1,10 +1,9 @@
 class CheckYourAnswersStep
   CHECK_YOUR_ANSWERS_PAGE_SLUG = "check-your-answers".freeze
 
-  attr_reader :next_page_slug, :page_slug, :page_id, :form_id
+  attr_reader :next_page_slug, :page_slug, :page_id
 
-  def initialize(form_id:)
-    @form_id = form_id
+  def initialize
     @page_id = CHECK_YOUR_ANSWERS_PAGE_SLUG
     @next_page_slug = "_submit" # not used for now
     @page_slug = CHECK_YOUR_ANSWERS_PAGE_SLUG

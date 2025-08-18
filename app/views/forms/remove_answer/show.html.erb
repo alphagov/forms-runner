@@ -1,8 +1,8 @@
 <% content_for :back_link do %>
-  <%= link_to t("forms.back"), add_another_answer_path(@step.form_id, @step.form_slug, @step.page_slug), class: "govuk-back-link" %>
+  <%= link_to t("forms.back"), add_another_answer_path(@form.id, @form.form_slug, @step.page_slug), class: "govuk-back-link" %>
 <% end %>
 
-<%= form_with(model: @remove_input , method: :delete, url: delete_form_remove_answer_path(form_id: @step.form_id, form_slug: @step.form_slug, page_slug: @step.page_slug, answer_index: @step.answer_index, changing_existing_answer: @changing_existing_answer, mode: @mode)) do |f| %>
+<%= form_with(model: @remove_input , method: :delete, url: delete_form_remove_answer_path(form_id: @form.id, form_slug: @form.form_slug, page_slug: @step.page_slug, answer_index: @step.answer_index, changing_existing_answer: @changing_existing_answer, mode: @mode)) do |f| %>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       <% if @remove_input&.errors.any? %>

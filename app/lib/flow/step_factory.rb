@@ -18,7 +18,7 @@ module Flow
       page_slug = page_slug_or_start.to_s == START_PAGE ? @form.start_page : page_slug_or_start
       page_slug = page_slug.to_s
 
-      return CheckYourAnswersStep.new(form_id: @form.id) if page_slug == CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG
+      return CheckYourAnswersStep.new if page_slug == CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG
 
       # for now, we use the page id as slug
       page = @form.pages.find { |p| p.id.to_s == page_slug }
@@ -27,7 +27,7 @@ module Flow
       next_page_slug = page.has_next_page? ? page.next_page.to_s : CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG
       question = QuestionRegister.from_page(page)
 
-      step_class(page).new(question:, page:, form: @form, next_page_slug:, page_slug:)
+      step_class(page).new(question:, page:, next_page_slug:, page_slug:)
     end
 
     def start_step
