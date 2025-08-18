@@ -29,12 +29,12 @@ module Flow
     end
 
     def find_or_create(page_slug)
-      step = completed_steps.find { |s| s.page_slug == page_slug }
+      step = completed_steps.find { |s| s.id == page_slug }
       step || @step_factory.create_step(page_slug)
     end
 
     def previous_step(page_slug)
-      index = completed_steps.find_index { |step| step.page_slug == page_slug }
+      index = completed_steps.find_index { |step| step.id == page_slug }
       return nil if completed_steps.empty? || index&.zero?
 
       return completed_steps.last if index.nil?
@@ -45,7 +45,7 @@ module Flow
     def next_page_slug
       return nil if completed_steps.last&.end_page?
 
-      completed_steps.last&.next_page_slug_after_routing || @step_factory.start_step.page_slug
+      completed_steps.last&.next_page_slug_after_routing || @step_factory.start_step.id
     end
 
     def next_step
@@ -55,7 +55,7 @@ module Flow
     end
 
     def can_visit?(page_slug)
-      (completed_steps.map(&:page_slug).include? page_slug) || page_slug == next_page_slug
+      (completed_steps.map(&:id).include? page_slug) || page_slug == next_page_slug
     end
 
     def all_steps
@@ -111,7 +111,7 @@ module Flow
           break if visited_page_slugs.include?(next_page_slug)
 
           yielder << current_step
-          visited_page_slugs << current_step.page_slug
+          visited_page_slugs << current_step.id
 
           break if next_page_slug.nil?
 

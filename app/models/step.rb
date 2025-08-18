@@ -1,20 +1,17 @@
 class Step
   attr_accessor :page, :question
-  attr_reader :page_slug
 
   GOTO_PAGE_ERROR_NAMES = %w[cannot_have_goto_page_before_routing_page goto_page_doesnt_exist].freeze
 
-  def initialize(page:, question:, page_slug:)
+  def initialize(page:, question:)
     @page = page
     @question = question
-
-    @page_slug = page_slug
   end
 
   alias_attribute :id, :page_id
 
   def page_id
-    page&.id
+    page&.id.to_s
   end
 
   def page_number

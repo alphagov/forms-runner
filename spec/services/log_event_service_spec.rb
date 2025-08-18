@@ -8,7 +8,7 @@ RSpec.describe LogEventService do
   describe "#log_page_save" do
     let(:changing_answers) { true }
     let(:step) { OpenStruct.new(id: step_id, question:) }
-    let(:step_id) { 2 }
+    let(:step_id) { "2" }
     let(:question) { OpenStruct.new(is_optional?: true, question_text: "question text") }
     let(:answers) { { "name": "John" } }
 
@@ -26,7 +26,7 @@ RSpec.describe LogEventService do
     end
 
     context "when the form is being started" do
-      let(:step_id) { 1 }
+      let(:step_id) { "1" }
 
       before do
         allow(EventLogger).to receive(:log_page_event).and_return(true)

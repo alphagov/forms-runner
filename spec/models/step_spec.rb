@@ -5,7 +5,6 @@ RSpec.describe Step do
     described_class.new(
       question:,
       page:,
-      page_slug: "current-page",
     )
   end
 
@@ -17,8 +16,7 @@ RSpec.describe Step do
   describe "#initialize" do
     it "sets the attributes correctly" do
       expect(step.question).to eq(question)
-      expect(step.page_id).to eq(2)
-      expect(step.page_slug).to eq("current-page")
+      expect(step.id).to eq("2")
       expect(step.next_page_slug).to eq("next-page")
       expect(step.page_number).to eq(1)
       expect(step.routing_conditions).to eq([])
@@ -30,7 +28,6 @@ RSpec.describe Step do
       other_step = described_class.new(
         question:,
         page:,
-        page_slug: "current-page",
       )
       expect(step).to eq(other_step)
     end
@@ -38,8 +35,7 @@ RSpec.describe Step do
     it "returns false for steps with different states" do
       other_step = described_class.new(
         question:,
-        page:,
-        page_slug: "other-current-page",
+        page: build(:page),
       )
       expect(step == other_step).to be false
     end
@@ -50,7 +46,6 @@ RSpec.describe Step do
       expected_state = [
         step.page,
         step.question,
-        step.page_slug,
       ]
 
       expect(step.state).to match_array(expected_state)
