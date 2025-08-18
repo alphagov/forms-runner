@@ -704,6 +704,28 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
       include_examples "for notification references"
     end
+
+    context "when there is an ActionMailer error with the confirmation email address" do
+      before do
+        mock_form_submission_service = instance_double(FormSubmissionService)
+        allow(FormSubmissionService).to receive(:new).and_return(mock_form_submission_service)
+        allow(mock_form_submission_service).to receive(:submit).and_raise(FormSubmissionService::ConfirmationEmailToAddressError)
+
+        post form_submit_answers_path(2, "form-name", 1, mode:), params: { email_confirmation_input: }
+      end
+
+      it "return 422 error code" do
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+
+      it "renders the check your answers page" do
+        expect(response).to render_template("forms/check_your_answers/show")
+      end
+
+      it "has a validation error for the confirmation email address" do
+        expect(response.body).to include(I18n.t("activemodel.errors.models.email_confirmation_input.attributes.confirmation_email_address.invalid_email"))
+      end
+    end
   end
 
 private

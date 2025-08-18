@@ -36,13 +36,19 @@ module Forms
         return render template: "errors/incomplete_submission", locals: { form: @form, current_context: }
       end
 
-      submission_reference = FormSubmissionService.call(current_context:,
-                                                        email_confirmation_input:,
-                                                        mode:).submit
+      begin
+        submission_reference = FormSubmissionService.call(current_context:,
+                                                          email_confirmation_input:,
+                                                          mode:).submit
 
-      current_context.save_submission_details(submission_reference, requested_email_confirmation)
+        current_context.save_submission_details(submission_reference, requested_email_confirmation)
 
-      redirect_to :form_submitted
+        redirect_to :form_submitted
+      rescue FormSubmissionService::ConfirmationEmailToAddressError
+        setup_check_your_answers
+        email_confirmation_input.errors.add(:confirmation_email_address, :invalid_email)
+        render template: "forms/check_your_answers/show", locals: { email_confirmation_input: }, status: :unprocessable_content
+      end
     rescue StandardError => e
       log_rescued_exception(e)
 
