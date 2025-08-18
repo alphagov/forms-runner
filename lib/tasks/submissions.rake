@@ -52,7 +52,7 @@ namespace :submissions do
     usage_message = "usage: rake submissions:retry_failed_send_job[<job_id>]"
     abort usage_message if job_id.blank?
 
-    job = SolidQueue::Job.find_by(active_job_id: job_id)
+    job = SolidQueue::Job.where(active_job_id: job_id).last
 
     abort "Job with job_id #{job_id} not found" unless job
 

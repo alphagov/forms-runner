@@ -222,7 +222,10 @@ RSpec.describe "submissions.rake" do
         .tap(&:reenable)
     end
 
-    let(:job) { create :solid_queue_job }
+    # If a job is retried, there are multiple jobs with the same active_job_id but the failed execution is only
+    # attached to the final one. Create another job with the same active_job_id first to simulate this.
+    let(:first_job) { create :solid_queue_job }
+    let(:job) { create :solid_queue_job, active_job_id: first_job.active_job_id }
 
     context "with valid arguments" do
       let(:valid_args) { [job.active_job_id] }
