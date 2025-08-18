@@ -1,14 +1,13 @@
 class Step
   attr_accessor :page, :question
-  attr_reader :next_page_slug, :page_slug
+  attr_reader :page_slug
 
   GOTO_PAGE_ERROR_NAMES = %w[cannot_have_goto_page_before_routing_page goto_page_doesnt_exist].freeze
 
-  def initialize(page:, question:, next_page_slug:, page_slug:)
+  def initialize(page:, question:, page_slug:)
     @page = page
     @question = question
 
-    @next_page_slug = next_page_slug
     @page_slug = page_slug
   end
 
@@ -20,6 +19,10 @@ class Step
 
   def page_number
     page&.position
+  end
+
+  def next_page_slug
+    page.has_next_page? ? page.next_page.to_s : CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG
   end
 
   def routing_conditions

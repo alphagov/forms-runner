@@ -24,10 +24,9 @@ module Flow
       page = @form.pages.find { |p| p.id.to_s == page_slug }
       raise PageNotFoundError, "Can't find page #{page_slug}" if page.nil?
 
-      next_page_slug = page.has_next_page? ? page.next_page.to_s : CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG
       question = QuestionRegister.from_page(page)
 
-      step_class(page).new(question:, page:, next_page_slug:, page_slug:)
+      step_class(page).new(question:, page:, page_slug:)
     end
 
     def start_step
