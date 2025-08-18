@@ -241,10 +241,19 @@ RSpec.describe Question::File, type: :model do
       context "when the filename and extension are over 100 characters" do
         let(:file_basename) { Faker::Alphanumeric.alpha(number: maximum_file_basename_length + 1) }
 
-        it "returns the original_filename" do
+        it "truncates the filename" do
           truncated_basename = file_basename.truncate(maximum_file_basename_length, omission: "")
           truncated_filename = "#{truncated_basename}#{file_extension}"
           expect(question.filename_for_s3_submission).to eq truncated_filename
+          expect(question.filename_for_s3_submission.length).to eq 100
+        end
+      end
+
+      context "when the filename contains illegal characters" do
+        let(:original_filename) { "\"a\"_<>:/\\?*very_very_very_very_very_very_very_very_very_long_filename_just_about_long_enough_for_truncation.png" }
+
+        it "returns a filename with the illegal characters removed" do
+          expect(question.filename_for_s3_submission).to eq "a_very_very_very_very_very_very_very_very_very_long_filename_just_about_long_enough_for_truncati.png"
           expect(question.filename_for_s3_submission.length).to eq 100
         end
       end
@@ -295,6 +304,15 @@ RSpec.describe Question::File, type: :model do
         expect(question.filename_after_reference_truncation).to eq truncated_filename
       end
     end
+
+    context "when the filename contains illegal characters" do
+      let(:original_filename) { "\"this\"_<>:/\\?*is_an_incredibly_long_filename_that_will_surely_have_to_be_truncated_somewhere_near_the_end.xlsx" }
+
+      it "returns a filename with illegal characters removed" do
+        truncated_filename = "this_is_an_incredibly_long_filename_that_will_surely_have_to_be_truncated_somewhere_nea.xlsx"
+        expect(question.filename_after_reference_truncation).to eq truncated_filename
+      end
+    end
   end
 
   describe "populate_email_filename" do
@@ -317,6 +335,15 @@ RSpec.describe Question::File, type: :model do
         let(:original_filename) { "a_very_very_very_very_very_very_very_long_filename_just_about_long_enough_for_truncation.png" }
 
         it "sets email_filename to the a truncated original_filename with the submission reference" do
+          expect { question.populate_email_filename(submission_reference:) }.to change(question, :email_filename).from("").to("a_very_very_very_very_very_very_very_long_filename_just_about_long_enough_for_truncatio_#{submission_reference}.png")
+          expect(question.email_filename.length).to eq 100
+        end
+      end
+
+      context "when the filename contains illegal characters" do
+        let(:original_filename) { "\"a\"_<>:/\\?*very_very_very_very_very_very_very_long_filename_just_about_long_enough_for_truncation.png" }
+
+        it "returns a filename with the illegal characters removed" do
           expect { question.populate_email_filename(submission_reference:) }.to change(question, :email_filename).from("").to("a_very_very_very_very_very_very_very_long_filename_just_about_long_enough_for_truncatio_#{submission_reference}.png")
           expect(question.email_filename.length).to eq 100
         end

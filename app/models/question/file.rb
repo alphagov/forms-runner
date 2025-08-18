@@ -57,7 +57,7 @@ module Question
 
       base_name_max_length = FILE_MAX_FILENAME_LENGTH - extension.length - filename_suffix.length
 
-      base_name = ::File.basename(original_filename, extension).truncate(base_name_max_length, omission: "")
+      base_name = ::File.basename(sanitized_filename, extension).truncate(base_name_max_length, omission: "")
 
       "#{base_name}#{filename_suffix}#{extension}"
     end
@@ -67,7 +67,7 @@ module Question
 
       base_name_max_length = FILE_MAX_FILENAME_LENGTH - extension.length - ReferenceNumberService::REFERENCE_LENGTH
 
-      base_name = ::File.basename(original_filename, extension).truncate(base_name_max_length, omission: "")
+      base_name = ::File.basename(sanitized_filename, extension).truncate(base_name_max_length, omission: "")
 
       "#{base_name}#{extension}"
     end
@@ -81,7 +81,7 @@ module Question
 
       base_name_max_length = FILE_MAX_FILENAME_LENGTH - submission_reference_with_underscore.length - extension.length - filename_suffix.length
 
-      base_name = ::File.basename(original_filename, extension).truncate(base_name_max_length, omission: "")
+      base_name = ::File.basename(sanitized_filename, extension).truncate(base_name_max_length, omission: "")
 
       self.email_filename = "#{base_name}#{filename_suffix}#{submission_reference_with_underscore}#{extension}"
     end
@@ -160,6 +160,10 @@ module Question
           file_type: file.content_type,
         }
       end
+    end
+
+    def sanitized_filename
+      original_filename.gsub(/[\/\\:*?"<>|]/, "")
     end
   end
 end
