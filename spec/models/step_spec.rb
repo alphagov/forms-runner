@@ -5,13 +5,12 @@ RSpec.describe Step do
     described_class.new(
       question:,
       page:,
-      next_page_slug: "next-page",
       page_slug: "current-page",
     )
   end
 
   let(:question) { instance_double(Question::Text, serializable_hash: {}, attribute_names: %w[name], valid?: true, errors: []) }
-  let(:page) { build(:page, id: 2, position: 1, routing_conditions: []) }
+  let(:page) { build(:page, id: 2, position: 1, next_page: "next-page", routing_conditions: []) }
   let(:answer_store) { instance_double(Store::SessionAnswerStore) }
   let(:form) { build(:form, id: 3, form_slug: "test-form", pages: [page]) }
 
@@ -31,7 +30,6 @@ RSpec.describe Step do
       other_step = described_class.new(
         question:,
         page:,
-        next_page_slug: "next-page",
         page_slug: "current-page",
       )
       expect(step).to eq(other_step)
@@ -41,7 +39,6 @@ RSpec.describe Step do
       other_step = described_class.new(
         question:,
         page:,
-        next_page_slug: "other-page",
         page_slug: "other-current-page",
       )
       expect(step == other_step).to be false
@@ -53,7 +50,6 @@ RSpec.describe Step do
       expected_state = [
         step.page,
         step.question,
-        step.next_page_slug,
         step.page_slug,
       ]
 
@@ -126,16 +122,8 @@ RSpec.describe Step do
   end
 
   describe "#end_page?" do
-    context "when next_page_slug is nil" do
-      subject(:step) do
-        described_class.new(question:, page:, next_page_slug: nil, page_slug: "current-page")
-      end
-
-      it { is_expected.to be_end_page }
-    end
-
-    context "when next_page_slug is not nil" do
-      it { is_expected.not_to be_end_page }
+    it "returns false" do
+      expect(step.end_page?).to be(false)
     end
   end
 
@@ -144,7 +132,7 @@ RSpec.describe Step do
     let(:selection) { "Yes" }
     let(:question) { instance_double(Question::Selection, selection:) }
     let(:routing_conditions) { [] }
-    let(:page) { build(:page, id: 2, position: 1, routing_conditions:) }
+    let(:page) { build(:page, id: 2, position: 1, next_page: "next-page", routing_conditions:) }
 
     describe "basic routing" do
       context "without any routing conditions" do
