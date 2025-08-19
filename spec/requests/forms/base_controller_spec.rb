@@ -8,7 +8,6 @@ RSpec.describe Forms::BaseController, type: :request do
       :v2_form_document,
       :with_support,
       id: 2,
-      live_at:,
       start_page:,
       privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
       what_happens_next_markdown: "Good things come to those that wait",
@@ -18,7 +17,6 @@ RSpec.describe Forms::BaseController, type: :request do
     )
   end
   let(:start_page) { 1 }
-  let(:live_at) { "2022-08-18 09:16:50 +0100" }
   let(:language) { "en" }
 
   let(:no_data_found_response) do
@@ -390,7 +388,6 @@ RSpec.describe Forms::BaseController, type: :request do
             :v2_form_document,
             :with_support,
             id: 2,
-            live_at:,
             start_page:,
             privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
             what_happens_next_markdown: "Good things come to those that wait",

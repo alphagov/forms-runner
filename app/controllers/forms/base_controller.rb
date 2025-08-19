@@ -42,13 +42,12 @@ module Forms
     def set_form
       begin
         @form = Api::V1::FormSnapshotRepository.find_with_mode(id: params.require(:form_id), mode:)
-        return if @form.start_page && (mode.preview? || @form.live?)
       rescue ActiveResource::ResourceNotFound
         archived_form = Api::V1::FormSnapshotRepository.find_archived(id: params.require(:form_id))
         return render template: "forms/archived/show", locals: { form_name: archived_form.name }, status: :gone if archived_form.present?
       end
 
-      raise ActiveResource::ResourceNotFound, "Not Found"
+      raise ActiveResource::ResourceNotFound, "Not Found" unless @form.start_page
     end
 
     def set_locale(&action)

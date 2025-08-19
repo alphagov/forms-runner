@@ -14,17 +14,6 @@ class Form < ActiveResource::Base
     pages.find { |p| p.id == page_id.to_i }
   end
 
-  def live?(current_datetime = Time.zone.now)
-    return false if respond_to?(:live_at) && live_at.blank?
-    raise Date::Error, "invalid live_at time" if live_at_date.nil?
-
-    live_at_date < current_datetime.to_time
-  end
-
-  def live_at_date
-    try(:live_at).try(:to_time)
-  end
-
   def payment_url_with_reference(reference)
     return nil if payment_url.blank?
 

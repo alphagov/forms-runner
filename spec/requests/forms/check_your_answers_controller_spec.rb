@@ -8,7 +8,6 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
   let(:form_data) do
     build(:v2_form_document, :with_support,
           id: 2,
-          live_at:,
           start_page: 1,
           privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
           what_happens_next_markdown: "Good things come to those that wait",
@@ -47,8 +46,6 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       },
     }
   end
-
-  let(:live_at) { "2022-08-18 09:16:50 +0100" }
 
   let(:steps_data) do
     [
@@ -383,17 +380,6 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
         include_examples "for notification references"
       end
-
-      context "and a form has a live_at value in the future" do
-        let(:live_at) { "2023-01-01 09:00:00 +0100" }
-
-        it "does not return 404" do
-          travel_to timestamp_of_request do
-            get check_your_answers_path(mode: "preview-draft", form_id: 2, form_slug: form_data.form_slug)
-          end
-          expect(response).not_to have_http_status(:not_found)
-        end
-      end
     end
 
     context "with preview mode off" do
@@ -415,17 +401,6 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         end
 
         include_examples "for notification references"
-      end
-
-      context "and a form has a live_at value in the future" do
-        let(:live_at) { "2023-01-01 09:00:00 +0100" }
-
-        it "returns 404" do
-          travel_to timestamp_of_request do
-            get check_your_answers_path(mode:, form_id: 2, form_slug: form_data.form_slug)
-            expect(response).to have_http_status(:not_found)
-          end
-        end
       end
     end
   end
