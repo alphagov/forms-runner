@@ -21,7 +21,6 @@ RSpec.describe Api::V2::FormDocumentResource do
       "what_happens_next_markdown" => "Test",
       "payment_url" => nil,
       "start_page" => 1,
-      "live_at" => "2024-09-05T06:25:25.637Z",
       "steps" =>
       [{ "id" => 1,
          "position" => 1,
@@ -190,7 +189,7 @@ RSpec.describe Api::V2::FormDocumentResource do
     end
 
     context "when tag is live" do
-      let(:response_data) { { id: 1, name: "form name", steps: [], live_at: "2022-08-18 09:16:50Z" } }
+      let(:response_data) { { id: 1, name: "form name", steps: [] } }
 
       before do
         ActiveResource::HttpMock.respond_to do |mock|
@@ -209,7 +208,7 @@ RSpec.describe Api::V2::FormDocumentResource do
     end
 
     context "when tag is draft" do
-      let(:response_data) { { id: 1, name: "form name", steps: [], live_at: nil } }
+      let(:response_data) { { id: 1, name: "form name", steps: [] } }
 
       before do
         ActiveResource::HttpMock.respond_to do |mock|
@@ -228,7 +227,7 @@ RSpec.describe Api::V2::FormDocumentResource do
     end
 
     context "when mode is archived" do
-      let(:response_data) { { id: 1, name: "form name", steps: [], live_at: "2022-08-18 09:16:50Z" } }
+      let(:response_data) { { id: 1, name: "form name", steps: [] } }
 
       before do
         ActiveResource::HttpMock.respond_to do |mock|

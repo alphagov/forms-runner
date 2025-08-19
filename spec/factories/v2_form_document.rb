@@ -58,7 +58,6 @@ FactoryBot.define do
 
     trait :live? do
       ready_for_live
-      live_at { Time.zone.now }
     end
   end
 end

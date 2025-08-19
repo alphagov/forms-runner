@@ -7,14 +7,12 @@ RSpec.describe Forms::PageController, type: :request do
   let(:form_data) do
     build(:v2_form_document, :with_support,
           id: 2,
-          live_at:,
           start_page: 1,
           privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
           what_happens_next_markdown: "Good things come to those that wait",
           declaration_text: "agree to the declaration",
           steps: steps_data)
   end
-  let(:live_at) { "2022-08-18 09:16:50 +0100" }
 
   let(:first_step_in_form) do
     build :v2_question_page_step, :with_text_settings,
@@ -68,7 +66,6 @@ RSpec.describe Forms::PageController, type: :request do
     let(:form_data) do
       build(:form, :with_support,
             id: 200,
-            live_at:,
             start_page: page_id,
             declaration_text: "agree to the declaration",
             steps: [
@@ -221,18 +218,6 @@ RSpec.describe Forms::PageController, type: :request do
       it_behaves_like "page with footer"
 
       it_behaves_like "question page"
-
-      context "and a form has a live_at value in the future" do
-        let(:live_at) { "2023-01-01 09:00:00 +0100" }
-
-        it "returns 404" do
-          travel_to timestamp_of_request do
-            get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
-          end
-
-          expect(response).to have_http_status(:not_found)
-        end
-      end
     end
 
     context "when viewing a live form with no routing_conditions" do
@@ -496,17 +481,6 @@ RSpec.describe Forms::PageController, type: :request do
         it "does not clear the submission reference from the session" do
           expect_any_instance_of(Flow::Context).not_to receive(:clear_submission_details)
           post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2), params: { question: { text: "answer text" } }
-        end
-      end
-
-      context "and a form has a live_at value in the future" do
-        let(:live_at) { "2023-01-01 09:00:00 +0100" }
-
-        it "does not return 404" do
-          travel_to timestamp_of_request do
-            post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
-          end
-          expect(response).not_to have_http_status(:not_found)
         end
       end
     end

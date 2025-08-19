@@ -7,7 +7,6 @@ FactoryBot.define do
     submission_email { Faker::Internet.email(domain: "example.gov.uk") }
     privacy_policy_url { Faker::Internet.url(host: "gov.uk") }
     org { "test-org" }
-    live_at { nil }
     what_happens_next_markdown { nil }
     support_email { nil }
     support_phone { nil }
@@ -38,7 +37,6 @@ FactoryBot.define do
 
     trait :live? do
       ready_for_live
-      live_at { Time.zone.now }
       has_draft_version { false }
       has_live_version { true }
     end

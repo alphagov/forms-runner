@@ -29,7 +29,6 @@ RSpec.describe Api::V1::FormSnapshotRepository do
       "what_happens_next_markdown" => "Test",
       "payment_url" => nil,
       "start_page" => 1,
-      "live_at" => "2024-09-05T06:25:25.637Z",
       "steps" =>
       [{ "id" => 1,
          "position" => 1,
@@ -166,9 +165,9 @@ RSpec.describe Api::V1::FormSnapshotRepository do
   describe ".find_with_mode" do
     before do
       ActiveResource::HttpMock.respond_to do |mock|
-        mock.get "/api/v2/forms/1/draft", req_headers, api_v2_response_data.merge("live_at": nil).to_json, 200
-        mock.get "/api/v2/forms/1/live", req_headers, api_v2_response_data.to_json, 200
-        mock.get "/api/v2/forms/1/archived", req_headers, api_v2_response_data.to_json, 200
+        mock.get "/api/v2/forms/1/draft", req_headers, api_v2_response_data.merge(name: "Draft form").to_json, 200
+        mock.get "/api/v2/forms/1/live", req_headers, api_v2_response_data.merge(name: "Live form").to_json, 200
+        mock.get "/api/v2/forms/1/archived", req_headers, api_v2_response_data.merge(name: "Archived form").to_json, 200
         mock.get "/api/v2/forms/2/live", req_headers, nil, 404
         mock.get "/api/v2/forms/2/archived", req_headers, api_v2_response_data.to_json, 200
         mock.get "/api/v2/forms/Alpha123/draft", req_headers, api_v2_response_data.merge("id": "Alpha123").to_json, 200
@@ -196,8 +195,7 @@ RSpec.describe Api::V1::FormSnapshotRepository do
       it "returns a live form" do
         form = described_class.find_with_mode(id: 1, mode: Mode.new("live"))
 
-        expect(form).to have_attributes(id: 1, name: "All question types form")
-        expect(form).to be_live
+        expect(form).to have_attributes(id: 1, name: "Live form")
       end
     end
 
@@ -205,8 +203,7 @@ RSpec.describe Api::V1::FormSnapshotRepository do
       it "returns a draft form" do
         form = described_class.find_with_mode(id: 1, mode: Mode.new("preview-draft"))
 
-        expect(form).to have_attributes(id: 1, name: "All question types form")
-        expect(form).not_to be_live
+        expect(form).to have_attributes(id: 1, name: "Draft form")
       end
     end
 
@@ -214,8 +211,7 @@ RSpec.describe Api::V1::FormSnapshotRepository do
       it "returns an archived form" do
         form = described_class.find_with_mode(id: 1, mode: Mode.new("preview-archived"))
 
-        expect(form).to have_attributes(id: 1, name: "All question types form")
-        expect(form).to be_live
+        expect(form).to have_attributes(id: 1, name: "Archived form")
       end
     end
 
@@ -223,8 +219,7 @@ RSpec.describe Api::V1::FormSnapshotRepository do
       it "returns a live form" do
         form = described_class.find_with_mode(id: 1, mode: Mode.new("preview-live"))
 
-        expect(form).to have_attributes(id: 1, name: "All question types form")
-        expect(form).to be_live
+        expect(form).to have_attributes(id: 1, name: "Live form")
       end
     end
 
@@ -265,7 +260,6 @@ RSpec.describe Api::V1::FormSnapshotRepository do
         form = described_class.find_archived(id: form_id)
 
         expect(form).to have_attributes(id: form_id, name: "All question types form")
-        expect(form).to be_live
       end
     end
 
