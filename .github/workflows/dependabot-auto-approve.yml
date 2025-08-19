@@ -88,7 +88,7 @@ jobs:
     needs: [validate_dependabot_opened_this_PR, validate_this_is_an_allowed_dependency, wait_for_checks]
     if: ${{ needs.validate_this_is_an_allowed_dependency.outputs.is_allowed_dependency == 1 }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Approve a PR if not already approved
         run: |
           # Sets the upstream metadata for `gh pr status`
