@@ -27,7 +27,6 @@ en:
       non_compliance:
         heading: Non compliance with the accessibility regulations
         repeated_questions: You may be asked for the same personal information more than once. This does not meet WCAG 2.2 criterion 3.3.7 (redundant entry).
-        resolution_timeline: We plan to resolve this by the end of 2024.
       other_problems:
         heading: Other problems using the interface
         other_problems_list:
@@ -43,7 +42,7 @@ en:
             list_item_3: some headings on question pages that have multiple fields
             preamble: 'VoiceOver on iOS (iPhone Operating System) 17 reads out some lines of content twice. This happens with:'
           list_item_6: When you click on ‘Get help with this form’, VoiceOver on iOS 17 does not announce that there’s more content to be shown. This could make it harder to get help with the form.
-          list_item_7: On the ‘Check your answers’ page, VoiceOver on iOS 17 does not doesn't always read out the 'Change' link. This could make it harder for you to change your answer.
+          list_item_7: On the ‘Check your answers’ page, VoiceOver on iOS 17 does not always read out the 'Change' link. This could make it harder for you to change your answer.
           list_item_8: It can be difficult to open the ‘Get help with this form’ link when using the Dragon web extension on Chrome. This could make it harder to get help with the form.
         preamble: Although the following issues do not fail WCAG 2.2 AA, we plan to investigate and fix them as soon as possible.
       preamble: The content listed below is non-accessible for the following reasons.
@@ -54,7 +53,7 @@ en:
       text: We’re always looking to improve the accessibility of forms made with GOV.UK Forms.
     statement_preparation:
       WCAG_version: GDS assessed the forms against the Web Content Accessibility Guidelines WCAG 2.2.
-      date: This statement was prepared on 20 February 2024.
+      date: This statement was first prepared on 20 February 2024. It was last reviewed and updated on 19 August 2025.
       heading: Preparation of this accessibility statement
       last_tested: Forms created using the GOV.UK Forms platform were last tested on 9 January 2024. The test was carried out by GDS.
     technical_information:
