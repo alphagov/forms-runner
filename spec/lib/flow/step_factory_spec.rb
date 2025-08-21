@@ -26,7 +26,7 @@ RSpec.describe Flow::StepFactory do
         expect(step).to be_a(Step)
         expect(step.question).to eq(question)
         expect(step.next_page_slug).to eq("page-2")
-        expect(step.page_slug).to eq("page-1")
+        expect(step.id).to eq("page-1")
       end
 
       context "when it is the last page" do
@@ -49,7 +49,7 @@ RSpec.describe Flow::StepFactory do
       end
 
       it "a RepeatingStep is created" do
-        step = factory.create_step(page.page_slug)
+        step = factory.create_step(page.id)
         expect(step).to be_a(RepeatableStep)
       end
     end
@@ -71,7 +71,7 @@ RSpec.describe Flow::StepFactory do
       it "creates a step for the start page" do
         step = factory.create_step(Flow::StepFactory::START_PAGE)
         expect(step).to be_a(Step)
-        expect(step.page_slug).to eq("page-1")
+        expect(step.id).to eq("page-1")
       end
     end
   end

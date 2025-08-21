@@ -9,10 +9,10 @@ module Forms
     end
 
     def show
-      return redirect_to form_page_path(@form.id, @form.form_slug, current_context.next_page_slug) unless current_context.can_visit?(@step.page_slug)
+      return redirect_to form_page_path(@form.id, @form.form_slug, current_context.next_page_slug) unless current_context.can_visit?(@step.id)
       return redirect_to review_file_page if answered_file_question?
 
-      back_link(@step.page_slug)
+      back_link(@step.id)
       setup_instance_vars_for_view
     end
 
@@ -53,7 +53,7 @@ module Forms
 
     def setup_instance_vars_for_view
       @is_question = true
-      @question_edit_link = "#{Settings.forms_admin.base_url}/forms/#{@form.id}/pages/#{@step.page_slug}/edit/question"
+      @question_edit_link = "#{Settings.forms_admin.base_url}/forms/#{@form.id}/pages/#{@step.id}/edit/question"
       @save_url = save_url
     end
 
@@ -67,20 +67,20 @@ module Forms
       if changing_existing_answer
         @back_link = check_your_answers_path(form_id: current_context.form.id)
       elsif previous_step
-        @back_link = previous_step.repeatable? ? add_another_answer_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug, page_slug: previous_step.page_slug) : form_page_path(@form.id, @form.form_slug, previous_step.page_id)
+        @back_link = previous_step.repeatable? ? add_another_answer_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug, page_slug: previous_step.id) : form_page_path(@form.id, @form.form_slug, previous_step.page_id)
       end
     end
 
     def redirect_post_save
       return redirect_to review_file_page, success: t("banner.success.file_uploaded") if answered_file_question?
-      return redirect_to exit_page_path(form_id: @form.id, form_slug: @form.form_slug, page_slug: @step.page_slug) if @step.exit_page_condition_matches?
+      return redirect_to exit_page_path(form_id: @form.id, form_slug: @form.form_slug, page_slug: @step.id) if @step.exit_page_condition_matches?
 
       redirect_to next_page
     end
 
     def redirect_if_not_answered_file_question
       unless @step.question.is_a?(Question::File) && @step.question.file_uploaded?
-        redirect_to form_page_path(@form.id, @form.form_slug, @step.page_slug)
+        redirect_to form_page_path(@form.id, @form.form_slug, @step.id)
       end
     end
 
@@ -89,7 +89,7 @@ module Forms
     end
 
     def review_file_page
-      review_file_path(form_id: @form.id, form_slug: @form.form_slug, page_slug: @step.page_slug, changing_existing_answer:)
+      review_file_path(form_id: @form.id, form_slug: @form.form_slug, page_slug: @step.id, changing_existing_answer:)
     end
 
     def next_page
@@ -102,7 +102,7 @@ module Forms
 
     def next_step_path
       if should_show_add_another?(@step)
-        return add_another_answer_path(form_id: @form.id, form_slug: @form.form_slug, page_slug: @step.page_slug)
+        return add_another_answer_path(form_id: @form.id, form_slug: @form.form_slug, page_slug: @step.id)
       end
 
       next_step_in_form_path
@@ -110,7 +110,7 @@ module Forms
 
     def next_step_changing
       if should_show_add_another?(@step)
-        return change_add_another_answer_path(form_id: @form.id, form_slug: @form.form_slug, page_slug: @step.page_slug)
+        return change_add_another_answer_path(form_id: @form.id, form_slug: @form.form_slug, page_slug: @step.id)
       end
 
       check_answers_path
@@ -160,7 +160,7 @@ module Forms
     end
 
     def is_first_page?
-      current_context.form.start_page == @step.id
+      current_context.form.start_page.to_s == @step.id
     end
 
     def save_url

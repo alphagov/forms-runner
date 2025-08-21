@@ -26,7 +26,7 @@ module Flow
 
       question = QuestionRegister.from_page(page)
 
-      step_class(page).new(question:, page:, page_slug:)
+      step_class(page).new(question:, page:)
     end
 
     def start_step
