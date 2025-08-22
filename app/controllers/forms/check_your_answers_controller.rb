@@ -57,23 +57,23 @@ module Forms
 
   private
 
-    def page_to_row(page)
-      question_name = page.question.question_text_for_check_your_answers
+    def step_to_row(step)
+      question_name = step.question.question_text_for_check_your_answers
       {
         key: { text: helpers.sanitize(question_name) },
-        value: { text: page.show_answer },
-        actions: [{ text: I18n.t("govuk_components.govuk_summary_list.change"), href: change_link(page), visually_hidden_text: helpers.strip_tags(question_name) }],
+        value: { text: step.show_answer },
+        actions: [{ text: I18n.t("govuk_components.govuk_summary_list.change"), href: change_link(step), visually_hidden_text: helpers.strip_tags(question_name) }],
       }
     end
 
-    def change_link(page)
-      return change_add_another_answer_path(@form.id, @form.form_slug, page.page_id) if page.repeatable? && page.show_answer.present?
+    def change_link(step)
+      return change_add_another_answer_path(@form.id, @form.form_slug, step.id) if step.repeatable? && step.show_answer.present?
 
-      form_change_answer_path(@form.id, @form.form_slug, page.page_id)
+      form_change_answer_path(@form.id, @form.form_slug, step.id)
     end
 
     def check_your_answers_rows
-      current_context.completed_steps.map { |page| page_to_row(page) }
+      current_context.completed_steps.map { |step| step_to_row(step) }
     end
 
     def answers_need_full_width
@@ -100,7 +100,7 @@ module Forms
       previous_step = current_context.previous_step(CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG)
 
       if previous_step.present?
-        previous_step.repeatable? ? add_another_answer_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug, page_slug: previous_step.id) : form_page_path(current_context.form.id, current_context.form.form_slug, previous_step.page_id)
+        previous_step.repeatable? ? add_another_answer_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug, page_slug: previous_step.id) : form_page_path(current_context.form.id, current_context.form.form_slug, previous_step.id)
       end
     end
   end
