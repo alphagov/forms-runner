@@ -47,6 +47,7 @@ locals {
   forms_admin_env_vars = [
     { name = "DATABASE_URL", value = "postgres://postgres:postgres@127.0.0.1:5432" },
     { name = "GOVUK_APP_DOMAIN", value = "publishing.service.gov.uk" },
+    { name = "EMAIL", value = "review-app-submissions@review.forms.service.gov.uk" },
     { name = "PORT", value = "3000" },
     { name = "RAILS_DEVELOPMENT_HOSTS", value = local.admin_app_hostname },
     { name = "RAILS_ENV", value = "production" },
