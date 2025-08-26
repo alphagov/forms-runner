@@ -5,43 +5,43 @@ class SesEmailFormatter
   class FormattingError < StandardError; end
 
   def build_question_answers_section_html(completed_steps)
-    completed_steps.map { |page|
-      [prep_question_title_html(page),
-       prep_answer_text_html(page)].join
+    completed_steps.map { |step|
+      [prep_question_title_html(step),
+       prep_answer_text_html(step)].join
     }.join(H_RULE)
   end
 
   def build_question_answers_section_plain_text(completed_steps)
-    completed_steps.map { |page|
-      [prep_question_title_plain_text(page),
-       prep_answer_text_plain_text(page)].join("\n\n")
+    completed_steps.map { |step|
+      [prep_question_title_plain_text(step),
+       prep_answer_text_plain_text(step)].join("\n\n")
     }.join(H_RULE_PLAIN_TEXT)
   end
 
 private
 
-  def prep_question_title_html(page)
-    "<h3>#{prep_question_title_plain_text(page)}</h3>"
+  def prep_question_title_html(step)
+    "<h3>#{prep_question_title_plain_text(step)}</h3>"
   end
 
-  def prep_answer_text_html(page)
-    "<p>#{convert_newlines_to_html(prep_answer_text_plain_text(page))}</p>"
+  def prep_answer_text_html(step)
+    "<p>#{convert_newlines_to_html(prep_answer_text_plain_text(step))}</p>"
   rescue StandardError
-    raise FormattingError, "could not format answer for question page #{page.id}"
+    raise FormattingError, "could not format answer for question page #{step.id}"
   end
 
-  def prep_question_title_plain_text(page)
-    page.question_text
+  def prep_question_title_plain_text(step)
+    step.question.question_text
   end
 
-  def prep_answer_text_plain_text(page)
-    answer = page.show_answer_in_email
+  def prep_answer_text_plain_text(step)
+    answer = step.show_answer_in_email
 
     return "[#{I18n.t('mailer.submission.question_skipped')}]" if answer.blank?
 
     sanitize(answer)
   rescue StandardError
-    raise FormattingError, "could not format answer for question page #{page.id}"
+    raise FormattingError, "could not format answer for question page #{step.id}"
   end
 
   def sanitize(text)
