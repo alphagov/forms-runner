@@ -203,6 +203,7 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
           perform_enqueued_jobs
           expect(Sentry).to have_received(:capture_message).with(
             a_string_including("Submission email bounced"),
+            fingerprint: ["{{ default }}", submission.form_id],
             extra: hash_including(
               ses_bounce: hash_including(
                 bounce_type: "Permanent",
