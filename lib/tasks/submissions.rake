@@ -56,6 +56,46 @@ namespace :submissions do
     disregard_bounced_submission(reference)
   end
 
+  desc "Disregard bounced submissions created between two timestamps for a specific form"
+  task :disregard_bounced_submissions_for_form, %i[form_id start_timestamp end_timestamp dry_run] => :environment do |_, args|
+    form_id = args[:form_id]
+    start_timestamp = args[:start_timestamp]
+    end_timestamp = args[:end_timestamp]
+    dry_run_arg = args[:dry_run]
+    dry_run = dry_run_arg == "true"
+
+    usage_message = "usage: rake submissions:disregard_bounced_submission[<form_id>, <start_timestamp>, <end_timestamp>, <dry_run>]".freeze
+    if form_id.blank? || start_timestamp.blank? || end_timestamp.blank? || !dry_run_arg.in?(%w[true false])
+      abort usage_message
+    end
+
+    start_time = Time.zone.parse(start_timestamp)
+    end_time = Time.zone.parse(end_timestamp)
+
+    if start_time.nil? || end_time.nil?
+      abort "Error: Invalid timestamp format. Use ISO 8601 format (e.g. '2024-01-01T00:00:00Z')"
+    end
+
+    if start_time >= end_time
+      abort "Error: Start timestamp must be before end timestamp"
+    end
+
+    Rails.logger.info "Dry run mode: #{dry_run ? 'enabled' : 'disabled'}"
+
+    submissions = Submission.bounced.where(form_id: form_id, created_at: start_time..end_time)
+
+    Rails.logger.info "Found #{submissions.length} bounced submissions to disregard for form ID #{form_id} in time range: #{start_time} to #{end_time}"
+
+    submissions.each do |submission|
+      if dry_run
+        Rails.logger.info "Would disregard bounce of submission with reference #{submission.reference} which was created at #{submission.created_at}"
+      else
+        submission.pending!
+        Rails.logger.info "Disregarded bounce of submission with reference #{submission.reference}"
+      end
+    end
+  end
+
   desc "Retry failed send submission job"
   task :retry_failed_send_job, %i[job_id] => :environment do |_, args|
     job_id = args[:job_id]
@@ -92,11 +132,12 @@ namespace :submissions do
     form_id = args[:form_id]
     start_timestamp = args[:start_timestamp]
     end_timestamp = args[:end_timestamp]
-    dry_run = args[:dry_run] == "true"
+    dry_run_arg = args[:dry_run]
+    dry_run = dry_run_arg == "true"
 
     usage_message = "usage: rake submissions:redeliver_submissions_by_date[<form_id>,<start_timestamp>,<end_timestamp>,<dry_run>]".freeze
 
-    if form_id.blank? || start_timestamp.blank? || end_timestamp.blank?
+    if form_id.blank? || start_timestamp.blank? || end_timestamp.blank? || !dry_run_arg.in?(%w[true false])
       abort usage_message
     end
 
@@ -112,7 +153,7 @@ namespace :submissions do
     end
 
     submissions_to_redeliver = Submission.where(form_id: form_id)
-                                        .where(created_at: start_time..end_time)
+                                         .where(created_at: start_time..end_time)
 
     Rails.logger.info "Time range: #{start_time} to #{end_time}"
     Rails.logger.info "Dry run mode: #{dry_run ? 'enabled' : 'disabled'}"
