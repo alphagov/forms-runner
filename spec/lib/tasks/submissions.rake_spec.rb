@@ -57,6 +57,27 @@ RSpec.describe "submissions.rake" do
     end
   end
 
+  describe "submissions:list_submissions_older_than_8_days" do
+    subject(:task) do
+      Rake::Task["submissions:list_submissions_older_than_8_days"]
+        .tap(&:reenable)
+    end
+
+    let!(:submission_more_than_8_days_old) { create :submission, :sent, form_id: 42, last_delivery_attempt: 8.days.ago - 1.second, delivery_status: :bounced }
+    let!(:submission_9_days_old) { create :submission, :sent, form_id: 43, last_delivery_attempt: 9.days.ago, delivery_status: :pending }
+
+    before do
+      create :submission, :sent, form_id: 99, last_delivery_attempt: 8.days.ago + 1.second
+    end
+
+    it "logs the number of submissions older than 8 days" do
+      expect(Rails.logger).to receive(:info).with("Found 2 submissions older than 8 days", { form_ids: [42, 43] })
+      expect(Rails.logger).to receive(:info).with("Submission reference: #{submission_more_than_8_days_old.reference}, form ID: #{submission_more_than_8_days_old.form_id}, delivery_status: #{submission_more_than_8_days_old.delivery_status}, last_delivery_attempt: #{submission_more_than_8_days_old.last_delivery_attempt}")
+      expect(Rails.logger).to receive(:info).with("Submission reference: #{submission_9_days_old.reference}, form ID: #{submission_9_days_old.form_id}, delivery_status: #{submission_9_days_old.delivery_status}, last_delivery_attempt: #{submission_9_days_old.last_delivery_attempt}")
+      task.invoke
+    end
+  end
+
   describe "submissions:retry_bounced_submissions" do
     subject(:task) do
       Rake::Task["submissions:retry_bounced_submissions"]

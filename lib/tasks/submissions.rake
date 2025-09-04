@@ -5,6 +5,17 @@ namespace :submissions do
     Rails.logger.info "#{Submission.bounced.count} bounced submissions"
   end
 
+  desc "List all submissions where delivery was last attempted more than 8 days ago"
+  task list_submissions_older_than_8_days: :environment do
+    submissions = Submission.where(last_delivery_attempt: ..8.days.ago)
+    Rails.logger.info "Found #{submissions.length} submissions older than 8 days", {
+      form_ids: submissions.map(&:form_id).uniq,
+    }
+    submissions.find_each do |submission|
+      Rails.logger.info "Submission reference: #{submission.reference}, form ID: #{submission.form_id}, delivery_status: #{submission.delivery_status}, last_delivery_attempt: #{submission.last_delivery_attempt}"
+    end
+  end
+
   desc "Fetch and display all data for a specific submission given a reference"
   task :inspect_submission_data, [:reference] => :environment do |_t, args|
     submission = Submission.find_by(reference: args.reference)

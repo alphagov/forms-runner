@@ -2,6 +2,7 @@ FactoryBot.define do
   factory :submission do
     created_at { Faker::Time.between(from: Time.zone.local(2025, 1, 1), to: Time.zone.now) }
     updated_at { created_at }
+    last_delivery_attempt { created_at + 1.minute }
     reference { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
     form_id { 1 }
     answers do
