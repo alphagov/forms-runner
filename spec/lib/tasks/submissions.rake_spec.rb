@@ -72,9 +72,34 @@ RSpec.describe "submissions.rake" do
 
     it "logs the number of submissions older than 8 days" do
       expect(Rails.logger).to receive(:info).with("Found 2 submissions older than 8 days", { form_ids: [42, 43] })
-      expect(Rails.logger).to receive(:info).with("Submission reference: #{submission_more_than_8_days_old.reference}, form ID: #{submission_more_than_8_days_old.form_id}, delivery_status: #{submission_more_than_8_days_old.delivery_status}, last_delivery_attempt: #{submission_more_than_8_days_old.last_delivery_attempt}")
-      expect(Rails.logger).to receive(:info).with("Submission reference: #{submission_9_days_old.reference}, form ID: #{submission_9_days_old.form_id}, delivery_status: #{submission_9_days_old.delivery_status}, last_delivery_attempt: #{submission_9_days_old.last_delivery_attempt}")
+      expect(Rails.logger).to receive(:info).with("Submission reference: #{submission_more_than_8_days_old.reference}, form ID: #{submission_more_than_8_days_old.form_id}, delivery_status: #{submission_more_than_8_days_old.delivery_status}, created_at: #{submission_more_than_8_days_old.created_at}, last_delivery_attempt: #{submission_more_than_8_days_old.last_delivery_attempt}")
+      expect(Rails.logger).to receive(:info).with("Submission reference: #{submission_9_days_old.reference}, form ID: #{submission_9_days_old.form_id}, delivery_status: #{submission_9_days_old.delivery_status}, created_at: #{submission_9_days_old.created_at}, last_delivery_attempt: #{submission_9_days_old.last_delivery_attempt}")
       task.invoke
+    end
+  end
+
+  describe "submissions:list_bounced_submissions_for_form" do
+    subject(:task) do
+      Rake::Task["submissions:list_bounced_submissions_for_form"]
+        .tap(&:reenable)
+    end
+
+    let(:form_id) { 42 }
+
+    let!(:bounced_submission) { create :submission, :bounced, form_id: }
+    let!(:another_bounced_submission) { create :submission, :bounced, form_id: }
+
+    before do
+      # create some submissions that won't be matched
+      create(:submission, form_id:)
+      create(:submission, :bounced, form_id: 99)
+    end
+
+    it "logs the bounced submissions" do
+      expect(Rails.logger).to receive(:info).with("Found 2 bounced submissions for form with ID #{form_id}")
+      expect(Rails.logger).to receive(:info).with "Submission reference: #{bounced_submission.reference}, created_at: #{bounced_submission.created_at}, last_delivery_attempt: #{bounced_submission.last_delivery_attempt}"
+      expect(Rails.logger).to receive(:info).with "Submission reference: #{another_bounced_submission.reference}, created_at: #{another_bounced_submission.created_at}, last_delivery_attempt: #{another_bounced_submission.last_delivery_attempt}"
+      task.invoke(form_id)
     end
   end
 
@@ -281,15 +306,15 @@ RSpec.describe "submissions.rake" do
         expect {
           task.invoke(*valid_args)
         }.to change { early_matching_submission.reload.delivery_status }.from("bounced").to("pending")
-          .and change { late_matching_submission.reload.delivery_status }.from("bounced").to("pending")
+                                                                        .and change { late_matching_submission.reload.delivery_status }.from("bounced").to("pending")
       end
 
       it "does not update non-matching submissions" do
         expect {
           task.invoke(*valid_args)
         }.to not_change { not_bounced_submission.reload.updated_at }
-         .and not_change { non_matching_submission_different_form.reload.delivery_status }
-         .and(not_change { non_matching_submission_different_time.reload.delivery_status })
+               .and not_change { non_matching_submission_different_form.reload.delivery_status }
+                      .and(not_change { non_matching_submission_different_time.reload.delivery_status })
       end
 
       it "logs the submissions to disregard" do
@@ -372,7 +397,7 @@ RSpec.describe "submissions.rake" do
         expect {
           task.invoke(form_id, start_time, start_time, "foo")
         }.to raise_error(SystemExit)
-                       .and output("usage: rake submissions:disregard_bounced_submission[<form_id>, <start_timestamp>, <end_timestamp>, <dry_run>]\n").to_stderr
+               .and output("usage: rake submissions:disregard_bounced_submission[<form_id>, <start_timestamp>, <end_timestamp>, <dry_run>]\n").to_stderr
       end
     end
   end
@@ -608,7 +633,7 @@ RSpec.describe "submissions.rake" do
         expect {
           task.invoke(form_id, start_time, start_time, "foo")
         }.to raise_error(SystemExit)
-                       .and output("usage: rake submissions:redeliver_submissions_by_date[<form_id>,<start_timestamp>,<end_timestamp>,<dry_run>]\n").to_stderr
+               .and output("usage: rake submissions:redeliver_submissions_by_date[<form_id>,<start_timestamp>,<end_timestamp>,<dry_run>]\n").to_stderr
       end
     end
   end

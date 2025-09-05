@@ -12,7 +12,21 @@ namespace :submissions do
       form_ids: submissions.map(&:form_id).uniq,
     }
     submissions.find_each do |submission|
-      Rails.logger.info "Submission reference: #{submission.reference}, form ID: #{submission.form_id}, delivery_status: #{submission.delivery_status}, last_delivery_attempt: #{submission.last_delivery_attempt}"
+      Rails.logger.info "Submission reference: #{submission.reference}, form ID: #{submission.form_id}, delivery_status: #{submission.delivery_status}, created_at: #{submission.created_at}, last_delivery_attempt: #{submission.last_delivery_attempt}"
+    end
+  end
+
+  desc "List all bounced submissions for the given form ID"
+  task :list_bounced_submissions_for_form, %i[form_id] => :environment do |_t, args|
+    form_id = args[:form_id]
+
+    usage_message = "usage: rake submissions:list_bounced_submissions_for_form[<form_id>]".freeze
+    abort usage_message if form_id.blank?
+
+    submissions = Submission.bounced.where(form_id: form_id)
+    Rails.logger.info "Found #{submissions.length} bounced submissions for form with ID #{form_id}"
+    submissions.find_each do |submission|
+      Rails.logger.info "Submission reference: #{submission.reference}, created_at: #{submission.created_at}, last_delivery_attempt: #{submission.last_delivery_attempt}"
     end
   end
 
