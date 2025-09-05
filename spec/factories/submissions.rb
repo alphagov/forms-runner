@@ -22,5 +22,10 @@ FactoryBot.define do
     trait :sent do
       mail_message_id { Faker::Alphanumeric.alphanumeric }
     end
+
+    trait :bounced do
+      sent
+      delivery_status { :bounced }
+    end
   end
 end

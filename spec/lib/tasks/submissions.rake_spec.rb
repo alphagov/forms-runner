@@ -72,9 +72,34 @@ RSpec.describe "submissions.rake" do
 
     it "logs the number of submissions older than 8 days" do
       expect(Rails.logger).to receive(:info).with("Found 2 submissions older than 8 days", { form_ids: [42, 43] })
-      expect(Rails.logger).to receive(:info).with("Submission reference: #{submission_more_than_8_days_old.reference}, form ID: #{submission_more_than_8_days_old.form_id}, delivery_status: #{submission_more_than_8_days_old.delivery_status}, last_delivery_attempt: #{submission_more_than_8_days_old.last_delivery_attempt}")
-      expect(Rails.logger).to receive(:info).with("Submission reference: #{submission_9_days_old.reference}, form ID: #{submission_9_days_old.form_id}, delivery_status: #{submission_9_days_old.delivery_status}, last_delivery_attempt: #{submission_9_days_old.last_delivery_attempt}")
+      expect(Rails.logger).to receive(:info).with("Submission reference: #{submission_more_than_8_days_old.reference}, form ID: #{submission_more_than_8_days_old.form_id}, delivery_status: #{submission_more_than_8_days_old.delivery_status}, created_at: #{submission_more_than_8_days_old.created_at}, last_delivery_attempt: #{submission_more_than_8_days_old.last_delivery_attempt}")
+      expect(Rails.logger).to receive(:info).with("Submission reference: #{submission_9_days_old.reference}, form ID: #{submission_9_days_old.form_id}, delivery_status: #{submission_9_days_old.delivery_status}, created_at: #{submission_9_days_old.created_at}, last_delivery_attempt: #{submission_9_days_old.last_delivery_attempt}")
       task.invoke
+    end
+  end
+
+  describe "submissions:list_bounced_submissions_for_form" do
+    subject(:task) do
+      Rake::Task["submissions:list_bounced_submissions_for_form"]
+        .tap(&:reenable)
+    end
+
+    let(:form_id) { 42 }
+
+    let!(:bounced_submission) { create :submission, :bounced, form_id: }
+    let!(:another_bounced_submission) { create :submission, :bounced, form_id: }
+
+    before do
+      # create some submissions that won't be matched
+      create(:submission, form_id:)
+      create(:submission, :bounced, form_id: 99)
+    end
+
+    it "logs the bounced submissions" do
+      expect(Rails.logger).to receive(:info).with("Found 2 bounced submissions for form with ID #{form_id}")
+      expect(Rails.logger).to receive(:info).with "Submission reference: #{bounced_submission.reference}, created_at: #{bounced_submission.created_at}, last_delivery_attempt: #{bounced_submission.last_delivery_attempt}"
+      expect(Rails.logger).to receive(:info).with "Submission reference: #{another_bounced_submission.reference}, created_at: #{another_bounced_submission.created_at}, last_delivery_attempt: #{another_bounced_submission.last_delivery_attempt}"
+      task.invoke(form_id)
     end
   end
 
@@ -237,6 +262,146 @@ RSpec.describe "submissions.rake" do
     end
   end
 
+  describe "submissions:disregard_bounced_submissions_for_form" do
+    subject(:task) do
+      Rake::Task["submissions:disregard_bounced_submissions_for_form"]
+        .tap(&:reenable)
+    end
+
+    let(:form_id) { 1 }
+    let(:other_form_id) { 2 }
+    let(:start_time) { "2024-01-01T00:00:00Z" }
+    let(:end_time) { "2024-01-02T00:00:00Z" }
+    let(:dry_run) { "false" }
+
+    let!(:early_matching_submission) do
+      create :submission, :bounced, form_id:,
+                                    created_at: Time.parse("2024-01-01T12:00:00Z")
+    end
+
+    let!(:late_matching_submission) do
+      create :submission, :bounced, form_id:,
+                                    created_at: Time.parse("2024-01-01T18:00:00Z")
+    end
+
+    let!(:not_bounced_submission) do
+      create :submission, :sent, form_id:,
+                                 created_at: Time.parse("2024-01-01T12:00:00Z")
+    end
+
+    let!(:non_matching_submission_different_form) do
+      create :submission, :bounced, form_id: other_form_id,
+                                    created_at: Time.parse("2024-01-01T12:00:00Z")
+    end
+
+    let!(:non_matching_submission_different_time) do
+      create :submission, :bounced, form_id:,
+                                    created_at: Time.parse("2023-12-31T23:59:59Z")
+    end
+
+    context "with valid arguments" do
+      let(:valid_args) { [form_id, start_time, end_time, dry_run] }
+
+      it "changes delivery_status for matched submissions to pending" do
+        expect {
+          task.invoke(*valid_args)
+        }.to change { early_matching_submission.reload.delivery_status }.from("bounced").to("pending")
+                                                                        .and change { late_matching_submission.reload.delivery_status }.from("bounced").to("pending")
+      end
+
+      it "does not update non-matching submissions" do
+        expect {
+          task.invoke(*valid_args)
+        }.to not_change { not_bounced_submission.reload.updated_at }
+               .and not_change { non_matching_submission_different_form.reload.delivery_status }
+                      .and(not_change { non_matching_submission_different_time.reload.delivery_status })
+      end
+
+      it "logs the submissions to disregard" do
+        allow(Rails.logger).to receive(:info)
+        expect(Rails.logger).to receive(:info).with("Found 2 bounced submissions to disregard for form ID #{form_id} in time range: 2024-01-01 00:00:00 UTC to 2024-01-02 00:00:00 UTC").once
+        expect(Rails.logger).to receive(:info).with("Disregarded bounce of submission with reference #{early_matching_submission.reference}")
+        expect(Rails.logger).to receive(:info).with("Disregarded bounce of submission with reference #{late_matching_submission.reference}")
+        task.invoke(*valid_args)
+      end
+
+      context "when dry_run is true" do
+        let(:dry_run) { "true" }
+
+        it "does not update any submissions" do
+          expect {
+            task.invoke(*valid_args)
+          }.not_to(change { early_matching_submission.reload.delivery_status })
+        end
+
+        it "logs the submissions that would be disregarded" do
+          allow(Rails.logger).to receive(:info)
+          expect(Rails.logger).to receive(:info).with("Would disregard bounce of submission with reference #{early_matching_submission.reference} which was created at #{early_matching_submission.created_at}")
+          expect(Rails.logger).to receive(:info).with("Would disregard bounce of submission with reference #{late_matching_submission.reference} which was created at #{late_matching_submission.created_at}")
+          task.invoke(*valid_args)
+        end
+      end
+    end
+
+    context "with invalid arguments" do
+      it "aborts when form_id is missing" do
+        expect {
+          task.invoke("", start_time, end_time, dry_run)
+        }.to raise_error(SystemExit)
+               .and output("usage: rake submissions:disregard_bounced_submission[<form_id>, <start_timestamp>, <end_timestamp>, <dry_run>]\n").to_stderr
+      end
+
+      it "aborts when start_timestamp is missing" do
+        expect {
+          task.invoke(form_id, "", end_time, dry_run)
+        }.to raise_error(SystemExit)
+               .and output("usage: rake submissions:disregard_bounced_submission[<form_id>, <start_timestamp>, <end_timestamp>, <dry_run>]\n").to_stderr
+      end
+
+      it "aborts when end_timestamp is missing" do
+        expect {
+          task.invoke(form_id, start_time, "", dry_run)
+        }.to raise_error(SystemExit)
+               .and output("usage: rake submissions:disregard_bounced_submission[<form_id>, <start_timestamp>, <end_timestamp>, <dry_run>]\n").to_stderr
+      end
+
+      it "aborts when start_timestamp is invalid" do
+        expect {
+          task.invoke(form_id, "invalid-date", end_time, dry_run)
+        }.to raise_error(SystemExit)
+               .and output("Error: Invalid timestamp format. Use ISO 8601 format (e.g. '2024-01-01T00:00:00Z')\n").to_stderr
+      end
+
+      it "aborts when end_timestamp is invalid" do
+        expect {
+          task.invoke(form_id, start_time, "invalid-date", dry_run)
+        }.to raise_error(SystemExit)
+               .and output("Error: Invalid timestamp format. Use ISO 8601 format (e.g. '2024-01-01T00:00:00Z')\n").to_stderr
+      end
+
+      it "aborts when start_timestamp is after end_timestamp" do
+        expect {
+          task.invoke(form_id, "2024-01-02T00:00:00Z", "2024-01-01T00:00:00Z", dry_run)
+        }.to raise_error(SystemExit)
+               .and output("Error: Start timestamp must be before end timestamp\n").to_stderr
+      end
+
+      it "aborts when start_timestamp equals end_timestamp" do
+        expect {
+          task.invoke(form_id, start_time, start_time, dry_run)
+        }.to raise_error(SystemExit)
+               .and output("Error: Start timestamp must be before end timestamp\n").to_stderr
+      end
+
+      it "aborts when dry_run is an invalid value" do
+        expect {
+          task.invoke(form_id, start_time, start_time, "foo")
+        }.to raise_error(SystemExit)
+               .and output("usage: rake submissions:disregard_bounced_submission[<form_id>, <start_timestamp>, <end_timestamp>, <dry_run>]\n").to_stderr
+      end
+    end
+  end
+
   describe "submissions:retry_failed_send_job" do
     subject(:task) do
       Rake::Task["submissions:retry_failed_send_job"]
@@ -380,7 +545,7 @@ RSpec.describe "submissions.rake" do
         expect {
           task.invoke(*valid_args)
         }.to have_enqueued_job(SendSubmissionJob).with(early_matching_submission)
-         .and have_enqueued_job(SendSubmissionJob).with(late_matching_submission)
+                                                 .and have_enqueued_job(SendSubmissionJob).with(late_matching_submission)
       end
 
       it "does not enqueue non-matching submissions" do
@@ -462,6 +627,13 @@ RSpec.describe "submissions.rake" do
           task.invoke(form_id, start_time, start_time, dry_run)
         }.to raise_error(SystemExit)
                .and output("Error: Start timestamp must be before end timestamp\n").to_stderr
+      end
+
+      it "aborts when dry_run is an invalid value" do
+        expect {
+          task.invoke(form_id, start_time, start_time, "foo")
+        }.to raise_error(SystemExit)
+               .and output("usage: rake submissions:redeliver_submissions_by_date[<form_id>,<start_timestamp>,<end_timestamp>,<dry_run>]\n").to_stderr
       end
     end
   end
