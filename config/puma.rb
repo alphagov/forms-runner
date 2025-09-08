@@ -41,4 +41,4 @@ pidfile ENV["PIDFILE"] if ENV["PIDFILE"]
 # this is to prevent 502s
 persistent_timeout ENV.fetch("RAILS_PERSISTENT_TIMEOUT", 75)
 
-plugin :solid_queue if Rails.env.production?
+plugin :solid_queue if Rails.env.production? && ENV.fetch("DISABLE_SOLID_QUEUE", "false") != "true"
