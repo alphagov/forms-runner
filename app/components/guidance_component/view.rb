@@ -5,7 +5,7 @@ module GuidanceComponent
     attr_accessor :question
 
     def initialize(question)
-      super
+      super()
       @question = question
     end
 

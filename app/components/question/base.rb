@@ -7,7 +7,7 @@ module Question
       @question = question
       @extra_question_text_suffix = extra_question_text_suffix
       @hint_id = question.hint_text.present? ? "govuk-address-hint" : ""
-      super
+      super()
     end
 
     def question_text_with_extra_suffix

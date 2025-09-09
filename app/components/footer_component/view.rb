@@ -5,7 +5,7 @@ module FooterComponent
     def initialize(mode:, form:)
       @mode = mode
       @form = form
-      super
+      super()
     end
 
     def meta_links

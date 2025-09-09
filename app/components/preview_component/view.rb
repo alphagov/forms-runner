@@ -6,7 +6,7 @@ module PreviewComponent
       @mode = mode || Mode.new
       @question_edit_link = question_edit_link
 
-      super
+      super()
     end
 
     def render?

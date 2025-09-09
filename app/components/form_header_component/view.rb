@@ -6,7 +6,7 @@ module FormHeaderComponent
       @current_context = current_context
       @mode = mode
       @hosting_environment = hosting_environment
-      super
+      super()
     end
 
     def call

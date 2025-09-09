@@ -5,7 +5,7 @@ module SupportDetailsComponent
     include ApplicationHelper
 
     def initialize(support_details)
-      super
+      super()
       @support_details = support_details
     end
 

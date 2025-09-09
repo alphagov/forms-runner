@@ -2,7 +2,7 @@ module SuccessBannerComponent
   class View < ViewComponent::Base
     def initialize(success:)
       @success = success
-      super
+      super()
     end
 
     def render?

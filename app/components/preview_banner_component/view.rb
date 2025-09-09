@@ -3,7 +3,7 @@ module PreviewBannerComponent
     def initialize(mode:)
       @mode = mode || Mode.new
 
-      super
+      super()
     end
 
     def render?
