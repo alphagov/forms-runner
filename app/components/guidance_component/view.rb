@@ -1,11 +1,11 @@
 require "govuk_forms_markdown"
 
 module GuidanceComponent
-  class View < ViewComponent::Base
+  class View < ApplicationComponent
     attr_accessor :question
 
     def initialize(question)
-      super
+      super()
       @question = question
     end
 
