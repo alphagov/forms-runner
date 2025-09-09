@@ -14,7 +14,7 @@ require "notifications_utils/recipient_validation/errors"
 HOSTNAME_PART = Regexp.compile("^(xn|[a-z0-9]+)(-?-[a-z0-9]+)*$", Regexp::IGNORECASE)
 TLD_PART = Regexp.compile("^([a-z]{2,63}|xn--([a-z0-9]+-)*[a-z0-9]+)$", Regexp::IGNORECASE)
 VALID_LOCAL_CHARS = "a-zA-Z0-9.!#$%&'*+/=?^_`{|}~\-"
-EMAIL_REGEX_PATTERN = /^[#{VALID_LOCAL_CHARS}]+@([^.@][^@\s]+)$/
+EMAIL_REGEX_PATTERN = /^[#{VALID_LOCAL_CHARS}]+@([^.@][^@\s]+[^.@\s])$/
 
 module NotificationsUtils
   module RecipientValidation
