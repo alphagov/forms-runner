@@ -1,4 +1,4 @@
 module CookieBannerComponent
-  class View < ViewComponent::Base
+  class View < ApplicationComponent
   end
 end

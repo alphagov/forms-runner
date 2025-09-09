@@ -1,4 +1,4 @@
 module CookieConsentFormComponent
-  class View < ViewComponent::Base
+  class View < ApplicationComponent
   end
 end

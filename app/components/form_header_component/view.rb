@@ -1,7 +1,7 @@
 module FormHeaderComponent
   GOVUK_BASE_URL = "https://www.gov.uk/".freeze
 
-  class View < ViewComponent::Base
+  class View < ApplicationComponent
     def initialize(current_context:, mode:, hosting_environment: HostingEnvironment)
       @current_context = current_context
       @mode = mode

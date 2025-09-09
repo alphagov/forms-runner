@@ -1,5 +1,5 @@
 module PreviewBannerComponent
-  class View < ViewComponent::Base
+  class View < ApplicationComponent
     def initialize(mode:)
       @mode = mode || Mode.new
 

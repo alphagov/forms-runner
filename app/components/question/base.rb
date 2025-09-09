@@ -1,5 +1,5 @@
 module Question
-  class Base < ViewComponent::Base
+  class Base < ApplicationComponent
     attr_accessor :form_builder, :question, :extra_question_text_suffix, :hint_id
 
     def initialize(form_builder:, question:, extra_question_text_suffix:)

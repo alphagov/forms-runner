@@ -1,5 +1,5 @@
 module SuccessBannerComponent
-  class View < ViewComponent::Base
+  class View < ApplicationComponent
     def initialize(success:)
       @success = success
       super()

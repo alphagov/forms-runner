@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module SupportDetailsComponent
-  class View < ViewComponent::Base
+  class View < ApplicationComponent
     include ApplicationHelper
 
     def initialize(support_details)
