@@ -103,6 +103,15 @@ private
   end
 
   def locale_param
+    return nil if is_default_locale?(params[:locale])
+
     params[:locale]
+  end
+
+  def is_default_locale?(locale)
+    return true if locale.nil?
+    return true if locale.to_sym == I18n.default_locale
+
+    false
   end
 end
