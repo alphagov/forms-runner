@@ -109,7 +109,13 @@ RSpec.describe Question::Text, type: :model do
     end
 
     it "returns valid with text length under 5000 characters" do
-      question.text = "a" * rand(1..4999)
+      question.text = "a" * 4999
+      expect(question).to be_valid
+      expect(question.errors[:text]).to eq []
+    end
+
+    it "strips carriage returns before calculating the length" do
+      question.text = "#{'a' * 4000}\r\n#{'a' * 998}"
       expect(question).to be_valid
       expect(question.errors[:text]).to eq []
     end
