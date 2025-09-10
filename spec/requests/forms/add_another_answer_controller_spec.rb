@@ -20,6 +20,8 @@ RSpec.describe Forms::AddAnotherAnswerController, type: :request do
     build :v2_question_page_step, :with_text_settings, id: 2
   end
 
+  let(:locale) { "en" }
+
   let(:req_headers) do
     {
       "X-API-Token" => Settings.forms_api.auth_key,
@@ -73,26 +75,26 @@ RSpec.describe Forms::AddAnotherAnswerController, type: :request do
       context "when adding another answer" do
         it "redirects to first page to add another" do
           post "/preview-draft/#{form.id}/#{form.form_slug}/#{first_step_in_form.id}/add-another-answer", params: { add_another_answer_input: { add_another_answer: "yes" } }
-          expect(response).to redirect_to("/preview-draft/#{form.id}/#{form.form_slug}/#{first_step_in_form.id}/3")
+          expect(response).to redirect_to("/preview-draft/#{form.id}/#{form.form_slug}.#{locale}/#{first_step_in_form.id}/3")
         end
       end
 
       context "when not adding another answer" do
         it "redirects to next page" do
           post "/preview-draft/#{form.id}/#{form.form_slug}/#{first_step_in_form.id}/add-another-answer", params: { add_another_answer_input: { add_another_answer: "no" } }
-          expect(response).to redirect_to("/preview-draft/#{form.id}/#{form.form_slug}/#{second_step_in_form.id}")
+          expect(response).to redirect_to("/preview-draft/#{form.id}/#{form.form_slug}.#{locale}/#{second_step_in_form.id}")
         end
       end
     end
 
     context "with invalid params" do
       it "renders the show template" do
-        post "/preview-draft/#{form.id}/#{form.form_slug}/#{first_step_in_form.id}/add-another-answer", params: { add_another_answer_input: { add_another_answer: "" } }
+        post "/preview-draft/#{form.id}/#{form.form_slug}.#{locale}/#{first_step_in_form.id}/add-another-answer", params: { add_another_answer_input: { add_another_answer: "" } }
         expect(response).to render_template(:show)
       end
 
       it "assigns @rows" do
-        post "/preview-draft/#{form.id}/#{form.form_slug}/#{first_step_in_form.id}/add-another-answer", params: { add_another_answer_input: { add_another_answer: "" } }
+        post "/preview-draft/#{form.id}/#{form.form_slug}.#{locale}/#{first_step_in_form.id}/add-another-answer", params: { add_another_answer_input: { add_another_answer: "" } }
         expect(assigns(:rows).count).to be_present
       end
     end
@@ -112,12 +114,12 @@ RSpec.describe Forms::AddAnotherAnswerController, type: :request do
     context "when step is not RepeatableStep" do
       it "redirects to form_page when not changing existing answer" do
         get "/preview-draft/#{form.id}/#{form.form_slug}/#{second_step_in_form.id}/add-another-answer"
-        expect(response).to redirect_to("/preview-draft/#{form.id}/#{form.form_slug}/#{second_step_in_form.id}")
+        expect(response).to redirect_to("/preview-draft/#{form.id}/#{form.form_slug}.#{locale}/#{second_step_in_form.id}")
       end
 
       it "redirects to form_change_answer_path when changing existing answer" do
         get "/preview-draft/#{form.id}/#{form.form_slug}/#{second_step_in_form.id}/add-another-answer/change"
-        expect(response).to redirect_to("/preview-draft/#{form.id}/#{form.form_slug}/#{second_step_in_form.id}/change")
+        expect(response).to redirect_to("/preview-draft/#{form.id}/#{form.form_slug}.#{locale}/#{second_step_in_form.id}/change")
       end
     end
   end

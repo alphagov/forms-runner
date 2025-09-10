@@ -31,6 +31,8 @@ RSpec.describe Forms::RemoveAnswerController, type: :request do
 
   let(:api_url_suffix) { "/draft" }
 
+  let(:locale) { "en" }
+
   let(:stored_answers) do
     [{ text: "answer 1" }, { text: "answer 2" }]
   end
@@ -63,7 +65,7 @@ RSpec.describe Forms::RemoveAnswerController, type: :request do
     context "with valid params" do
       it "redirects to add another answer" do
         delete "/preview-draft/#{form.id}/#{form.form_slug}/#{first_step_in_form.id}/1/remove", params: { remove_input: { remove: } }
-        expect(response).to redirect_to("/preview-draft/#{form.id}/#{form.form_slug}/#{first_step_in_form.id}/add-another-answer")
+        expect(response).to redirect_to("/preview-draft/#{form.id}/#{form.form_slug}.#{locale}/#{first_step_in_form.id}/add-another-answer")
       end
 
       context "when not removing answer" do
@@ -71,7 +73,7 @@ RSpec.describe Forms::RemoveAnswerController, type: :request do
 
         it "redirects to add another answer" do
           delete "/preview-draft/#{form.id}/#{form.form_slug}/#{first_step_in_form.id}/1/remove", params: { remove_input: { remove: } }
-          expect(response).to redirect_to("/preview-draft/#{form.id}/#{form.form_slug}/#{first_step_in_form.id}/add-another-answer")
+          expect(response).to redirect_to("/preview-draft/#{form.id}/#{form.form_slug}.#{locale}/#{first_step_in_form.id}/add-another-answer")
         end
       end
     end
@@ -92,7 +94,7 @@ RSpec.describe Forms::RemoveAnswerController, type: :request do
 
       it "redirects to the next question page" do
         delete "/preview-draft/#{form.id}/#{form.form_slug}/#{first_step_in_form.id}/1/remove", params: { remove_input: { remove: } }
-        expect(response).to redirect_to("/preview-draft/#{form.id}/#{form.form_slug}/#{first_step_in_form.id}")
+        expect(response).to redirect_to("/preview-draft/#{form.id}/#{form.form_slug}.#{locale}/#{first_step_in_form.id}")
       end
     end
   end
