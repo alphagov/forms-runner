@@ -374,6 +374,10 @@ RSpec.describe Forms::BaseController, type: :request do
         it "renders content in English" do
           expect(response.body).to include(I18n.t("support_details.get_help_with_this_form"))
         end
+
+        it "renders links without the locale scope" do
+          expect(response.body).to include(form_privacy_path(form_id: 2, form_slug: form_response_data.form_slug))
+        end
       end
 
       context "when the locale param is set to English" do
@@ -382,6 +386,10 @@ RSpec.describe Forms::BaseController, type: :request do
         it "renders content in English" do
           expect(response.body).to include(I18n.t("support_details.get_help_with_this_form"))
         end
+
+        it "renders links with the en locale scope" do
+          expect(response.body).to include(form_privacy_path(form_id: 2, form_slug: form_response_data.form_slug, locale: :en))
+        end
       end
 
       context "when the locale param is set to Welsh" do
@@ -389,6 +397,10 @@ RSpec.describe Forms::BaseController, type: :request do
 
         it "renders content in Welsh" do
           expect(response.body).to include(I18n.t("support_details.get_help_with_this_form", locale: :cy))
+        end
+
+        it "renders links with the cy locale scope" do
+          expect(response.body).to include(form_privacy_path(form_id: 2, form_slug: form_response_data.form_slug, locale: :cy))
         end
       end
 

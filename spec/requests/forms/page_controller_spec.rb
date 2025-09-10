@@ -52,6 +52,8 @@ RSpec.describe Forms::PageController, type: :request do
   let(:output) { StringIO.new }
   let(:logger) { ActiveSupport::Logger.new(output) }
 
+  let(:locale) { "en" }
+
   before do
     # Intercept the request logs so we can do assertions on them
     allow(Lograge).to receive(:logger).and_return(logger)
@@ -154,13 +156,13 @@ RSpec.describe Forms::PageController, type: :request do
 
       it "Passes the changing answers parameter in its submit request" do
         get form_change_answer_path(2, form_data.form_slug, 1, mode:)
-        expect(response.body).to include(save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1, changing_existing_answer: true, answer_index: 1))
+        expect(response.body).to include(save_form_page_path(mode:, locale:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1, changing_existing_answer: true, answer_index: 1))
       end
     end
 
     context "with no questions answered" do
       it "redirects if a later page is requested" do
-        get check_your_answers_path(2, form_data.form_slug, mode:)
+        get check_your_answers_path(2, form_data.form_slug, mode:, locale:)
         expect(response).to have_http_status(:found)
         expect(response.location).to eq(form_page_url(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1))
       end

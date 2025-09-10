@@ -36,7 +36,7 @@ module Forms
     end
 
     def default_url_options
-      { mode: }
+      { mode:, locale: locale_param }
     end
 
     def set_form
