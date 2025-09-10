@@ -49,6 +49,7 @@ RSpec.describe NotificationsUtils::RecipientValidation::EmailAddress do
     '"quoted@domain.com"',
     "lots-of-dots@domain..gov..uk",
     "two-dots..in-local@domain.com",
+    "dot-at-end@domain.com.",
     "multiple@domains@domain.com",
     "spaces in local@domain.com",
     "spaces-in-domain@dom ain.com",
