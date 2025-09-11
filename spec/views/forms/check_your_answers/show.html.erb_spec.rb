@@ -55,9 +55,9 @@ describe "forms/check_your_answers/show.html.erb" do
     expect(rendered).to have_css(".govuk-grid-column-two-thirds-from-desktop h1")
   end
 
-  it "displays the email confirmation form at two-thirds width" do
-    expect(rendered).not_to have_css(".govuk-grid-column-full input[type='radio']")
-    expect(rendered).to have_css(".govuk-grid-column-two-thirds-from-desktop input[type='radio']")
+  it "displays the hidden email confirmation field at two-thirds width" do
+    expect(rendered).not_to have_css(".govuk-grid-column-full input[type='hidden'][name*='send_confirmation']", visible: :hidden)
+    expect(rendered).to have_css(".govuk-grid-column-two-thirds-from-desktop input[type='hidden'][name*='send_confirmation']", visible: :hidden)
   end
 
   context "when full_width is true" do
@@ -73,9 +73,9 @@ describe "forms/check_your_answers/show.html.erb" do
       expect(rendered).to have_css(".govuk-grid-column-two-thirds-from-desktop h1")
     end
 
-    it "displays the email confirmation form at two-thirds width" do
-      expect(rendered).not_to have_css(".govuk-grid-column-full input[type='radio']")
-      expect(rendered).to have_css(".govuk-grid-column-two-thirds-from-desktop input[type='radio']")
+    it "displays the hidden email confirmation field at two-thirds width" do
+      expect(rendered).not_to have_css(".govuk-grid-column-full input[type='hidden'][name*='send_confirmation']", visible: :hidden)
+      expect(rendered).to have_css(".govuk-grid-column-two-thirds-from-desktop input[type='hidden'][name*='send_confirmation']", visible: :hidden)
     end
   end
 
@@ -88,49 +88,15 @@ describe "forms/check_your_answers/show.html.erb" do
   end
 
   describe "email confirmation" do
-    it "renders an email confirmation form" do
-      expect(rendered).to have_css "form .govuk-fieldset", text: "Do you want to get an email confirming your form has been submitted?"
+    it "contains a hidden field defaulting to skip confirmation" do
+      expect(rendered).to have_field("email_confirmation_input[send_confirmation]", type: "hidden", with: "skip_confirmation")
     end
 
-    it "displays the email radio buttons" do
-      expect(rendered).to have_text(I18n.t("helpers.legend.email_confirmation_input.send_confirmation"))
-      expect(rendered).to have_field(I18n.t("helpers.label.email_confirmation_input.send_confirmation_options.send_email"))
-      expect(rendered).to have_field(I18n.t("helpers.label.email_confirmation_input.send_confirmation_options.skip_confirmation"))
-    end
-
-    it "displays the email field" do
-      expect(rendered).to have_field(
-        I18n.t("helpers.label.email_confirmation_input.confirmation_email_address"),
-        type: "email",
-      )
-    end
-
-    it "email field has correct atttributes set" do
-      expect(rendered).to have_selector("input[name='email_confirmation_input[confirmation_email_address]'][autocomplete='email'][spellcheck='false']")
-    end
-
-    context "when there is an error" do
-      let(:email_confirmation_input) do
-        email_confirmation_input = build(:email_confirmation_input)
-        email_confirmation_input.validate
-        email_confirmation_input
-      end
-
-      it "renders an error message" do
-        expect(rendered).to have_text "Select yes if you want to get an email confirming your form has been submitted"
-      end
-
-      it "renders an error summary" do
-        expect(rendered).to have_css ".govuk-error-summary"
-      end
-
-      it "links from the error summary to the first radio button" do
-        page = Capybara.string(rendered.html)
-        error_summary_link = page.find_link "Select yes if you want to get an email confirming your form has been submitted"
-        first_radio_button = page.first :field, type: :radio
-
-        expect(error_summary_link["href"]).to eq "##{first_radio_button['id']}"
-      end
+    it "does not display the email confirmation UI elements" do
+      expect(rendered).not_to have_css "form .govuk-fieldset", text: "Do you want to get an email confirming your form has been submitted?"
+      expect(rendered).not_to have_field(I18n.t("helpers.label.email_confirmation_input.send_confirmation_options.send_email"))
+      expect(rendered).not_to have_field(I18n.t("helpers.label.email_confirmation_input.send_confirmation_options.skip_confirmation"))
+      expect(rendered).not_to have_field(I18n.t("helpers.label.email_confirmation_input.confirmation_email_address"), type: "email")
     end
   end
 

@@ -69,7 +69,7 @@ feature "Fill in and submit a form", type: :feature do
   end
 
   def when_i_opt_out_of_email_confirmation
-    choose "No"
+    # Email confirmation UI has been removed - form automatically skips confirmation
   end
 
   def and_i_submit_my_form

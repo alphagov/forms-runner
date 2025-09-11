@@ -25,21 +25,12 @@ feature "Email confirmation", type: :feature do
     end
   end
 
-  scenario "opting out of email submission returns the confirmation page without confirmation email text" do
+  scenario "form submission automatically skips email confirmation" do
     fill_in_form
-    choose "No", visible: false
+    expect(page).not_to have_text I18n.t("helpers.legend.email_confirmation_input.send_confirmation")
     click_button "Submit"
     expect(page.find("h1")).to have_text I18n.t("form.submitted.title")
     expect(page).not_to have_text I18n.t("form.submitted.email_sent")
-  end
-
-  scenario "opting in to email submission returns the confirmation page with confirmation email text" do
-    fill_in_form
-    choose "Yes", visible: false
-    fill_in "What email address do you want us to send your confirmation to?", with: "example@example.gov.uk"
-    click_button "Submit"
-    expect(page.find("h1")).to have_text I18n.t("form.submitted.title")
-    expect(page).to have_text I18n.t("form.submitted.email_sent")
   end
 
   def fill_in_form

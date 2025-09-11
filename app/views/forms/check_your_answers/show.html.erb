@@ -32,13 +32,7 @@
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds-from-desktop">
-      <%= form.govuk_radio_buttons_fieldset(:send_confirmation, legend: { size: 'm', tag: 'h2' }) do %>
-        <%= form.govuk_radio_button :send_confirmation, 'send_email', link_errors: :true do %>
-          <%= form.govuk_email_field :confirmation_email_address, autocomplete: 'email', spellcheck: false  %>
-        <% end %>
-        <%= form.govuk_radio_button :send_confirmation, 'skip_confirmation' %>
-      <% end %>
-
+      <%= form.hidden_field :send_confirmation, value: 'skip_confirmation' %>
       <%= form.hidden_field :confirmation_email_reference, id: 'confirmation-email-reference' %>
 
       <%if @current_context.form.declaration_text.present? %>
