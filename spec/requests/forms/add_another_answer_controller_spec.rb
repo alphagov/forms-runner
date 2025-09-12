@@ -40,63 +40,70 @@ RSpec.describe Forms::AddAnotherAnswerController, type: :request do
   end
 
   describe "GET #show" do
+    before do
+      get add_another_answer_path(mode: "preview-draft", form_id: form.id, form_slug: form.form_slug, page_slug: first_step_in_form.id)
+    end
+
     it "renders the show template" do
-      get "/preview-draft/#{form.id}/#{form.form_slug}/#{first_step_in_form.id}/add-another-answer"
       expect(response).to render_template(:show)
     end
 
     it "assigns @rows" do
-      get "/preview-draft/#{form.id}/#{form.form_slug}/#{first_step_in_form.id}/add-another-answer"
       expect(assigns(:rows).count).to eq 2
     end
 
     it "adds the change and remove links to each row" do
-      get "/preview-draft/#{form.id}/#{form.form_slug}/#{first_step_in_form.id}/add-another-answer"
       expect(assigns(:rows).first[:actions].first[:text]).to eq("Change")
       expect(assigns(:rows).first[:actions].second[:text]).to eq("Remove")
       expect(response.body).to include(form_remove_answer_path(form.id, form.form_slug, first_step_in_form.id, answer_index: 1, changing_existing_answer: nil))
     end
 
     it "initializes @add_another_answer_input" do
-      get "/preview-draft/#{form.id}/#{form.form_slug}/#{first_step_in_form.id}/add-another-answer"
       expect(assigns(:add_another_answer_input)).to be_a(AddAnotherAnswerInput)
     end
   end
 
   describe "POST #save" do
+    before do
+      post add_another_answer_path(mode: "preview-draft", form_id: form.id, form_slug: form.form_slug, page_slug: first_step_in_form.id), params:
+    end
+
     context "with valid params" do
       context "when adding another answer" do
+        let(:params) { { add_another_answer_input: { add_another_answer: "yes" } } }
+
         it "redirects to first page to add another" do
-          post "/preview-draft/#{form.id}/#{form.form_slug}/#{first_step_in_form.id}/add-another-answer", params: { add_another_answer_input: { add_another_answer: "yes" } }
-          expect(response).to redirect_to("/preview-draft/#{form.id}/#{form.form_slug}/#{first_step_in_form.id}/3")
+          expect(response).to redirect_to(form_page_path(mode: "preview-draft", form_id: form.id, form_slug: form.form_slug, page_slug: first_step_in_form.id, answer_index: 3))
         end
       end
 
       context "when not adding another answer" do
+        let(:params) { { add_another_answer_input: { add_another_answer: "no" } } }
+
         it "redirects to next page" do
-          post "/preview-draft/#{form.id}/#{form.form_slug}/#{first_step_in_form.id}/add-another-answer", params: { add_another_answer_input: { add_another_answer: "no" } }
-          expect(response).to redirect_to("/preview-draft/#{form.id}/#{form.form_slug}/#{second_step_in_form.id}")
+          expect(response).to redirect_to(form_page_path(mode: "preview-draft", form_id: form.id, form_slug: form.form_slug, page_slug: second_step_in_form.id))
         end
       end
     end
 
     context "with invalid params" do
+      let(:params) { { add_another_answer_input: { add_another_answer: "" } } }
+
       it "renders the show template" do
-        post "/preview-draft/#{form.id}/#{form.form_slug}/#{first_step_in_form.id}/add-another-answer", params: { add_another_answer_input: { add_another_answer: "" } }
         expect(response).to render_template(:show)
       end
 
       it "assigns @rows" do
-        post "/preview-draft/#{form.id}/#{form.form_slug}/#{first_step_in_form.id}/add-another-answer", params: { add_another_answer_input: { add_another_answer: "" } }
         expect(assigns(:rows).count).to be_present
       end
     end
 
     context "with the maximum number of answers" do
       let(:stored_answers) { Array.new(RepeatableStep::MAX_ANSWERS) { |i| { text: i.to_s } } }
+      let(:params) { { add_another_answer_input: { add_another_answer: "yes" } } }
 
       it "renders the show template with an error" do
-        post "/preview-draft/#{form.id}/#{form.form_slug}/#{first_step_in_form.id}/add-another-answer", params: { add_another_answer_input: { add_another_answer: "yes" } }
+        post add_another_answer_path(mode: "preview-draft", form_id: form.id, form_slug: form.form_slug, page_slug: first_step_in_form.id), params: { add_another_answer_input: { add_another_answer: "yes" } }
         expect(response).to render_template(:show)
         expect(response.body).to include("You cannot add another answer")
       end
@@ -106,13 +113,13 @@ RSpec.describe Forms::AddAnotherAnswerController, type: :request do
   describe "redirect_if_not_repeating" do
     context "when step is not RepeatableStep" do
       it "redirects to form_page when not changing existing answer" do
-        get "/preview-draft/#{form.id}/#{form.form_slug}/#{second_step_in_form.id}/add-another-answer"
-        expect(response).to redirect_to("/preview-draft/#{form.id}/#{form.form_slug}/#{second_step_in_form.id}")
+        get add_another_answer_path(mode: "preview-draft", form_id: form.id, form_slug: form.form_slug, page_slug: second_step_in_form.id)
+        expect(response).to redirect_to(form_page_path(mode: "preview-draft", form_id: form.id, form_slug: form.form_slug, page_slug: second_step_in_form.id))
       end
 
       it "redirects to form_change_answer_path when changing existing answer" do
-        get "/preview-draft/#{form.id}/#{form.form_slug}/#{second_step_in_form.id}/add-another-answer/change"
-        expect(response).to redirect_to("/preview-draft/#{form.id}/#{form.form_slug}/#{second_step_in_form.id}/change")
+        get change_add_another_answer_path(mode: "preview-draft", form_id: form.id, form_slug: form.form_slug, page_slug: second_step_in_form.id)
+        expect(response).to redirect_to(form_change_answer_path(mode: "preview-draft", form_id: form.id, form_slug: form.form_slug, page_slug: second_step_in_form.id))
       end
     end
   end
