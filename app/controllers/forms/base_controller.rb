@@ -36,7 +36,7 @@ module Forms
     end
 
     def default_url_options
-      { mode: }
+      { mode:, locale: locale_param }
     end
 
     def set_form
@@ -48,16 +48,6 @@ module Forms
       end
 
       raise ActiveResource::ResourceNotFound, "Not Found" unless @form.start_page
-    end
-
-    def set_locale(&action)
-      I18n.with_locale(locale, &action)
-    end
-
-    def locale
-      return @form.language if @form.present? && @form.respond_to?(:language)
-
-      I18n.default_locale
     end
   end
 end
