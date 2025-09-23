@@ -39,6 +39,7 @@ Rails.application.configure do
 
   # Prevent health checks from clogging up the logs.
   config.silence_healthcheck_path = "/up"
+  config.lograge.ignore_actions = "Rails::HealthController#show"
 
   # Replace the default in-process memory cache store with a durable alternative.
   # config.cache_store = :mem_cache_store
