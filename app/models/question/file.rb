@@ -7,10 +7,18 @@ module Question
     attribute :uploaded_file_key
     attribute :filename_suffix, default: ""
     attribute :email_filename, default: ""
-    validates :file, presence: true, unless: :is_optional?
-    validate :validate_file_size
-    validate :validate_file_extension
-    validate :validate_not_empty
+
+    with_options except_on: :submission do
+      validates :file, presence: true, unless: :is_optional?
+      validate :validate_file_size
+      validate :validate_file_extension
+      validate :validate_not_empty
+    end
+
+    with_options on: :submission do
+      validates :original_filename, presence: true, unless: -> { email_filename.present? }
+      validates :uploaded_file_key, presence: true
+    end
 
     after_validation :set_logging_attributes
 

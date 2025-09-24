@@ -521,5 +521,43 @@ RSpec.describe Question::File, type: :model do
         expect(question).to be_valid
       end
     end
+
+    context "when validating for submission" do
+      let(:question) { described_class.new({ file: nil, original_filename:, uploaded_file_key:, filename_suffix: "", email_filename: }, {}) }
+      let(:uploaded_file_key) { "#{Faker::Internet.uuid}#{extension}" }
+      let(:email_filename) { "" }
+
+      before do
+        question.validate :submission
+      end
+
+      it "is valid for submission" do
+        expect(question).to be_valid(:submission)
+      end
+
+      context "when it does not have the original filename" do
+        let(:original_filename) { "" }
+
+        it "is not valid for submission" do
+          expect(question).not_to be_valid(:submission)
+        end
+
+        it "has a blank original_filename error" do
+          expect(question.errors.of_kind?(:original_filename, :blank)).to be true
+        end
+
+        context "but it has an email filename set" do
+          let(:email_filename) { "my-email-attachment#{extension}" }
+
+          it "is valid for submission" do
+            expect(question).to be_valid(:submission)
+          end
+
+          it "does not have a blank original_filename error" do
+            expect(question.errors.of_kind?(:original_filename, :blank)).to be false
+          end
+        end
+      end
+    end
   end
 end
