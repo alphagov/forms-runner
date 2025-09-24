@@ -154,12 +154,7 @@ RSpec.describe Api::V2::FormDocumentResource do
          "routing_conditions" => [] }] }
   end
 
-  let(:req_headers) do
-    {
-      "X-API-Token" => Settings.forms_api.auth_key,
-      "Accept" => "application/json",
-    }
-  end
+  let(:req_headers) { { "Accept" => "application/json" } }
 
   before do
     ActiveResource::HttpMock.respond_to do |mock|

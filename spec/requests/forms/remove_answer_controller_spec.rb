@@ -22,12 +22,7 @@ RSpec.describe Forms::RemoveAnswerController, type: :request do
     build :v2_question_page_step, :with_text_settings, id: 2
   end
 
-  let(:req_headers) do
-    {
-      "X-API-Token" => Settings.forms_api.auth_key,
-      "Accept" => "application/json",
-    }
-  end
+  let(:req_headers) { { "Accept" => "application/json" } }
 
   let(:api_url_suffix) { "/draft" }
 

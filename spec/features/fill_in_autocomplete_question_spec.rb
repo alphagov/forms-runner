@@ -8,19 +8,8 @@ feature "Fill in and submit a form with an autocomplete question", type: :featur
   let(:answer_text) { "Answer 1" }
   let(:reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
 
-  let(:req_headers) do
-    {
-      "X-API-Token" => Settings.forms_api.auth_key,
-      "Accept" => "application/json",
-    }
-  end
-
-  let(:post_headers) do
-    {
-      "X-API-Token" => Settings.forms_api.auth_key,
-      "Content-Type" => "application/json",
-    }
-  end
+  let(:req_headers) { { "Accept" => "application/json" } }
+  let(:post_headers) { { "Content-Type" => "application/json" } }
 
   before do
     ActiveResource::HttpMock.respond_to do |mock|

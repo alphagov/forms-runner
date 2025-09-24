@@ -9,19 +9,8 @@ feature "Fill in and submit a form with a file upload question", type: :feature 
   let(:answer_text) { "Answer 1" }
   let(:reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
 
-  let(:req_headers) do
-    {
-      "X-API-Token" => Settings.forms_api.auth_key,
-      "Accept" => "application/json",
-    }
-  end
-
-  let(:post_headers) do
-    {
-      "X-API-Token" => Settings.forms_api.auth_key,
-      "Content-Type" => "application/json",
-    }
-  end
+  let(:req_headers) { { "Accept" => "application/json" } }
+  let(:post_headers) { { "Content-Type" => "application/json" } }
 
   let(:test_file) { "tmp/a-file.txt" }
   let(:test_file_content) { "some content" }

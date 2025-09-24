@@ -39,12 +39,7 @@ RSpec.describe Forms::PageController, type: :request do
 
   let(:is_optional) { false }
 
-  let(:req_headers) do
-    {
-      "X-API-Token" => Settings.forms_api.auth_key,
-      "Accept" => "application/json",
-    }
-  end
+  let(:req_headers) { { "Accept" => "application/json" } }
 
   let(:api_url_suffix) { "/live" }
   let(:mode) { "form" }

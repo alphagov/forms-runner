@@ -6,18 +6,8 @@ feature "Email confirmation", type: :feature do
   let(:question_text) { Faker::Lorem.question }
   let(:text_answer) { Faker::Lorem.sentence }
 
-  let(:req_headers) do
-    {
-      "X-API-Token" => Settings.forms_api.auth_key,
-      "Accept" => "application/json",
-    }
-  end
-  let(:post_headers) do
-    {
-      "X-API-Token" => Settings.forms_api.auth_key,
-      "Content-Type" => "application/json",
-    }
-  end
+  let(:req_headers) { { "Accept" => "application/json" } }
+  let(:post_headers) { { "Content-Type" => "application/json" } }
 
   before do
     ActiveResource::HttpMock.respond_to do |mock|

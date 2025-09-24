@@ -22,7 +22,6 @@ locals {
     { name = "SETTINGS__ANALYTICS_ENABLED", value = "false" },
     { name = "SETTINGS__CLOUDWATCH_METRICS_ENABLED", value = "false" },
     { name = "SETTINGS__FORMS_ADMIN__BASE_URL", value = "https://${local.admin_app_hostname}" },
-    { name = "SETTINGS__FORMS_API__AUTH_KEY", value = "unsecured_api_key_for_review_apps_only" },
     { name = "SETTINGS__FORMS_API__BASE_URL", value = "http://localhost:9292" },
     { name = "SETTINGS__FORMS_ENV", value = "review" },
 
@@ -40,7 +39,6 @@ locals {
     { name = "RAILS_DEVELOPMENT_HOSTS", value = "localhost:9292" },
     { name = "RAILS_ENV", value = "production" },
     { name = "SECRET_KEY_BASE", value = "unsecured_secret_key_material" },
-    { name = "SETTINGS__FORMS_API__AUTH_KEY", value = "unsecured_api_key_for_review_apps_only" },
     { name = "SETTINGS__FORMS_ENV", value = "review" },
   ]
 

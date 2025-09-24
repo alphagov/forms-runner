@@ -37,12 +37,7 @@ RSpec.describe Forms::PrivacyPageController, type: :request do
     ]
   end
 
-  let(:req_headers) do
-    {
-      "X-API-Token" => Settings.forms_api.auth_key,
-      "Accept" => "application/json",
-    }
-  end
+  let(:req_headers) { { "Accept" => "application/json" } }
 
   describe "#show" do
     before do

@@ -1,12 +1,7 @@
 require "rails_helper"
 
 RSpec.describe Api::V1::FormSnapshotRepository do
-  let(:req_headers) do
-    {
-      "X-API-Token" => Settings.forms_api.auth_key,
-      "Accept" => "application/json",
-    }
-  end
+  let(:req_headers) { { "Accept" => "application/json" } }
 
   let(:form_id) { 1 }
   let(:api_v2_response_data) do
