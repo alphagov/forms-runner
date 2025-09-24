@@ -47,7 +47,7 @@ or run the rails server:
 npm run dev
 ```
 
-You will also need to run the [forms-api service](https://github.com/alphagov/forms-api), as this app needs the API to create and access forms.
+You will also need to run the [forms-admin service](https://github.com/alphagov/forms-admin), as this app needs the API to create and access forms.
 
 #### Getting AWS credentials
 
