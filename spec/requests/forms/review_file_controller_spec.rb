@@ -25,12 +25,7 @@ RSpec.describe Forms::ReviewFileController, type: :request do
 
   let(:steps_data) { [file_upload_step, text_question_step] }
 
-  let(:req_headers) do
-    {
-      "X-API-Token" => Settings.forms_api.auth_key,
-      "Accept" => "application/json",
-    }
-  end
+  let(:req_headers) { { "Accept" => "application/json" } }
 
   let(:api_url_suffix) { "/live" }
   let(:mode) { "form" }

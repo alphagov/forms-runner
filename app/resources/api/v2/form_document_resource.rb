@@ -3,7 +3,6 @@ class Api::V2::FormDocumentResource < ActiveResource::Base
   self.site = Settings.forms_api.base_url
   self.prefix = "/api/v2/"
   self.include_format_in_path = false
-  headers["X-API-Token"] = Settings.forms_api.auth_key
 
   class Step < ActiveResource::Base
     self.site = Settings.forms_api.base_url

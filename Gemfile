@@ -38,7 +38,7 @@ gem "tzinfo-data"
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
 
-# For forms-api
+# For requests to the forms-admin API
 gem "activeresource"
 
 # Use postgresql as the database for Active Record

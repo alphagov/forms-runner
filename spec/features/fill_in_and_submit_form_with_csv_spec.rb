@@ -9,12 +9,7 @@ feature "Fill in and submit a form with a CSV submission", type: :feature do
   end
   let(:form) { build :v2_form_document, :live?, id: 1, name: "Fill in this form", steps:, start_page: steps.first.id, submission_type: "email_with_csv" }
   let(:reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
-  let(:req_headers) do
-    {
-      "X-API-Token" => Settings.forms_api.auth_key,
-      "Accept" => "application/json",
-    }
-  end
+  let(:req_headers) { { "Accept" => "application/json" } }
 
   before do
     ActiveResource::HttpMock.respond_to do |mock|
