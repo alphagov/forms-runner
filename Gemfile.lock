@@ -79,10 +79,10 @@ GEM
       activemodel (= 8.0.2.1)
       activesupport (= 8.0.2.1)
       timeout (>= 0.4.0)
-    activeresource (6.1.4)
-      activemodel (>= 6.0)
+    activeresource (6.2.0)
+      activemodel (>= 7.0)
       activemodel-serializers-xml (~> 1.0)
-      activesupport (>= 6.0)
+      activesupport (>= 7.0)
     activestorage (8.0.2.1)
       actionpack (= 8.0.2.1)
       activejob (= 8.0.2.1)
@@ -577,7 +577,7 @@ CHECKSUMS
   activemodel (8.0.2.1) sha256=17bab6cdb86531844113df22f864480a89a276bf0318246e628f99e0ac077ec4
   activemodel-serializers-xml (1.0.3) sha256=fa1b16305e7254cc58a59c68833e3c0a593a59c8ab95d3be5aaea7cd9416c397
   activerecord (8.0.2.1) sha256=a6556e7bdd53f3889d18d2aa3a7ff115fd6c5e1463dd06f97fb88d06b58c6df1
-  activeresource (6.1.4) sha256=8418646c65e734c4b62cfb012c5d3c25ef0b0d4280adf3584de02de23c16572a
+  activeresource (6.2.0) sha256=818ca60d3cd1ff7bbb7277f41250ad4d61a7cdbe30fbf52b2145e1b66ed13900
   activestorage (8.0.2.1) sha256=43bb3d9e115471e201e6a66813810c1d15b607a321f29d62efdf9d90ffaf76f8
   activesupport (8.0.2.1) sha256=0405a76fd1ca989975d9ae00d46a4d3979bdf3817482d846b63affa84bd561c6
   addressable (2.8.6) sha256=798f6af3556641a7619bad1dce04cdb6eb44b0216a991b0396ea7339276f2b47
