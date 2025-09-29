@@ -17,14 +17,12 @@ class AwsSesSubmissionService
       return
     end
 
-    files = uploaded_files_in_answers
-
-    raise StandardError, "Number of files does not match number of completed file questions" unless files.count == @journey.completed_file_upload_questions.count
+    files_to_email = uploaded_files_in_answers
 
     if @form.submission_type == "email_with_csv"
-      deliver_submission_email_with_csv_attachment(files)
+      deliver_submission_email_with_csv_attachment(files_to_email)
     else
-      deliver_submission_email(files)
+      deliver_submission_email(files_to_email)
     end
   end
 
@@ -60,10 +58,24 @@ private
   end
 
   def uploaded_files_in_answers
-    @journey.completed_file_upload_questions
-            .each { it.populate_email_filename(submission_reference: @mailer_options.submission_reference) }
-            .map { |question| [question.email_filename, question.file_from_s3] }
-            .to_h
+    questions = @journey.completed_file_upload_questions
+
+    questions_with_errors = questions.filter { it.invalid?(:submission) }
+    if questions_with_errors.any?
+      errors = questions_with_errors.to_h { [it.question_text, it.errors.details] }
+      raise "One or more file answers are invalid:\n#{errors.inspect.indent(2)}"
+    end
+
+    questions.each { it.populate_email_filename(submission_reference: @mailer_options.submission_reference) }
+
+    files =
+      questions
+        .map { |question| [question.email_filename, question.file_from_s3] }
+        .to_h
+
+    raise "Duplicate email attachment filenames for submission" if files.count != questions.count
+
+    files
   end
 
   def write_submission_csv(file)

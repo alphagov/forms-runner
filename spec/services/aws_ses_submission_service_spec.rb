@@ -88,8 +88,9 @@ RSpec.describe AwsSesSubmissionService do
     end
 
     context "when answers contain uploaded files" do
+      let(:questions) { [question] }
       let(:question) { build :file, :with_uploaded_file }
-      let(:journey) { instance_double(Flow::Journey, completed_steps: all_steps, all_steps:, completed_file_upload_questions: [question]) }
+      let(:journey) { instance_double(Flow::Journey, completed_steps: all_steps, all_steps:, completed_file_upload_questions: questions) }
       let(:file_content) { Faker::Lorem.sentence }
 
       before do
@@ -115,15 +116,45 @@ RSpec.describe AwsSesSubmissionService do
 
       include_examples "it returns the message id"
 
-      context "when uploaded_files_in_answers returns the wrong number of files" do
+      context "when uploaded_files_in_answers finds two files with the same name for the email attachment" do
+        let(:questions) do
+          [
+            build(:file, :with_uploaded_file, original_filename: "my-uploaded-file.jpg"),
+            build(:file, :with_uploaded_file, original_filename: "my-uploaded-file.jpg"),
+          ]
+        end
+
         before do
-          allow(service).to receive(:uploaded_files_in_answers).and_return({})
+          questions.each do |question|
+            allow(question).to receive(:file_from_s3).and_return(file_content)
+          end
         end
 
         it "raises an error" do
           expect {
             service.submit
-          }.to raise_error(/Number of files does not match number of completed file questions/)
+          }.to raise_error(/Duplicate email attachment filenames for submission/)
+        end
+      end
+
+      context "when one or more file answers are missing the original filename" do
+        let(:questions) do
+          [
+            build(:file, :with_uploaded_file, original_filename: ""),
+            build(:file, :with_uploaded_file, original_filename: ""),
+          ]
+        end
+
+        before do
+          questions.each do |question|
+            allow(question).to receive(:file_from_s3).and_return(file_content)
+          end
+        end
+
+        it "raises an error" do
+          expect {
+            service.submit
+          }.to raise_error(/file answers are invalid/)
         end
       end
     end

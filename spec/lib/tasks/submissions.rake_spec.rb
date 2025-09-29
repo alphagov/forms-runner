@@ -637,4 +637,210 @@ RSpec.describe "submissions.rake" do
       end
     end
   end
+
+  describe "submissions:file_answers:fix_missing_original_filenames" do
+    subject(:task) do
+      Rake::Task["submissions:file_answers:fix_missing_original_filenames"]
+        .tap(&:reenable)
+    end
+
+    let(:submission) do
+      create(:submission, form_document:, answers:, reference: "F008AR")
+    end
+
+    let(:form_document) do
+      build(
+        :v2_form_document,
+        steps: [
+          build(
+            :v2_question_page_step,
+            id: 100,
+            answer_type: "file",
+            question_text: "Upload your evidence",
+            position: "1",
+          ),
+        ],
+      )
+    end
+
+    context "when original filename is missing" do
+      let(:answers) do
+        {
+          "100" => {
+            "file" => nil,
+            "original_filename" => "",
+            "uploaded_file_key" => "#{Faker::Internet.uuid}.jpg",
+            "filename_suffix" => "",
+            "email_filename" => "",
+          },
+        }
+      end
+
+      it "sets the email filename to the question text" do
+        task.invoke(submission.reference)
+        submission.reload
+        expect(submission.answers["100"]).to include(
+          "original_filename" => "",
+          "email_filename" => "1-upload-your-evidence_F008AR.jpg",
+        )
+      end
+
+      it "reschedules the submission" do
+        task.invoke(submission.reference)
+        expect(SendSubmissionJob).to have_been_enqueued
+      end
+    end
+
+    context "when original filename is present" do
+      let(:answers) do
+        {
+          "100" => {
+            "file" => nil,
+            "original_filename" => "my-test-picture.jpg",
+            "uploaded_file_key" => "#{Faker::Internet.uuid}.jpg",
+            "filename_suffix" => "",
+            "email_filename" => "",
+          },
+        }
+      end
+
+      it "does not set the email filename" do
+        task.invoke(submission.reference)
+        submission.reload
+        expect(submission.answers["100"]).to include(
+          "original_filename" => "my-test-picture.jpg",
+          "email_filename" => "",
+        )
+      end
+
+      it "does not reschedule the submission" do
+        task.invoke(submission.reference)
+        expect(SendSubmissionJob).not_to have_been_enqueued
+      end
+    end
+
+    context "when there is an optional file question" do
+      let(:form_document) do
+        build(
+          :v2_form_document,
+          steps: [
+            build(
+              :v2_question_page_step,
+              id: 100,
+              answer_type: "file",
+              question_text: "Upload your evidence",
+              position: "1",
+              is_optional: true,
+            ),
+          ],
+        )
+      end
+
+      context "and the question has been skipped" do
+        let(:answers) do
+          {
+            "100" => {
+              "file" => nil,
+              "original_filename" => "",
+              "uploaded_file_key" => nil,
+              "filename_suffix" => "",
+              "email_filename" => "",
+            },
+          }
+        end
+
+        it "does not set the email filename" do
+          task.invoke(submission.reference)
+          submission.reload
+          expect(submission.answers["100"]).to include(
+            "original_filename" => "",
+            "email_filename" => "",
+          )
+        end
+      end
+    end
+
+    context "when there is more than one file upload question" do
+      let(:form_document) do
+        build(
+          :v2_form_document,
+          steps: [
+            build(
+              :v2_question_page_step,
+              id: 500,
+              answer_type: "file",
+              question_text: "Upload your evidence 1",
+              position: "1",
+            ),
+            build(
+              :v2_question_page_step,
+              id: 501,
+              answer_type: "file",
+              question_text: "Upload your evidence 2",
+              position: "2",
+            ),
+            build(
+              :v2_question_page_step,
+              id: 502,
+              answer_type: "file",
+              question_text: "Upload your evidence 2",
+              position: "3",
+            ),
+            build(
+              :v2_question_page_step,
+              id: 503,
+              answer_type: "file",
+              question_text: "Upload your evidence 4",
+              position: "4",
+              is_optional: true,
+            ),
+          ],
+        )
+      end
+
+      let(:answers) do
+        {
+          "500" => {
+            "file" => nil,
+            "original_filename" => "",
+            "uploaded_file_key" => "#{Faker::Internet.uuid}.jpg",
+            "filename_suffix" => "",
+            "email_filename" => "",
+          },
+          "501" => {
+            "file" => nil,
+            "original_filename" => "",
+            "uploaded_file_key" => "#{Faker::Internet.uuid}.jpg",
+            "filename_suffix" => "",
+            "email_filename" => "",
+          },
+          "502" => {
+            "file" => nil,
+            "original_filename" => "my-test-picture.jpg",
+            "uploaded_file_key" => "#{Faker::Internet.uuid}.jpg",
+            "filename_suffix" => "",
+            "email_filename" => "",
+          },
+          "503" => {
+            "file" => nil,
+            "original_filename" => "",
+            "uploaded_file_key" => nil,
+            "filename_suffix" => "",
+            "email_filename" => "",
+          },
+        }
+      end
+
+      it "fixes all answers missing original filename" do
+        task.invoke(submission.reference)
+        submission.reload
+        expect(submission.answers).to match({
+          "500" => a_hash_including("original_filename" => "", "email_filename" => "1-upload-your-evidence-1_F008AR.jpg"),
+          "501" => a_hash_including("original_filename" => "", "email_filename" => "2-upload-your-evidence-2_F008AR.jpg"),
+          "502" => a_hash_including("original_filename" => "my-test-picture.jpg", "email_filename" => ""),
+          "503" => a_hash_including("original_filename" => "", "email_filename" => ""),
+        })
+      end
+    end
+  end
 end

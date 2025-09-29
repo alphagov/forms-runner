@@ -7,10 +7,18 @@ module Question
     attribute :uploaded_file_key
     attribute :filename_suffix, default: ""
     attribute :email_filename, default: ""
-    validates :file, presence: true, unless: :is_optional?
-    validate :validate_file_size
-    validate :validate_file_extension
-    validate :validate_not_empty
+
+    with_options except_on: :submission do
+      validates :file, presence: true, unless: :is_optional?
+      validate :validate_file_size
+      validate :validate_file_extension
+      validate :validate_not_empty
+    end
+
+    with_options on: :submission do
+      validates :original_filename, presence: true, unless: -> { email_filename.present? }
+      validates :uploaded_file_key, presence: true
+    end
 
     after_validation :set_logging_attributes
 
@@ -32,7 +40,6 @@ module Question
       # .odt:
       "application/vnd.oasis.opendocument.text",
     ].freeze
-    FILE_MAX_FILENAME_LENGTH = 100
 
     def show_answer
       original_filename
@@ -53,37 +60,17 @@ module Question
     end
 
     def filename_for_s3_submission
-      extension = ::File.extname(original_filename)
-
-      base_name_max_length = FILE_MAX_FILENAME_LENGTH - extension.length - filename_suffix.length
-
-      base_name = ::File.basename(sanitized_filename, extension).truncate(base_name_max_length, omission: "")
-
-      "#{base_name}#{filename_suffix}#{extension}"
+      FilenameService.to_s3_submission(original_filename, suffix: filename_suffix)
     end
 
     def filename_after_reference_truncation
-      extension = ::File.extname(original_filename)
-
-      base_name_max_length = FILE_MAX_FILENAME_LENGTH - extension.length - ReferenceNumberService::REFERENCE_LENGTH
-
-      base_name = ::File.basename(sanitized_filename, extension).truncate(base_name_max_length, omission: "")
-
-      "#{base_name}#{extension}"
+      FilenameService.truncate_for_reference(original_filename)
     end
 
     def populate_email_filename(submission_reference:)
       return if original_filename.blank?
 
-      extension = ::File.extname(original_filename)
-
-      submission_reference_with_underscore = "_#{submission_reference}"
-
-      base_name_max_length = FILE_MAX_FILENAME_LENGTH - submission_reference_with_underscore.length - extension.length - filename_suffix.length
-
-      base_name = ::File.basename(sanitized_filename, extension).truncate(base_name_max_length, omission: "")
-
-      self.email_filename = "#{base_name}#{filename_suffix}#{submission_reference_with_underscore}#{extension}"
+      self.email_filename = FilenameService.to_email_attachment(original_filename, submission_reference:, suffix: filename_suffix)
     end
 
     def before_save
@@ -160,10 +147,6 @@ module Question
           file_type: file.content_type,
         }
       end
-    end
-
-    def sanitized_filename
-      original_filename.gsub(/[\/\\:*?"<>|]/, "")
     end
   end
 end
