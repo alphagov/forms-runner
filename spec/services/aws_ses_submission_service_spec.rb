@@ -88,8 +88,9 @@ RSpec.describe AwsSesSubmissionService do
     end
 
     context "when answers contain uploaded files" do
+      let(:questions) { [question] }
       let(:question) { build :file, :with_uploaded_file }
-      let(:journey) { instance_double(Flow::Journey, completed_steps: all_steps, all_steps:, completed_file_upload_questions: [question]) }
+      let(:journey) { instance_double(Flow::Journey, completed_steps: all_steps, all_steps:, completed_file_upload_questions: questions) }
       let(:file_content) { Faker::Lorem.sentence }
 
       before do
@@ -116,8 +117,17 @@ RSpec.describe AwsSesSubmissionService do
       include_examples "it returns the message id"
 
       context "when uploaded_files_in_answers returns the wrong number of files" do
+        let(:questions) do
+          [
+            build(:file, :with_uploaded_file, original_filename: ""),
+            build(:file, :with_uploaded_file, original_filename: ""),
+          ]
+        end
+
         before do
-          allow(service).to receive(:uploaded_files_in_answers).and_return({})
+          questions.each do |question|
+            allow(question).to receive(:file_from_s3).and_return(file_content)
+          end
         end
 
         it "raises an error" do
