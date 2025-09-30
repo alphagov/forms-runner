@@ -45,6 +45,7 @@ locals {
     { name = "SETTINGS__AUTH_PROVIDER", value = "developer" },
     { name = "SETTINGS__FORMS_ENV", value = "review" },
     { name = "SETTINGS__FORMS_RUNNER__URL", value = "https://${local.runner_review_app_hostname}" },
+    { name = "ALLOWED_HOST_PATTERNS", value = "localhost:3000" }
   ]
 }
 
