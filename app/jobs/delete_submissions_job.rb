@@ -21,7 +21,7 @@ class DeleteSubmissionsJob < ApplicationJob
     files.each(&:delete_from_s3)
     submission.destroy!
 
-    EventLogger.log_form_event("submission_deleted")
+    EventLogger.log_form_event("submission_deleted", { delivery_status: submission.delivery_status })
     CloudWatchService.record_submission_deleted_metric(submission.delivery_status)
   rescue StandardError => e
     Rails.logger.warn("Error deleting submission - #{e.class.name}: #{e.message}")

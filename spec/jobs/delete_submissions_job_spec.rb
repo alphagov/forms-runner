@@ -118,6 +118,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
         hash_including(
           "level" => "INFO",
           "message" => "Form event",
+          "delivery_status" => "pending",
           "event" => "form_submission_deleted",
           "form_id" => form_with_file_upload.id,
           "form_name" => form_with_file_upload.name,
@@ -129,6 +130,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
         hash_including(
           "level" => "INFO",
           "message" => "Form event",
+          "delivery_status" => "pending",
           "event" => "form_submission_deleted",
           "form_id" => form_without_file_upload.id,
           "form_name" => form_without_file_upload.name,
