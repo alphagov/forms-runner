@@ -22,6 +22,7 @@ class DeleteSubmissionsJob < ApplicationJob
     submission.destroy!
 
     EventLogger.log_form_event("submission_deleted")
+    CloudWatchService.record_submission_deleted_metric(submission.delivery_status)
   rescue StandardError => e
     Rails.logger.warn("Error deleting submission - #{e.class.name}: #{e.message}")
     Sentry.capture_exception(e)

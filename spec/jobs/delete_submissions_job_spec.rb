@@ -70,7 +70,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
     Rails.logger.broadcast_to logger
 
     allow(Question::FileUploadS3Service).to receive(:new).and_return(file_upload_s3_service_spy)
-    allow(CloudWatchService).to receive(:record_job_started_metric)
+    allow(CloudWatchService).to receive_messages(record_job_started_metric: nil, record_submission_deleted_metric: nil)
 
     job = described_class.perform_later
     @job_id = job.job_id
@@ -140,9 +140,14 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
       )
     end
 
-    it "sends cloudwatch metric" do
+    it "sends cloudwatch metric for job being started" do
       perform_enqueued_jobs
       expect(CloudWatchService).to have_received(:record_job_started_metric).with("DeleteSubmissionsJob")
+    end
+
+    it "sends cloudwatch metric for each submission deleted" do
+      perform_enqueued_jobs
+      expect(CloudWatchService).to have_received(:record_submission_deleted_metric).twice.with("pending")
     end
   end
 
@@ -180,9 +185,14 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
       expect(Submission.exists?(sent_submission_sent_7_days_ago.id)).to be false
     end
 
-    it "sends cloudwatch metric" do
+    it "sends cloudwatch metric for job being started" do
       perform_enqueued_jobs
       expect(CloudWatchService).to have_received(:record_job_started_metric).with("DeleteSubmissionsJob")
+    end
+
+    it "sends cloudwatch metric for the deleted submission only" do
+      perform_enqueued_jobs
+      expect(CloudWatchService).to have_received(:record_submission_deleted_metric).once.with("pending")
     end
   end
 

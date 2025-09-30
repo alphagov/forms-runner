@@ -199,6 +199,45 @@ RSpec.describe CloudWatchService do
     end
   end
 
+  describe ".record_submission_deleted_metric" do
+    let(:delivery_status) { "pending" }
+
+    context "when CloudWatch metrics are disabled" do
+      let(:cloudwatch_metrics_enabled) { false }
+
+      it "does not call the CloudWatch client with .put_metric_data" do
+        expect(cloudwatch_client).not_to receive(:put_metric_data)
+
+        described_class.record_submission_deleted_metric(form_id:)
+      end
+    end
+
+    it "calls the cloudwatch client with put_metric_data" do
+      expect(cloudwatch_client).to receive(:put_metric_data).once.with(
+        namespace: "Forms/Jobs",
+        metric_data: [
+          {
+            metric_name: "SubmissionDeleted",
+            dimensions: [
+              {
+                name: "Environment",
+                value: forms_env,
+              },
+              {
+                name: "DeliveryStatus",
+                value: delivery_status,
+              },
+            ],
+            value: 1,
+            unit: "Count",
+          },
+        ],
+      )
+
+      described_class.record_submission_deleted_metric(delivery_status)
+    end
+  end
+
   describe ".record_job_failure_metric" do
     context "when CloudWatch metrics are disabled" do
       let(:cloudwatch_metrics_enabled) { false }
