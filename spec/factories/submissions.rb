@@ -1,8 +1,8 @@
 FactoryBot.define do
   factory :submission do
-    created_at { Faker::Time.between(from: Time.zone.local(2025, 1, 1), to: Time.zone.now) }
+    created_at { Time.zone.now - 2.minutes }
     updated_at { created_at }
-    last_delivery_attempt { created_at + 1.minute }
+    last_delivery_attempt { nil }
     reference { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
     form_id { 1 }
     answers do
@@ -21,6 +21,7 @@ FactoryBot.define do
 
     trait :sent do
       mail_message_id { Faker::Alphanumeric.alphanumeric }
+      last_delivery_attempt { created_at + 1.minute }
     end
 
     trait :bounced do
