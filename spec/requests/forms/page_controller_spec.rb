@@ -76,7 +76,7 @@ RSpec.describe Forms::PageController, type: :request do
         mock.get "/api/v2/forms/200#{api_url_suffix}", req_headers, form_data.to_json, 200
       end
 
-      get form_page_path(200, form_data.form_slug, page_id, mode:)
+      get form_page_path(form_id: 200, form_slug: form_data.form_slug, page_slug: page_id, mode:)
     end
 
     it "adds the page ID to the instrumentation payload" do
@@ -143,12 +143,12 @@ RSpec.describe Forms::PageController, type: :request do
 
     context "with a change answers page" do
       it "Displays a back link to the check your answers page" do
-        get form_change_answer_path(2, form_data.form_slug, 1, mode:)
+        get form_change_answer_path(form_id: 2, form_slug: form_data.form_slug, page_slug: 1, mode:)
         expect(response.body).to include(check_your_answers_path(2, form_data.form_slug, mode:))
       end
 
       it "Passes the changing answers parameter in its submit request" do
-        get form_change_answer_path(2, form_data.form_slug, 1, mode:)
+        get form_change_answer_path(form_id: 2, form_slug: form_data.form_slug, page_slug: 1, mode:)
         expect(response.body).to include(save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1, changing_existing_answer: true, answer_index: 1))
       end
     end
