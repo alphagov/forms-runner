@@ -22,7 +22,7 @@ locals {
     { name = "SETTINGS__ANALYTICS_ENABLED", value = "false" },
     { name = "SETTINGS__CLOUDWATCH_METRICS_ENABLED", value = "false" },
     { name = "SETTINGS__FORMS_ADMIN__BASE_URL", value = "https://${local.admin_app_hostname}" },
-    { name = "SETTINGS__FORMS_API__BASE_URL", value = "http://localhost:9292" },
+    { name = "SETTINGS__FORMS_API__BASE_URL", value = "http://localhost:3000" },
     { name = "SETTINGS__FORMS_ENV", value = "review" },
 
     ##
@@ -31,15 +31,6 @@ locals {
     #
     # We aren't enabling them for review apps for the time being.
     ##
-  ]
-
-  forms_api_env_vars = [
-    { name = "DATABASE_URL", value = "postgres://postgres:postgres@127.0.0.1:5432" },
-    { name = "EMAIL", value = "review-app-submissions@review.forms.service.gov.uk" },
-    { name = "RAILS_DEVELOPMENT_HOSTS", value = "localhost:9292" },
-    { name = "RAILS_ENV", value = "production" },
-    { name = "SECRET_KEY_BASE", value = "unsecured_secret_key_material" },
-    { name = "SETTINGS__FORMS_ENV", value = "review" },
   ]
 
   forms_admin_env_vars = [
@@ -52,10 +43,9 @@ locals {
     { name = "SECRET_KEY_BASE", value = "unsecured_secret_key_material" },
     { name = "SETTINGS__ACT_AS_USER_ENABLED", value = "true" },
     { name = "SETTINGS__AUTH_PROVIDER", value = "developer" },
-    { name = "SETTINGS__FORMS_API__AUTH_KEY", value = "unsecured_api_key_for_review_apps_only" },
-    { name = "SETTINGS__FORMS_API__BASE_URL", value = "http://localhost:9292" },
     { name = "SETTINGS__FORMS_ENV", value = "review" },
     { name = "SETTINGS__FORMS_RUNNER__URL", value = "https://${local.runner_review_app_hostname}" },
+    { name = "ALLOWED_HOST_PATTERNS", value = "localhost:3000" }
   ]
 }
 
@@ -135,45 +125,6 @@ resource "aws_ecs_task_definition" "task" {
           containerName = "forms-runner-seeding",
           condition     = "SUCCESS"
         },
-      ]
-    },
-
-    # forms-api
-    {
-      name                   = "forms-api"
-      image                  = "711966560482.dkr.ecr.eu-west-2.amazonaws.com/forms-api-deploy:latest"
-      command                = []
-      essential              = true
-      environment            = local.forms_api_env_vars
-      readonlyRootFilesystem = true
-
-      portMappings = [{ containerPort = 9292 }]
-
-      logConfiguration = {
-        logDriver = "awslogs"
-        options = {
-          awslogs-group         = data.terraform_remote_state.review.outputs.review_apps_log_group_name
-          awslogs-region        = "eu-west-2"
-          awslogs-stream-prefix = "${local.logs_stream_prefix}/forms-api"
-        }
-      }
-
-      healthCheck = {
-        command     = ["CMD-SHELL", "wget -O - 'http://localhost:9292/up' || exit 1"]
-        interval    = 30
-        retries     = 5
-        startPeriod = 180
-      }
-
-      dependsOn = [
-        {
-          containerName = "postgres"
-          condition     = "HEALTHY"
-        },
-        {
-          containerName = "forms-api-seeding",
-          condition     = "SUCCESS"
-        }
       ]
     },
 
@@ -304,32 +255,6 @@ resource "aws_ecs_task_definition" "task" {
           awslogs-group         = data.terraform_remote_state.review.outputs.review_apps_log_group_name
           awslogs-region        = "eu-west-2"
           awslogs-stream-prefix = "${local.logs_stream_prefix}/forms-runner-seeding"
-        }
-      }
-
-      dependsOn = [
-        {
-          containerName = "postgres"
-          condition     = "HEALTHY"
-        }
-      ]
-    },
-
-    # forms-api-seeding
-    {
-      name                   = "forms-api-seeding"
-      image                  = "711966560482.dkr.ecr.eu-west-2.amazonaws.com/forms-api-deploy:latest"
-      command                = ["rake", "db:setup"]
-      essential              = false
-      environment            = local.forms_api_env_vars
-      readonlyRootFilesystem = true
-
-      logConfiguration = {
-        logDriver = "awslogs"
-        options = {
-          awslogs-group         = data.terraform_remote_state.review.outputs.review_apps_log_group_name
-          awslogs-region        = "eu-west-2"
-          awslogs-stream-prefix = "${local.logs_stream_prefix}/forms-api-seeding"
         }
       }
 
