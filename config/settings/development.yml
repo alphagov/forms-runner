@@ -14,4 +14,6 @@ ses_submission_email:
 submission_status_api:
   secret: test_token
 
-retain_submissions_for_seconds: 60
+submissions:
+  delete_not_bounced_after_seconds: 60
+  maximum_retention_seconds: 300

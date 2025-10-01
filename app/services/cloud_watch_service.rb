@@ -84,6 +84,28 @@ class CloudWatchService
     )
   end
 
+  def self.record_submission_deleted_metric(delivery_status)
+    return unless Settings.cloudwatch_metrics_enabled
+
+    cloudwatch_client.put_metric_data(
+      namespace: JOBS_METRICS_NAMESPACE,
+      metric_data: [
+        {
+          metric_name: "SubmissionDeleted",
+          dimensions: [
+            environment_dimension,
+            {
+              name: "DeliveryStatus",
+              value: delivery_status,
+            },
+          ],
+          value: 1,
+          unit: "Count",
+        },
+      ],
+    )
+  end
+
   def self.record_job_failure_metric(job_name)
     return unless Settings.cloudwatch_metrics_enabled
 
