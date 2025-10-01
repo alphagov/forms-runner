@@ -358,22 +358,44 @@ RSpec.describe Forms::BaseController, type: :request do
   end
 
   describe "locale" do
+    let(:locale) { nil }
+
     context "when getting a form page that exists" do
       before do
-        get form_page_path(mode: "form", form_id: 2, form_slug: form_response_data.form_slug, page_slug: 1)
+        get form_page_path(mode: "form", form_id: 2, form_slug: form_response_data.form_slug, page_slug: 1, locale:)
       end
 
-      context "when the form is English" do
+      context "when the locale param is not set" do
         it "renders content in English" do
           expect(response.body).to include(I18n.t("support_details.get_help_with_this_form"))
         end
+
+        it "renders links without the locale scope" do
+          expect(response.body).to include(form_privacy_path(form_id: 2, form_slug: form_response_data.form_slug))
+        end
       end
 
-      context "when the form is Welsh" do
-        let(:language) { "cy" }
+      context "when the locale param is set to English" do
+        let(:locale) { "en" }
+
+        it "renders content in English" do
+          expect(response.body).to include(I18n.t("support_details.get_help_with_this_form"))
+        end
+
+        it "renders links with the default locale scope" do
+          expect(response.body).to include(form_privacy_path(form_id: 2, form_slug: form_response_data.form_slug))
+        end
+      end
+
+      context "when the locale param is set to Welsh" do
+        let(:locale) { "cy" }
 
         it "renders content in Welsh" do
           expect(response.body).to include(I18n.t("support_details.get_help_with_this_form", locale: :cy))
+        end
+
+        it "renders links with the cy locale scope" do
+          expect(response.body).to include(form_privacy_path(form_id: 2, form_slug: form_response_data.form_slug, locale: :cy))
         end
       end
 
@@ -401,10 +423,10 @@ RSpec.describe Forms::BaseController, type: :request do
 
     context "when getting a form page that doesn't exist" do
       before do
-        get form_page_path(mode: "form", form_id: 2, form_slug: form_response_data.form_slug, page_slug: 42)
+        get form_page_path(mode: "form", form_id: 2, form_slug: form_response_data.form_slug, page_slug: 42, locale:)
       end
 
-      context "when the form is English" do
+      context "when the locale param is not set" do
         it "returns 404" do
           expect(response).to have_http_status(:not_found)
         end
@@ -414,8 +436,20 @@ RSpec.describe Forms::BaseController, type: :request do
         end
       end
 
-      context "when the form is Welsh" do
-        let(:language) { "cy" }
+      context "when the locale param is set to English" do
+        let(:locale) { "en" }
+
+        it "returns 404" do
+          expect(response).to have_http_status(:not_found)
+        end
+
+        it "renders the error page in English" do
+          expect(response.body).to include(I18n.t("errors.not_found.title"))
+        end
+      end
+
+      context "when the locale param is set to Welsh" do
+        let(:locale) { "cy" }
 
         it "returns 404" do
           expect(response).to have_http_status(:not_found)
