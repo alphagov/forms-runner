@@ -6,7 +6,7 @@ It constructs a minimal, ephemeral version of a GOV.UK Forms environment in AWS 
 
 * a copy of `forms-runner` at the commit in question
 * a copy of the version of `forms-admin` currently in production
-* a local PostgreSQL database with seed data for both `forms-api` and `forms-admin`
+* a local PostgreSQL database with seed data for `forms-admin`
 * a local Redis instance of session storage
 
 Review apps rely on a set of underlying infrastructure managed and deployed in `forms-deploy`. The Terraform will require you to be targeting the `integration` AWS account (where the `review` environment lives), and you should not override this.
