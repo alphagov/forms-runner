@@ -71,7 +71,7 @@ RSpec.describe "submissions.rake" do
     end
 
     it "logs the number of submissions older than 8 days" do
-      expect(Rails.logger).to receive(:info).with("Found 2 submissions older than 8 days", { form_ids: [42, 43] })
+      expect(Rails.logger).to receive(:info).with("Found 2 submissions older than 8 days", { form_ids: contain_exactly(42, 43) })
       expect(Rails.logger).to receive(:info).with("Submission reference: #{submission_more_than_8_days_old.reference}, form ID: #{submission_more_than_8_days_old.form_id}, delivery_status: #{submission_more_than_8_days_old.delivery_status}, created_at: #{submission_more_than_8_days_old.created_at}, last_delivery_attempt: #{submission_more_than_8_days_old.last_delivery_attempt}")
       expect(Rails.logger).to receive(:info).with("Submission reference: #{submission_9_days_old.reference}, form ID: #{submission_9_days_old.form_id}, delivery_status: #{submission_9_days_old.delivery_status}, created_at: #{submission_9_days_old.created_at}, last_delivery_attempt: #{submission_9_days_old.last_delivery_attempt}")
       task.invoke
