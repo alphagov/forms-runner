@@ -60,10 +60,10 @@ private
 
       submission = Submission.find_by!(mail_message_id: ses_message_id)
 
-      process_delivery(submission)
+      delivery_time = Time.zone.parse(ses_message["delivery"]["timestamp"])
+      process_delivery(submission, delivered_at: delivery_time)
       sqs_client.delete_message(queue_url: queue_url, receipt_handle: receipt_handle)
 
-      delivery_time = Time.zone.parse(ses_message["delivery"]["timestamp"])
       submission_duration_ms = ((delivery_time - submission.created_at) * 1000).round
       CloudWatchService.record_submission_delivery_latency_metric(submission_duration_ms, "Email")
     rescue StandardError => e
@@ -74,8 +74,10 @@ private
     end
   end
 
-  def process_delivery(submission)
+  def process_delivery(submission, **attributes)
     set_submission_logging_attributes(submission)
+
+    submission.update! attributes
 
     EventLogger.log_form_event("submission_delivered")
   end
