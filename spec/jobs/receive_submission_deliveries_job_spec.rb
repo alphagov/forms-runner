@@ -111,6 +111,11 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
                                      ))
       end
 
+      it "saves the submission delivery time to the submission record" do
+        perform_enqueued_jobs
+        expect(submission.reload.delivered_at).to eq ses_delivery_timestamp
+      end
+
       it "sends cloudwatch metric for submission delivery time" do
         perform_enqueued_jobs
         # latency is ses_delivery_timestamp - submission.created_at
