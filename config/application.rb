@@ -74,6 +74,9 @@ module FormsRunner
     config.logger = ApplicationLogger.new($stdout)
     config.logger.formatter = JsonLogFormatter.new
 
+    # Turn off logging from ActiveResource
+    config.after_initialize { ActiveResource::Base.logger = nil }
+
     # custom configuration for the SES mailer delivery method
     config.x.aws_ses_form_submission_mailer.delivery_method = :aws_ses
 
