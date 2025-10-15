@@ -6,5 +6,7 @@
   <%= form_builder.govuk_text_area :text,
                                    label: { text:  question_text_with_extra_suffix, **question_text_size_and_tag },
                                    hint: { text: question.hint_text },
+                                   max_chars: Question::Text::MAX_LENGTH_LONG_TEXT,
+                                   threshold: 99,
                                    rows: 5 %>
 <% end %>
