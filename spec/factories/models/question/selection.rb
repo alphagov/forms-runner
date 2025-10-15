@@ -25,6 +25,7 @@ FactoryBot.define do
         selection_options { [DataStruct.new(name: "Option 1"),  DataStruct.new(name: "Option 2")] }
       end
       answer_settings { DataStruct.new(only_one_option: "false", selection_options:) }
+      selection { ["Option 1", "Option 2"] }
     end
   end
 end

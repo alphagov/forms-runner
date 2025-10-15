@@ -21,7 +21,7 @@ module Question
       selection
     end
 
-    def show_answer_in_json
+    def show_answer_in_json(*)
       hash = {}
 
       hash["selections"] = selection_without_blanks if allow_multiple_answers?
