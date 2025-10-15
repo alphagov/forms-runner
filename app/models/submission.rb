@@ -22,6 +22,10 @@ class Submission < ApplicationRecord
     created_at.in_time_zone(submission_timezone)
   end
 
+  def payment_url
+    form.payment_url_with_reference(reference)
+  end
+
   def self.emailed?(reference)
     submission = Submission.find_by(reference: reference)
     submission.mail_message_id.present? if submission.present?

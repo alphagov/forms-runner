@@ -5,27 +5,18 @@ RSpec.describe SendSubmissionJob, type: :job do
   include ActiveJob::TestHelper
 
   let(:submission_created_at) { Time.utc(2022, 12, 14, 13, 0o0, 0o0) }
-  let(:submission) { create :submission, form_document: form, delivery_status: :pending, created_at: submission_created_at }
-  let(:form) { build(:form, id: 1, name: "Form 1") }
+  let(:submission) { create :submission, form_document:, delivery_status: :pending, created_at: submission_created_at }
+  let(:form_document) { build(:v2_form_document, name: "Form 1") }
   let(:question) { build :text, question_text: "What is the meaning of life?", text: "42" }
   let(:step) { build :step, question: }
   let(:all_steps) { [step] }
   let(:journey) { instance_double(Flow::Journey, completed_steps: all_steps, all_steps:) }
   let(:aws_ses_submission_service_spy) { instance_double(AwsSesSubmissionService) }
   let(:mail_message_id) { "1234" }
-  let(:mailer_options) do
-    FormSubmissionService::MailerOptions.new(
-      title: form.name,
-      is_preview: false,
-      timestamp: submission.created_at,
-      submission_reference: submission.reference,
-      payment_url: form.payment_url_with_reference(submission.reference),
-    )
-  end
 
   before do
     allow(Flow::Journey).to receive(:new).and_return(journey)
-    allow(AwsSesSubmissionService).to receive(:new).with(form:, journey:, mailer_options:).and_return(aws_ses_submission_service_spy)
+    allow(AwsSesSubmissionService).to receive(:new).with(submission:).and_return(aws_ses_submission_service_spy)
     allow(CloudWatchService).to receive(:record_submission_sent_metric)
   end
 

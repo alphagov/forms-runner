@@ -1,8 +1,14 @@
 require "rails_helper"
 
 describe AwsSesFormSubmissionMailer, type: :mailer do
-  let(:mail) { described_class.submission_email(answer_content_html:, answer_content_plain_text:, submission_email_address:, mailer_options:, files:, csv_filename:) }
-  let(:title) { "Form 1" }
+  subject(:mail) { described_class.submission_email(answer_content_html:, answer_content_plain_text:, submission:, files:, csv_filename:) }
+
+  let(:submission) do
+    build(:submission, form_document: form_document, created_at: submission_timestamp,
+                       reference: submission_reference, is_preview:)
+  end
+  let(:form_document) { build(:v2_form_document, name: form_name, submission_email: submission_email_address, payment_url:) }
+  let(:form_name) { "Form 1" }
   let(:answer_content_html) { "My question: My answer" }
   let(:answer_content_plain_text) { "My question: My answer" }
   let(:is_preview) { false }
@@ -12,13 +18,6 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
   let(:payment_url) { nil }
   let(:csv_filename) { nil }
   let(:submission_timestamp) { Time.utc(2022, 12, 14, 13, 0o0, 0o0) }
-  let(:mailer_options) do
-    FormSubmissionService::MailerOptions.new(title:,
-                                             is_preview:,
-                                             timestamp: submission_timestamp,
-                                             submission_reference:,
-                                             payment_url:)
-  end
 
   context "when form filler submits a completed form" do
     context "when form is not in preview" do
@@ -27,7 +26,7 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
       end
 
       it "sets the subject" do
-        expect(mail.subject).to eq("Form submission: #{title} - reference: #{submission_reference}")
+        expect(mail.subject).to eq("Form submission: #{form_name} - reference: #{submission_reference}")
       end
 
       describe "the html part" do
@@ -46,7 +45,7 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
         end
 
         it "includes the form title text" do
-          expect(part.body).to have_css("p", text: I18n.t("mailer.submission.title", title:))
+          expect(part.body).to have_css("p", text: I18n.t("mailer.submission.title", title: form_name))
         end
 
         it "does not include the form preview text" do
@@ -102,7 +101,7 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
         end
 
         it "includes the form title text" do
-          expect(part.body).to have_text(I18n.t("mailer.submission.title", title:))
+          expect(part.body).to have_text(I18n.t("mailer.submission.title", title: form_name))
         end
 
         it "does not include the form preview text" do
@@ -155,14 +154,14 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
       let(:is_preview) { true }
 
       it "sets the subject" do
-        expect(mail.subject).to eq("TEST FORM SUBMISSION: #{title} - reference: #{submission_reference}")
+        expect(mail.subject).to eq("TEST FORM SUBMISSION: #{form_name} - reference: #{submission_reference}")
       end
 
       describe "the html part" do
         let(:part) { mail.html_part }
 
         it "includes the form title text" do
-          expect(part.body).to have_css("p", text: I18n.t("mailer.submission.title", title:))
+          expect(part.body).to have_css("p", text: I18n.t("mailer.submission.title", title: form_name))
         end
 
         it "includes the form preview text" do
@@ -174,7 +173,7 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
         let(:part) { mail.text_part }
 
         it "includes the form title text" do
-          expect(part.body).to have_text(I18n.t("mailer.submission.title", title:))
+          expect(part.body).to have_text(I18n.t("mailer.submission.title", title: form_name))
         end
 
         it "includes the form preview text" do

@@ -15,9 +15,13 @@ FactoryBot.define do
         },
       }
     end
-    mode { "live" }
+    mode { is_preview ? "preview-live" : "live" }
     form_document { build :v2_form_document }
     delivery_status { :pending }
+
+    transient do
+      is_preview { false }
+    end
 
     trait :sent do
       mail_message_id { Faker::Alphanumeric.alphanumeric }
@@ -27,6 +31,10 @@ FactoryBot.define do
     trait :bounced do
       sent
       delivery_status { :bounced }
+    end
+
+    trait :preview do
+      mode { "preview-live" }
     end
   end
 end
