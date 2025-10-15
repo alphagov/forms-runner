@@ -29,7 +29,7 @@ class AwsSesSubmissionService
 private
 
   def deliver_submission_email_with_csv_attachment(files)
-    csv = CsvGenerator.write_submission(
+    csv = CsvGenerator.generate_submission(
       all_steps: @journey.all_steps,
       submission_reference: @mailer_options.submission_reference,
       timestamp: @mailer_options.timestamp,

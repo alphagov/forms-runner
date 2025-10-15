@@ -21,7 +21,7 @@ class S3SubmissionService
     # file arrives and the referenced files will already be present
     copy_uploaded_files_to_bucket
 
-    csv = CsvGenerator.write_submission(
+    csv = CsvGenerator.generate_submission(
       all_steps: @journey.all_steps,
       submission_reference: @submission_reference,
       timestamp: @timestamp,

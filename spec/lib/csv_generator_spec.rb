@@ -15,8 +15,8 @@ RSpec.describe CsvGenerator do
     Time.use_zone("London") { Time.zone.local(2022, 9, 14, 8, 0o0, 0o0) }
   end
 
-  describe "#write_submission" do
-    subject(:csv) { described_class.write_submission(all_steps:, submission_reference:, timestamp:, is_s3_submission:) }
+  describe "#generate_submission" do
+    subject(:csv) { described_class.generate_submission(all_steps:, submission_reference:, timestamp:, is_s3_submission:) }
 
     context "when the submission is being sent by email" do
       let(:is_s3_submission) { false }
@@ -41,7 +41,7 @@ RSpec.describe CsvGenerator do
       context "when a question is optional and answer is not provided" do
         let(:text_question) { build :text, question_text: "What is the meaning of life?", is_optional: true, text: nil }
 
-        it "writes submission to CSV file including blank column for unanswered optional question" do
+        it "generates a CSV including blank column for unanswered optional question" do
           expect(CSV.parse(csv)).to eq(
             [
               ["Reference", "Submitted at", "What is the meaning of life?", "What is your name? - First name", "What is your name? - Last name", "Upload a file"],
@@ -55,7 +55,7 @@ RSpec.describe CsvGenerator do
         let(:name_question_repeated) { build :first_middle_last_name_question, question_text: "What is your name?" }
         let(:second_step) { build :repeatable_step, questions: [name_question, name_question_repeated] }
 
-        it "writes submission to CSV file with headers containing suffixes for the repeated steps" do
+        it "generates a CSV with headers containing suffixes for the repeated steps" do
           expect(CSV.parse(csv)).to eq(
             [
               [
@@ -87,7 +87,7 @@ RSpec.describe CsvGenerator do
     context "when the submission is being sent to an S3 bucket" do
       let(:is_s3_submission) { true }
 
-      it "writes submission to CSV file without including the submission reference in the filename" do
+      it "generates a CSV without including the submission reference in the filename for the file upload question" do
         expect(CSV.parse(csv)).to eq(
           [
             ["Reference", "Submitted at", "What is the meaning of life?", "What is your name? - First name", "What is your name? - Last name", "Upload a file"],

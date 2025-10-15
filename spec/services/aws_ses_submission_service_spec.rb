@@ -44,7 +44,7 @@ RSpec.describe AwsSesSubmissionService do
 
   describe "#submit" do
     before do
-      allow(CsvGenerator).to receive(:write_submission).and_call_original
+      allow(CsvGenerator).to receive(:generate_submission).and_call_original
       allow(Settings.ses_submission_email).to receive(:from_email_address).and_return(from_email_address)
     end
 
@@ -81,7 +81,7 @@ RSpec.describe AwsSesSubmissionService do
 
       it "does not write a CSV file" do
         service.submit
-        expect(CsvGenerator).not_to have_received(:write_submission)
+        expect(CsvGenerator).not_to have_received(:generate_submission)
       end
 
       include_examples "it returns the message id"
