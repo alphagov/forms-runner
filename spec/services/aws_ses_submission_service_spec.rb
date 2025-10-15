@@ -164,18 +164,6 @@ RSpec.describe AwsSesSubmissionService do
         form.submission_type = "email_with_csv"
       end
 
-      it "writes a CSV file" do
-        travel_to timestamp do
-          service.submit
-          expect(CsvGenerator).to have_received(:write_submission)
-                                    .with(all_steps:,
-                                          submission_reference:,
-                                          timestamp:,
-                                          output_file_path: an_instance_of(String),
-                                          is_s3_submission: false)
-        end
-      end
-
       it "calls AwsSesFormSubmissionMailer passing in a CSV file" do
         travel_to timestamp do
           allow(AwsSesFormSubmissionMailer).to receive(:submission_email).and_call_original

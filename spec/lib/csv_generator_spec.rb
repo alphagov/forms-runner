@@ -15,22 +15,22 @@ RSpec.describe CsvGenerator do
     Time.use_zone("London") { Time.zone.local(2022, 9, 14, 8, 0o0, 0o0) }
   end
 
-  let(:test_file) { Tempfile.new("csv") }
-
-  after do
-    test_file.unlink
-  end
-
   describe "#write_submission" do
+    subject(:csv) { described_class.write_submission(all_steps:, submission_reference:, timestamp:, is_s3_submission:) }
+
     context "when the submission is being sent by email" do
+      let(:is_s3_submission) { false }
+
       before do
         file_question.populate_email_filename(submission_reference:)
-        described_class.write_submission(all_steps:, submission_reference:, timestamp:,
-                                         output_file_path: test_file.path, is_s3_submission: false)
       end
 
-      it "writes submission to CSV file" do
-        expect(CSV.open(test_file.path).readlines).to eq(
+      it "returns a string" do
+        expect(csv).to be_a(String)
+      end
+
+      it "generates the submission CSV" do
+        expect(CSV.parse(csv)).to eq(
           [
             ["Reference", "Submitted at", "What is the meaning of life?", "What is your name? - First name", "What is your name? - Last name", "Upload a file"],
             [submission_reference, "2022-09-14T08:00:00+01:00", text_question.text, name_question.first_name, name_question.last_name, "test_#{submission_reference}.txt"],
@@ -42,7 +42,7 @@ RSpec.describe CsvGenerator do
         let(:text_question) { build :text, question_text: "What is the meaning of life?", is_optional: true, text: nil }
 
         it "writes submission to CSV file including blank column for unanswered optional question" do
-          expect(CSV.open(test_file.path).readlines).to eq(
+          expect(CSV.parse(csv)).to eq(
             [
               ["Reference", "Submitted at", "What is the meaning of life?", "What is your name? - First name", "What is your name? - Last name", "Upload a file"],
               [submission_reference, "2022-09-14T08:00:00+01:00", "", name_question.first_name, name_question.last_name, "test_#{submission_reference}.txt"],
@@ -56,7 +56,7 @@ RSpec.describe CsvGenerator do
         let(:second_step) { build :repeatable_step, questions: [name_question, name_question_repeated] }
 
         it "writes submission to CSV file with headers containing suffixes for the repeated steps" do
-          expect(CSV.open(test_file.path).readlines).to eq(
+          expect(CSV.parse(csv)).to eq(
             [
               [
                 "Reference",
@@ -85,13 +85,10 @@ RSpec.describe CsvGenerator do
     end
 
     context "when the submission is being sent to an S3 bucket" do
-      before do
-        described_class.write_submission(all_steps:, submission_reference:, timestamp:,
-                                         output_file_path: test_file.path, is_s3_submission: true)
-      end
+      let(:is_s3_submission) { true }
 
       it "writes submission to CSV file without including the submission reference in the filename" do
-        expect(CSV.open(test_file.path).readlines).to eq(
+        expect(CSV.parse(csv)).to eq(
           [
             ["Reference", "Submitted at", "What is the meaning of life?", "What is your name? - First name", "What is your name? - Last name", "Upload a file"],
             [submission_reference, "2022-09-14T08:00:00+01:00", text_question.text, name_question.first_name, name_question.last_name, file_question.original_filename],
