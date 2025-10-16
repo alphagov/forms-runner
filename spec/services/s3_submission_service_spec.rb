@@ -5,7 +5,6 @@ RSpec.describe S3SubmissionService do
     described_class.new(journey:, form:, timestamp:, submission_reference:, is_preview:)
   end
 
-  let(:file_body) { "some body/n" }
   let(:form) do
     build(:form,
           id: 42,
@@ -45,17 +44,6 @@ RSpec.describe S3SubmissionService do
         allow(mock_file_upload_s3_service).to receive(:delete_from_s3)
         allow(Settings.aws).to receive_messages(s3_submission_iam_role_arn: role_arn, file_upload_s3_bucket_name: file_upload_bucket)
         allow(CloudWatchService).to receive(:record_submission_delivery_latency_metric)
-      end
-
-      it "writes a CSV file" do
-        expect(CsvGenerator).to receive(:write_submission)
-                                  .with(all_steps:,
-                                        submission_reference:,
-                                        timestamp:,
-                                        output_file_path: an_instance_of(String),
-                                        is_s3_submission: true)
-
-        service.submit
       end
 
       it "calls AWS to assume the role to upload to S3" do

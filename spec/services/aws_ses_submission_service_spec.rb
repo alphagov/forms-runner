@@ -44,7 +44,7 @@ RSpec.describe AwsSesSubmissionService do
 
   describe "#submit" do
     before do
-      allow(CsvGenerator).to receive(:write_submission).and_call_original
+      allow(CsvGenerator).to receive(:generate_submission).and_call_original
       allow(Settings.ses_submission_email).to receive(:from_email_address).and_return(from_email_address)
     end
 
@@ -81,7 +81,7 @@ RSpec.describe AwsSesSubmissionService do
 
       it "does not write a CSV file" do
         service.submit
-        expect(CsvGenerator).not_to have_received(:write_submission)
+        expect(CsvGenerator).not_to have_received(:generate_submission)
       end
 
       include_examples "it returns the message id"
@@ -162,18 +162,6 @@ RSpec.describe AwsSesSubmissionService do
     context "when the submission type is email_with_csv" do
       before do
         form.submission_type = "email_with_csv"
-      end
-
-      it "writes a CSV file" do
-        travel_to timestamp do
-          service.submit
-          expect(CsvGenerator).to have_received(:write_submission)
-                                    .with(all_steps:,
-                                          submission_reference:,
-                                          timestamp:,
-                                          output_file_path: an_instance_of(String),
-                                          is_s3_submission: false)
-        end
       end
 
       it "calls AwsSesFormSubmissionMailer passing in a CSV file" do

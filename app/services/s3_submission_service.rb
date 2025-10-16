@@ -21,12 +21,13 @@ class S3SubmissionService
     # file arrives and the referenced files will already be present
     copy_uploaded_files_to_bucket
 
-    # rubocop:disable Rails/SaveBang
-    Tempfile.create do |file|
-      write_submission_csv(file)
-      upload_submission_csv_to_s3(file.path)
-    end
-    # rubocop:enable Rails/SaveBang
+    csv = CsvGenerator.generate_submission(
+      all_steps: @journey.all_steps,
+      submission_reference: @submission_reference,
+      timestamp: @timestamp,
+      is_s3_submission: true,
+    )
+    upload_submission_csv_to_s3(csv)
 
     delete_uploaded_files_from_our_bucket
   end
@@ -57,20 +58,10 @@ private
     @journey.completed_file_upload_questions.each(&:delete_from_s3)
   end
 
-  def write_submission_csv(file)
-    CsvGenerator.write_submission(
-      all_steps: @journey.all_steps,
-      submission_reference: @submission_reference,
-      timestamp: @timestamp,
-      output_file_path: file.path,
-      is_s3_submission: true,
-    )
-  end
-
-  def upload_submission_csv_to_s3(file_path)
+  def upload_submission_csv_to_s3(csv)
     key = csv_submission_key
     s3_client.put_object({
-      body: File.read(file_path),
+      body: csv,
       bucket: @form.s3_bucket_name,
       expected_bucket_owner: @form.s3_bucket_aws_account_id,
       key: key,

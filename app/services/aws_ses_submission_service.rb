@@ -29,12 +29,15 @@ class AwsSesSubmissionService
 private
 
   def deliver_submission_email_with_csv_attachment(files)
-    Tempfile.create do |file|
-      write_submission_csv(file)
+    csv = CsvGenerator.generate_submission(
+      all_steps: @journey.all_steps,
+      submission_reference: @mailer_options.submission_reference,
+      timestamp: @mailer_options.timestamp,
+      is_s3_submission: false,
+    )
 
-      files = files.merge({ csv_filename => File.read(file.path) })
-      deliver_submission_email(files, csv_filename)
-    end
+    files = files.merge({ csv_filename => csv })
+    deliver_submission_email(files, csv_filename)
   end
 
   def deliver_submission_email(files, csv_filename = nil)
@@ -76,16 +79,6 @@ private
     raise "Duplicate email attachment filenames for submission" if files.count != questions.count
 
     files
-  end
-
-  def write_submission_csv(file)
-    CsvGenerator.write_submission(
-      all_steps: @journey.all_steps,
-      submission_reference: @mailer_options.submission_reference,
-      timestamp: @mailer_options.timestamp,
-      output_file_path: file.path,
-      is_s3_submission: false,
-    )
   end
 
   def csv_filename
