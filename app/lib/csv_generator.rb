@@ -19,14 +19,14 @@ class CsvGenerator
     end
   end
 
-  def self.csv_filename(form_title:, submission_reference:, max_length:)
+  def self.csv_filename(form_name:, submission_reference:, max_length:)
     reference_part = "_#{submission_reference}"
 
-    title_part_max_length = max_length - CSV_EXTENSION.length - CSV_FILENAME_PREFIX.length - reference_part.length
+    name_part_max_length = max_length - CSV_EXTENSION.length - CSV_FILENAME_PREFIX.length - reference_part.length
 
-    title_part = form_title
+    name_part = form_name
       .parameterize(separator: "_")
-      .truncate(title_part_max_length, separator: "_", omission: "")
-    "#{CSV_FILENAME_PREFIX}#{title_part}#{reference_part}#{CSV_EXTENSION}"
+      .truncate(name_part_max_length, separator: "_", omission: "")
+    "#{CSV_FILENAME_PREFIX}#{name_part}#{reference_part}#{CSV_EXTENSION}"
   end
 end

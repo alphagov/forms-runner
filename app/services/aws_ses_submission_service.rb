@@ -81,7 +81,7 @@ private
   end
 
   def csv_filename
-    CsvGenerator.csv_filename(form_title: @form.name,
+    CsvGenerator.csv_filename(form_name: @form.name,
                               submission_reference: @submission.reference,
                               max_length: CSV_MAX_FILENAME_LENGTH)
   end

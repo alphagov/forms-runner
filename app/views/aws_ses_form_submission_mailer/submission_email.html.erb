@@ -4,7 +4,7 @@
   </p>
 <% end %>
 
-<p><%= I18n.t("mailer.submission.title", title: @submission.form.name) %></p>
+<p><%= I18n.t("mailer.submission.title", form_name: @submission.form.name) %></p>
 
 <p>
   <%= I18n.t("mailer.submission.time", time: @submission.submission_time.strftime("%l:%M%P").strip, date: @submission.submission_time.strftime("%-d %B %Y") ) %>

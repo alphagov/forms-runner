@@ -45,7 +45,7 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
         end
 
         it "includes the form title text" do
-          expect(part.body).to have_css("p", text: I18n.t("mailer.submission.title", title: form_name))
+          expect(part.body).to have_css("p", text: I18n.t("mailer.submission.title", form_name: form_name))
         end
 
         it "does not include the form preview text" do
@@ -101,7 +101,7 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
         end
 
         it "includes the form title text" do
-          expect(part.body).to have_text(I18n.t("mailer.submission.title", title: form_name))
+          expect(part.body).to have_text(I18n.t("mailer.submission.title", form_name: form_name))
         end
 
         it "does not include the form preview text" do
@@ -161,7 +161,7 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
         let(:part) { mail.html_part }
 
         it "includes the form title text" do
-          expect(part.body).to have_css("p", text: I18n.t("mailer.submission.title", title: form_name))
+          expect(part.body).to have_css("p", text: I18n.t("mailer.submission.title", form_name: form_name))
         end
 
         it "includes the form preview text" do
@@ -173,7 +173,7 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
         let(:part) { mail.text_part }
 
         it "includes the form title text" do
-          expect(part.body).to have_text(I18n.t("mailer.submission.title", title: form_name))
+          expect(part.body).to have_text(I18n.t("mailer.submission.title", form_name: form_name))
         end
 
         it "includes the form preview text" do

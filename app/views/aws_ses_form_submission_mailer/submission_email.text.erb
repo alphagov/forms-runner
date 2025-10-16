@@ -2,7 +2,7 @@
   <%= I18n.t("mailer.submission.preview") %>
 
 <% end %>
-<%= I18n.t("mailer.submission.title", title: @submission.form.name) %>
+<%= I18n.t("mailer.submission.title", form_name: @submission.form.name) %>
 
 <%= I18n.t("mailer.submission.time", time: @submission.submission_time.strftime("%l:%M%P").strip, date: @submission.submission_time.strftime("%-d %B %Y") ) %>
 

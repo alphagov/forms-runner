@@ -23,8 +23,8 @@ class AwsSesFormSubmissionMailer < ApplicationMailer
 private
 
   def email_subject
-    return I18n.t("mailer.submission.subject_preview", form_title: @submission.form.name, reference: @submission.reference) if @submission.preview?
+    return I18n.t("mailer.submission.subject_preview", form_name: @submission.form.name, reference: @submission.reference) if @submission.preview?
 
-    I18n.t("mailer.submission.subject", form_title: @submission.form.name, reference: @submission.reference)
+    I18n.t("mailer.submission.subject", form_name: @submission.form.name, reference: @submission.reference)
   end
 end
