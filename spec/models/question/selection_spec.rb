@@ -34,6 +34,13 @@ RSpec.describe Question::Selection, type: :model do
       it "returns a hash with an blank value for show_answer_in_csv" do
         expect(question.show_answer_in_csv).to eq(Hash[question_text, ""])
       end
+
+      it "returns a hash with blank values for show_answer_in_json" do
+        expect(question.show_answer_in_json).to eq({
+          "selections" => [],
+          "answer_text" => "",
+        })
+      end
     end
 
     context "when selection is blank" do
@@ -53,6 +60,13 @@ RSpec.describe Question::Selection, type: :model do
       it "returns a hash with an blank value for show_answer_in_csv" do
         expect(question.show_answer_in_csv).to eq(Hash[question_text, ""])
       end
+
+      it "returns a hash with blank values for show_answer_in_json" do
+        expect(question.show_answer_in_json).to eq({
+          "selections" => [],
+          "answer_text" => "",
+        })
+      end
     end
 
     context "when selection has a value" do
@@ -66,6 +80,13 @@ RSpec.describe Question::Selection, type: :model do
 
       it "shows the answer in show_answer_in_csv" do
         expect(question.show_answer_in_csv).to eq(Hash[question_text, "something"])
+      end
+
+      it "returns a hash for show_answer_in_json" do
+        expect(question.show_answer_in_json).to eq({
+          "selections" => %w[something],
+          "answer_text" => "something",
+        })
       end
     end
 
@@ -111,6 +132,13 @@ RSpec.describe Question::Selection, type: :model do
         it "returns a hash with an blank value for show_answer_in_csv" do
           expect(question.show_answer_in_csv).to eq(Hash[question_text, ""])
         end
+
+        it "returns a hash with blank values for show_answer_in_json" do
+          expect(question.show_answer_in_json).to eq({
+            "selections" => [],
+            "answer_text" => "",
+          })
+        end
       end
 
       it "returns valid with none of the above selected" do
@@ -140,6 +168,13 @@ RSpec.describe Question::Selection, type: :model do
 
         it "shows the answer in show_answer_in_csv" do
           expect(question.show_answer_in_csv).to eq(Hash[question_text, "something"])
+        end
+
+        it "returns a hash for show_answer_in_json" do
+          expect(question.show_answer_in_json).to eq({
+            "selections" => %w[something],
+            "answer_text" => "something",
+          })
         end
       end
     end
@@ -172,6 +207,12 @@ RSpec.describe Question::Selection, type: :model do
       it "returns a hash with an blank value for show_answer_in_csv" do
         expect(question.show_answer_in_csv).to eq(Hash[question_text, ""])
       end
+
+      it "returns a hash with blank values for show_answer_in_json" do
+        expect(question.show_answer_in_json).to eq({
+          "answer_text" => "",
+        })
+      end
     end
 
     context "when selection has a value" do
@@ -185,6 +226,12 @@ RSpec.describe Question::Selection, type: :model do
 
       it "shows the answer in show_answer_in_csv" do
         expect(question.show_answer_in_csv).to eq(Hash[question_text, "something"])
+      end
+
+      it "returns a hash for show_answer_in_json" do
+        expect(question.show_answer_in_json).to eq({
+          "answer_text" => "something",
+        })
       end
     end
 
@@ -230,6 +277,12 @@ RSpec.describe Question::Selection, type: :model do
         it "returns a hash with an blank value for show_answer_in_csv" do
           expect(question.show_answer_in_csv).to eq(Hash[question_text, ""])
         end
+
+        it "returns a hash with blank values for show_answer_in_json" do
+          expect(question.show_answer_in_json).to eq({
+            "answer_text" => "",
+          })
+        end
       end
 
       context "when selection has a value" do
@@ -243,6 +296,12 @@ RSpec.describe Question::Selection, type: :model do
 
         it "shows the answer in show_answer_in_csv" do
           expect(question.show_answer_in_csv).to eq(Hash[question_text, "something"])
+        end
+
+        it "returns a hash for show_answer_in_json" do
+          expect(question.show_answer_in_json).to eq({
+            "answer_text" => "something",
+          })
         end
       end
     end

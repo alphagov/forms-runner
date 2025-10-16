@@ -37,6 +37,17 @@ RSpec.describe Question::Address, type: :model do
       it "returns a hash with an blank value for show_answer_in_csv" do
         expect(question.show_answer_in_csv).to eq(Hash[question_text, ""])
       end
+
+      it "returns a hash with blank values for show_answer_in_json" do
+        expect(question.show_answer_in_json).to eq({
+          "address1" => "",
+          "address2" => "",
+          "town_or_city" => "",
+          "county" => "",
+          "postcode" => "",
+          "answer_text" => "",
+        })
+      end
     end
 
     context "when an address has all mandatory fields filled" do
@@ -58,6 +69,17 @@ RSpec.describe Question::Address, type: :model do
 
       it "returns the whole address as one item in show_answer_in_csv" do
         expect(question.show_answer_in_csv).to eq(Hash[question_text, "The mews, Leeds, LS1 1AF"])
+      end
+
+      it "returns a hash for show_answer_in_json" do
+        expect(question.show_answer_in_json).to eq({
+          "address1" => "The mews",
+          "address2" => "",
+          "town_or_city" => "Leeds",
+          "county" => "",
+          "postcode" => "LS1 1AF",
+          "answer_text" => "The mews, Leeds, LS1 1AF",
+        })
       end
     end
 
@@ -107,6 +129,17 @@ RSpec.describe Question::Address, type: :model do
         it "returns a hash with an blank value for show_answer_in_csv" do
           expect(question.show_answer_in_csv).to eq(Hash[question_text, ""])
         end
+
+        it "returns a hash with blank values for show_answer_in_json" do
+          expect(question.show_answer_in_json).to eq({
+            "address1" => "",
+            "address2" => "",
+            "town_or_city" => "",
+            "county" => "",
+            "postcode" => "",
+            "answer_text" => "",
+          })
+        end
       end
 
       context "when an address has all mandatory fields filled" do
@@ -128,6 +161,17 @@ RSpec.describe Question::Address, type: :model do
 
         it "returns the whole address as one item in show_answer_in_csv" do
           expect(question.show_answer_in_csv).to eq(Hash[question_text, "The mews, Leeds, LS1 1AF"])
+        end
+
+        it "returns a hash for show_answer_in_json" do
+          expect(question.show_answer_in_json).to eq({
+            "address1" => "The mews",
+            "address2" => "",
+            "town_or_city" => "Leeds",
+            "county" => "",
+            "postcode" => "LS1 1AF",
+            "answer_text" => "The mews, Leeds, LS1 1AF",
+          })
         end
       end
 
@@ -255,6 +299,14 @@ RSpec.describe Question::Address, type: :model do
         it "returns a hash with an blank value for show_answer_in_csv" do
           expect(question.show_answer_in_csv).to eq(Hash[question_text, ""])
         end
+
+        it "returns a hash with blank values for show_answer_in_json" do
+          expect(question.show_answer_in_json).to eq({
+            "street_address" => "",
+            "country" => "",
+            "answer_text" => "",
+          })
+        end
       end
 
       context "when an address has all mandatory fields filled" do
@@ -273,6 +325,14 @@ RSpec.describe Question::Address, type: :model do
 
         it "returns the whole address as one item in show_answer_in_csv" do
           expect(question.show_answer_in_csv).to eq(Hash[question_text, "Laskerstraße 5, 10245 Berlin, Germany"])
+        end
+
+        it "returns a hash for show_answer_in_json" do
+          expect(question.show_answer_in_json).to eq({
+            "street_address" => "Laskerstraße 5, 10245 Berlin",
+            "country" => "Germany",
+            "answer_text" => "Laskerstraße 5, 10245 Berlin, Germany",
+          })
         end
       end
     end

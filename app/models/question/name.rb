@@ -73,6 +73,28 @@ module Question
       header_values_hash
     end
 
+    def show_answer_in_json(...)
+      hash = {}
+
+      if needs_title?
+        hash["title"] = title.to_s
+      end
+
+      if is_full_name?
+        hash["full_name"] = full_name.to_s
+      else
+        hash["first_name"] = first_name.to_s
+        if include_middle_name?
+          hash["middle_names"] = middle_names.to_s
+        end
+        hash["last_name"] = last_name.to_s
+      end
+
+      hash["answer_text"] = show_answer
+
+      hash
+    end
+
     def has_blank_values?(attribute)
       send(attribute).blank?
     end
