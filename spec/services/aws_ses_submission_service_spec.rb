@@ -202,6 +202,47 @@ RSpec.describe AwsSesSubmissionService do
       end
     end
 
+    context "when the submission type is email_with_json" do
+      before do
+        form_document.submission_type = "email_with_json"
+      end
+
+      it "calls AwsSesFormSubmissionMailer passing in a JSON file" do
+        expect(AwsSesFormSubmissionMailer).to receive(:submission_email).with(
+          hash_including(
+            files: {
+              "govuk_forms_a_great_form_#{submission_reference}.json" => satisfy do |json|
+                JSON.parse(json)["form_name"] == "A great form"
+              end,
+            },
+          ),
+        ).and_call_original
+
+        service.submit
+      end
+    end
+
+    context "when the submission type is email_with_csv_and_json" do
+      before do
+        form_document.submission_type = "email_with_csv_and_json"
+      end
+
+      it "calls AwsSesFormSubmissionMailer passing in both a CSV and JSON file" do
+        allow(AwsSesFormSubmissionMailer).to receive(:submission_email).and_call_original
+
+        expect(AwsSesFormSubmissionMailer).to receive(:submission_email).with(
+          hash_including(
+            files: {
+              "govuk_forms_a_great_form_#{submission_reference}.json" => kind_of(String),
+              "govuk_forms_a_great_form_#{submission_reference}.csv" => kind_of(String),
+            },
+          ),
+        ).and_call_original
+
+        service.submit
+      end
+    end
+
     context "when form being submitted is from previewed form" do
       let(:is_preview) { true }
 
