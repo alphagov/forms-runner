@@ -176,15 +176,15 @@ RSpec.describe Question::Selection, type: :model do
 
     context "when selection has a value" do
       before do
-        question.selection = %w[something]
+        question.selection = "something"
       end
 
       it "shows the answer" do
-        expect(question.show_answer).to eq(%w[something])
+        expect(question.show_answer).to eq("something")
       end
 
       it "shows the answer in show_answer_in_csv" do
-        expect(question.show_answer_in_csv).to eq(Hash[question_text, %w[something]])
+        expect(question.show_answer_in_csv).to eq(Hash[question_text, "something"])
       end
     end
 
@@ -234,15 +234,15 @@ RSpec.describe Question::Selection, type: :model do
 
       context "when selection has a value" do
         before do
-          question.selection = %w[something]
+          question.selection = "something"
         end
 
         it "shows the answer" do
-          expect(question.show_answer).to eq(%w[something])
+          expect(question.show_answer).to eq("something")
         end
 
         it "shows the answer in show_answer_in_csv" do
-          expect(question.show_answer_in_csv).to eq(Hash[question_text, %w[something]])
+          expect(question.show_answer_in_csv).to eq(Hash[question_text, "something"])
         end
       end
     end
