@@ -63,8 +63,8 @@ FactoryBot.define do
 
     trait :with_name_settings do
       transient do
-        input_type { Forms::NameSettingsForm::INPUT_TYPES.sample }
-        title_needed { Forms::NameSettingsForm::TITLE_NEEDED.sample }
+        input_type { "full_name" }
+        title_needed { "true" }
       end
 
       answer_type { "name" }
