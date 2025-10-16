@@ -1,9 +1,6 @@
 require "csv"
 
 class CsvGenerator
-  CSV_EXTENSION = ".csv".freeze
-  CSV_FILENAME_PREFIX = "govuk_forms_".freeze
-
   def self.generate_submission(all_steps:, submission_reference:, timestamp:, is_s3_submission:)
     headers = [I18n.t("submission_csv.reference"), I18n.t("submission_csv.submitted_at")]
     values = [submission_reference, timestamp.iso8601]
@@ -17,16 +14,5 @@ class CsvGenerator
       csv << headers
       csv << values
     end
-  end
-
-  def self.csv_filename(form_name:, submission_reference:, max_length:)
-    reference_part = "_#{submission_reference}"
-
-    name_part_max_length = max_length - CSV_EXTENSION.length - CSV_FILENAME_PREFIX.length - reference_part.length
-
-    name_part = form_name
-      .parameterize(separator: "_")
-      .truncate(name_part_max_length, separator: "_", omission: "")
-    "#{CSV_FILENAME_PREFIX}#{name_part}#{reference_part}#{CSV_EXTENSION}"
   end
 end

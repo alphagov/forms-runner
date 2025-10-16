@@ -1,6 +1,4 @@
 class AwsSesSubmissionService
-  CSV_MAX_FILENAME_LENGTH = 100
-
   def initialize(submission:)
     @submission = submission
     @journey = submission.journey
@@ -81,8 +79,6 @@ private
   end
 
   def csv_filename
-    CsvGenerator.csv_filename(form_name: @form.name,
-                              submission_reference: @submission.reference,
-                              max_length: CSV_MAX_FILENAME_LENGTH)
+    SubmissionFilenameGenerator.csv_filename(form_name: @form.name, submission_reference: @submission.reference)
   end
 end
