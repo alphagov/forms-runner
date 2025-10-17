@@ -1,5 +1,5 @@
 class AwsSesSubmissionService
-  CSV_MAX_FILENAME_LENGTH = 100
+  include SubmissionFilenameGenerator
 
   def initialize(submission:)
     @submission = submission
@@ -17,30 +17,24 @@ class AwsSesSubmissionService
       return
     end
 
-    files_to_email = uploaded_files_in_answers
-
-    if @form.submission_type == "email_with_csv"
-      deliver_submission_email_with_csv_attachment(files_to_email)
-    else
-      deliver_submission_email(files_to_email)
-    end
+    deliver_submission_email
   end
 
 private
 
-  def deliver_submission_email_with_csv_attachment(files)
-    csv = CsvGenerator.generate_submission(
-      all_steps: @journey.all_steps,
-      submission_reference: @submission.reference,
-      timestamp: @submission.submission_time,
-      is_s3_submission: false,
-    )
+  def deliver_submission_email
+    files = uploaded_files_in_answers
 
-    files = files.merge({ csv_filename => csv })
-    deliver_submission_email(files, csv_filename)
-  end
+    csv_filename = nil
+    if %w[email_with_json email_with_csv_and_json].include?(@form.submission_type)
+      json_filename = generate_json_filename
+      files.merge!({ json_filename => generate_json_submission })
+    end
+    if %w[email_with_csv email_with_csv_and_json].include?(@form.submission_type)
+      csv_filename = generate_csv_filename
+      files.merge!({ csv_filename => generate_csv_submission })
+    end
 
-  def deliver_submission_email(files, csv_filename = nil)
     mail = AwsSesFormSubmissionMailer.submission_email(answer_content_html:,
                                                        answer_content_plain_text:,
                                                        submission: @submission,
@@ -49,6 +43,25 @@ private
 
     CurrentJobLoggingAttributes.mail_message_id = mail.message_id
     mail.message_id
+  end
+
+  def generate_csv_submission
+    CsvGenerator.generate_submission(
+      all_steps: @journey.all_steps,
+      submission_reference: @submission.reference,
+      timestamp: @submission.submission_time,
+      is_s3_submission: false,
+    )
+  end
+
+  def generate_json_submission
+    JsonSubmissionGenerator.generate_submission(
+      form: @form,
+      all_steps: @journey.all_steps,
+      submission_reference: @submission.reference,
+      timestamp: @submission.submission_time,
+      is_s3_submission: false,
+    )
   end
 
   def answer_content_html
@@ -80,9 +93,11 @@ private
     files
   end
 
-  def csv_filename
-    CsvGenerator.csv_filename(form_name: @form.name,
-                              submission_reference: @submission.reference,
-                              max_length: CSV_MAX_FILENAME_LENGTH)
+  def generate_csv_filename
+    SubmissionFilenameGenerator.csv_filename(form_name: @form.name, submission_reference: @submission.reference)
+  end
+
+  def generate_json_filename
+    SubmissionFilenameGenerator.json_filename(form_name: @form.name, submission_reference: @submission.reference)
   end
 end

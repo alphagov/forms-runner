@@ -36,6 +36,12 @@ RSpec.describe JsonSubmissionGenerator do
         }.not_to raise_error
       end
 
+      it "outputs pretty printed JSON" do
+        json_string = described_class.generate_submission(form:, all_steps:, submission_reference:, timestamp:, is_s3_submission:)
+        expect(json_string).to include("\n  \"form_name\":")
+        expect(json_string).to include("\n  \"answers\": [\n")
+      end
+
       it "generates the submission JSON" do
         expect(
           JSON.parse(described_class.generate_submission(form:, all_steps:, submission_reference:, timestamp:, is_s3_submission:)),
@@ -43,7 +49,7 @@ RSpec.describe JsonSubmissionGenerator do
           "form_id" => form.id.to_s,
           "form_name" => form.name,
           "submission_reference" => submission_reference,
-          "submitted_at" => timestamp.getutc.iso8601(3),
+          "submitted_at" => "2022-09-14T07:00:00.000Z",
           "answers" => [
             {
               "question_id" => first_step.id,
