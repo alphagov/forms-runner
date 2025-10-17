@@ -22,6 +22,18 @@ FactoryBot.define do
       answer_settings { DataStruct.new(input_type: "full_name", title_needed: with_title) }
     end
 
+    factory :first_and_last_name_question do
+      transient do
+        with_title { "false" }
+      end
+
+      title { with_title == "false" ? nil : Faker::Name.prefix }
+      first_name { Faker::Name.first_name }
+      last_name { Faker::Name.last_name }
+
+      answer_settings { DataStruct.new(input_type: "first_and_last_name", title_needed: with_title) }
+    end
+
     factory :first_middle_last_name_question do
       transient do
         with_title { "false" }

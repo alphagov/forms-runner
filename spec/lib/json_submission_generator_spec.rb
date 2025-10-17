@@ -1,0 +1,105 @@
+require "rails_helper"
+
+RSpec.describe JsonSubmissionGenerator do
+  let(:form) { build :form, id: 1 }
+  let(:text_question) { build :text, :with_answer, question_text: "What is the meaning of life?" }
+  let(:name_question) { build :first_and_last_name_question, question_text: "What is your name?" }
+  let(:file_question) { build :file, :with_uploaded_file, question_text: "Upload a file", original_filename: "test.txt" }
+  let(:address_question) { build :uk_address_question, question_text: "What is your address?" }
+  let(:selection_question) { build :multiple_selection_question, question_text: "Select your options" }
+  let(:first_step) { build :step, page: build(:page, :with_text_settings), question: text_question }
+  let(:second_step) { build :step, page: build(:page, answer_type: "name"), question: name_question }
+  let(:third_step) { build :step, page: build(:page, answer_type: "file"), question: file_question }
+  let(:fourth_step) { build :step, page: build(:page, :with_address_settings), question: address_question }
+  let(:fifth_step) { build :step, page: build(:page, :with_selections_settings), question: selection_question }
+  let(:all_steps) { [first_step, second_step, third_step, fourth_step, fifth_step] }
+  let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
+  let(:timestamp) do
+    Time.use_zone("London") { Time.zone.local(2022, 9, 14, 8, 0, 0) }
+  end
+
+  describe ".generate_submission" do
+    context "when the submission is being sent by email" do
+      let(:is_s3_submission) { false }
+
+      before do
+        file_question.populate_email_filename(submission_reference:)
+      end
+
+      it "returns a string" do
+        expect(described_class.generate_submission(form:, all_steps:, submission_reference:, timestamp:, is_s3_submission:)).to be_a(String)
+      end
+
+      it "returns JSON" do
+        expect {
+          JSON.parse(described_class.generate_submission(form:, all_steps:, submission_reference:, timestamp:, is_s3_submission:))
+        }.not_to raise_error
+      end
+
+      it "generates the submission JSON" do
+        expect(
+          JSON.parse(described_class.generate_submission(form:, all_steps:, submission_reference:, timestamp:, is_s3_submission:)),
+        ).to eq({
+          "form_id" => form.id.to_s,
+          "form_name" => form.name,
+          "submission_reference" => submission_reference,
+          "submitted_at" => timestamp.getutc.iso8601(3),
+          "answers" => [
+            {
+              "question_id" => first_step.id,
+              "question_text" => "What is the meaning of life?",
+              "answer_type" => "text",
+              "answer_text" => text_question.text,
+            },
+            {
+              "question_id" => second_step.id,
+              "question_text" => "What is your name?",
+              "answer_type" => "name",
+              "first_name" => name_question.first_name,
+              "last_name" => name_question.last_name,
+              "answer_text" => name_question.show_answer,
+            },
+            {
+              "question_id" => third_step.id,
+              "question_text" => "Upload a file",
+              "answer_type" => "file",
+              "answer_text" => "test_#{submission_reference}.txt",
+            },
+            {
+              "question_id" => fourth_step.id,
+              "question_text" => "What is your address?",
+              "answer_type" => "address",
+              "address1" => address_question.address1,
+              "address2" => "",
+              "town_or_city" => address_question.town_or_city,
+              "county" => address_question.county,
+              "postcode" => address_question.postcode,
+              "answer_text" => address_question.show_answer,
+            },
+            {
+              "question_id" => fifth_step.id,
+              "question_text" => "Select your options",
+              "answer_type" => "selection",
+              "selections" => ["Option 1", "Option 2"],
+              "answer_text" => "Option 1, Option 2",
+            },
+          ],
+        })
+      end
+
+      context "when the submission is being sent to an S3 bucket" do
+        let(:is_s3_submission) { true }
+
+        it "generates JSON without including the submission reference in the filename for the file upload question" do
+          json = JSON.parse(described_class.generate_submission(form:, all_steps:, submission_reference:, timestamp:, is_s3_submission:))
+          expect(json["answers"]).to include({
+            "question_id" => third_step.id,
+            "question_text" => "Upload a file",
+            "answer_type" => "file",
+            "answer_text" => "test.txt",
+          })
+        end
+      end
+    end
+  end
+end

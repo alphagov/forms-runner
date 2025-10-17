@@ -63,7 +63,7 @@ class Step
     question.errors.clear
   end
 
-  delegate :show_answer, :show_answer_in_email, :show_answer_in_csv, :question_text, :hint_text, :answer_settings, to: :question
+  delegate :show_answer, :show_answer_in_email, :show_answer_in_csv, :show_answer_in_json, :question_text, :hint_text, :answer_settings, to: :question
 
   def end_page?
     next_page_slug.nil?

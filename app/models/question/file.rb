@@ -52,11 +52,11 @@ module Question
     end
 
     def show_answer_in_csv(is_s3_submission)
-      return Hash[question_text, nil] if original_filename.blank?
+      { question_text => filename_for_submission(is_s3_submission) }
+    end
 
-      return { question_text => filename_for_s3_submission } if is_s3_submission
-
-      { question_text => email_filename }
+    def show_answer_in_json(is_s3_submission)
+      { "answer_text" => filename_for_submission(is_s3_submission).to_s }
     end
 
     def filename_for_s3_submission
@@ -115,6 +115,12 @@ module Question
     end
 
   private
+
+    def filename_for_submission(is_s3_submission)
+      return nil if original_filename.blank?
+
+      is_s3_submission ? filename_for_s3_submission : email_filename
+    end
 
     def validate_file_size
       if file.present? && file.size > FILE_UPLOAD_MAX_SIZE_IN_MB.megabytes
