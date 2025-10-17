@@ -4,7 +4,7 @@ class JsonSubmissionGenerator
       form_name: form.name,
       form_id: form.id.to_s,
       submission_reference:,
-      submitted_at: timestamp.getutc,
+      submitted_at: timestamp.getutc.iso8601(3),
       answers: all_steps.map do |step|
         {
           question_id: step.page_id,
@@ -14,6 +14,6 @@ class JsonSubmissionGenerator
         }
       end,
     }
-    submission.to_json
+    JSON.pretty_generate(submission)
   end
 end
