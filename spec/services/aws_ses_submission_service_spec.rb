@@ -227,15 +227,13 @@ RSpec.describe AwsSesSubmissionService do
         form_document.submission_type = "email_with_csv_and_json"
       end
 
-      it "calls AwsSesFormSubmissionMailer passing in both a CSV and JSON file" do
-        allow(AwsSesFormSubmissionMailer).to receive(:submission_email).and_call_original
+      it "calls AwsSesFormSubmissionMailer passing in both a CSV and JSON file in the expected order" do
+        json_filename = "govuk_forms_a_great_form_#{submission_reference}.json"
+        csv_filename = "govuk_forms_a_great_form_#{submission_reference}.csv"
 
         expect(AwsSesFormSubmissionMailer).to receive(:submission_email).with(
           hash_including(
-            files: {
-              "govuk_forms_a_great_form_#{submission_reference}.json" => kind_of(String),
-              "govuk_forms_a_great_form_#{submission_reference}.csv" => kind_of(String),
-            },
+            files: satisfy { |files| files.keys == [json_filename, csv_filename] },
           ),
         ).and_call_original
 
