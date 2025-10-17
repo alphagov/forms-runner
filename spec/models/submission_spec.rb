@@ -25,6 +25,34 @@ RSpec.describe Submission, type: :model do
     end
   end
 
+  describe "#submission_time" do
+    subject(:submission) { described_class.create!(created_at: created_at) }
+
+    context "with a time in BST" do
+      let(:created_at) { Time.utc(2022, 9, 14, 7, 0, 0) }
+
+      it "has BST timezone" do
+        expect(submission.submission_time.zone).to eq("BST")
+      end
+
+      it "returns the local time when stringified" do
+        expect(submission.submission_time.strftime("%-d %B %Y - %l:%M%P")).to eq("14 September 2022 -  8:00am")
+      end
+    end
+
+    context "with a time in GMT" do
+      let(:created_at) { Time.utc(2022, 12, 14, 13, 0, 0) }
+
+      it "has GMT timezone" do
+        expect(submission.submission_time.zone).to eq("GMT")
+      end
+
+      it "returns the local time when stringified" do
+        expect(submission.submission_time.strftime("%-d %B %Y - %l:%M%P")).to eq("14 December 2022 -  1:00pm")
+      end
+    end
+  end
+
   describe "delivery_status" do
     let(:submission) { create :submission }
 

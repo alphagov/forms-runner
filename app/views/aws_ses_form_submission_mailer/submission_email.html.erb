@@ -1,19 +1,19 @@
-<% if @mailer_options.is_preview %>
+<% if @submission.preview? %>
   <p>
     <%= I18n.t("mailer.submission.preview") %>
   </p>
 <% end %>
 
-<p><%= I18n.t("mailer.submission.title", title: @mailer_options.title) %></p>
+<p><%= I18n.t("mailer.submission.title", form_name: @submission.form.name) %></p>
 
 <p>
-  <%= I18n.t("mailer.submission.time", time: @mailer_options.timestamp.strftime("%l:%M%P").strip, date: @mailer_options.timestamp.strftime("%-d %B %Y") ) %>
+  <%= I18n.t("mailer.submission.time", time: @submission.submission_time.strftime("%l:%M%P").strip, date: @submission.submission_time.strftime("%-d %B %Y") ) %>
 </p>
 <p>
-  <%= I18n.t("mailer.submission.reference", submission_reference: @mailer_options.submission_reference) %>
+  <%= I18n.t("mailer.submission.reference", submission_reference: @submission.reference) %>
 </p>
 
-<% if @mailer_options.payment_url.present? %>
+<% if @submission.payment_url.present? %>
   <p>
     <%= I18n.t("mailer.submission.payment") %>
   </p>

@@ -1,18 +1,18 @@
 class AwsSesSubmissionService
   CSV_MAX_FILENAME_LENGTH = 100
 
-  def initialize(journey:, form:, mailer_options:)
-    @journey = journey
-    @form = form
-    @mailer_options = mailer_options
+  def initialize(submission:)
+    @submission = submission
+    @journey = submission.journey
+    @form = submission.form
   end
 
   def submit
-    if !@mailer_options.is_preview && @form.submission_email.blank?
+    if !@submission.preview? && @form.submission_email.blank?
       raise StandardError, "Form id(#{@form.id}) is missing a submission email address"
     end
 
-    if @form.submission_email.blank? && @mailer_options.is_preview
+    if @form.submission_email.blank? && @submission.preview?
       Rails.logger.info "Skipping sending submission email for preview submission, as the submission email address has not been set"
       return
     end
@@ -31,8 +31,8 @@ private
   def deliver_submission_email_with_csv_attachment(files)
     csv = CsvGenerator.generate_submission(
       all_steps: @journey.all_steps,
-      submission_reference: @mailer_options.submission_reference,
-      timestamp: @mailer_options.timestamp,
+      submission_reference: @submission.reference,
+      timestamp: @submission.submission_time,
       is_s3_submission: false,
     )
 
@@ -43,8 +43,7 @@ private
   def deliver_submission_email(files, csv_filename = nil)
     mail = AwsSesFormSubmissionMailer.submission_email(answer_content_html:,
                                                        answer_content_plain_text:,
-                                                       submission_email_address: @form.submission_email,
-                                                       mailer_options: @mailer_options,
+                                                       submission: @submission,
                                                        files:,
                                                        csv_filename:).deliver_now
 
@@ -69,7 +68,7 @@ private
       raise "One or more file answers are invalid:\n#{errors.inspect.indent(2)}"
     end
 
-    questions.each { it.populate_email_filename(submission_reference: @mailer_options.submission_reference) }
+    questions.each { it.populate_email_filename(submission_reference: @submission.reference) }
 
     files =
       questions
@@ -82,8 +81,8 @@ private
   end
 
   def csv_filename
-    CsvGenerator.csv_filename(form_title: @mailer_options.title,
-                              submission_reference: @mailer_options.submission_reference,
+    CsvGenerator.csv_filename(form_name: @form.name,
+                              submission_reference: @submission.reference,
                               max_length: CSV_MAX_FILENAME_LENGTH)
   end
 end
