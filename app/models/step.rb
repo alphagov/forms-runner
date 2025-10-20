@@ -63,7 +63,16 @@ class Step
     question.errors.clear
   end
 
-  delegate :show_answer, :show_answer_in_email, :show_answer_in_csv, :show_answer_in_json, :question_text, :hint_text, :answer_settings, to: :question
+  delegate :show_answer, :show_answer_in_email, :show_answer_in_csv, :question_text, :hint_text, :answer_settings, to: :question
+
+  def show_answer_in_json(is_s3_submission)
+    {
+      question_id: id,
+      question_text: question_text,
+      answer_type: page.answer_type,
+      **question.show_answer_in_json(is_s3_submission),
+    }
+  end
 
   def end_page?
     next_page_slug.nil?
