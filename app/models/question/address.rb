@@ -24,18 +24,18 @@ module Question
     def show_answer_in_json(*)
       if is_international_address?
         {
-          "street_address" => street_address.to_s,
-          "country" => country.to_s,
-          "answer_text" => show_answer,
+          street_address: street_address.to_s,
+          country: country.to_s,
+          answer_text: show_answer,
         }
       else
         {
-          "address1" => address1.to_s,
-          "address2" => address2.to_s,
-          "town_or_city" => town_or_city.to_s,
-          "county" => county.to_s,
-          "postcode" => postcode.to_s,
-          "answer_text" => show_answer,
+          address1: address1.to_s,
+          address2: address2.to_s,
+          town_or_city: town_or_city.to_s,
+          county: county.to_s,
+          postcode: postcode.to_s,
+          answer_text: show_answer,
         }
       end
     end

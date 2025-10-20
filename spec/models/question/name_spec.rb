@@ -49,8 +49,8 @@ RSpec.describe Question::Name, type: :model do
 
       it "returns the labelled individual parts in show_answer_in_json" do
         expect(question.show_answer_in_json).to eq({
-          "full_name" => "",
-          "answer_text" => "",
+          full_name: "",
+          answer_text: "",
         })
       end
     end
@@ -81,8 +81,8 @@ RSpec.describe Question::Name, type: :model do
 
       it "returns the labelled individual parts in show_answer_in_json" do
         expect(question.show_answer_in_json).to eq({
-          "full_name" => name,
-          "answer_text" => name,
+          full_name: name,
+          answer_text: name,
         })
       end
     end
@@ -133,9 +133,9 @@ RSpec.describe Question::Name, type: :model do
 
       it "returns a hash with blank fields show_answer_in_json" do
         expect(question.show_answer_in_json).to eq({
-          "first_name" => "",
-          "last_name" => "",
-          "answer_text" => "",
+          first_name: "",
+          last_name: "",
+          answer_text: "",
         })
       end
     end
@@ -167,9 +167,9 @@ RSpec.describe Question::Name, type: :model do
 
       it "returns a hash with blank fields for show_answer_in_json" do
         expect(question.show_answer_in_json).to eq({
-          "first_name" => "",
-          "last_name" => "",
-          "answer_text" => "",
+          first_name: "",
+          last_name: "",
+          answer_text: "",
         })
       end
     end
@@ -207,9 +207,9 @@ RSpec.describe Question::Name, type: :model do
 
       it "returns the labelled individual parts in show_answer_in_json" do
         expect(question.show_answer_in_json).to eq({
-          "first_name" => first_name,
-          "last_name" => last_name,
-          "answer_text" => name,
+          first_name: first_name,
+          last_name: last_name,
+          answer_text: name,
         })
       end
     end
@@ -271,10 +271,10 @@ RSpec.describe Question::Name, type: :model do
 
       it "returns a hash with blank fields for show_answer_in_json" do
         expect(question.show_answer_in_json).to eq({
-          "first_name" => "",
-          "middle_names" => "",
-          "last_name" => "",
-          "answer_text" => "",
+          first_name: "",
+          middle_names: "",
+          last_name: "",
+          answer_text: "",
         })
       end
     end
@@ -316,10 +316,10 @@ RSpec.describe Question::Name, type: :model do
 
       it "returns the labelled individual parts in show_answer_in_json" do
         expect(question.show_answer_in_json).to eq({
-          "first_name" => first_name,
-          "middle_names" => middle_name,
-          "last_name" => last_name,
-          "answer_text" => name,
+          first_name: first_name,
+          middle_names: middle_name,
+          last_name: last_name,
+          answer_text: name,
         })
       end
     end
@@ -389,9 +389,9 @@ RSpec.describe Question::Name, type: :model do
 
         it "returns a hash with a blank value for the title and the labelled individual parts for show_answer_in_json" do
           expect(question.show_answer_in_json).to eq({
-            "title" => "",
-            "full_name" => name,
-            "answer_text" => name,
+            title: "",
+            full_name: name,
+            answer_text: name,
           })
         end
       end
@@ -421,9 +421,9 @@ RSpec.describe Question::Name, type: :model do
 
         it "returns the labelled individual parts for show_answer_in_json" do
           expect(question.show_answer_in_json).to eq({
-            "title" => title,
-            "full_name" => name,
-            "answer_text" => "#{title} #{name}",
+            title: title,
+            full_name: name,
+            answer_text: "#{title} #{name}",
           })
         end
       end
@@ -465,10 +465,10 @@ RSpec.describe Question::Name, type: :model do
 
         it "returns the labelled individual parts for show_answer_in_json" do
           expect(question.show_answer_in_json).to eq({
-            "title" => "",
-            "first_name" => first_name,
-            "last_name" => last_name,
-            "answer_text" => "#{first_name} #{last_name}",
+            title: "",
+            first_name: first_name,
+            last_name: last_name,
+            answer_text: "#{first_name} #{last_name}",
           })
         end
       end
@@ -500,10 +500,10 @@ RSpec.describe Question::Name, type: :model do
 
         it "returns the labelled individual parts for show_answer_in_json" do
           expect(question.show_answer_in_json).to eq({
-            "title" => title,
-            "first_name" => first_name,
-            "last_name" => last_name,
-            "answer_text" => "#{title} #{first_name} #{last_name}",
+            title: title,
+            first_name: first_name,
+            last_name: last_name,
+            answer_text: "#{title} #{first_name} #{last_name}",
           })
         end
 
@@ -550,11 +550,11 @@ RSpec.describe Question::Name, type: :model do
 
         it "returns the labelled individual parts for show_answer_in_json" do
           expect(question.show_answer_in_json).to eq({
-            "title" => "",
-            "first_name" => first_name,
-            "middle_names" => middle_name,
-            "last_name" => last_name,
-            "answer_text" => "#{first_name} #{middle_name} #{last_name}",
+            title: "",
+            first_name: first_name,
+            middle_names: middle_name,
+            last_name: last_name,
+            answer_text: "#{first_name} #{middle_name} #{last_name}",
           })
         end
       end
@@ -588,11 +588,11 @@ RSpec.describe Question::Name, type: :model do
 
         it "returns the labelled individual parts for show_answer_in_json" do
           expect(question.show_answer_in_json).to eq({
-            "title" => title,
-            "first_name" => first_name,
-            "middle_names" => middle_name,
-            "last_name" => last_name,
-            "answer_text" => "#{title} #{first_name} #{middle_name} #{last_name}",
+            title: title,
+            first_name: first_name,
+            middle_names: middle_name,
+            last_name: last_name,
+            answer_text: "#{title} #{first_name} #{middle_name} #{last_name}",
           })
         end
 

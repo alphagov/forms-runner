@@ -97,6 +97,19 @@ class RepeatableStep < Step
     end
   end
 
+  def show_answer_in_json(is_s3_submission)
+    return nil if questions.blank?
+
+    questions.map do |question|
+      {
+        question_id: page&.id,
+        question_text: question.question_text,
+        answer_type: page.answer_type,
+        **question.show_answer_in_json(is_s3_submission),
+      }
+    end
+  end
+
   def remove_answer(answer_index)
     questions.delete_at(answer_index - 1)
     if questions.empty?

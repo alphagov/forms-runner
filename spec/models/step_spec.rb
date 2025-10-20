@@ -348,6 +348,32 @@ RSpec.describe Step do
     it_behaves_like "delegates to question", :answer_settings
   end
 
+  describe "#show_answer_in_json" do
+    let(:question) { build :first_and_last_name_question }
+    let(:page) { build(:page, :with_name_settings, id: 2) }
+    let(:is_s3_submission) { false }
+
+    it "returns a hash containing question and answer details" do
+      expect(step.show_answer_in_json(is_s3_submission)).to eq({
+        question_id: page.id,
+        question_text: question.question_text,
+        answer_type: "name",
+        first_name: question.first_name,
+        last_name: question.last_name,
+        answer_text: question.show_answer,
+      })
+    end
+
+    [true, false].each do |is_s3_submission|
+      context "when is_s3_submission is #{is_s3_submission}" do
+        it "passes is_s3_submission argument to the question" do
+          expect(question).to receive(:show_answer_in_json).with(is_s3_submission).and_call_original
+          step.show_answer_in_json(is_s3_submission)
+        end
+      end
+    end
+  end
+
   describe "#conditions_with_goto_errors" do
     let(:cannot_have_goto_page_before_routing_page_error) { OpenStruct.new(name: "cannot_have_goto_page_before_routing_page") }
     let(:goto_page_doesnt_exist_error) { OpenStruct.new(name: "goto_page_doesnt_exist") }

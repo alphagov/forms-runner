@@ -5,14 +5,7 @@ class JsonSubmissionGenerator
       form_id: form.id.to_s,
       submission_reference:,
       submitted_at: timestamp.getutc.iso8601(3),
-      answers: all_steps.map do |step|
-        {
-          question_id: step.page_id,
-          question_text: step.question_text,
-          answer_type: step.page.answer_type,
-          **step.show_answer_in_json(is_s3_submission),
-        }
-      end,
+      answers: all_steps.flat_map { |step| step.show_answer_in_json(is_s3_submission) },
     }
     JSON.pretty_generate(submission)
   end

@@ -7,12 +7,12 @@ RSpec.describe JsonSubmissionGenerator do
   let(:file_question) { build :file, :with_uploaded_file, question_text: "Upload a file", original_filename: "test.txt" }
   let(:address_question) { build :uk_address_question, question_text: "What is your address?" }
   let(:selection_question) { build :multiple_selection_question, question_text: "Select your options" }
-  let(:first_step) { build :step, page: build(:page, :with_text_settings), question: text_question }
-  let(:second_step) { build :step, page: build(:page, answer_type: "name"), question: name_question }
-  let(:third_step) { build :step, page: build(:page, answer_type: "file"), question: file_question }
-  let(:fourth_step) { build :step, page: build(:page, :with_address_settings), question: address_question }
-  let(:fifth_step) { build :step, page: build(:page, :with_selections_settings), question: selection_question }
-  let(:all_steps) { [first_step, second_step, third_step, fourth_step, fifth_step] }
+  let(:text_step) { build :step, page: build(:page, :with_text_settings), question: text_question }
+  let(:name_step) { build :step, page: build(:page, answer_type: "name"), question: name_question }
+  let(:file_step) { build :step, page: build(:page, answer_type: "file"), question: file_question }
+  let(:address_step) { build :step, page: build(:page, :with_address_settings), question: address_question }
+  let(:selection_step) { build :step, page: build(:page, :with_selections_settings), question: selection_question }
+  let(:all_steps) { [text_step, name_step, file_step, address_step, selection_step] }
   let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
   let(:timestamp) do
     Time.use_zone("London") { Time.zone.local(2022, 9, 14, 8, 0, 0) }
@@ -52,13 +52,13 @@ RSpec.describe JsonSubmissionGenerator do
           "submitted_at" => "2022-09-14T07:00:00.000Z",
           "answers" => [
             {
-              "question_id" => first_step.id,
+              "question_id" => text_step.page.id,
               "question_text" => "What is the meaning of life?",
               "answer_type" => "text",
               "answer_text" => text_question.text,
             },
             {
-              "question_id" => second_step.id,
+              "question_id" => name_step.page.id,
               "question_text" => "What is your name?",
               "answer_type" => "name",
               "first_name" => name_question.first_name,
@@ -66,13 +66,13 @@ RSpec.describe JsonSubmissionGenerator do
               "answer_text" => name_question.show_answer,
             },
             {
-              "question_id" => third_step.id,
+              "question_id" => file_step.page.id,
               "question_text" => "Upload a file",
               "answer_type" => "file",
               "answer_text" => "test_#{submission_reference}.txt",
             },
             {
-              "question_id" => fourth_step.id,
+              "question_id" => address_step.page.id,
               "question_text" => "What is your address?",
               "answer_type" => "address",
               "address1" => address_question.address1,
@@ -83,7 +83,7 @@ RSpec.describe JsonSubmissionGenerator do
               "answer_text" => address_question.show_answer,
             },
             {
-              "question_id" => fifth_step.id,
+              "question_id" => selection_step.page.id,
               "question_text" => "Select your options",
               "answer_type" => "selection",
               "selections" => ["Option 1", "Option 2"],
@@ -93,18 +93,60 @@ RSpec.describe JsonSubmissionGenerator do
         })
       end
 
-      context "when the submission is being sent to an S3 bucket" do
-        let(:is_s3_submission) { true }
+      context "when there is a repeatable question" do
+        let(:question_text) { "What is the meaning of life?" }
+        let(:page) { build(:page, :with_text_settings, :with_repeatable, question_text:) }
+        let(:first_answer) { build :text, question_text:, text: "dunno" }
+        let(:second_answer) { build :text, question_text:, text: "42" }
+        let(:repeatable_step) { build :repeatable_step, page:, questions: [first_answer, second_answer] }
+        let(:all_steps) { [repeatable_step, name_step] }
 
-        it "generates JSON without including the submission reference in the filename for the file upload question" do
-          json = JSON.parse(described_class.generate_submission(form:, all_steps:, submission_reference:, timestamp:, is_s3_submission:))
-          expect(json["answers"]).to include({
-            "question_id" => third_step.id,
-            "question_text" => "Upload a file",
-            "answer_type" => "file",
-            "answer_text" => "test.txt",
+        it "includes an entry for each answer in the JSON" do
+          expect(
+            JSON.parse(described_class.generate_submission(form:, all_steps:, submission_reference:, timestamp:, is_s3_submission:)),
+          ).to eq({
+            "form_id" => form.id.to_s,
+            "form_name" => form.name,
+            "submission_reference" => submission_reference,
+            "submitted_at" => "2022-09-14T07:00:00.000Z",
+            "answers" => [
+              {
+                "question_id" => repeatable_step.page.id,
+                "question_text" => "What is the meaning of life?",
+                "answer_type" => "text",
+                "answer_text" => first_answer.text,
+              },
+              {
+                "question_id" => repeatable_step.page.id,
+                "question_text" => "What is the meaning of life?",
+                "answer_type" => "text",
+                "answer_text" => second_answer.text,
+              },
+              {
+                "question_id" => name_step.page.id,
+                "question_text" => "What is your name?",
+                "answer_type" => "name",
+                "first_name" => name_question.first_name,
+                "last_name" => name_question.last_name,
+                "answer_text" => name_question.show_answer,
+              },
+            ],
           })
         end
+      end
+    end
+
+    context "when the submission is being sent to an S3 bucket" do
+      let(:is_s3_submission) { true }
+
+      it "generates JSON without including the submission reference in the filename for the file upload question" do
+        json = JSON.parse(described_class.generate_submission(form:, all_steps:, submission_reference:, timestamp:, is_s3_submission:))
+        expect(json["answers"]).to include({
+          "question_id" => file_step.page.id,
+          "question_text" => "Upload a file",
+          "answer_type" => "file",
+          "answer_text" => "test.txt",
+        })
       end
     end
   end

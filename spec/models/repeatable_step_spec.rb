@@ -204,6 +204,64 @@ RSpec.describe RepeatableStep, type: :model do
     end
   end
 
+  describe "#show_answer_in_json" do
+    context "when the step has multiple answers" do
+      let(:page) { build(:page, :with_name_settings, id: 2) }
+      let(:questions) { [first_question, second_question] }
+      let(:first_question) { build :first_and_last_name_question, question_text: page.question_text }
+      let(:second_question) { build :first_and_last_name_question, question_text: page.question_text }
+
+      before { repeatable_step.questions = questions }
+
+      it "returns an array containing a hash per answer" do
+        expect(repeatable_step.show_answer_in_json(false)).to eq([
+          {
+            question_id: page.id,
+            question_text: page.question_text,
+            answer_type: "name",
+            first_name: first_question.first_name,
+            last_name: first_question.last_name,
+            answer_text: first_question.show_answer,
+          },
+          {
+            question_id: page.id,
+            question_text: page.question_text,
+            answer_type: "name",
+            first_name: second_question.first_name,
+            last_name: second_question.last_name,
+            answer_text: second_question.show_answer,
+          },
+        ])
+      end
+
+      [true, false].each do |is_s3_submission|
+        context "when is_s3_submission is #{is_s3_submission}" do
+          it "passes is_s3_submission argument to the question" do
+            expect(first_question).to receive(:show_answer_in_json).with(is_s3_submission).and_call_original
+            expect(second_question).to receive(:show_answer_in_json).with(is_s3_submission).and_call_original
+            repeatable_step.show_answer_in_json(is_s3_submission)
+          end
+        end
+      end
+    end
+
+    context "when the question is optional and has no answers" do
+      let(:page) { build(:page, :with_text_settings, id: 2) }
+      let(:question) { build :text, question_text: page.question_text }
+
+      it "returns an array with a single entry with a blank answer" do
+        expect(repeatable_step.show_answer_in_json(false)).to eq([
+          {
+            question_id: page.id,
+            question_text: page.question_text,
+            answer_type: "text",
+            answer_text: "",
+          },
+        ])
+      end
+    end
+  end
+
   describe "#remove_answer" do
     let(:questions) { [first_question, second_question] }
     let(:first_question) { OpenStruct.new({ show_answer_in_email: "first answer" }) }

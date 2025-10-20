@@ -56,7 +56,7 @@ module Question
     end
 
     def show_answer_in_json(is_s3_submission)
-      { "answer_text" => filename_for_submission(is_s3_submission).to_s }
+      { answer_text: filename_for_submission(is_s3_submission).to_s }
     end
 
     def filename_for_s3_submission
