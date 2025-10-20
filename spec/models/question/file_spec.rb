@@ -229,7 +229,7 @@ RSpec.describe Question::File, type: :model do
       let(:original_filename) { nil }
 
       it "returns a hash with a blank value" do
-        expect(question.show_answer_in_json(false)).to eq({ "answer_text" => "" })
+        expect(question.show_answer_in_json(false)).to eq({ answer_text: "" })
       end
     end
 
@@ -238,13 +238,13 @@ RSpec.describe Question::File, type: :model do
         let(:original_filename) { Faker::File.file_name(dir: "", directory_separator: "") }
 
         it "returns a hash with the email_filename" do
-          expect(question.show_answer_in_json(false)).to eq({ "answer_text" => question.email_filename })
+          expect(question.show_answer_in_json(false)).to eq({ answer_text: question.email_filename })
         end
       end
 
       context "when is_s3_submission is true" do
         it "returns a hash with the filename_for_s3_submission" do
-          expect(question.show_answer_in_json(true)).to eq({ "answer_text" => question.filename_for_s3_submission })
+          expect(question.show_answer_in_json(true)).to eq({ answer_text: question.filename_for_s3_submission })
         end
       end
     end

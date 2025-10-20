@@ -37,8 +37,8 @@ RSpec.describe Question::Selection, type: :model do
 
       it "returns a hash with blank values for show_answer_in_json" do
         expect(question.show_answer_in_json).to eq({
-          "selections" => [],
-          "answer_text" => "",
+          selections: [],
+          answer_text: "",
         })
       end
     end
@@ -63,8 +63,8 @@ RSpec.describe Question::Selection, type: :model do
 
       it "returns a hash with blank values for show_answer_in_json" do
         expect(question.show_answer_in_json).to eq({
-          "selections" => [],
-          "answer_text" => "",
+          selections: [],
+          answer_text: "",
         })
       end
     end
@@ -84,8 +84,8 @@ RSpec.describe Question::Selection, type: :model do
 
       it "returns a hash for show_answer_in_json" do
         expect(question.show_answer_in_json).to eq({
-          "selections" => %w[something],
-          "answer_text" => "something",
+          selections: %w[something],
+          answer_text: "something",
         })
       end
     end
@@ -135,8 +135,8 @@ RSpec.describe Question::Selection, type: :model do
 
         it "returns a hash with blank values for show_answer_in_json" do
           expect(question.show_answer_in_json).to eq({
-            "selections" => [],
-            "answer_text" => "",
+            selections: [],
+            answer_text: "",
           })
         end
       end
@@ -172,8 +172,8 @@ RSpec.describe Question::Selection, type: :model do
 
         it "returns a hash for show_answer_in_json" do
           expect(question.show_answer_in_json).to eq({
-            "selections" => %w[something],
-            "answer_text" => "something",
+            selections: %w[something],
+            answer_text: "something",
           })
         end
       end
@@ -210,7 +210,7 @@ RSpec.describe Question::Selection, type: :model do
 
       it "returns a hash with blank values for show_answer_in_json" do
         expect(question.show_answer_in_json).to eq({
-          "answer_text" => "",
+          answer_text: "",
         })
       end
     end
@@ -230,7 +230,7 @@ RSpec.describe Question::Selection, type: :model do
 
       it "returns a hash for show_answer_in_json" do
         expect(question.show_answer_in_json).to eq({
-          "answer_text" => "something",
+          answer_text: "something",
         })
       end
     end
@@ -280,7 +280,7 @@ RSpec.describe Question::Selection, type: :model do
 
         it "returns a hash with blank values for show_answer_in_json" do
           expect(question.show_answer_in_json).to eq({
-            "answer_text" => "",
+            answer_text: "",
           })
         end
       end
@@ -300,7 +300,7 @@ RSpec.describe Question::Selection, type: :model do
 
         it "returns a hash for show_answer_in_json" do
           expect(question.show_answer_in_json).to eq({
-            "answer_text" => "something",
+            answer_text: "something",
           })
         end
       end
