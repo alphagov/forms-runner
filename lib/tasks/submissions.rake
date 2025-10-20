@@ -200,7 +200,7 @@ namespace :submissions do
         question = submission.form.page_by_id(question_id)
         extension = ::File.extname(answer["uploaded_file_key"])
         filename = "#{question.position}-#{question.question_text.parameterize}#{extension}"
-        filename = FilenameService.to_email_attachment(filename, submission_reference: submission.reference, suffix: answer["filename_suffix"])
+        filename = FileUploadFilenameGenerator.to_email_attachment(filename, submission_reference: submission.reference, suffix: answer["filename_suffix"])
         answer["email_filename"] = filename
       end
 

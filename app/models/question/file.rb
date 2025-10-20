@@ -60,17 +60,17 @@ module Question
     end
 
     def filename_for_s3_submission
-      FilenameService.to_s3_submission(original_filename, suffix: filename_suffix)
+      FileUploadFilenameGenerator.to_s3_submission(original_filename, suffix: filename_suffix)
     end
 
     def filename_after_reference_truncation
-      FilenameService.truncate_for_reference(original_filename)
+      FileUploadFilenameGenerator.truncate_for_reference(original_filename)
     end
 
     def populate_email_filename(submission_reference:)
       return if original_filename.blank?
 
-      self.email_filename = FilenameService.to_email_attachment(original_filename, submission_reference:, suffix: filename_suffix)
+      self.email_filename = FileUploadFilenameGenerator.to_email_attachment(original_filename, submission_reference:, suffix: filename_suffix)
     end
 
     def before_save
