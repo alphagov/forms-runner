@@ -102,7 +102,7 @@ class RepeatableStep < Step
 
     questions.map do |question|
       {
-        question_id: id,
+        question_id: page&.id,
         question_text: question.question_text,
         answer_type: page.answer_type,
         **question.show_answer_in_json(is_s3_submission),

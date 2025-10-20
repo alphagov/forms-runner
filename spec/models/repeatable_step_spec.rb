@@ -216,7 +216,7 @@ RSpec.describe RepeatableStep, type: :model do
       it "returns an array containing a hash per answer" do
         expect(repeatable_step.show_answer_in_json(false)).to eq([
           {
-            question_id: repeatable_step.id,
+            question_id: page.id,
             question_text: page.question_text,
             answer_type: "name",
             first_name: first_question.first_name,
@@ -224,7 +224,7 @@ RSpec.describe RepeatableStep, type: :model do
             answer_text: first_question.show_answer,
           },
           {
-            question_id: repeatable_step.id,
+            question_id: page.id,
             question_text: page.question_text,
             answer_type: "name",
             first_name: second_question.first_name,
@@ -252,7 +252,7 @@ RSpec.describe RepeatableStep, type: :model do
       it "returns an array with a single entry with a blank answer" do
         expect(repeatable_step.show_answer_in_json(false)).to eq([
           {
-            question_id: repeatable_step.id,
+            question_id: page.id,
             question_text: page.question_text,
             answer_type: "text",
             answer_text: "",

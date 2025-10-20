@@ -355,7 +355,7 @@ RSpec.describe Step do
 
     it "returns a hash containing question and answer details" do
       expect(step.show_answer_in_json(is_s3_submission)).to eq({
-        question_id: step.id,
+        question_id: page.id,
         question_text: question.question_text,
         answer_type: "name",
         first_name: question.first_name,
