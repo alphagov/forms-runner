@@ -1,4 +1,4 @@
-class FilenameService
+class FileUploadFilenameGenerator
   FILE_MAX_FILENAME_LENGTH = 100
 
   class << self

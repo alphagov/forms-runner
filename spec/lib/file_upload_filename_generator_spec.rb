@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe FilenameService do
+RSpec.describe FileUploadFilenameGenerator do
   subject(:service) { described_class }
 
   describe ".sanitize" do
