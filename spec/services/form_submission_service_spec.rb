@@ -95,35 +95,37 @@ RSpec.describe FormSubmissionService do
     end
 
     describe "submitting the form to the processing team" do
-      context "when the submission type is s3" do
-        let(:submission_type) { "s3" }
-        let(:s3_submission_service_spy) { instance_double(S3SubmissionService) }
+      %w[s3 s3_with_json].each do |type|
+        context "when the submission type is #{type}" do
+          let(:submission_type) { type }
+          let(:s3_submission_service_spy) { instance_double(S3SubmissionService) }
 
-        before do
-          allow(S3SubmissionService).to receive(:new).and_return(s3_submission_service_spy)
-          allow(s3_submission_service_spy).to receive("submit")
-        end
-
-        it "creates a S3SubmissionService instance" do
-          freeze_time do
-            service.submit
-
-            expect(S3SubmissionService).to have_received(:new).with(
-              journey:,
-              form:,
-              timestamp: Time.zone.now,
-              submission_reference: reference,
-              is_preview: mode.preview?,
-            ).once
+          before do
+            allow(S3SubmissionService).to receive(:new).and_return(s3_submission_service_spy)
+            allow(s3_submission_service_spy).to receive("submit")
           end
-        end
 
-        it "calls upload_submission_csv_to_s3" do
-          service.submit
-          expect(s3_submission_service_spy).to have_received(:submit)
-        end
+          it "creates a S3SubmissionService instance" do
+            freeze_time do
+              service.submit
 
-        include_examples "logging"
+              expect(S3SubmissionService).to have_received(:new).with(
+                journey:,
+                form:,
+                timestamp: Time.zone.now,
+                submission_reference: reference,
+                is_preview: mode.preview?,
+              ).once
+            end
+          end
+
+          it "calls upload_submission_csv_to_s3" do
+            service.submit
+            expect(s3_submission_service_spy).to have_received(:submit)
+          end
+
+          include_examples "logging"
+        end
       end
 
       shared_examples "submits via AWS SES" do

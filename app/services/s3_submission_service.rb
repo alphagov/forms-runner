@@ -21,18 +21,41 @@ class S3SubmissionService
     # file arrives and the referenced files will already be present
     copy_uploaded_files_to_bucket
 
-    csv = CsvGenerator.generate_submission(
-      all_steps: @journey.all_steps,
-      submission_reference: @submission_reference,
-      timestamp: @timestamp,
-      is_s3_submission: true,
-    )
-    upload_submission_csv_to_s3(csv)
+    submission_content, key =
+      case @form.submission_type
+      when "s3"
+        [generate_csv_submission, generate_key("form_submission.csv")]
+      when "s3_with_json"
+        [generate_json_submission, generate_key("form_submission.json")]
+      else
+        raise StandardError, "Unsupported submission type: #{@form.submission_type}"
+      end
+
+    upload_submission_to_s3(submission_content, key)
 
     delete_uploaded_files_from_our_bucket
   end
 
 private
+
+  def generate_csv_submission
+    CsvGenerator.generate_submission(
+      all_steps: @journey.all_steps,
+      submission_reference: @submission_reference,
+      timestamp: @timestamp,
+      is_s3_submission: true,
+    )
+  end
+
+  def generate_json_submission
+    JsonSubmissionGenerator.generate_submission(
+      form: @form,
+      all_steps: @journey.all_steps,
+      submission_reference: @submission_reference,
+      timestamp: @timestamp,
+      is_s3_submission: true,
+    )
+  end
 
   def copy_uploaded_files_to_bucket
     @journey.completed_file_upload_questions.each(&method(:copy_file_to_bucket))
@@ -58,10 +81,9 @@ private
     @journey.completed_file_upload_questions.each(&:delete_from_s3)
   end
 
-  def upload_submission_csv_to_s3(csv)
-    key = csv_submission_key
+  def upload_submission_to_s3(submission_content, key)
     s3_client.put_object({
-      body: csv,
+      body: submission_content,
       bucket: @form.s3_bucket_name,
       expected_bucket_owner: @form.s3_bucket_aws_account_id,
       key: key,
@@ -88,10 +110,6 @@ private
     )
     Rails.logger.info "Assumed S3 role", { role_session_name: }
     credentials
-  end
-
-  def csv_submission_key
-    generate_key("form_submission.csv")
   end
 
   def uploaded_file_target_key(file)
