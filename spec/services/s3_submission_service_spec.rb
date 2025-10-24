@@ -8,10 +8,12 @@ RSpec.describe S3SubmissionService do
   let(:form) do
     build(:form,
           id: 42,
+          submission_type:,
           s3_bucket_name:,
           s3_bucket_aws_account_id:,
           s3_bucket_region:)
   end
+  let(:submission_type) { "s3" }
   let(:s3_bucket_name) { "a-bucket" }
   let(:s3_bucket_aws_account_id) { "23423423423423" }
   let(:s3_bucket_region) { "eu-west-1" }
@@ -58,19 +60,39 @@ RSpec.describe S3SubmissionService do
         service.submit
       end
 
-      it "calls put_object for CSV file" do
-        expected_key_name = "form_submissions/#{form.id}/#{expected_timestamp}_#{submission_reference}/form_submission.csv"
-        expected_csv_content = "Reference,Submitted at,What is the meaning of life?\n#{submission_reference},2022-09-14T08:24:34+01:00,42\n"
-        expect(mock_s3_client).to receive(:put_object).with(
-          {
-            body: expected_csv_content,
-            bucket: s3_bucket_name,
-            expected_bucket_owner: s3_bucket_aws_account_id,
-            key: expected_key_name,
-          },
-        )
+      context "when the submission format is CSV" do
+        it "calls put_object with a CSV file and filename" do
+          expected_key_name = "form_submissions/#{form.id}/#{expected_timestamp}_#{submission_reference}/form_submission.csv"
+          expected_csv_content = "Reference,Submitted at,What is the meaning of life?\n#{submission_reference},2022-09-14T08:24:34+01:00,42\n"
+          expect(mock_s3_client).to receive(:put_object).with(
+            {
+              body: expected_csv_content,
+              bucket: s3_bucket_name,
+              expected_bucket_owner: s3_bucket_aws_account_id,
+              key: expected_key_name,
+            },
+          )
 
-        service.submit
+          service.submit
+        end
+      end
+
+      context "when the submission format is JSON" do
+        let(:submission_type) { "s3_with_json" }
+
+        it "calls put_object with a JSON file and filename" do
+          expected_key_name = "form_submissions/#{form.id}/#{expected_timestamp}_#{submission_reference}/form_submission.json"
+          expect(mock_s3_client).to receive(:put_object).with(
+            {
+              body: satisfy { |value| JSON.parse(value)["form_name"] == form.name },
+              bucket: s3_bucket_name,
+              expected_bucket_owner: s3_bucket_aws_account_id,
+              key: expected_key_name,
+            },
+          )
+
+          service.submit
+        end
       end
 
       context "when the form has answered file upload questions" do
@@ -84,20 +106,43 @@ RSpec.describe S3SubmissionService do
           ]
         end
 
-        it "creates the CSV file with the expected filenames" do
-          expected_key_name = "form_submissions/#{form.id}/#{expected_timestamp}_#{submission_reference}/form_submission.csv"
-          expected_csv_content = "Reference,Submitted at,#{first_file_upload_question.question_text},#{second_file_upload_question.question_text}\n" \
-            "#{submission_reference},2022-09-14T08:24:34+01:00,file.txt,file_1.txt\n"
-          expect(mock_s3_client).to receive(:put_object).with(
-            {
-              body: expected_csv_content,
-              bucket: s3_bucket_name,
-              expected_bucket_owner: s3_bucket_aws_account_id,
-              key: expected_key_name,
-            },
-          )
+        context "when the submission format is CSV" do
+          it "creates the CSV file with the expected filenames" do
+            expected_key_name = "form_submissions/#{form.id}/#{expected_timestamp}_#{submission_reference}/form_submission.csv"
+            expected_csv_content = "Reference,Submitted at,#{first_file_upload_question.question_text},#{second_file_upload_question.question_text}\n" \
+              "#{submission_reference},2022-09-14T08:24:34+01:00,file.txt,file_1.txt\n"
+            expect(mock_s3_client).to receive(:put_object).with(
+              {
+                body: expected_csv_content,
+                bucket: s3_bucket_name,
+                expected_bucket_owner: s3_bucket_aws_account_id,
+                key: expected_key_name,
+              },
+            )
 
-          service.submit
+            service.submit
+          end
+        end
+
+        context "when the submission format is JSON" do
+          let(:submission_type) { "s3_with_json" }
+
+          it "creates the JSON file with the expected filenames" do
+            expected_key_name = "form_submissions/#{form.id}/#{expected_timestamp}_#{submission_reference}/form_submission.json"
+            expect(mock_s3_client).to receive(:put_object).with(
+              {
+                body: satisfy do |value|
+                  json = JSON.parse(value)
+                  json["answers"][0]["answer_text"] == "file.txt" && json["answers"][1]["answer_text"] == "file_1.txt"
+                end,
+                bucket: s3_bucket_name,
+                expected_bucket_owner: s3_bucket_aws_account_id,
+                key: expected_key_name,
+              },
+            )
+
+            service.submit
+          end
         end
 
         it "copies the file objects to the submission S3 bucket" do
