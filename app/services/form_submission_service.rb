@@ -40,7 +40,7 @@ private
 
   def deliver_submission
     case @form.submission_type
-    when "s3"
+    when "s3", "s3_with_json"
       deliver_submission_via_s3
     else
       deliver_submission_via_email
