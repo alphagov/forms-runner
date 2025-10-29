@@ -39,11 +39,13 @@ private
   end
 
   def deliver_submission
-    case @form.submission_type
-    when "s3", "s3_with_json"
+    case @form.submission_method
+    when :s3
       deliver_submission_via_s3
-    else
+    when :email
       deliver_submission_via_email
+    else
+      raise "unrecognized submission delivery method #{@form.submission_method.inspect}"
     end
 
     LogEventService.log_submit(

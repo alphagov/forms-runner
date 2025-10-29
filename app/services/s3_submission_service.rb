@@ -22,13 +22,13 @@ class S3SubmissionService
     copy_uploaded_files_to_bucket
 
     submission_content, key =
-      case @form.submission_type
-      when "s3"
+      case @form.submission_format
+      when [:csv]
         [generate_csv_submission, generate_key("form_submission.csv")]
-      when "s3_with_json"
+      when [:json]
         [generate_json_submission, generate_key("form_submission.json")]
       else
-        raise StandardError, "Unsupported submission type: #{@form.submission_type}"
+        raise StandardError, "Unsupported submission format: #{@form.submission_format.inspect}"
       end
 
     upload_submission_to_s3(submission_content, key)

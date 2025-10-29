@@ -42,6 +42,68 @@ RSpec.describe Form, type: :model do
     end
   end
 
+  describe "#submission_method" do
+    context "when the submission type is blank" do
+      let(:attributes) { { submission_type: nil } }
+
+      it "returns the submission delivery method :email" do
+        expect(form.submission_method).to eq :email
+      end
+    end
+
+    [
+      ["email", :email],
+      ["email_with_csv", :email],
+      ["email_with_json", :email],
+      ["email_with_csv_and_json", :email],
+      ["s3", :s3],
+      ["s3_with_json", :s3],
+    ].each do |submission_type, expected_submission_method|
+      context "when the submission type is #{submission_type}" do
+        let(:attributes) { { submission_type: } }
+
+        it "returns the submission delivery method :#{expected_submission_method}" do
+          expect(form.submission_method).to eq expected_submission_method
+        end
+      end
+    end
+
+    context "when the submission type is unrecognized" do
+      let(:attributes) { { submission_type: "something_else_with_csv" } }
+
+      it "raises an error" do
+        expect { form.submission_method }.to raise_error(/something_else_with_csv/)
+      end
+    end
+  end
+
+  describe "#submission_format" do
+    context "when the submission type is blank" do
+      let(:attributes) { { submission_type: nil } }
+
+      it "returns no submission delivery formats" do
+        expect(form.submission_format).to eq []
+      end
+    end
+
+    [
+      ["email", []],
+      ["email_with_csv", %i[csv]],
+      ["email_with_json", %i[json]],
+      ["email_with_csv_and_json", %i[csv json]],
+      ["s3", %i[csv]],
+      ["s3_with_json", %i[json]],
+    ].each do |submission_type, expected_submission_format|
+      context "when the submission type is #{submission_type}" do
+        let(:attributes) { { submission_type: } }
+
+        it "returns the submission delivery formats #{expected_submission_format}" do
+          expect(form.submission_format).to eq expected_submission_format
+        end
+      end
+    end
+  end
+
   describe "#support_details" do
     let(:attributes) do
       {

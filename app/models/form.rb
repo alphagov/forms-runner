@@ -20,6 +20,23 @@ class Form < ActiveResource::Base
     "#{payment_url}?reference=#{reference}"
   end
 
+  def submission_method
+    return :email if submission_type.blank? || submission_type.start_with?("email")
+    return :s3 if submission_type.start_with?("s3")
+
+    raise "unrecognised submission method in #{submission_type.inspect}"
+  end
+
+  def submission_format
+    return [] if submission_type.blank? || submission_type == "email"
+    return [:csv] if submission_type == "s3"
+
+    formats = []
+    formats << :csv if submission_type.include?("csv")
+    formats << :json if submission_type.include?("json")
+    formats
+  end
+
   def support_details
     OpenStruct.new({
       email: support_email,
