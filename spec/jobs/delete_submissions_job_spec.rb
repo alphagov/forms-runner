@@ -4,8 +4,8 @@ require "rails_helper"
 RSpec.describe DeleteSubmissionsJob, type: :job do
   include ActiveJob::TestHelper
 
-  let(:form_with_file_upload) { build :v2_form_document, id: 1, steps: file_upload_steps, start_page: 1 }
-  let(:form_without_file_upload) { build :v2_form_document, id: 2, steps: [text_step], start_page: text_step.id }
+  let(:form_with_file_upload) { build :v2_form_document, form_id: 1, steps: file_upload_steps, start_page: 1 }
+  let(:form_without_file_upload) { build :v2_form_document, form_id: 2, steps: [text_step], start_page: text_step.id }
   let(:file_upload_steps) do
     [
       build(:v2_question_page_step, answer_type: "file", id: 1, next_step_id: 2),
@@ -49,7 +49,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
       create :submission,
              :sent,
              reference: "SENT8DAYS",
-             form_id: form_with_file_upload.id,
+             form_id: form_with_file_upload.form_id,
              form_document: form_with_file_upload,
              last_delivery_attempt: 8.days.ago,
              answers: form_with_file_upload_answers
@@ -58,7 +58,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
       create :submission,
              :sent,
              reference: "SENT7DAYS",
-             form_id: form_without_file_upload.id,
+             form_id: form_without_file_upload.form_id,
              form_document: form_without_file_upload,
              last_delivery_attempt: 7.days.ago
     end
@@ -66,7 +66,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
       create :submission,
              :sent,
              reference: "SENT6DAYS",
-             form_id: form_without_file_upload.id,
+             form_id: form_without_file_upload.form_id,
              form_document: form_without_file_upload,
              last_delivery_attempt: 6.days.ago
     end
@@ -74,7 +74,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
       create :submission,
              :sent,
              reference: "BOUNCED",
-             form_id: form_without_file_upload.id,
+             form_id: form_without_file_upload.form_id,
              form_document: form_without_file_upload,
              last_delivery_attempt: 7.days.ago,
              delivery_status: :bounced
@@ -121,7 +121,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
             "message" => "Form event",
             "delivery_status" => "pending",
             "event" => "form_submission_deleted",
-            "form_id" => form_with_file_upload.id,
+            "form_id" => form_with_file_upload.form_id,
             "form_name" => form_with_file_upload.name,
             "submission_reference" => sent_submission_sent_8_days_ago.reference,
             "preview" => "false",
@@ -133,7 +133,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
             "message" => "Form event",
             "delivery_status" => "pending",
             "event" => "form_submission_deleted",
-            "form_id" => form_without_file_upload.id,
+            "form_id" => form_without_file_upload.form_id,
             "form_name" => form_without_file_upload.name,
             "submission_reference" => sent_submission_sent_7_days_ago.reference,
             "preview" => "false",
@@ -165,7 +165,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
         expect(log_lines).to include(hash_including(
                                        "level" => "WARN",
                                        "message" => "Error deleting submission - StandardError: Test error",
-                                       "form_id" => form_with_file_upload.id,
+                                       "form_id" => form_with_file_upload.form_id,
                                        "submission_reference" => sent_submission_sent_8_days_ago.reference,
                                        "preview" => "false",
                                        "job_id" => @job_id,
@@ -212,7 +212,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
       create :submission,
              :sent,
              reference: "BOUNCED_31_DAYS",
-             form_id: form_without_file_upload.id,
+             form_id: form_without_file_upload.form_id,
              form_document: form_without_file_upload,
              created_at: 31.days.ago,
              delivery_status: :bounced
@@ -220,7 +220,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
     let!(:not_sent_submission_created_31_days_ago) do
       create :submission,
              reference: "NOT_SENT",
-             form_id: form_without_file_upload.id,
+             form_id: form_without_file_upload.form_id,
              form_document: form_without_file_upload,
              created_at: 31.days.ago
     end

@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe Forms::RemoveAnswerController, type: :request do
   let(:form) do
-    build(:v2_form_document, :with_support, id: 2, start_page: 1, steps:)
+    build(:v2_form_document, :with_support, form_id: 2, start_page: 1, steps:)
   end
 
   let(:steps) { [first_step_in_form, second_step_in_form] }
@@ -32,7 +32,7 @@ RSpec.describe Forms::RemoveAnswerController, type: :request do
 
   before do
     ActiveResource::HttpMock.respond_to do |mock|
-      mock.get "/api/v2/forms/#{form.id}#{api_url_suffix}", req_headers, form.to_json, 200
+      mock.get "/api/v2/forms/#{form.form_id}#{api_url_suffix}", req_headers, form.to_json, 200
     end
 
     answer_store = instance_double(Store::SessionAnswerStore)
@@ -44,7 +44,7 @@ RSpec.describe Forms::RemoveAnswerController, type: :request do
 
   describe "GET #show" do
     before do
-      get form_remove_answer_path(mode: "preview-draft", form_id: form.id, form_slug: form.form_slug, page_slug: first_step_in_form.id, answer_index: 1)
+      get form_remove_answer_path(mode: "preview-draft", form_id: form.form_id, form_slug: form.form_slug, page_slug: first_step_in_form.id, answer_index: 1)
     end
 
     it "renders the show template" do
@@ -60,19 +60,19 @@ RSpec.describe Forms::RemoveAnswerController, type: :request do
     let(:params) { { remove_input: { remove: } } }
 
     before do
-      delete form_remove_answer_path(mode: "preview-draft", form_id: form.id, form_slug: form.form_slug, page_slug: first_step_in_form.id, answer_index: 1), params:
+      delete form_remove_answer_path(mode: "preview-draft", form_id: form.form_id, form_slug: form.form_slug, page_slug: first_step_in_form.id, answer_index: 1), params:
     end
 
     context "with valid params" do
       it "redirects to add another answer" do
-        expect(response).to redirect_to(add_another_answer_path(mode: "preview-draft", form_id: form.id, form_slug: form.form_slug, page_slug: first_step_in_form.id))
+        expect(response).to redirect_to(add_another_answer_path(mode: "preview-draft", form_id: form.form_id, form_slug: form.form_slug, page_slug: first_step_in_form.id))
       end
 
       context "when not removing answer" do
         let(:remove) { "no" }
 
         it "redirects to add another answer" do
-          expect(response).to redirect_to(add_another_answer_path(mode: "preview-draft", form_id: form.id, form_slug: form.form_slug, page_slug: first_step_in_form.id))
+          expect(response).to redirect_to(add_another_answer_path(mode: "preview-draft", form_id: form.form_id, form_slug: form.form_slug, page_slug: first_step_in_form.id))
         end
       end
     end
@@ -91,7 +91,7 @@ RSpec.describe Forms::RemoveAnswerController, type: :request do
       let(:is_optional) { true }
 
       it "redirects to the question page" do
-        expect(response).to redirect_to(form_page_path(mode: "preview-draft", form_id: form.id, form_slug: form.form_slug, page_slug: first_step_in_form.id))
+        expect(response).to redirect_to(form_page_path(mode: "preview-draft", form_id: form.form_id, form_slug: form.form_slug, page_slug: first_step_in_form.id))
       end
     end
   end

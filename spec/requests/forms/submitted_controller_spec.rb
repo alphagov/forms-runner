@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe Forms::SubmittedController, type: :request do
   let(:form_data) do
     build(:v2_form_document, :with_support,
-          id: 2,
+          form_id: 2,
           start_page: 1,
           privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
           what_happens_next_markdown: "Your application will be processed within a few days.\n\nContact us if you need to:\n\n-change the details of your application\n-cancel your application",

@@ -7,7 +7,7 @@ RSpec.describe Forms::BaseController, type: :request do
     build(
       :v2_form_document,
       :with_support,
-      id: 2,
+      form_id: 2,
       start_page:,
       privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
       what_happens_next_markdown: "Good things come to those that wait",

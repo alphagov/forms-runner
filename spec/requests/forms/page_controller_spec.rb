@@ -6,7 +6,7 @@ RSpec.describe Forms::PageController, type: :request do
 
   let(:form_data) do
     build(:v2_form_document, :with_support,
-          id: 2,
+          form_id: 2,
           start_page: 1,
           privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
           what_happens_next_markdown: "Good things come to those that wait",
@@ -334,12 +334,12 @@ RSpec.describe Forms::PageController, type: :request do
       let(:first_step_in_form) { build :v2_question_page_step, :with_repeatable, id: 1, next_step_id: second_step_in_form.id }
 
       it "shows the page as normal when there are no stored answers" do
-        get form_page_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug: first_step_in_form.id, answer_index: 1)
+        get form_page_path(mode:, form_id: form_data.form_id, form_slug: form_data.form_slug, page_slug: first_step_in_form.id, answer_index: 1)
         expect(response).to have_http_status(:ok)
       end
 
       it "returns 404 when given an invalid answer_index" do
-        get form_page_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug: first_step_in_form.id, answer_index: 12)
+        get form_page_path(mode:, form_id: form_data.form_id, form_slug: form_data.form_slug, page_slug: first_step_in_form.id, answer_index: 12)
         expect(response).to have_http_status(:not_found)
       end
     end
@@ -365,7 +365,7 @@ RSpec.describe Forms::PageController, type: :request do
         let(:store) do
           {
             answers: {
-              form_data.id.to_s => {
+              form_data.form_id.to_s => {
                 first_step_in_form.id.to_s => {
                   "original_filename" => "foo.png",
                   "uploaded_file_key" => "bar",
@@ -588,12 +588,12 @@ RSpec.describe Forms::PageController, type: :request do
       let(:first_step_in_form) { build :v2_question_page_step, :with_repeatable, id: 1, next_step_id: second_step_in_form.id }
 
       it "redirects to the add another answer page when given valid answer" do
-        post save_form_page_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug: first_step_in_form.id, params: { question: { number: 12 } })
-        expect(response).to redirect_to(add_another_answer_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug: first_step_in_form.id))
+        post save_form_page_path(mode:, form_id: form_data.form_id, form_slug: form_data.form_slug, page_slug: first_step_in_form.id, params: { question: { number: 12 } })
+        expect(response).to redirect_to(add_another_answer_path(mode:, form_id: form_data.form_id, form_slug: form_data.form_slug, page_slug: first_step_in_form.id))
       end
 
       it "shows 404 if an invalid answer_index is given" do
-        post save_form_page_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug: first_step_in_form.id, answer_index: 3, params: { question: { number: 12 } })
+        post save_form_page_path(mode:, form_id: form_data.form_id, form_slug: form_data.form_slug, page_slug: first_step_in_form.id, answer_index: 3, params: { question: { number: 12 } })
         expect(response).to have_http_status(:not_found)
       end
 
@@ -601,8 +601,8 @@ RSpec.describe Forms::PageController, type: :request do
         let(:first_step_in_form) { build :v2_question_page_step, :with_repeatable, is_optional: true, id: 1, next_step_id: second_step_in_form.id }
 
         it "redirects to the next page when not given an answer" do
-          post save_form_page_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug: first_step_in_form.id, params: { question: { number: nil } })
-          expect(response).to redirect_to(form_page_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug: second_step_in_form.id))
+          post save_form_page_path(mode:, form_id: form_data.form_id, form_slug: form_data.form_slug, page_slug: first_step_in_form.id, params: { question: { number: nil } })
+          expect(response).to redirect_to(form_page_path(mode:, form_id: form_data.form_id, form_slug: form_data.form_slug, page_slug: second_step_in_form.id))
         end
       end
     end

@@ -19,7 +19,7 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
       build(:v2_question_page_step, answer_type: "file", id: 2),
     ]
   end
-  let(:form_with_file_upload) { build :v2_form_document, id: 1, steps: file_upload_steps, start_page: 1 }
+  let(:form_with_file_upload) { build :v2_form_document, form_id: 1, steps: file_upload_steps, start_page: 1 }
   let(:form_with_file_upload_answers) do
     {
       "1" => { uploaded_file_key: "key1" },
@@ -28,7 +28,7 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
   end
   let(:mail_message_id) { "mail-message-id" }
   let(:reference) { "submission-reference" }
-  let!(:submission) { create :submission, mail_message_id:, reference:, form_id: form_with_file_upload.id, form_document: form_with_file_upload, answers: form_with_file_upload_answers }
+  let!(:submission) { create :submission, mail_message_id:, reference:, form_id: form_with_file_upload.form_id, form_document: form_with_file_upload, answers: form_with_file_upload_answers }
   let!(:other_submission) { create :submission, mail_message_id: "abc", delivery_status: :pending, reference: "other-submission-reference", form_id: 2, answers: form_with_file_upload_answers }
 
   let(:output) { StringIO.new }
@@ -106,7 +106,7 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
                                          "level" => "INFO",
                                          "message" => "Form event",
                                          "event" => "form_submission_bounced",
-                                         "form_id" => form_with_file_upload.id,
+                                         "form_id" => form_with_file_upload.form_id,
                                          "submission_reference" => reference,
                                          "preview" => "false",
                                          "mail_message_id" => mail_message_id,
@@ -134,7 +134,7 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
           create :submission,
                  mail_message_id:,
                  reference:,
-                 form_id: form_with_file_upload.id,
+                 form_id: form_with_file_upload.form_id,
                  form_document: form_with_file_upload,
                  answers: form_with_file_upload_answers,
                  mode: "preview-live"
@@ -152,7 +152,7 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
                                          "level" => "INFO",
                                          "message" => "Form event",
                                          "event" => "form_submission_bounced",
-                                         "form_id" => form_with_file_upload.id,
+                                         "form_id" => form_with_file_upload.form_id,
                                          "submission_reference" => reference,
                                          "preview" => "true",
                                          "mail_message_id" => mail_message_id,
@@ -321,7 +321,7 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
 
         expect(log_lines).to include(hash_including(
                                        "level" => "INFO",
-                                       "form_id" => form_with_file_upload.id,
+                                       "form_id" => form_with_file_upload.form_id,
                                        "submission_reference" => reference,
                                        "preview" => "false",
                                        "mail_message_id" => mail_message_id,
