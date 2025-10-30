@@ -31,8 +31,7 @@ class Api::V1::FormSnapshotRepository
     def find_with_tag(id, tag)
       raise ActiveResource::ResourceNotFound.new(404, "Not Found") unless id.to_s =~ /^[[:alnum:]]+$/
 
-      v2_form_document = Api::V2::FormDocumentResource.find(id, tag)
-      v2_blob = v2_form_document.as_json
+      v2_blob = Api::V2::FormDocumentResource.get(id, tag)
 
       v1_blob = converter.to_api_v1_form_snapshot(v2_blob)
 

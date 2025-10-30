@@ -14,6 +14,10 @@ class Api::V2::FormDocumentResource < ActiveResource::Base
       super(:one, from: document_path(form_id, tag))
     end
 
+    def get(form_id, tag)
+      super("#{form_id}/#{tag}")
+    end
+
   private
 
     def document_path(form_id, tag)
