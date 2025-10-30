@@ -4,158 +4,7 @@ RSpec.describe Api::V1::FormSnapshotRepository do
   let(:req_headers) { { "Accept" => "application/json" } }
 
   let(:form_id) { 1 }
-  let(:api_v2_response_data) do
-    { "form_id" => form_id,
-      "name" => "All question types form",
-      "submission_email" => "",
-      "privacy_policy_url" => "https://www.gov.uk/help/privacy-notice",
-      "form_slug" => "all-question-types-form",
-      "support_email" => "your.email+fakedata84701@gmail.com.gov.uk",
-      "support_phone" => "08000800",
-      "support_url" => nil,
-      "support_url_text" => nil,
-      "declaration_text" => "",
-      "question_section_completed" => true,
-      "declaration_section_completed" => true,
-      "created_at" => "2024-09-05T06:25:25.558Z",
-      "updated_at" => "2024-09-05T06:25:25.637Z",
-      "creator_id" => nil,
-      "organisation_id" => 1,
-      "what_happens_next_markdown" => "Test",
-      "payment_url" => nil,
-      "start_page" => 1,
-      "steps" =>
-      [{ "id" => 1,
-         "position" => 1,
-         "next_step_id" => 2,
-         "type" => "question_page",
-         "data" =>
-         { "question_text" => "Single line of text",
-           "hint_text" => nil,
-           "answer_type" => "text",
-           "is_optional" => false,
-           "answer_settings" => { "input_type" => "single_line" },
-           "page_heading" => nil,
-           "guidance_markdown" => nil,
-           "is_repeatable" => false },
-         "routing_conditions" => [] },
-       { "id" => 2,
-         "position" => 2,
-         "next_step_id" => 3,
-         "type" => "question_page",
-         "data" =>
-         { "question_text" => "Number",
-           "hint_text" => nil,
-           "answer_type" => "number",
-           "is_optional" => false,
-           "answer_settings" => nil,
-           "page_heading" => nil,
-           "guidance_markdown" => nil,
-           "is_repeatable" => false },
-         "routing_conditions" => [] },
-       { "id" => 3,
-         "position" => 3,
-         "next_step_id" => 4,
-         "type" => "question_page",
-         "data" =>
-         { "question_text" => "Address",
-           "hint_text" => nil,
-           "answer_type" => "address",
-           "is_optional" => false,
-           "answer_settings" =>
-           { "input_type" => { "international_address" => false, "uk_address" => true } },
-           "page_heading" => nil,
-           "guidance_markdown" => nil,
-           "is_repeatable" => false },
-         "routing_conditions" => [] },
-       { "id" => 4,
-         "position" => 4,
-         "next_step_id" => 5,
-         "type" => "question_page",
-         "data" =>
-         { "question_text" => "Email address",
-           "hint_text" => nil,
-           "answer_type" => "email",
-           "is_optional" => false,
-           "answer_settings" => nil,
-           "page_heading" => nil,
-           "guidance_markdown" => nil,
-           "is_repeatable" => false },
-         "routing_conditions" => [] },
-       { "id" => 5,
-         "position" => 5,
-         "next_step_id" => 6,
-         "type" => "question_page",
-         "data" =>
-         { "question_text" => "Todays Date",
-           "hint_text" => nil,
-           "answer_type" => "date",
-           "is_optional" => false,
-           "answer_settings" => { "input_type" => "other_date" },
-           "page_heading" => nil,
-           "guidance_markdown" => nil,
-           "is_repeatable" => false },
-         "routing_conditions" => [] },
-       { "id" => 6,
-         "position" => 6,
-         "next_step_id" => 7,
-         "type" => "question_page",
-         "data" =>
-         { "question_text" => "National Insurance number",
-           "hint_text" => nil,
-           "answer_type" => "national_insurance_number",
-           "is_optional" => false,
-           "answer_settings" => nil,
-           "page_heading" => nil,
-           "guidance_markdown" => nil,
-           "is_repeatable" => false },
-         "routing_conditions" => [] },
-       { "id" => 7,
-         "position" => 7,
-         "next_step_id" => 8,
-         "type" => "question_page",
-         "data" =>
-         { "question_text" => "Phone number",
-           "hint_text" => nil,
-           "answer_type" => "phone_number",
-           "is_optional" => false,
-           "answer_settings" => nil,
-           "page_heading" => nil,
-           "guidance_markdown" => nil,
-           "is_repeatable" => false },
-         "routing_conditions" => [] },
-       { "id" => 8,
-         "position" => 8,
-         "next_step_id" => 9,
-         "type" => "question_page",
-         "data" =>
-         { "question_text" => "Selection from a list of options",
-           "hint_text" => nil,
-           "answer_type" => "selection",
-           "is_optional" => true,
-           "answer_settings" =>
-           { "only_one_option" => "0",
-             "selection_options" =>
-             [{ "name" => "Option 1" }, { "name" => "Option 2" }, { "name" => "Option 3" }] },
-           "page_heading" => nil,
-           "guidance_markdown" => nil,
-           "is_repeatable" => false },
-         "routing_conditions" => [] },
-       { "id" => 9,
-         "position" => 9,
-         "next_step_id" => nil,
-         "type" => "question_page",
-         "data" =>
-         { "question_text" => "Multiple lines of text",
-           "hint_text" => nil,
-           "answer_type" => "text",
-           "is_optional" => true,
-           "answer_settings" => { "input_type" => "long_text" },
-           "page_heading" => nil,
-           "guidance_markdown" => nil,
-           "is_repeatable" => false },
-         "routing_conditions" => [] }] }
-  end
+  let(:api_v2_response_data) { JSON.load_file("spec/fixtures/all_question_types_form.json") }
 
   describe ".find_with_mode" do
     before do
@@ -190,7 +39,7 @@ RSpec.describe Api::V1::FormSnapshotRepository do
       it "returns a live form" do
         form = described_class.find_with_mode(id: 1, mode: Mode.new("live"))
 
-        expect(form).to have_attributes(id: 1, name: "Live form")
+        expect(form).to have_attributes(id: "1", name: "Live form")
       end
     end
 
@@ -198,7 +47,7 @@ RSpec.describe Api::V1::FormSnapshotRepository do
       it "returns a draft form" do
         form = described_class.find_with_mode(id: 1, mode: Mode.new("preview-draft"))
 
-        expect(form).to have_attributes(id: 1, name: "Draft form")
+        expect(form).to have_attributes(id: "1", name: "Draft form")
       end
     end
 
@@ -206,7 +55,7 @@ RSpec.describe Api::V1::FormSnapshotRepository do
       it "returns an archived form" do
         form = described_class.find_with_mode(id: 1, mode: Mode.new("preview-archived"))
 
-        expect(form).to have_attributes(id: 1, name: "Archived form")
+        expect(form).to have_attributes(id: "1", name: "Archived form")
       end
     end
 
@@ -214,7 +63,7 @@ RSpec.describe Api::V1::FormSnapshotRepository do
       it "returns a live form" do
         form = described_class.find_with_mode(id: 1, mode: Mode.new("preview-live"))
 
-        expect(form).to have_attributes(id: 1, name: "Live form")
+        expect(form).to have_attributes(id: "1", name: "Live form")
       end
     end
 
@@ -254,7 +103,7 @@ RSpec.describe Api::V1::FormSnapshotRepository do
       it "returns an archived form" do
         form = described_class.find_archived(id: form_id)
 
-        expect(form).to have_attributes(id: form_id, name: "All question types form")
+        expect(form).to have_attributes(id: form_id.to_s, name: "All question types form")
       end
     end
 
