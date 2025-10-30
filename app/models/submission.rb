@@ -42,8 +42,7 @@ private
   end
 
   def form_from_document
-    v1_blob = Api::V1::Converter.new.to_api_v1_form_snapshot(form_document)
-    Form.new(v1_blob, true)
+    Form.new(form_document, true)
   end
 
   def submission_timezone
