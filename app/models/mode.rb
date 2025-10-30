@@ -27,6 +27,18 @@ class Mode
     @mode_string
   end
 
+  def tag
+    if preview_draft?
+      :draft
+    elsif preview_archived?
+      :archived
+    elsif live?
+      :live
+    elsif preview_live?
+      :live
+    end
+  end
+
   def to_param
     live? ? "form" : @mode_string
   end

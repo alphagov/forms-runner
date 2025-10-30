@@ -1,7 +1,7 @@
 class Api::V1::FormSnapshotRepository
   class << self
     def find_with_mode(id:, mode:)
-      v2_find_with_mode(id:, mode:)
+      find_with_tag(id, mode.tag)
     end
 
     def find_archived(id:)
@@ -12,20 +12,6 @@ class Api::V1::FormSnapshotRepository
 
     def converter
       @converter ||= Api::V1::Converter.new
-    end
-
-    def v2_find_with_mode(id:, mode:)
-      tag = if mode.preview_draft?
-              :draft
-            elsif mode.preview_archived?
-              :archived
-            elsif mode.live?
-              :live
-            elsif mode.preview_live?
-              :live
-            end
-
-      find_with_tag(id, tag)
     end
 
     def find_with_tag(id, tag)
