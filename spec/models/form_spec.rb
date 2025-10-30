@@ -12,12 +12,84 @@ RSpec.describe Form, type: :model do
     ]
   end
 
+  describe "#form_id" do
+    context "when the form is initialised with attribute form_id" do
+      let(:attributes) { { form_id: "1" } }
+
+      it "returns the form ID" do
+        expect(form).to have_attributes form_id: "1"
+      end
+
+      it "equals #id" do
+        expect(form.form_id).to eq form.id
+      end
+    end
+
+    context "when the form is initialised with attribute id" do
+      let(:attributes) { { id: 1 } }
+
+      it "returns the form ID" do
+        expect(form).to have_attributes form_id: 1
+      end
+
+      it "equals #id" do
+        expect(form.form_id).to eq form.id
+      end
+    end
+  end
+
   describe "#pages" do
     it "returns the pages for the form" do
       pages = form.pages
       expect(pages.length).to eq(2)
       expect(pages[0]).to have_attributes(id: 9, next_page: 10, answer_type: "date", question_text: "Question one")
       expect(pages[1]).to have_attributes(id: 10, answer_type: "address", question_text: "Question two")
+    end
+
+    context "when the form is initialised with steps" do
+      let(:attributes) { { steps: } }
+
+      let(:steps) do
+        [
+          { id: 9, next_step_id: 10, type: "question_page", data: { answer_type: "date", question_text: "Question one" } },
+          { id: 10, type: "question_page", data: { answer_type: "address", question_text: "Question two" } },
+        ]
+      end
+
+      it "returns the pages for the form" do
+        pages = form.pages
+        expect(pages.length).to eq(2)
+        expect(pages[0]).to have_attributes(id: 9, next_page: 10, answer_type: "date", question_text: "Question one")
+        expect(pages[1]).to have_attributes(id: 10, answer_type: "address", question_text: "Question two")
+      end
+    end
+
+    context "when the form document in the API has steps" do
+      subject(:form) { described_class.find(:one, from: "/api/v2/forms/1/live") }
+
+      let(:attributes) { { id: 1, name: "form name", submission_email: "user@example.com", start_page: 1, steps: } }
+
+      let(:steps) do
+        [
+          { id: 9, next_step_id: 10, type: "question_page", data: { answer_type: "date", question_text: "Question one" } },
+          { id: 10, type: "question_page", data: { answer_type: "address", question_text: "Question two" } },
+        ]
+      end
+
+      let(:req_headers) { { "Accept" => "application/json" } }
+
+      before do
+        ActiveResource::HttpMock.respond_to do |mock|
+          mock.get "/api/v2/forms/1/live", req_headers, attributes.to_json, 200
+        end
+      end
+
+      it "returns the pages for the form" do
+        pages = form.pages
+        expect(pages.length).to eq(2)
+        expect(pages[0]).to have_attributes(id: 9, next_page: 10, answer_type: "date", question_text: "Question one")
+        expect(pages[1]).to have_attributes(id: 10, answer_type: "address", question_text: "Question two")
+      end
     end
   end
 
