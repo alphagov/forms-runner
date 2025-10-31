@@ -34,18 +34,18 @@ jobs:
       QUEUE_DATABASE_URL: "postgres://postgres:postgres@localhost:5432/forms_runner_test_queue"
     steps:
       # TODO: remove these steps once we can use latest Chrome again (see https://github.com/teamcapybara/capybara/issues/2800)
-      - uses: nanasess/setup-chromedriver@v2
+      - uses: nanasess/setup-chromedriver@e93e57b843c0c92788f22483f1a31af8ee48db25 # v2.3.0
         with:
           chromedriver-version: '128.0.6613.8600'
           chromeapp: chrome
       - run: |
           sudo apt-get purge google-chrome-stable
-      - uses: browser-actions/setup-chrome@v2
+      - uses: browser-actions/setup-chrome@b94431e051d1c52dcbe9a7092a4f10f827795416 # v2.1.0
         with:
           chrome-version: 128
           install-chromedriver: 'false'
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493 # v5.0.0
       # Add or replace dependency steps here
       - name: Install Ruby and gems
         # The ruby version is taken from the .ruby-version file, no need to specify here.
@@ -53,7 +53,7 @@ jobs:
         with:
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
       - name: Install Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
         with:
           node-version-file: ".nvmrc"
           cache: "npm"
