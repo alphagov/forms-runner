@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe Forms::RemoveFileController, type: :request do
   let(:form_data) do
     build(:v2_form_document, :with_support, :live?,
-          id: 1,
+          form_id: 1,
           start_page: 1,
           privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
           what_happens_next_markdown: "Good things come to those that wait",
@@ -36,7 +36,7 @@ RSpec.describe Forms::RemoveFileController, type: :request do
   let(:store) do
     {
       answers: {
-        form_data.id.to_s => {
+        form_data.form_id.to_s => {
           file_upload_step.id.to_s => {
             "original_filename" => uploaded_filename,
             "uploaded_file_key" => uploaded_file_key,
@@ -59,7 +59,7 @@ RSpec.describe Forms::RemoveFileController, type: :request do
 
   describe "#show" do
     before do
-      get remove_file_confirmation_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug:, changing_existing_answer:)
+      get remove_file_confirmation_path(mode:, form_id: form_data.form_id, form_slug: form_data.form_slug, page_slug:, changing_existing_answer:)
     end
 
     context "when the question is a file upload question" do
@@ -75,7 +75,7 @@ RSpec.describe Forms::RemoveFileController, type: :request do
         end
 
         it "displays a back link to the review file page" do
-          expect(response.body).to include(review_file_path(form_data.id, form_data.form_slug, page_slug, changing_existing_answer:))
+          expect(response.body).to include(review_file_path(form_data.form_id, form_data.form_slug, page_slug, changing_existing_answer:))
         end
       end
 
@@ -83,7 +83,7 @@ RSpec.describe Forms::RemoveFileController, type: :request do
         let(:store) { {} }
 
         it "redirects to the show page route" do
-          expect(response).to redirect_to form_page_path(form_data.id, form_data.form_slug, page_slug)
+          expect(response).to redirect_to form_page_path(form_data.form_id, form_data.form_slug, page_slug)
         end
       end
 
@@ -92,7 +92,7 @@ RSpec.describe Forms::RemoveFileController, type: :request do
 
         it "includes the changing_existing_answer query parameter for the confirmation URL" do
           rendered = Capybara.string(response.body)
-          expected_url = remove_file_confirmation_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug:, changing_existing_answer:)
+          expected_url = remove_file_confirmation_path(mode:, form_id: form_data.form_id, form_slug: form_data.form_slug, page_slug:, changing_existing_answer:)
           expect(rendered).to have_css("form[action='#{expected_url}'][method='post']")
         end
       end
@@ -102,7 +102,7 @@ RSpec.describe Forms::RemoveFileController, type: :request do
       let(:page_slug) { text_question_step.id }
 
       it "redirects to the show page route" do
-        expect(response).to redirect_to form_page_path(form_data.id, form_data.form_slug, page_slug)
+        expect(response).to redirect_to form_page_path(form_data.form_id, form_data.form_slug, page_slug)
       end
     end
   end
@@ -114,7 +114,7 @@ RSpec.describe Forms::RemoveFileController, type: :request do
     before do
       allow(Aws::S3::Client).to receive(:new).and_return(mock_s3_client)
       allow(mock_s3_client).to receive(:delete_object)
-      delete remove_file_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug:, changing_existing_answer:, remove_input: { remove: })
+      delete remove_file_path(mode:, form_id: form_data.form_id, form_slug: form_data.form_slug, page_slug:, changing_existing_answer:, remove_input: { remove: })
     end
 
     context "when the question is a file upload question" do
@@ -134,7 +134,7 @@ RSpec.describe Forms::RemoveFileController, type: :request do
         end
 
         it "displays a back link to the review file page" do
-          expect(response.body).to include(review_file_path(form_data.id, form_data.form_slug, page_slug, changing_existing_answer:))
+          expect(response.body).to include(review_file_path(form_data.form_id, form_data.form_slug, page_slug, changing_existing_answer:))
         end
       end
 
@@ -145,11 +145,11 @@ RSpec.describe Forms::RemoveFileController, type: :request do
           end
 
           it "removes the answer from the session" do
-            expect(store[:answers][form_data.id.to_s]).not_to have_key page_slug
+            expect(store[:answers][form_data.form_id.to_s]).not_to have_key page_slug
           end
 
           it "redirects to the show page route" do
-            expect(response).to redirect_to form_page_path(form_data.id, form_data.form_slug, page_slug)
+            expect(response).to redirect_to form_page_path(form_data.form_id, form_data.form_slug, page_slug)
           end
 
           it "displays a success banner" do
@@ -160,7 +160,7 @@ RSpec.describe Forms::RemoveFileController, type: :request do
             let(:changing_existing_answer) { true }
 
             it "redirects to the change answer route" do
-              expect(response).to redirect_to form_change_answer_path(form_data.id, form_data.form_slug, page_slug)
+              expect(response).to redirect_to form_change_answer_path(form_data.form_id, form_data.form_slug, page_slug)
             end
           end
         end
@@ -169,11 +169,11 @@ RSpec.describe Forms::RemoveFileController, type: :request do
           let(:uploaded_file_key) { nil }
 
           it "does not remove the answer from the session" do
-            expect(store[:answers][form_data.id.to_s]).to have_key page_slug
+            expect(store[:answers][form_data.form_id.to_s]).to have_key page_slug
           end
 
           it "redirects to the show page route" do
-            expect(response).to redirect_to form_page_path(form_data.id, form_data.form_slug, page_slug)
+            expect(response).to redirect_to form_page_path(form_data.form_id, form_data.form_slug, page_slug)
           end
         end
       end
@@ -186,11 +186,11 @@ RSpec.describe Forms::RemoveFileController, type: :request do
         end
 
         it "does not remove the answer from the session" do
-          expect(store[:answers][form_data.id.to_s]).to have_key page_slug
+          expect(store[:answers][form_data.form_id.to_s]).to have_key page_slug
         end
 
         it "redirects to the review file page route" do
-          expect(response).to redirect_to review_file_path(form_data.id, form_data.form_slug, page_slug, changing_existing_answer:)
+          expect(response).to redirect_to review_file_path(form_data.form_id, form_data.form_slug, page_slug, changing_existing_answer:)
         end
       end
     end
@@ -200,7 +200,7 @@ RSpec.describe Forms::RemoveFileController, type: :request do
       let(:store) do
         {
           answers: {
-            form_data.id.to_s => {
+            form_data.form_id.to_s => {
               text_question_step.id.to_s => {
                 "text" => "foo",
               },
@@ -210,11 +210,11 @@ RSpec.describe Forms::RemoveFileController, type: :request do
       end
 
       it "does not remove the answer from the session" do
-        expect(store[:answers][form_data.id.to_s]).to have_key page_slug
+        expect(store[:answers][form_data.form_id.to_s]).to have_key page_slug
       end
 
       it "redirects to the show page route" do
-        expect(response).to redirect_to form_page_path(form_data.id, form_data.form_slug, page_slug)
+        expect(response).to redirect_to form_page_path(form_data.form_id, form_data.form_slug, page_slug)
       end
     end
   end

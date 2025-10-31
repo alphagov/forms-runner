@@ -20,7 +20,7 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
       build(:v2_question_page_step, answer_type: "file", id: 2),
     ]
   end
-  let(:form_with_file_upload) { build :v2_form_document, id: 1, steps: file_upload_steps, start_page: 1 }
+  let(:form_with_file_upload) { build :v2_form_document, form_id: 1, steps: file_upload_steps, start_page: 1 }
   let(:form_with_file_upload_answers) do
     {
       "1" => { uploaded_file_key: "key1" },
@@ -29,7 +29,7 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
   end
   let(:mail_message_id) { "mail-message-id" }
   let(:reference) { "submission-reference" }
-  let!(:submission) { create :submission, created_at: Time.zone.parse("2025-05-09T10:25:35.001Z"), mail_message_id:, reference:, form_id: form_with_file_upload.id, form_document: form_with_file_upload, answers: form_with_file_upload_answers }
+  let!(:submission) { create :submission, created_at: Time.zone.parse("2025-05-09T10:25:35.001Z"), mail_message_id:, reference:, form_id: form_with_file_upload.form_id, form_document: form_with_file_upload, answers: form_with_file_upload_answers }
   let!(:other_submission) { create :submission, created_at: Time.zone.parse("2025-05-09T10:25:35.001Z"), mail_message_id: "abc", delivery_status: :bounced, reference: "other-submission-reference", form_id: 2, answers: form_with_file_upload_answers }
 
   let(:output) { StringIO.new }
@@ -102,7 +102,7 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
                                        "level" => "INFO",
                                        "message" => "Form event",
                                        "event" => "form_submission_delivered",
-                                       "form_id" => form_with_file_upload.id,
+                                       "form_id" => form_with_file_upload.form_id,
                                        "submission_reference" => reference,
                                        "preview" => "false",
                                        "sns_message_timestamp" => sns_message_timestamp,

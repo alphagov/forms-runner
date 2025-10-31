@@ -3,8 +3,38 @@ class Form < ActiveResource::Base
   self.prefix = "/api/v2/"
   self.include_format_in_path = false
 
-  has_many :pages
+  class Step < ActiveResource::Base
+    self.site = Form.site
+    self.prefix = Form.prefix_source
+    self.include_format_in_path = false
+  end
+
+  has_many :steps, class_name: "form/step"
   attr_accessor :document_json
+
+  def form_id
+    @attributes["form_id"] || @attributes["id"]
+  end
+
+  alias_method :id, :form_id
+
+  def pages
+    return @attributes["pages"] if @attributes.key? "pages"
+
+    @pages ||= steps.map do |step|
+      step = step.as_json
+      attrs = {
+        "id" => step["id"],
+        "position" => step["position"],
+        "next_page" => step["next_step_id"],
+      }
+      if step["type"] == "question_page"
+        attrs.merge!(step["data"])
+      end
+      attrs["routing_conditions"] = step.fetch("routing_conditions", [])
+      Page.new(attrs, @persisted)
+    end
+  end
 
   def last_page
     pages.find { |p| !p.has_next_page? }

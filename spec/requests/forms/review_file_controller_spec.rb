@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe Forms::ReviewFileController, type: :request do
   let(:form_data) do
     build(:v2_form_document, :with_support, :live?,
-          id: 1,
+          form_id: 1,
           start_page: 1,
           privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
           what_happens_next_markdown: "Good things come to those that wait",
@@ -36,7 +36,7 @@ RSpec.describe Forms::ReviewFileController, type: :request do
   let(:store) do
     {
       answers: {
-        form_data.id.to_s => {
+        form_data.form_id.to_s => {
           file_upload_step.id.to_s => {
             "original_filename" => uploaded_filename,
             "uploaded_file_key" => uploaded_file_key,
@@ -59,7 +59,7 @@ RSpec.describe Forms::ReviewFileController, type: :request do
 
   describe "#show" do
     before do
-      get review_file_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug:, changing_existing_answer:)
+      get review_file_path(mode:, form_id: form_data.form_id, form_slug: form_data.form_slug, page_slug:, changing_existing_answer:)
     end
 
     context "when the question is a file upload question" do
@@ -75,7 +75,7 @@ RSpec.describe Forms::ReviewFileController, type: :request do
         end
 
         it "displays a back link to the file upload page" do
-          expect(response.body).to include(form_page_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug: file_upload_step.id))
+          expect(response.body).to include(form_page_path(mode:, form_id: form_data.form_id, form_slug: form_data.form_slug, page_slug: file_upload_step.id))
         end
       end
 
@@ -83,13 +83,13 @@ RSpec.describe Forms::ReviewFileController, type: :request do
         let(:store) { {} }
 
         it "redirects to the show page route" do
-          expect(response).to redirect_to form_page_path(form_data.id, form_data.form_slug, page_slug)
+          expect(response).to redirect_to form_page_path(form_data.form_id, form_data.form_slug, page_slug)
         end
       end
 
       it "includes the changing_existing_answer query parameter for the continue URL" do
         rendered = Capybara.string(response.body)
-        expected_url = review_file_continue_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug:, changing_existing_answer:)
+        expected_url = review_file_continue_path(mode:, form_id: form_data.form_id, form_slug: form_data.form_slug, page_slug:, changing_existing_answer:)
         expect(rendered).to have_css("form[action='#{expected_url}'][method='post']")
       end
     end
@@ -98,14 +98,14 @@ RSpec.describe Forms::ReviewFileController, type: :request do
       let(:page_slug) { text_question_step.id }
 
       it "redirects to the show page route" do
-        expect(response).to redirect_to form_page_path(form_data.id, form_data.form_slug, page_slug)
+        expect(response).to redirect_to form_page_path(form_data.form_id, form_data.form_slug, page_slug)
       end
     end
   end
 
   describe "#continue" do
     before do
-      post review_file_continue_path(mode:, form_id: form_data.id, form_slug: form_data.form_slug, page_slug:, changing_existing_answer:)
+      post review_file_continue_path(mode:, form_id: form_data.form_id, form_slug: form_data.form_slug, page_slug:, changing_existing_answer:)
     end
 
     context "when the question is a file upload question" do
@@ -113,7 +113,7 @@ RSpec.describe Forms::ReviewFileController, type: :request do
 
       context "when a file has been uploaded" do
         it "redirects to the next step in the form" do
-          expect(response).to redirect_to form_page_path(form_data.id, form_data.form_slug, text_question_step.id)
+          expect(response).to redirect_to form_page_path(form_data.form_id, form_data.form_slug, text_question_step.id)
         end
       end
 
@@ -121,7 +121,7 @@ RSpec.describe Forms::ReviewFileController, type: :request do
         let(:changing_existing_answer) { true }
 
         it "redirects to the check your answers page" do
-          expect(response).to redirect_to(check_your_answers_path(form_data.id, form_data.form_slug, mode:))
+          expect(response).to redirect_to(check_your_answers_path(form_data.form_id, form_data.form_slug, mode:))
         end
       end
 
@@ -129,7 +129,7 @@ RSpec.describe Forms::ReviewFileController, type: :request do
         let(:uploaded_file_key) { nil }
 
         it "redirects to the show page route" do
-          expect(response).to redirect_to form_page_path(form_data.id, form_data.form_slug, page_slug)
+          expect(response).to redirect_to form_page_path(form_data.form_id, form_data.form_slug, page_slug)
         end
       end
     end
@@ -138,7 +138,7 @@ RSpec.describe Forms::ReviewFileController, type: :request do
       let(:page_slug) { text_question_step.id }
 
       it "redirects to the show page route" do
-        expect(response).to redirect_to form_page_path(form_data.id, form_data.form_slug, page_slug)
+        expect(response).to redirect_to form_page_path(form_data.form_id, form_data.form_slug, page_slug)
       end
     end
   end
