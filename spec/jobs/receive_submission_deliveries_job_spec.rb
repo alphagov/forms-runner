@@ -90,6 +90,11 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
       expect(submission.reload.delivered_at).to eq ses_delivery_timestamp
     end
 
+    it "sets the delivery_status to delivered" do
+      perform_enqueued_jobs
+      expect(submission.reload.delivered?).to be true
+    end
+
     it "doesn't change the delivery status for other submissions" do
       perform_enqueued_jobs
       expect(other_submission.reload.bounced?).to be true
@@ -109,6 +114,32 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
                                      "job_id" => @job_id,
                                      "job_class" => "ReceiveSubmissionDeliveriesJob",
                                    ))
+    end
+
+    context "when submission is already bounced" do
+      let!(:bounced_submission) { create :submission, created_at: Time.zone.parse("2025-05-09T10:25:35.001Z"), mail_message_id:, reference:, form_id: form_with_file_upload.form_id, form_document: form_with_file_upload, answers: form_with_file_upload_answers, delivery_status: :bounced }
+
+      it "does not update delivered_at" do
+        perform_enqueued_jobs
+        expect(bounced_submission.reload.delivered_at).to be_nil
+      end
+
+      it "does not change delivery_status from bounced" do
+        perform_enqueued_jobs
+        expect(bounced_submission.reload.bounced?).to be true
+      end
+
+      it "still logs the form event" do
+        perform_enqueued_jobs
+
+        expect(log_lines).to include(hash_including(
+                                       "level" => "INFO",
+                                       "message" => "Form event",
+                                       "event" => "form_submission_delivered",
+                                       "form_id" => form_with_file_upload.form_id,
+                                       "submission_reference" => bounced_submission.reference,
+                                     ))
+      end
     end
   end
 
