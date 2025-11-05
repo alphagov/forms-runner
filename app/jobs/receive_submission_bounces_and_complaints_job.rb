@@ -31,7 +31,9 @@ private
 
     # Don't mark preview submissions as bounced, just log that they bounced. We don't need to attempt to resend preview
     # submissions so these can be deleted as normal by the deletion job.
-    submission.bounced! unless submission.preview?
+    unless submission.preview?
+      submission.update!(delivery_status: :bounced, delivered_at: nil)
+    end
 
     bounce_object = ses_message["bounce"] || {}
 
