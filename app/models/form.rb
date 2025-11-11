@@ -58,7 +58,7 @@ class Form < ActiveResource::Base
   end
 
   def submission_format
-    (@attributes["submission_format"] || []).map(&:to_sym)
+    @attributes["submission_format"] || []
   end
 
   def support_details

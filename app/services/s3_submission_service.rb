@@ -23,9 +23,9 @@ class S3SubmissionService
 
     submission_content, key =
       case @form.submission_format
-      when [:csv]
+      when %w[csv]
         [generate_csv_submission, generate_key("form_submission.csv")]
-      when [:json]
+      when %w[json]
         [generate_json_submission, generate_key("form_submission.json")]
       else
         raise StandardError, "Unsupported submission format: #{@form.submission_format.inspect}"

@@ -158,18 +158,11 @@ RSpec.describe Form, type: :model do
       end
     end
 
-    [
-      [[], []],
-      [%w[csv], %i[csv]],
-      [%w[json], %i[json]],
-      [%w[csv json], %i[csv json]],
-    ].each do |submission_format, expected_submission_format|
-      context "when the submission format attribute is #{submission_format}" do
-        let(:attributes) { { submission_format: } }
+    context "when the submission format attribute is an array of strings" do
+      let(:attributes) { { submission_format: %w[csv json] } }
 
-        it "returns the submission delivery formats #{expected_submission_format}" do
-          expect(form.submission_format).to eq expected_submission_format
-        end
+      it "returns the submission format attribute" do
+        expect(form.submission_format).to eq %w[csv json]
       end
     end
   end
