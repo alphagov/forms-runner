@@ -53,6 +53,7 @@ private
       requested_email_confirmation: requested_confirmation?,
       preview: @mode.preview?,
       submission_type: @form.submission_type,
+      submission_format: @form.submission_format,
     )
   end
 

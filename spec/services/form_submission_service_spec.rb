@@ -92,6 +92,7 @@ RSpec.describe FormSubmissionService do
           requested_email_confirmation: true,
           preview: mode.preview?,
           submission_type:,
+          submission_format: form.submission_format,
         )
       end
     end
