@@ -9,11 +9,13 @@ RSpec.describe S3SubmissionService do
     build(:form,
           id: 42,
           submission_type:,
+          submission_format:,
           s3_bucket_name:,
           s3_bucket_aws_account_id:,
           s3_bucket_region:)
   end
   let(:submission_type) { "s3" }
+  let(:submission_format) { %w[csv] }
   let(:s3_bucket_name) { "a-bucket" }
   let(:s3_bucket_aws_account_id) { "23423423423423" }
   let(:s3_bucket_region) { "eu-west-1" }
@@ -79,6 +81,7 @@ RSpec.describe S3SubmissionService do
 
       context "when the submission format is JSON" do
         let(:submission_type) { "s3_with_json" }
+        let(:submission_format) { %w[json] }
 
         it "calls put_object with a JSON file and filename" do
           expected_key_name = "form_submissions/#{form.id}/#{expected_timestamp}_#{submission_reference}/form_submission.json"
@@ -126,6 +129,7 @@ RSpec.describe S3SubmissionService do
 
         context "when the submission format is JSON" do
           let(:submission_type) { "s3_with_json" }
+          let(:submission_format) { %w[json] }
 
           it "creates the JSON file with the expected filenames" do
             expected_key_name = "form_submissions/#{form.id}/#{expected_timestamp}_#{submission_reference}/form_submission.json"

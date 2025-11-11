@@ -58,13 +58,7 @@ class Form < ActiveResource::Base
   end
 
   def submission_format
-    return [] if submission_type.blank? || submission_type == "email"
-    return [:csv] if submission_type == "s3"
-
-    formats = []
-    formats << :csv if submission_type.include?("csv")
-    formats << :json if submission_type.include?("json")
-    formats
+    (@attributes["submission_format"] || []).map(&:to_sym)
   end
 
   def support_details

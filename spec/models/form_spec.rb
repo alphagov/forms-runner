@@ -150,8 +150,8 @@ RSpec.describe Form, type: :model do
   end
 
   describe "#submission_format" do
-    context "when the submission type is blank" do
-      let(:attributes) { { submission_type: nil } }
+    context "when the submission format attribute is nil" do
+      let(:attributes) { { submission_format: nil } }
 
       it "returns no submission delivery formats" do
         expect(form.submission_format).to eq []
@@ -159,15 +159,13 @@ RSpec.describe Form, type: :model do
     end
 
     [
-      ["email", []],
-      ["email_with_csv", %i[csv]],
-      ["email_with_json", %i[json]],
-      ["email_with_csv_and_json", %i[csv json]],
-      ["s3", %i[csv]],
-      ["s3_with_json", %i[json]],
-    ].each do |submission_type, expected_submission_format|
-      context "when the submission type is #{submission_type}" do
-        let(:attributes) { { submission_type: } }
+      [[], []],
+      [%w[csv], %i[csv]],
+      [%w[json], %i[json]],
+      [%w[csv json], %i[csv json]],
+    ].each do |submission_format, expected_submission_format|
+      context "when the submission format attribute is #{submission_format}" do
+        let(:attributes) { { submission_format: } }
 
         it "returns the submission delivery formats #{expected_submission_format}" do
           expect(form.submission_format).to eq expected_submission_format
