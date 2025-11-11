@@ -8,24 +8,26 @@ RSpec.describe FormSubmissionService do
   let(:mode) { Mode.new }
   let(:confirmation_email_address) { "testing@gov.uk" }
   let(:email_confirmation_input) { build :email_confirmation_input_opted_in, confirmation_email_address: }
+  let(:form) { build(:form, **document_json, document_json:) }
 
-  let(:form) do
-    build(:form,
-          id: 1,
-          name: "Form 1",
-          what_happens_next_markdown:,
-          support_email:,
-          support_phone:,
-          support_url:,
-          support_url_text:,
-          submission_email:,
-          payment_url:,
-          submission_type:,
-          pages:,
-          document_json: form_document)
+  let(:document_json) do
+    build(
+      :v2_form_document,
+      form_id: 1,
+      name: "Form 1",
+      what_happens_next_markdown:,
+      support_email:,
+      support_phone:,
+      support_url:,
+      support_url_text:,
+      submission_email:,
+      payment_url:,
+      submission_type:,
+      steps:,
+    ).as_json
   end
-  let(:form_document) { build(:v2_form_document).to_h.with_indifferent_access }
-  let(:pages) { [build(:page, id: 2, answer_type: "text")] }
+
+  let(:steps) { [build(:v2_question_page_step, id: 2, answer_type: "text")] }
   let(:submission_type) { "email" }
   let(:what_happens_next_markdown) { "We usually respond to applications within 10 working days." }
   let(:support_email) { Faker::Internet.email(domain: "example.gov.uk") }
@@ -95,36 +97,31 @@ RSpec.describe FormSubmissionService do
     end
 
     describe "submitting the form to the processing team" do
-      %w[s3 s3_with_json].each do |type|
-        context "when the submission type is #{type}" do
-          let(:submission_type) { type }
-          let(:s3_submission_service_spy) { instance_double(S3SubmissionService) }
+      shared_examples "submits via AWS S3" do
+        let(:s3_submission_service_spy) { instance_double(S3SubmissionService) }
 
-          before do
-            allow(S3SubmissionService).to receive(:new).and_return(s3_submission_service_spy)
-            allow(s3_submission_service_spy).to receive("submit")
-          end
+        before do
+          allow(S3SubmissionService).to receive(:new).and_return(s3_submission_service_spy)
+          allow(s3_submission_service_spy).to receive("submit")
+        end
 
-          it "creates a S3SubmissionService instance" do
-            freeze_time do
-              service.submit
-
-              expect(S3SubmissionService).to have_received(:new).with(
-                journey:,
-                form:,
-                timestamp: Time.zone.now,
-                submission_reference: reference,
-                is_preview: mode.preview?,
-              ).once
-            end
-          end
-
-          it "calls upload_submission_csv_to_s3" do
+        it "creates a S3SubmissionService instance" do
+          freeze_time do
             service.submit
-            expect(s3_submission_service_spy).to have_received(:submit)
-          end
 
-          include_examples "logging"
+            expect(S3SubmissionService).to have_received(:new).with(
+              journey:,
+              form:,
+              timestamp: Time.zone.now,
+              submission_reference: reference,
+              is_preview: mode.preview?,
+            ).once
+          end
+        end
+
+        it "calls upload_submission_csv_to_s3" do
+          service.submit
+          expect(s3_submission_service_spy).to have_received(:submit)
         end
       end
 
@@ -163,7 +160,7 @@ RSpec.describe FormSubmissionService do
           }.to change(Submission, :count).by(1)
 
           expect(Submission.last).to have_attributes(reference:, form_id: form.id, answers: answers.deep_stringify_keys,
-                                                     mode: "form", mail_message_id: nil, form_document: form_document,
+                                                     mode: "form", mail_message_id: nil, form_document: document_json,
                                                      last_delivery_attempt: nil)
         end
 
@@ -190,6 +187,22 @@ RSpec.describe FormSubmissionService do
             end
           end
         end
+      end
+
+      context "when the submission type is s3" do
+        let(:submission_type) { "s3" }
+
+        include_examples "submits via AWS S3"
+
+        include_examples "logging"
+      end
+
+      context "when the submission type is s3_with_json" do
+        let(:submission_type) { "s3_with_json" }
+
+        include_examples "submits via AWS S3"
+
+        include_examples "logging"
       end
 
       context "when the submission type is email" do
