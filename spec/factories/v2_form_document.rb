@@ -13,6 +13,7 @@ FactoryBot.define do
     privacy_policy_url { nil }
     submission_email { nil }
     submission_type { nil }
+    submission_format { nil }
     support_email { nil }
     support_phone { nil }
     support_url { nil }
@@ -38,6 +39,8 @@ FactoryBot.define do
     end
 
     trait :with_submission_email do
+      submission_type { "email" }
+      submission_format { [] }
       submission_email { Faker::Internet.email domain: "example.gov.uk" }
     end
 

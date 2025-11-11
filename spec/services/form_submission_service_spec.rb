@@ -23,12 +23,14 @@ RSpec.describe FormSubmissionService do
       submission_email:,
       payment_url:,
       submission_type:,
+      submission_format:,
       steps:,
     ).as_json
   end
 
   let(:steps) { [build(:v2_question_page_step, id: 2, answer_type: "text")] }
   let(:submission_type) { "email" }
+  let(:submission_format) { [] }
   let(:what_happens_next_markdown) { "We usually respond to applications within 10 working days." }
   let(:support_email) { Faker::Internet.email(domain: "example.gov.uk") }
   let(:support_phone) { Faker::Lorem.paragraph(sentence_count: 2, supplemental: true, random_sentences_to_add: 4) }
@@ -192,6 +194,7 @@ RSpec.describe FormSubmissionService do
 
       context "when the submission type is s3" do
         let(:submission_type) { "s3" }
+        let(:submission_format) { %w[csv] }
 
         include_examples "submits via AWS S3"
 
@@ -200,6 +203,7 @@ RSpec.describe FormSubmissionService do
 
       context "when the submission type is s3_with_json" do
         let(:submission_type) { "s3_with_json" }
+        let(:submission_format) { %w[json] }
 
         include_examples "submits via AWS S3"
 
@@ -208,6 +212,7 @@ RSpec.describe FormSubmissionService do
 
       context "when the submission type is email" do
         let(:submission_type) { "email" }
+        let(:submission_format) { [] }
 
         include_examples "submits via AWS SES"
 
@@ -216,6 +221,7 @@ RSpec.describe FormSubmissionService do
 
       context "when the submission type is email_with_csv" do
         let(:submission_type) { "email_with_csv" }
+        let(:submission_format) { %w[csv] }
 
         include_examples "submits via AWS SES"
 
