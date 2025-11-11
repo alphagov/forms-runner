@@ -149,7 +149,7 @@ RSpec.describe AwsSesSubmissionService do
     end
 
     context "when the submission type is email with csv" do
-      let(:submission_type) { "email_with_csv" }
+      let(:submission_type) { "email" }
       let(:submission_format) { %w[csv] }
 
       it "calls AwsSesFormSubmissionMailer passing in a CSV file" do
@@ -203,7 +203,7 @@ RSpec.describe AwsSesSubmissionService do
     end
 
     context "when the submission type is email with json" do
-      let(:submission_type) { "email_with_json" }
+      let(:submission_type) { "email" }
       let(:submission_format) { %w[json] }
 
       it "calls AwsSesFormSubmissionMailer passing in a JSON file" do
@@ -221,8 +221,8 @@ RSpec.describe AwsSesSubmissionService do
       end
     end
 
-    context "when the submission type is email_with_csv_and_json" do
-      let(:submission_type) { "email_with_csv_and_json" }
+    context "when the submission type is email with csv and json" do
+      let(:submission_type) { "email" }
       let(:submission_format) { %w[csv json] }
 
       it "calls AwsSesFormSubmissionMailer passing in both a CSV and JSON file in the expected order" do
