@@ -4,7 +4,9 @@ redis_url = RedisConfig.redis_url
 
 if redis_url.blank?
   throw StandardError.new "You must configure a session store using REDIS_URL" unless Rails.configuration.try(:unsafe_session_storage)
-  Rails.logger.debug "WARNING: Using cookies as session store, insecure\n"
+
+  Rails.application.config.session_store :cache_store
+  Rails.logger.warn "WARNING: Using Rails cache #{Rails.application.config.cache_store.inspect || ":file_store"} as session store, this is insecure and session data may be lost on server restart\n"
 else
   Rails.application.config.session_store :redis_session_store,
                                          key: "_forms",
