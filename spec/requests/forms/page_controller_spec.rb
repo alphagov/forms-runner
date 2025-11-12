@@ -7,16 +7,17 @@ RSpec.describe Forms::PageController, type: :request do
   let(:form_data) do
     build(:v2_form_document, :with_support,
           form_id: 2,
-          start_page: 1,
+          start_page: first_page_id,
           privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
           what_happens_next_markdown: "Good things come to those that wait",
           declaration_text: "agree to the declaration",
           steps: steps_data)
   end
 
+  let(:first_page_id) { 1 }
   let(:first_step_in_form) do
     build :v2_question_page_step, :with_text_settings,
-          id: 1,
+          id: first_page_id,
           next_step_id: 2,
           is_optional: false
   end
@@ -29,7 +30,7 @@ RSpec.describe Forms::PageController, type: :request do
 
   let(:page_with_routing) do
     build :v2_question_page_step, :with_selections_settings,
-          id: 1,
+          id: first_page_id,
           next_step_id: 2,
           routing_conditions: [DataStruct.new(id: 1, routing_page_id: 1, check_page_id: 1, goto_page_id: 3, answer_value: "Option 1", validation_errors:)],
           is_optional: false
@@ -95,46 +96,55 @@ RSpec.describe Forms::PageController, type: :request do
   shared_examples "ordered steps" do
     it "redirects to first page when second request before first complete" do
       get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2)
-      expect(response).to redirect_to(form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1))
+      expect(response).to redirect_to(form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id))
     end
 
     it "redirects to first page when the page does not exist for the form" do
       get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 99_999_999)
       expect(response).to have_http_status(:found)
-      expect(response.location).to eq(form_page_url(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1))
+      expect(response.location).to eq(form_page_url(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id))
     end
   end
 
   shared_examples "page with footer" do
     it "Displays the privacy policy link on the page" do
-      get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
+      get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id)
       expect(response.body).to include("Privacy")
     end
 
     it "Displays the accessibility statement link on the page" do
-      get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
+      get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id)
       expect(response.body).to include("Accessibility statement")
     end
 
     it "Displays the Cookies link on the page" do
-      get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
+      get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id)
       expect(response.body).to include("Cookies")
     end
   end
 
   shared_examples "question page" do
     it "Returns a 200" do
-      get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
+      get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id)
       expect(response).to have_http_status(:ok)
     end
 
+    context "when a page ID is an external ID" do
+      let(:first_page_id) { "xc23ERo3" }
+
+      it "returns a 200" do
+        get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id)
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
     it "Returns the correct X-Robots-Tag header" do
-      get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
+      get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id)
       expect(response.headers["X-Robots-Tag"]).to eq("noindex, nofollow")
     end
 
     it "Displays the question text on the page" do
-      get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
+      get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id)
       expect(response.body).to include(form_data.steps.first.data.question_text)
     end
 
@@ -143,19 +153,19 @@ RSpec.describe Forms::PageController, type: :request do
         allow_any_instance_of(Flow::Context).to receive(:can_visit?).and_return(true)
         allow_any_instance_of(Flow::Context).to receive(:previous_step).and_return(OpenStruct.new(page_id: 1))
         get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2)
-        expect(response.body).to include(form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1))
+        expect(response.body).to include(form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id))
       end
     end
 
     context "with a change answers page" do
       it "Displays a back link to the check your answers page" do
-        get form_change_answer_path(form_id: 2, form_slug: form_data.form_slug, page_slug: 1, mode:)
+        get form_change_answer_path(form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id, mode:)
         expect(response.body).to include(check_your_answers_path(2, form_data.form_slug, mode:))
       end
 
       it "Passes the changing answers parameter in its submit request" do
-        get form_change_answer_path(form_id: 2, form_slug: form_data.form_slug, page_slug: 1, mode:)
-        expect(response.body).to include(save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1, changing_existing_answer: true, answer_index: 1))
+        get form_change_answer_path(form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id, mode:)
+        expect(response.body).to include(save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id, changing_existing_answer: true, answer_index: 1))
       end
     end
 
@@ -163,7 +173,7 @@ RSpec.describe Forms::PageController, type: :request do
       it "redirects if a later page is requested" do
         get check_your_answers_path(2, form_data.form_slug, mode:)
         expect(response).to have_http_status(:found)
-        expect(response.location).to eq(form_page_url(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1))
+        expect(response.location).to eq(form_page_url(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id))
       end
     end
   end
@@ -197,6 +207,7 @@ RSpec.describe Forms::PageController, type: :request do
         "/form/2/1/setup.php",
         "/form/2/1/test.cgi",
         "/form/2/1/x",
+        "/form/2/1/toolongforanid0",
       ].each do |path|
         context "with an invalid URL: #{path}" do
           before do
@@ -208,7 +219,7 @@ RSpec.describe Forms::PageController, type: :request do
             expect(response).to have_http_status(:not_found)
           end
 
-          it "does not send an expception to sentry" do
+          it "does not send an exception to sentry" do
             expect(Sentry).not_to have_received(:capture_exception)
           end
         end
@@ -234,7 +245,7 @@ RSpec.describe Forms::PageController, type: :request do
       end
 
       it "Returns a 200" do
-        get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
+        get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id)
         expect(response).to have_http_status(:ok)
       end
     end
@@ -269,12 +280,12 @@ RSpec.describe Forms::PageController, type: :request do
         let(:validation_errors) { [{ name: "cannot_have_goto_page_before_routing_page" }] }
 
         it "returns a 422 response" do
-          get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
+          get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id)
           expect(response).to have_http_status(:unprocessable_content)
         end
 
         it "shows the error page" do
-          get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
+          get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id)
           link_url = "#{Settings.forms_admin.base_url}/forms/2/pages/1/routes"
           question_number = first_step_in_form.position
           expect(response.body).to include(I18n.t("errors.goto_page_routing_error.cannot_have_goto_page_before_routing_page.body_html", link_url:, question_number:))
@@ -282,7 +293,7 @@ RSpec.describe Forms::PageController, type: :request do
 
         it "logs an error event" do
           expect(EventLogger).to receive(:log_page_event).with("goto_page_before_routing_page_error", first_step_in_form.data.question_text, nil)
-          get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
+          get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id)
         end
 
         context "when the route is a secondary skip" do
@@ -316,12 +327,12 @@ RSpec.describe Forms::PageController, type: :request do
         let(:validation_errors) { [{ name: "goto_page_doesnt_exist" }] }
 
         it "returns a 422 response" do
-          get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
+          get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id)
           expect(response).to have_http_status(:unprocessable_content)
         end
 
         it "shows the error page" do
-          get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
+          get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id)
           link_url = "#{Settings.forms_admin.base_url}/forms/2/pages/1/routes"
           question_number = first_step_in_form.position
           expect(response.body).to include(I18n.t("errors.goto_page_routing_error.goto_page_doesnt_exist.body_html", link_url:, question_number:))
@@ -329,7 +340,7 @@ RSpec.describe Forms::PageController, type: :request do
 
         it "logs an error event" do
           expect(EventLogger).to receive(:log_page_event).with("goto_page_doesnt_exist_error", first_step_in_form.data.question_text, nil)
-          get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
+          get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id)
         end
       end
     end
@@ -364,7 +375,7 @@ RSpec.describe Forms::PageController, type: :request do
           context_spy = original_method.call(form: args[0][:form], store:)
           context_spy
         end
-        get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
+        get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id)
       end
 
       context "when the question has already been answered" do
@@ -382,7 +393,7 @@ RSpec.describe Forms::PageController, type: :request do
         end
 
         it "redirects to the review file route" do
-          expect(response).to redirect_to review_file_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
+          expect(response).to redirect_to review_file_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id)
         end
       end
 
@@ -404,7 +415,7 @@ RSpec.describe Forms::PageController, type: :request do
     shared_examples "for validating answer" do
       context "when the form is invalid" do
         before do
-          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: { text: "" }, changing_existing_answer: false }
+          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id), params: { question: { text: "" }, changing_existing_answer: false }
         end
 
         it "renders the show page template" do
@@ -423,18 +434,18 @@ RSpec.describe Forms::PageController, type: :request do
 
     shared_examples "for redirecting after saving answer" do
       it "Redirects to the next page" do
-        post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
+        post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id), params: { question: { text: "answer text" }, changing_existing_answer: false }
         expect(response).to redirect_to(form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2))
       end
 
       it "does not add validation_errors logging attribute" do
-        post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: { text: "answer text" }, changing_existing_answer: false }
+        post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id), params: { question: { text: "answer text" }, changing_existing_answer: false }
         expect(log_lines[0].keys).not_to include("validation_errors")
       end
 
       context "when changing an existing answer" do
         it "Redirects to the check your answers page" do
-          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1, params: { question: { text: "answer text" }, changing_existing_answer: true })
+          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id, params: { question: { text: "answer text" }, changing_existing_answer: true })
           expect(response).to redirect_to(check_your_answers_path(2, form_data.form_slug, mode:))
         end
       end
@@ -457,19 +468,19 @@ RSpec.describe Forms::PageController, type: :request do
       context "when changing an existing answer" do
         it "does not log the change_answer_page_save event" do
           expect(EventLogger).not_to receive(:log)
-          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1, params: { question: { text: "answer text" }, changing_existing_answer: true })
+          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id, params: { question: { text: "answer text" }, changing_existing_answer: true })
         end
       end
 
       context "with the first page" do
         it "does not log the first_page_save event" do
           expect(EventLogger).not_to receive(:log)
-          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: { text: "answer text" } }
+          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id), params: { question: { text: "answer text" } }
         end
 
         it "clears the submission reference from the session" do
           expect_any_instance_of(Flow::Context).to receive(:clear_submission_details).once
-          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: { text: "answer text" } }
+          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id), params: { question: { text: "answer text" } }
         end
       end
 
@@ -496,14 +507,14 @@ RSpec.describe Forms::PageController, type: :request do
       context "when changing an existing answer" do
         it "Logs the change_answer_page_save event" do
           expect(EventLogger).to receive(:log_page_event).with("change_answer_page_save", first_step_in_form.data.question_text, nil)
-          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1, params: { question: { text: "answer text" }, changing_existing_answer: true })
+          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id, params: { question: { text: "answer text" }, changing_existing_answer: true })
         end
       end
 
       context "with the first page" do
         it "Logs the first_page_save event" do
           expect(EventLogger).to receive(:log_page_event).with("first_page_save", first_step_in_form.data.question_text, nil)
-          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: { text: "answer text" } }
+          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id), params: { question: { text: "answer text" } }
         end
       end
 
@@ -559,13 +570,13 @@ RSpec.describe Forms::PageController, type: :request do
       let(:mode) { "preview-draft" }
 
       it "redirects to the goto page if answer value matches condition" do
-        post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: { selection: "Option 1" }, changing_existing_answer: false }
+        post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id), params: { question: { selection: "Option 1" }, changing_existing_answer: false }
         expect(response).to redirect_to(form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 3))
       end
 
       context "when the answer_value does not match the condition" do
         it "redirects to the next page in the journey" do
-          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: { selection: "Option 2" }, changing_existing_answer: false }
+          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id), params: { question: { selection: "Option 2" }, changing_existing_answer: false }
           expect(response).to redirect_to(form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2))
         end
       end
@@ -575,12 +586,12 @@ RSpec.describe Forms::PageController, type: :request do
         let(:validation_errors) { [{ name: "cannot_have_goto_page_before_routing_page" }] }
 
         it "returns a 422 response" do
-          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: { selection: "Option 2" }, changing_existing_answer: false }
+          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id), params: { question: { selection: "Option 2" }, changing_existing_answer: false }
           expect(response).to have_http_status(:unprocessable_content)
         end
 
         it "shows the error page" do
-          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: { selection: "Option 2" }, changing_existing_answer: false }
+          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id), params: { question: { selection: "Option 2" }, changing_existing_answer: false }
           link_url = "#{Settings.forms_admin.base_url}/forms/2/pages/1/routes"
           question_number = first_step_in_form.position
           expect(response.body).to include(I18n.t("errors.goto_page_routing_error.cannot_have_goto_page_before_routing_page.body_html", link_url:, question_number:))
@@ -639,18 +650,18 @@ RSpec.describe Forms::PageController, type: :request do
         end
 
         it "redirects to the review file route" do
-          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: }
-          expect(response).to redirect_to review_file_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
+          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id), params: { question: }
+          expect(response).to redirect_to review_file_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id)
         end
 
         it "displays a success banner" do
-          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: }
+          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id), params: { question: }
 
           expect(flash[:success]).to eq(I18n.t("banner.success.file_uploaded"))
         end
 
         it "adds answer_metadata logging attribute" do
-          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: }
+          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id), params: { question: }
           expect(log_lines[0]["answer_metadata"]).to eq({
             "file_size_in_bytes" => tempfile.size,
             "file_type" => content_type,
@@ -659,8 +670,8 @@ RSpec.describe Forms::PageController, type: :request do
 
         context "when changing an existing answer" do
           it "includes the changing_existing_answer query parameter in the redirect" do
-            post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1, changing_existing_answer: true), params: { question: }
-            expect(response).to redirect_to review_file_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1, changing_existing_answer: true)
+            post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id, changing_existing_answer: true), params: { question: }
+            expect(response).to redirect_to review_file_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id, changing_existing_answer: true)
           end
         end
       end
@@ -669,7 +680,7 @@ RSpec.describe Forms::PageController, type: :request do
         let(:question) { { file: nil } }
 
         it "redirects to the next step in the form" do
-          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: }
+          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id), params: { question: }
           expect(response).to redirect_to form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2)
         end
       end
@@ -680,7 +691,7 @@ RSpec.describe Forms::PageController, type: :request do
         let(:question) { { file: Rack::Test::UploadedFile.new(tempfile.path, content_type) } }
 
         before do
-          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1), params: { question: }
+          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id), params: { question: }
         end
 
         after do
@@ -710,12 +721,12 @@ RSpec.describe Forms::PageController, type: :request do
       end
 
       it "redirects to the exit page when exit page answer given" do
-        post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1, params: { question: { selection: "Option 1" }, changing_existing_answer: false })
-        expect(response).to redirect_to exit_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1)
+        post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id, params: { question: { selection: "Option 1" }, changing_existing_answer: false })
+        expect(response).to redirect_to exit_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id)
       end
 
       it "redirects to the next step in the form when any other answer given" do
-        post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1, params: { question: { selection: "Option 2" }, changing_existing_answer: false })
+        post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id, params: { question: { selection: "Option 2" }, changing_existing_answer: false })
         expect(response).to redirect_to form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2)
       end
     end
