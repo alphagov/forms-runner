@@ -6,6 +6,7 @@ FactoryBot.define do
     form_slug { name ? name.parameterize : nil }
 
     steps { [] }
+    start_page { nil }
 
     declaration_text { nil }
     declaration_section_completed { false }
@@ -30,6 +31,7 @@ FactoryBot.define do
         Array.new(steps_count) { attributes_for(:v2_step) }
       end
 
+      start_page { steps.presence && steps.first[:id] }
       question_section_completed { true }
     end
 
