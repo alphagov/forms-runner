@@ -21,6 +21,7 @@ module Flow
 
       # for now, we use the page id as slug
       page = @form.pages.find { |p| p.id.to_s == page_slug }
+      page = @form.pages.find { |p| p.respond_to?(:database_id) && p.database_id.to_s == page_slug } if page.nil?
       raise PageNotFoundError, "Can't find page #{page_slug}" if page.nil?
 
       question = QuestionRegister.from_page(page)
