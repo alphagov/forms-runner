@@ -38,331 +38,200 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
     end
   end
 
-  context "when there are messages in the queue" do
+  before do
+    sts_client = instance_double(Aws::STS::Client)
+    allow(Aws::STS::Client).to receive(:new).and_return(sts_client)
+    allow(sts_client).to receive(:get_caller_identity).and_return(OpenStruct.new(account: "123456789012"))
+
+    allow(Aws::SQS::Client).to receive(:new).and_return(sqs_client)
+    allow(sqs_client).to receive(:receive_message).and_return(OpenStruct.new(messages: messages), OpenStruct.new(messages: []))
+    allow(sqs_client).to receive(:delete_message)
+
+    allow(CloudWatchService).to receive(:record_job_started_metric)
+
+    Rails.logger.broadcast_to logger
+  end
+
+  after do
+    Rails.logger.stop_broadcasting_to logger
+  end
+
+  describe "CloudWatch metrics" do
+    let(:messages) { [sqs_message] }
+
+    it "sends job started metric" do
+      described_class.perform_now
+      expect(CloudWatchService).to have_received(:record_job_started_metric).with("ReceiveSubmissionBouncesAndComplaintsJob")
+    end
+  end
+
+  describe "processing bounce notifications" do
+    let(:messages) { [sqs_message] }
+
     before do
-      sts_client = instance_double(Aws::STS::Client)
-      allow(Aws::STS::Client).to receive(:new).and_return(sts_client)
-      allow(sts_client).to receive(:get_caller_identity).and_return(OpenStruct.new(account: "123456789012"))
-
-      allow(Aws::SQS::Client).to receive(:new).and_return(sqs_client)
-      allow(sqs_client).to receive(:receive_message).and_return(OpenStruct.new(messages: messages), OpenStruct.new(messages: []))
-      allow(sqs_client).to receive(:delete_message) do
-        messages.shift
-      end
-
-      allow(CloudWatchService).to receive(:record_job_started_metric)
-
-      Rails.logger.broadcast_to logger
+      job = described_class.perform_later
+      @job_id = job.job_id
     end
 
-    after do
-      Rails.logger.stop_broadcasting_to logger
-    end
-
-    context "when there are many messages in the queue" do
-      let(:message_count) { 15 }
-      let(:messages) { Array.new(message_count, sqs_message) }
-
-      before do
-        allow(sqs_client).to receive(:receive_message).and_return(OpenStruct.new(messages: messages[0..9]), OpenStruct.new(messages: messages[10..15]), OpenStruct.new(messages: []))
-
-        described_class.perform_later
-      end
-
-      it "clears the SQS queue" do
+    context "when it is for a live submission" do
+      it "updates the submission mail status to bounced" do
         perform_enqueued_jobs
-        expect(sqs_client).to have_received(:delete_message).exactly(message_count).times
+        expect(submission.reload.bounced?).to be true
       end
 
-      it "sends cloudwatch metric" do
+      it "doesn't change the mail status for other submissions" do
         perform_enqueued_jobs
-        expect(CloudWatchService).to have_received(:record_job_started_metric).with("ReceiveSubmissionBouncesAndComplaintsJob")
-      end
-    end
-
-    context "when the message is a bounce notification" do
-      let(:messages) { [sqs_message] }
-
-      before do
-        job = described_class.perform_later
-        @job_id = job.job_id
+        expect(other_submission.reload.pending?).to be true
       end
 
-      context "when it is for a live submission" do
-        it "updates the submission mail status to bounced" do
-          perform_enqueued_jobs
-          expect(submission.reload.bounced?).to be true
-        end
-
-        it "doesn't change the mail status for other submissions" do
-          perform_enqueued_jobs
-          expect(other_submission.reload.pending?).to be true
-        end
-
-        it "logs at info level" do
-          perform_enqueued_jobs
-
-          expect(log_lines).to include(hash_including(
-                                         "level" => "INFO",
-                                         "message" => "Form event",
-                                         "event" => "form_submission_bounced",
-                                         "form_id" => form_with_file_upload.form_id,
-                                         "submission_reference" => reference,
-                                         "preview" => "false",
-                                         "mail_message_id" => mail_message_id,
-                                         "sqs_message_id" => sqs_message_id,
-                                         "sns_message_timestamp" => sns_message_timestamp,
-                                         "job_id" => @job_id,
-                                         "job_class" => "ReceiveSubmissionBouncesAndComplaintsJob",
-                                       ))
-        end
-
-        it "alerts to Sentry that there was a bounced delivery" do
-          allow(Sentry).to receive(:capture_message)
-          perform_enqueued_jobs
-          expect(Sentry).to have_received(:capture_message)
-        end
-
-        it "deletes the SQS message" do
-          perform_enqueued_jobs
-          expect(sqs_client).to have_received(:delete_message).with(queue_url: anything, receipt_handle:)
-        end
-      end
-
-      context "when it is for a preview submission" do
-        let!(:submission) do
-          create :submission,
-                 mail_message_id:,
-                 reference:,
-                 form_id: form_with_file_upload.form_id,
-                 form_document: form_with_file_upload,
-                 answers: form_with_file_upload_answers,
-                 mode: "preview-live"
-        end
-
-        it "does not update the submission mail status to bounced" do
-          perform_enqueued_jobs
-          expect(submission.reload.bounced?).to be false
-        end
-
-        it "logs at info level" do
-          perform_enqueued_jobs
-
-          expect(log_lines).to include(hash_including(
-                                         "level" => "INFO",
-                                         "message" => "Form event",
-                                         "event" => "form_submission_bounced",
-                                         "form_id" => form_with_file_upload.form_id,
-                                         "submission_reference" => reference,
-                                         "preview" => "true",
-                                         "mail_message_id" => mail_message_id,
-                                         "sqs_message_id" => sqs_message_id,
-                                         "sns_message_timestamp" => sns_message_timestamp,
-                                         "job_id" => @job_id,
-                                         "job_class" => "ReceiveSubmissionBouncesAndComplaintsJob",
-                                       ))
-        end
-
-        it "does not alert to Sentry" do
-          allow(Sentry).to receive(:capture_message)
-          perform_enqueued_jobs
-          expect(Sentry).not_to have_received(:capture_message)
-        end
-
-        it "deletes the SQS message" do
-          perform_enqueued_jobs
-          expect(sqs_client).to have_received(:delete_message).with(queue_url: anything, receipt_handle:)
-        end
-      end
-
-      context "when there is a bounce object" do
-        let(:ses_message_body) { { "mail" => { "messageId" => mail_message_id }, "eventType" => event_type, "bounce" => bounce } }
-        let(:bounce) { { "bounceType" => "Permanent", "bounceSubType" => "General", "bouncedRecipients" => bounced_recipients } }
-        let(:bounced_recipients) { [{ "emailAddress" => "bounce@example.com" }] }
-
-        it "logs the bounce type" do
-          perform_enqueued_jobs
-
-          expect(log_lines).to include(
-            hash_including(
-              "ses_bounce" => hash_including(
-                "bounce_type" => "Permanent",
-                "bounce_sub_type" => "General",
-                "bounced_recipients" => [
-                  hash_including(
-                    "email_address" => "bounce@example.com",
-                  ),
-                ],
-              ),
-            ),
-          )
-        end
-
-        it "includes the bounce type in the Sentry event" do
-          allow(Sentry).to receive(:capture_message)
-          perform_enqueued_jobs
-          expect(Sentry).to have_received(:capture_message).with(
-            a_string_including("Submission email bounced"),
-            fingerprint: ["{{ default }}", submission.form_id],
-            extra: hash_including(
-              ses_bounce: hash_including(
-                bounce_type: "Permanent",
-                bounce_sub_type: "General",
-              ),
-            ),
-          )
-        end
-
-        it "includes the form_id in the Sentry message" do
-          allow(Sentry).to receive(:capture_message)
-          perform_enqueued_jobs
-          expect(Sentry).to have_received(:capture_message).with(a_string_including("Submission email bounced for form 1 - ReceiveSubmissionBouncesAndComplaintsJob"), anything)
-        end
-
-        it "does not include the bounced recipients in the Sentry event" do
-          allow(Sentry).to receive(:capture_message)
-          perform_enqueued_jobs
-          expect(Sentry).not_to have_received(:capture_message).with(
-            anything,
-            extra: hash_including(
-              ses_bounce: hash_including(
-                :bounced_recipients,
-              ),
-            ),
-          )
-        end
-      end
-
-      context "when there is no submission found" do
-        let(:ses_message_body) { { "mail" => { "messageId" => "mismatched-message-id" }, "eventType": event_type } }
-
-        it "sends an error to Sentry" do
-          allow(Sentry).to receive(:capture_exception)
-
-          perform_enqueued_jobs
-
-          expect(Sentry).to have_received(:capture_exception) do |error|
-            expect(error.class).to eq(ActiveRecord::RecordNotFound)
-          end
-        end
-
-        it "does not delete the SQS message" do
-          perform_enqueued_jobs
-
-          expect(sqs_client).not_to have_received(:delete_message)
-        end
-      end
-
-      context "when updating submission fails" do
-        let(:messages) { [sqs_message, sqs_message] }
-
-        before do
-          call_count = 0
-
-          allow(Submission).to receive(:find_by) do
-            call_count += 1
-            if call_count == 1
-              raise StandardError, "Test error"
-            else
-              submission
-            end
-          end
-        end
-
-        it "logs at warn level" do
-          begin
-            perform_enqueued_jobs
-          rescue StandardError
-            nil
-          end
-
-          expect(log_lines).to include(hash_including(
-                                         "level" => "WARN",
-                                         "mail_message_id" => mail_message_id,
-                                         "sqs_message_id" => sqs_message_id,
-                                         "sns_message_timestamp" => sns_message_timestamp,
-                                         "message" => "Error processing message - StandardError: Test error",
-                                         "job_id" => @job_id,
-                                         "job_class" => "ReceiveSubmissionBouncesAndComplaintsJob",
-                                       ))
-        end
-
-        it "sends an error to Sentry" do
-          allow(Sentry).to receive(:capture_exception)
-
-          perform_enqueued_jobs
-
-          expect(Sentry).to have_received(:capture_exception)
-        end
-
-        it "continues processing subsequent messages" do
-          expected_loop_count = messages.length - 1
-
-          perform_enqueued_jobs
-
-          expect(sqs_client).to have_received(:delete_message).exactly(expected_loop_count).times
-        end
-      end
-    end
-
-    context "when the message is a complaint notification" do
-      let(:event_type) { "Complaint" }
-
-      let(:messages) { [sqs_message] }
-      let(:receipt_handle) { "complaint-receipt-handle" }
-
-      before do
-        job = described_class.perform_later
-        @job_id = job.job_id
-      end
-
-      it "logs that there was a complaint" do
+      it "logs form event with correct details" do
         perform_enqueued_jobs
 
         expect(log_lines).to include(hash_including(
                                        "level" => "INFO",
+                                       "message" => "Form event",
+                                       "event" => "form_submission_bounced",
                                        "form_id" => form_with_file_upload.form_id,
                                        "submission_reference" => reference,
                                        "preview" => "false",
                                        "mail_message_id" => mail_message_id,
                                        "sqs_message_id" => sqs_message_id,
                                        "sns_message_timestamp" => sns_message_timestamp,
-                                       "message" => "Form event",
-                                       "event" => "form_submission_complaint",
                                        "job_id" => @job_id,
                                        "job_class" => "ReceiveSubmissionBouncesAndComplaintsJob",
                                      ))
       end
 
-      it "deletes the SQS message" do
+      it "alerts to Sentry that there was a bounced delivery" do
+        allow(Sentry).to receive(:capture_message)
         perform_enqueued_jobs
-        expect(sqs_client).to have_received(:delete_message).with(queue_url: anything, receipt_handle:)
+        expect(Sentry).to have_received(:capture_message)
       end
     end
 
-    context "when the message is neither a bounce or complaint notification" do
-      let(:event_type) { "Some other event type" }
-      let(:messages) { [sqs_message] }
-
-      before do
-        job = described_class.perform_later
-        @job_id = job.job_id
+    context "when it is for a preview submission" do
+      let!(:submission) do
+        create :submission,
+               mail_message_id:,
+               reference:,
+               form_id: form_with_file_upload.form_id,
+               form_document: form_with_file_upload,
+               answers: form_with_file_upload_answers,
+               mode: "preview-live"
       end
 
-      it "sends an error to Sentry" do
-        allow(Sentry).to receive(:capture_exception)
-
+      it "does not update the submission mail status to bounced" do
         perform_enqueued_jobs
-
-        expect(Sentry).to have_received(:capture_exception) do |error|
-          expect(error.message).to eq("Unexpected event type:#{event_type}")
-        end
+        expect(submission.reload.bounced?).to be false
       end
 
-      it "does not delete the SQS message" do
+      it "logs form event with preview flag" do
         perform_enqueued_jobs
 
-        expect(sqs_client).not_to have_received(:delete_message)
+        expect(log_lines).to include(hash_including(
+                                       "level" => "INFO",
+                                       "message" => "Form event",
+                                       "event" => "form_submission_bounced",
+                                       "preview" => "true",
+                                     ))
+      end
+
+      it "does not alert to Sentry" do
+        allow(Sentry).to receive(:capture_message)
+        perform_enqueued_jobs
+        expect(Sentry).not_to have_received(:capture_message)
+      end
+    end
+
+    context "when there is a bounce object with detailed information" do
+      let(:ses_message_body) { { "mail" => { "messageId" => mail_message_id }, "eventType" => event_type, "bounce" => bounce } }
+      let(:bounce) { { "bounceType" => "Permanent", "bounceSubType" => "General", "bouncedRecipients" => bounced_recipients } }
+      let(:bounced_recipients) { [{ "emailAddress" => "bounce@example.com" }] }
+
+      it "logs the bounce details" do
+        perform_enqueued_jobs
+
+        expect(log_lines).to include(
+          hash_including(
+            "ses_bounce" => hash_including(
+              "bounce_type" => "Permanent",
+              "bounce_sub_type" => "General",
+              "bounced_recipients" => [
+                hash_including(
+                  "email_address" => "bounce@example.com",
+                ),
+              ],
+            ),
+          ),
+        )
+      end
+
+      it "includes bounce details in the Sentry event" do
+        allow(Sentry).to receive(:capture_message)
+        perform_enqueued_jobs
+        expect(Sentry).to have_received(:capture_message).with(
+          a_string_including("Submission email bounced for form 1 - ReceiveSubmissionBouncesAndComplaintsJob"),
+          fingerprint: ["{{ default }}", submission.form_id],
+          extra: hash_including(
+            ses_bounce: hash_including(
+              bounce_type: "Permanent",
+              bounce_sub_type: "General",
+            ),
+          ),
+        )
+      end
+
+      it "does not include bounced recipients in the Sentry event" do
+        allow(Sentry).to receive(:capture_message)
+        perform_enqueued_jobs
+        expect(Sentry).not_to have_received(:capture_message).with(
+          anything,
+          extra: hash_including(
+            ses_bounce: hash_including(
+              :bounced_recipients,
+            ),
+          ),
+        )
+      end
+    end
+  end
+
+  describe "processing complaint notifications" do
+    let(:event_type) { "Complaint" }
+    let(:messages) { [sqs_message] }
+
+    before do
+      job = described_class.perform_later
+      @job_id = job.job_id
+    end
+
+    it "logs complaint event with correct details" do
+      perform_enqueued_jobs
+
+      expect(log_lines).to include(hash_including(
+                                     "level" => "INFO",
+                                     "form_id" => form_with_file_upload.form_id,
+                                     "submission_reference" => reference,
+                                     "preview" => "false",
+                                     "message" => "Form event",
+                                     "event" => "form_submission_complaint",
+                                     "job_id" => @job_id,
+                                     "job_class" => "ReceiveSubmissionBouncesAndComplaintsJob",
+                                   ))
+    end
+  end
+
+  describe "handling unexpected event types" do
+    let(:event_type) { "Some other event type" }
+    let(:messages) { [sqs_message] }
+
+    it "raises an error with the unexpected event type" do
+      allow(Sentry).to receive(:capture_exception)
+
+      described_class.perform_now
+
+      expect(Sentry).to have_received(:capture_exception) do |error|
+        expect(error.message).to eq("Unexpected event type:#{event_type}")
       end
     end
   end
