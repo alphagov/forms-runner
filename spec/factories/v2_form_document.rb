@@ -35,6 +35,19 @@ FactoryBot.define do
       question_section_completed { true }
     end
 
+    trait :with_question_pages do
+      transient do
+        steps_count { 5 }
+      end
+
+      steps do
+        Array.new(steps_count) { attributes_for(:v2_question_page_step) }
+      end
+
+      start_page { steps.presence && steps.first[:id] }
+      question_section_completed { true }
+    end
+
     trait :with_privacy_policy_url do
       privacy_policy_url { Faker::Internet.url host: "gov.uk" }
     end
@@ -51,7 +64,7 @@ FactoryBot.define do
     end
 
     trait :ready_for_live do
-      with_steps
+      with_question_pages
       with_privacy_policy_url
       with_submission_email
       support_email { Faker::Internet.email(domain: "example.gov.uk") }
