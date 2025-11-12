@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Api::V2::FormDocumentRepository do
+RSpec.describe Api::V2::FormRepository do
   let(:req_headers) { { "Accept" => "application/json" } }
 
   let(:form_id) { "1" }

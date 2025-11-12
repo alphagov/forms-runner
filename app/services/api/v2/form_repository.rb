@@ -1,4 +1,4 @@
-class Api::V2::FormDocumentRepository
+class Api::V2::FormRepository
   class << self
     def find(form_id:, tag:)
       raise ActiveResource::ResourceNotFound.new(404, "Not Found") unless form_id.to_s =~ /^[[:alnum:]]+$/
