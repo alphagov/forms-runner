@@ -1,7 +1,6 @@
 module Flow
   class StepFactory
     START_PAGE = "_start".freeze
-    PAGE_SLUG_REGEX = Regexp.union([Page::PAGE_ID_REGEX, Regexp.new(CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG)])
 
     class PageNotFoundError < StandardError
       def initialize(msg = "Page not found.")
