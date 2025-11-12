@@ -12,6 +12,15 @@ class Form < ActiveResource::Base
   has_many :steps, class_name: "form/step"
   attr_accessor :document_json
 
+  class << self
+    def from_form_document(form_id, tag, content, persisted = true)
+      form = new(content, persisted)
+      form.document_json = content
+      form.prefix_options = { form_id:, tag: }
+      form
+    end
+  end
+
   def form_id
     @attributes["form_id"] || @attributes["id"]
   end

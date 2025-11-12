@@ -12,6 +12,43 @@ RSpec.describe Form, type: :model do
     ]
   end
 
+  describe ".from_form_document" do
+    def as_json(...)
+      attributes_for(...).as_json
+    end
+
+    let(:form_document) { as_json(:v2_form_document, form_id: 1, name: "form name", submission_email: "user@example.com", start_page: 1, steps:) }
+
+    let(:steps) do
+      [
+        as_json(:v2_step, id: 9, next_step_id: 10, type: "question_page", data: { answer_type: "date", question_text: "Question one" }),
+        as_json(:v2_step, id: 10, type: "question_page", data: { answer_type: "address", question_text: "Question two" }),
+      ]
+    end
+
+    it "creates a form object from a form document" do
+      form = described_class.from_form_document(1, "draft", form_document)
+      expect(form).to be_a described_class
+      expect(form).to have_attributes(
+        id: 1,
+        name: "form name",
+        submission_email: "user@example.com",
+        start_page: 1,
+      )
+    end
+
+    it "returns a persisted form object" do
+      form = described_class.from_form_document(1, "live", form_document)
+      expect(form).to be_persisted
+      expect(form.prefix_options).to eq({ form_id: 1, tag: "live" })
+    end
+
+    it "sets the document_json on the form" do
+      form = described_class.from_form_document(10, "archived", form_document)
+      expect(form.document_json).to eq form_document
+    end
+  end
+
   describe "#form_id" do
     context "when the form is initialised with attribute form_id" do
       let(:attributes) { { form_id: "1" } }
