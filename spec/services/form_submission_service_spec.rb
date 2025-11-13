@@ -201,8 +201,8 @@ RSpec.describe FormSubmissionService do
         include_examples "logging"
       end
 
-      context "when the submission type is s3_with_json" do
-        let(:submission_type) { "s3_with_json" }
+      context "when the submission type is s3 with json" do
+        let(:submission_type) { "s3" }
         let(:submission_format) { %w[json] }
 
         include_examples "submits via AWS S3"
@@ -219,8 +219,8 @@ RSpec.describe FormSubmissionService do
         include_examples "logging"
       end
 
-      context "when the submission type is email_with_csv" do
-        let(:submission_type) { "email_with_csv" }
+      context "when the submission type is email with csv" do
+        let(:submission_type) { "email" }
         let(:submission_format) { %w[csv] }
 
         include_examples "submits via AWS SES"

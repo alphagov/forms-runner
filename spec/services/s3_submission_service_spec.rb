@@ -80,7 +80,7 @@ RSpec.describe S3SubmissionService do
       end
 
       context "when the submission format is JSON" do
-        let(:submission_type) { "s3_with_json" }
+        let(:submission_type) { "s3" }
         let(:submission_format) { %w[json] }
 
         it "calls put_object with a JSON file and filename" do
@@ -128,7 +128,7 @@ RSpec.describe S3SubmissionService do
         end
 
         context "when the submission format is JSON" do
-          let(:submission_type) { "s3_with_json" }
+          let(:submission_type) { "s3" }
           let(:submission_format) { %w[json] }
 
           it "creates the JSON file with the expected filenames" do
