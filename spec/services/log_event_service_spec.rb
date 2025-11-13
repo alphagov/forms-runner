@@ -74,14 +74,14 @@ RSpec.describe LogEventService do
     before do
       allow(EventLogger).to receive(:log_form_event).and_return(true)
       allow(CloudWatchService).to receive(:record_form_submission_metric).and_return(true)
-      described_class.log_submit(current_context, requested_email_confirmation:, preview:, submission_type: "email")
+      described_class.log_submit(current_context, requested_email_confirmation:, preview:, submission_type: "email", submission_format: %w[csv])
     end
 
     context "when in preview mode" do
       let(:preview) { true }
 
       it "calls the event logger with .log_form_event" do
-        expect(EventLogger).to have_received(:log_form_event).with("preview_submission", { submission_type: "email" })
+        expect(EventLogger).to have_received(:log_form_event).with("preview_submission", { submission_type: "email", submission_format: %w[csv] })
       end
 
       it "does not call the cloud watch service" do
@@ -93,7 +93,7 @@ RSpec.describe LogEventService do
       let(:preview) { false }
 
       it "calls the event logger with .log_form_event" do
-        expect(EventLogger).to have_received(:log_form_event).with("submission", { submission_type: "email" })
+        expect(EventLogger).to have_received(:log_form_event).with("submission", { submission_type: "email", submission_format: %w[csv] })
       end
 
       it "calls the cloud watch service with .record_form_submission_metric" do
@@ -121,7 +121,7 @@ RSpec.describe LogEventService do
           allow(CloudWatchService).to receive(:record_form_submission_metric).and_raise(StandardError)
           allow(Sentry).to receive(:capture_exception)
 
-          described_class.log_submit(current_context, requested_email_confirmation:, preview:, submission_type: "email")
+          described_class.log_submit(current_context, requested_email_confirmation:, preview:, submission_type: "email", submission_format: [])
           expect(Sentry).to have_received(:capture_exception)
         end
       end

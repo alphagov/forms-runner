@@ -7,7 +7,7 @@ RSpec.describe AwsSesSubmissionService do
     build(:submission, form_document:, reference: submission_reference, is_preview: is_preview,
                        created_at: Time.utc(2022, 12, 14, 8, 0o0, 0o0))
   end
-  let(:form_document) { build(:v2_form_document, name: "A great form", submission_email:, payment_url:) }
+  let(:form_document) { build(:v2_form_document, name: "A great form", submission_type:, submission_format:, submission_email:, payment_url:) }
   let(:all_steps) { [step] }
   let(:journey) { instance_double(Flow::Journey, completed_steps: all_steps, all_steps:, completed_file_upload_questions: []) }
   let(:question) { build :text, question_text: "What is the meaning of life?", text: "42" }
@@ -15,6 +15,8 @@ RSpec.describe AwsSesSubmissionService do
   let(:is_preview) { false }
   let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
   let(:payment_url) { nil }
+  let(:submission_type) { "email" }
+  let(:submission_format) { [] }
   let(:submission_email) { "submissions@example.gov.uk" }
   let(:from_email_address) { "govukforms@example.gov.uk" }
 
@@ -50,9 +52,8 @@ RSpec.describe AwsSesSubmissionService do
     end
 
     context "when the submission type is email" do
-      before do
-        form_document.submission_type = "email"
-      end
+      let(:submission_type) { "email" }
+      let(:submission_format) { [] }
 
       it "calls AwsSesFormSubmissionMailer" do
         freeze_time do
@@ -147,10 +148,9 @@ RSpec.describe AwsSesSubmissionService do
       end
     end
 
-    context "when the submission type is email_with_csv" do
-      before do
-        form_document.submission_type = "email_with_csv"
-      end
+    context "when the submission type is email with csv" do
+      let(:submission_type) { "email_with_csv" }
+      let(:submission_format) { %w[csv] }
 
       it "calls AwsSesFormSubmissionMailer passing in a CSV file" do
         allow(AwsSesFormSubmissionMailer).to receive(:submission_email).and_call_original
@@ -202,10 +202,9 @@ RSpec.describe AwsSesSubmissionService do
       end
     end
 
-    context "when the submission type is email_with_json" do
-      before do
-        form_document.submission_type = "email_with_json"
-      end
+    context "when the submission type is email with json" do
+      let(:submission_type) { "email_with_json" }
+      let(:submission_format) { %w[json] }
 
       it "calls AwsSesFormSubmissionMailer passing in a JSON file" do
         expect(AwsSesFormSubmissionMailer).to receive(:submission_email).with(
@@ -223,9 +222,8 @@ RSpec.describe AwsSesSubmissionService do
     end
 
     context "when the submission type is email_with_csv_and_json" do
-      before do
-        form_document.submission_type = "email_with_csv_and_json"
-      end
+      let(:submission_type) { "email_with_csv_and_json" }
+      let(:submission_format) { %w[csv json] }
 
       it "calls AwsSesFormSubmissionMailer passing in both a CSV and JSON file in the expected order" do
         json_filename = "govuk_forms_a_great_form_#{submission_reference}.json"

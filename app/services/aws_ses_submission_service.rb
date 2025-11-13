@@ -26,11 +26,11 @@ private
     files = uploaded_files_in_answers
 
     csv_filename = nil
-    if @form.submission_format.include? :json
+    if @form.submission_format.include? "json"
       json_filename = generate_json_filename
       files.merge!({ json_filename => generate_json_submission })
     end
-    if @form.submission_format.include? :csv
+    if @form.submission_format.include? "csv"
       csv_filename = generate_csv_filename
       files.merge!({ csv_filename => generate_csv_submission })
     end
