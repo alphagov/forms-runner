@@ -10,18 +10,26 @@ class Api::V2::FormDocumentResource < ActiveResource::Base
   end
 
   class << self
-    def find(form_id, tag)
-      super(:one, from: document_path(form_id, tag))
+    def find(form_id, tag, language = :en)
+      super(:one, from: document_path(form_id, tag, language))
     end
 
-    def get(form_id, tag)
-      super("#{form_id}/#{tag}")
+    def get(form_id, tag, language = :en)
+      if language == :en
+        super("#{form_id}/#{tag}")
+      else
+        super("#{form_id}/#{tag}?language=#{language}")
+      end
     end
 
   private
 
-    def document_path(form_id, tag)
-      "#{prefix}forms/#{form_id}/#{tag}"
+    def document_path(form_id, tag, language = :en)
+      if language == :en
+        "#{prefix}forms/#{form_id}/#{tag}"
+      else
+        "#{prefix}forms/#{form_id}/#{tag}?language=#{language}"
+      end
     end
   end
 end

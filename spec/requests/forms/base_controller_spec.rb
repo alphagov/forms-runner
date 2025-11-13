@@ -55,7 +55,9 @@ RSpec.describe Forms::BaseController, type: :request do
   before do
     ActiveResource::HttpMock.respond_to do |mock|
       mock.get "/api/v2/forms/2#{api_url_suffix}", req_headers, form_response_data.to_json, 200
+      mock.get "/api/v2/forms/2#{api_url_suffix}?language=cy", req_headers, form_response_data.to_json, 200
       mock.get "/api/v2/forms/9999#{api_url_suffix}", req_headers, no_data_found_response, 404
+      mock.get "/api/v2/forms/9999#{api_url_suffix}?language=cy", req_headers, no_data_found_response, 404
     end
   end
 
@@ -423,7 +425,7 @@ RSpec.describe Forms::BaseController, type: :request do
 
     context "when getting a form page that doesn't exist" do
       before do
-        get form_page_path(mode: "form", form_id: 2, form_slug: form_response_data.form_slug, page_slug: 42, locale:)
+        get form_page_path(mode: "form", form_id: 9999, form_slug: form_response_data.form_slug, page_slug: 42, locale:)
       end
 
       context "when the locale param is not set" do
