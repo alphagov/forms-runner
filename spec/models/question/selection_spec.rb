@@ -8,7 +8,7 @@ RSpec.describe Question::Selection, type: :model do
       is_optional:,
       answer_settings: OpenStruct.new({
         only_one_option:,
-        selection_options: [OpenStruct.new({ name: "option 1" }), OpenStruct.new({ name: "option 2" })],
+        selection_options: [OpenStruct.new({ name: "option 1", value: "option 1" }), OpenStruct.new({ name: "option 2", value: "option 2" })],
       }),
       question_text:,
     }
@@ -217,20 +217,20 @@ RSpec.describe Question::Selection, type: :model do
 
     context "when selection has a value" do
       before do
-        question.selection = "something"
+        question.selection = "option 1"
       end
 
       it "shows the answer" do
-        expect(question.show_answer).to eq("something")
+        expect(question.show_answer).to eq("option 1")
       end
 
       it "shows the answer in show_answer_in_csv" do
-        expect(question.show_answer_in_csv).to eq(Hash[question_text, "something"])
+        expect(question.show_answer_in_csv).to eq(Hash[question_text, "option 1"])
       end
 
       it "returns a hash for show_answer_in_json" do
         expect(question.show_answer_in_json).to eq({
-          answer_text: "something",
+          answer_text: "option 1",
         })
       end
     end
@@ -287,20 +287,20 @@ RSpec.describe Question::Selection, type: :model do
 
       context "when selection has a value" do
         before do
-          question.selection = "something"
+          question.selection = "option 1"
         end
 
         it "shows the answer" do
-          expect(question.show_answer).to eq("something")
+          expect(question.show_answer).to eq("option 1")
         end
 
         it "shows the answer in show_answer_in_csv" do
-          expect(question.show_answer_in_csv).to eq(Hash[question_text, "something"])
+          expect(question.show_answer_in_csv).to eq(Hash[question_text, "option 1"])
         end
 
         it "returns a hash for show_answer_in_json" do
           expect(question.show_answer_in_json).to eq({
-            answer_text: "something",
+            answer_text: "option 1",
           })
         end
       end
@@ -309,7 +309,7 @@ RSpec.describe Question::Selection, type: :model do
 
   describe "#selection_options_with_none_of_the_above" do
     let(:only_one_option) { "true" }
-    let(:none_of_the_above_option) { OpenStruct.new(name: I18n.t("page.none_of_the_above")) }
+    let(:none_of_the_above_option) { OpenStruct.new(name: I18n.t("page.none_of_the_above"), value: I18n.t("page.none_of_the_above")) }
 
     context "when the user can select 'None of the above'" do
       let(:is_optional) { true }

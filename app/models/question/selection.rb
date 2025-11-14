@@ -10,9 +10,9 @@ module Question
     end
 
     def show_answer
-      return selection_without_blanks.join(", ") if allow_multiple_answers?
+      return selection_without_blanks.map { |selected| name_from_value(selected) }.join(", ") if allow_multiple_answers?
 
-      selection
+      selection_name
     end
 
     def show_answer_in_email
@@ -30,6 +30,22 @@ module Question
       hash
     end
 
+    def selection_name
+      return nil if selection.nil?
+      return "" if selection.blank?
+
+      name_from_value(selection)
+    end
+
+    # a function to convert the value of the selected option to the name of the option
+    # we build and memoize a lookup table, which might over the top here.
+    # fallback to to the value if the name is not found. This prevents us
+    # having to rewrite tests but ight not be what we want.
+    def name_from_value(selected)
+      @options_by_value ||= answer_settings.selection_options.index_by(&:value)
+      @options_by_value[selected]&.name || selected
+    end
+
     def show_optional_suffix
       false
     end
@@ -45,11 +61,11 @@ module Question
   private
 
     def allowed_options
-      selection_options_with_none_of_the_above.map(&:name)
+      selection_options_with_none_of_the_above.map(&:value)
     end
 
     def none_of_the_above_option
-      OpenStruct.new(name: I18n.t("page.none_of_the_above"))
+      OpenStruct.new(name: I18n.t("page.none_of_the_above"), value: I18n.t("page.none_of_the_above"))
     end
 
     def selection_without_blanks
