@@ -93,9 +93,15 @@ RSpec.describe Forms::PageController, type: :request do
   end
 
   shared_examples "ordered steps" do
-    it "redirects to first page if second request before first complete" do
+    it "redirects to first page when second request before first complete" do
       get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2)
       expect(response).to redirect_to(form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1))
+    end
+
+    it "redirects to first page when the page does not exist for the form" do
+      get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 99_999_999)
+      expect(response).to have_http_status(:found)
+      expect(response.location).to eq(form_page_url(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1))
     end
   end
 
