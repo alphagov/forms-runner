@@ -17,9 +17,20 @@ RSpec.describe Step do
     it "sets the attributes correctly" do
       expect(step.question).to eq(question)
       expect(step.id).to eq("2")
+      expect(step.database_id).to be_nil
       expect(step.next_page_slug).to eq("next-page")
       expect(step.page_number).to eq(1)
       expect(step.routing_conditions).to eq([])
+    end
+
+    context "when the page has a database_id attribute" do
+      before do
+        page.database_id = "test-database-id"
+      end
+
+      it "returns the database_id" do
+        expect(step.database_id).to eq("test-database-id")
+      end
     end
   end
 
