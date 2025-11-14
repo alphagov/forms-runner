@@ -16,11 +16,20 @@ module Store
     end
 
     def get_stored_answer(step)
-      @store.dig(ANSWERS_KEY, @form_key, page_key(step))
+      return nil if answers.nil?
+
+      if answers.key?(page_key(step))
+        answers[page_key(step)]
+      elsif step.database_id && answers.key?(step.database_id)
+        answers[step.database_id]
+      end
     end
 
     def clear_stored_answer(step)
-      @store.dig(ANSWERS_KEY, @form_key)&.delete(page_key(step))
+      return nil if answers.nil?
+
+      answers.delete(page_key(step)) if answers.key?(page_key(step))
+      answers.delete(step.database_id) if step.database_id && answers.key?(step.database_id)
     end
 
     def clear
