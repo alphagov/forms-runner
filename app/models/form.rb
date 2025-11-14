@@ -32,7 +32,8 @@ class Form < ActiveResource::Base
         attrs.merge!(step["data"])
       end
       attrs["routing_conditions"] = step.fetch("routing_conditions", [])
-      Page.new(attrs, @persisted)
+
+      Page.from_attributes(attrs, @persisted)
     end
   end
 
