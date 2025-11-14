@@ -70,4 +70,8 @@ class Form < ActiveResource::Base
       url_text: support_url_text,
     })
   end
+
+  def welsh_available?
+    @attributes["available_languages"] && @attributes["available_languages"].include?("cy")
+  end
 end

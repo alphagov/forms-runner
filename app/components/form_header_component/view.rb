@@ -2,6 +2,8 @@ module FormHeaderComponent
   GOVUK_BASE_URL = "https://www.gov.uk/".freeze
 
   class View < ApplicationComponent
+    attr_reader :current_context, :mode
+
     def initialize(current_context:, mode:, hosting_environment: HostingEnvironment)
       @current_context = current_context
       @mode = mode
@@ -32,6 +34,10 @@ module FormHeaderComponent
     end
 
   private
+
+    def welsh_available?
+      @current_context.form.welsh_available?
+    end
 
     def product_name_with_tag
       govuk_tag(colour: colour_for_environment, text: environment_name).html_safe unless environment_name == I18n.t("environment_names.production")
@@ -69,12 +75,15 @@ module FormHeaderComponent
     def navigation_items
       return [] if @mode.live?
 
-      [
-        {
-          text: I18n.t("preview_header.your_questions"),
-          href: your_questions_url,
-        },
-      ]
+      your_questions = {
+        text: I18n.t("preview_header.your_questions"),
+        href: your_questions_url,
+      }
+
+      welsh_locale = (welsh_available? && current_context.locale != :cy && { text: "welsh", href: url_for(locale: "cy") }) || nil
+      english_locale = current_context.locale != :en && { text: "english", href: url_for(locale: "en") } || nil
+
+      [your_questions, welsh_locale, english_locale].compact
     end
 
     def your_questions_url
