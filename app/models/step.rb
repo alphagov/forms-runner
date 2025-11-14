@@ -14,6 +14,11 @@ class Step
     page&.id.to_s
   end
 
+  # Temporary attribute while we switch to using external IDs so we don't lose in-progress user sessions
+  def database_id
+    page.database_id if page && page.respond_to?(:database_id)
+  end
+
   def page_number
     page&.position
   end
