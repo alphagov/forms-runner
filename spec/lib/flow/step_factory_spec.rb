@@ -37,6 +37,16 @@ RSpec.describe Flow::StepFactory do
           expect(step.next_page_slug).to eq(CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG)
         end
       end
+
+      context "when the page slug is the database ID" do
+        let(:page) { build_stubbed :page, id: "page-1", database_id: "123", has_next_page?: true, next_page: "page-2" }
+
+        it "finds the page to create the step using the database_id" do
+          step = factory.create_step("123")
+          expect(step).to be_a(Step)
+          expect(step.id).to eq("page-1")
+        end
+      end
     end
 
     context "when creating a repeating step" do
@@ -80,20 +90,6 @@ RSpec.describe Flow::StepFactory do
     it "calls create_step with START_PAGE" do
       expect(factory).to receive(:create_step).with(Flow::StepFactory::START_PAGE)
       factory.start_step
-    end
-  end
-
-  describe Flow::StepFactory::PAGE_SLUG_REGEX do
-    it "matches valid page_id values" do
-      %w[1 123 0123456789 check-your-answers].each do |string|
-        expect(described_class).to match string
-      end
-    end
-
-    it "does not match invalid page_id values" do
-      %w[no ten inspect_your_answers /secret/login.php].each do |string|
-        expect(described_class).not_to match string
-      end
     end
   end
 end

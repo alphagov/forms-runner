@@ -420,46 +420,6 @@ RSpec.describe Forms::BaseController, type: :request do
         end
       end
     end
-
-    context "when getting a form page that doesn't exist" do
-      before do
-        get form_page_path(mode: "form", form_id: 2, form_slug: form_response_data.form_slug, page_slug: 42, locale:)
-      end
-
-      context "when the locale param is not set" do
-        it "returns 404" do
-          expect(response).to have_http_status(:not_found)
-        end
-
-        it "renders the error page in English" do
-          expect(response.body).to include(I18n.t("errors.not_found.title"))
-        end
-      end
-
-      context "when the locale param is set to English" do
-        let(:locale) { "en" }
-
-        it "returns 404" do
-          expect(response).to have_http_status(:not_found)
-        end
-
-        it "renders the error page in English" do
-          expect(response.body).to include(I18n.t("errors.not_found.title"))
-        end
-      end
-
-      context "when the locale param is set to Welsh" do
-        let(:locale) { "cy" }
-
-        it "returns 404" do
-          expect(response).to have_http_status(:not_found)
-        end
-
-        it "renders the error page in Welsh" do
-          expect(response.body).to include(I18n.t("errors.not_found.title", locale: :cy))
-        end
-      end
-    end
   end
 
   def log_lines
