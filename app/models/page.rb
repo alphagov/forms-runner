@@ -7,6 +7,19 @@ class Page < ActiveResource::Base
 
   belongs_to :form
 
+  def self.from_attributes(attributes, persisted)
+    # If anwer_settings doesn't have a value key, add one from the name
+    if attributes["answer_settings"].present? && attributes["answer_settings"]["selection_options"].present?
+
+      attributes["answer_settings"]["selection_options"].each do |so|
+        if so["value"].blank?
+          so.merge!(value: so["name"])
+        end
+      end
+    end
+    new(attributes, persisted)
+  end
+
   def form_id
     @prefix_options[:form_id]
   end

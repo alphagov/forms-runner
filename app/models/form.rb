@@ -32,7 +32,8 @@ class Form < ActiveResource::Base
         attrs.merge!(step["data"])
       end
       attrs["routing_conditions"] = step.fetch("routing_conditions", [])
-      Page.new(attrs, @persisted)
+
+      Page.from_attributes(attrs, @persisted)
     end
   end
 
@@ -69,5 +70,9 @@ class Form < ActiveResource::Base
       url: support_url,
       url_text: support_url_text,
     })
+  end
+
+  def welsh_available?
+    @attributes["available_languages"] && @attributes["available_languages"].include?("cy")
   end
 end

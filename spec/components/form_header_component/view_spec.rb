@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe FormHeaderComponent::View, type: :component do
   let(:mode) { Mode.new }
   let(:form) { OpenStruct.new(id: 1, name: "test_form_name", form_slug: "test") }
-  let(:current_context) { OpenStruct.new(form:) }
+  let(:current_context) { OpenStruct.new(form:, locale: :en) }
 
   it "has service name" do
     render_inline(described_class.new(current_context:, mode:))
