@@ -21,6 +21,10 @@
   <%= I18n.t("mailer.submission.csv_file", filename: @csv_filename) %>
 <% end %>
 
+<% if @json_filename.present? %>
+  <%= I18n.t("mailer.submission.json_file", filename: @json_filename) %>
+<% end %>
+
 <%= @answer_content_plain_text %>
 
 ---

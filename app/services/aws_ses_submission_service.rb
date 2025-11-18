@@ -39,7 +39,8 @@ private
                                                        answer_content_plain_text:,
                                                        submission: @submission,
                                                        files:,
-                                                       csv_filename:).deliver_now
+                                                       csv_filename:,
+                                                       json_filename:).deliver_now
 
     CurrentJobLoggingAttributes.mail_message_id = mail.message_id
     mail.message_id

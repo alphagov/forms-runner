@@ -1,7 +1,7 @@
 require "rails_helper"
 
 describe AwsSesFormSubmissionMailer, type: :mailer do
-  subject(:mail) { described_class.submission_email(answer_content_html:, answer_content_plain_text:, submission:, files:, csv_filename:) }
+  subject(:mail) { described_class.submission_email(answer_content_html:, answer_content_plain_text:, submission:, files:, csv_filename:, json_filename:) }
 
   let(:submission) do
     build(:submission, form_document: form_document, created_at: submission_timestamp,
@@ -17,6 +17,7 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
   let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
   let(:payment_url) { nil }
   let(:csv_filename) { nil }
+  let(:json_filename) { nil }
   let(:submission_timestamp) { Time.utc(2022, 12, 14, 13, 0o0, 0o0) }
 
   context "when form filler submits a completed form" do
@@ -254,6 +255,26 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
 
         it "does not include text about the CSV filename" do
           expect(part.body).not_to have_text(I18n.t("mailer.submission.csv_file", filename: csv_filename))
+        end
+      end
+
+      context "when the json file of answers is attached" do
+        let(:json_filename) { "my_answers.json" }
+
+        describe "the html part" do
+          let(:part) { mail.html_part }
+
+          it "includes text about the JSON filename" do
+            expect(part.body).to have_css("p", text: I18n.t("mailer.submission.json_file", filename: json_filename))
+          end
+        end
+
+        describe "the plaintext part" do
+          let(:part) { mail.text_part }
+
+          it "includes text about the JSON filename" do
+            expect(part.body).to have_text(I18n.t("mailer.submission.json_file", filename: json_filename))
+          end
         end
       end
     end
