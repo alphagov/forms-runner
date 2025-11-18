@@ -1,7 +1,6 @@
 module Flow
   class StepFactory
     START_PAGE = "_start".freeze
-    PAGE_SLUG_REGEX = Regexp.union([Page::PAGE_ID_REGEX, Regexp.new(CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG)])
 
     class PageNotFoundError < StandardError
       def initialize(msg = "Page not found.")
@@ -22,6 +21,7 @@ module Flow
 
       # for now, we use the page id as slug
       page = @form.pages.find { |p| p.id.to_s == page_slug }
+      page = @form.pages.find { |p| p.respond_to?(:database_id) && p.database_id.to_s == page_slug } if page.nil?
       raise PageNotFoundError, "Can't find page #{page_slug}" if page.nil?
 
       question = QuestionRegister.from_page(page)

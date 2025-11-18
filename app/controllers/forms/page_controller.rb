@@ -38,7 +38,11 @@ module Forms
 
     def prepare_step
       page_slug = params.require(:page_slug)
-      @step = current_context.find_or_create(page_slug)
+      begin
+        @step = current_context.find_or_create(page_slug)
+      rescue Flow::StepFactory::PageNotFoundError
+        return redirect_to form_page_path(@form.id, @form.form_slug, current_context.next_page_slug)
+      end
 
       if @step.respond_to?(:answer_index)
         @step.answer_index = answer_index

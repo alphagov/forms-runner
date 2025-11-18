@@ -1,5 +1,6 @@
 class Page < ActiveResource::Base
-  PAGE_ID_REGEX = /\d+/
+  PAGE_ID_REGEX_FOR_ROUTES = /(?:[a-zA-Z0-9]{8}|\d+)/
+  PAGE_ID_REGEX = /\A#{PAGE_ID_REGEX_FOR_ROUTES}\z/
 
   self.site = Settings.forms_api.base_url
   self.prefix = "/api/v2/forms/:form_id/"

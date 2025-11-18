@@ -90,6 +90,19 @@ RSpec.describe Form, type: :model do
         expect(pages[0]).to have_attributes(id: 9, next_page: 10, answer_type: "date", question_text: "Question one")
         expect(pages[1]).to have_attributes(id: 10, answer_type: "address", question_text: "Question two")
       end
+
+      context "when the steps have a database_id" do
+        let(:steps) do
+          [
+            { id: "abc123", next_step_id: 10, database_id: 9, type: "question_page", data: { answer_type: "date", question_text: "Question one" } },
+          ]
+        end
+
+        it "includes the database_id in the pages" do
+          pages = form.pages
+          expect(pages[0]).to have_attributes(id: "abc123", database_id: 9)
+        end
+      end
     end
   end
 
