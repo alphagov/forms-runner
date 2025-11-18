@@ -31,6 +31,10 @@
   <p><%= I18n.t("mailer.submission.csv_file", filename: @csv_filename) %></p>
 <% end %>
 
+<% if @json_filename.present? %>
+  <p><%= I18n.t("mailer.submission.json_file", filename: @json_filename) %></p>
+<% end %>
+
 <%= @answer_content_html.html_safe %>
 
 <hr style="border: 0; height: 1px; background: #B1B4B6; margin: 30px 0 30px 0;">

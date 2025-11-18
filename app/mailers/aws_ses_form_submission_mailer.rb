@@ -3,12 +3,13 @@ class AwsSesFormSubmissionMailer < ApplicationMailer
           reply_to: Settings.ses_submission_email.reply_to_email_address,
           delivery_method: Rails.configuration.x.aws_ses_form_submission_mailer["delivery_method"]
 
-  def submission_email(answer_content_html:, answer_content_plain_text:, submission:, files:, csv_filename: nil)
+  def submission_email(answer_content_html:, answer_content_plain_text:, submission:, files:, csv_filename: nil, json_filename: nil)
     @answer_content_html = answer_content_html
     @answer_content_plain_text = answer_content_plain_text
     @submission = submission
     @subject = email_subject
     @csv_filename = csv_filename
+    @json_filename = json_filename
 
     files.each do |name, file|
       attachments[name] = {

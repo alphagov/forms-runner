@@ -433,6 +433,7 @@ en:
       csv_file: 'A CSV file of these answers is attached to this email in a file named: %{filename}'
       file_attached: "%{filename} (attached to this email)"
       from: GOV.UK Forms <%{email_address}>
+      json_file: 'A JSON file of these answers is attached to this email in a file named: %{filename}'
       payment: You can check that a payment has been made by using this reference number to search transactions within GOV.​UK Pay.
       preview: This is a test submission from a preview of this form.
       question_skipped: This question was skipped

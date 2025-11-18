@@ -67,6 +67,7 @@ RSpec.describe AwsSesSubmissionService do
             submission:,
             files: {},
             csv_filename: nil,
+            json_filename: nil,
           ).once
         end
       end
@@ -100,6 +101,7 @@ RSpec.describe AwsSesSubmissionService do
           submission:,
           files: { question.email_filename => file_content },
           csv_filename: nil,
+          json_filename: nil,
         ).once
       end
 
@@ -165,6 +167,7 @@ RSpec.describe AwsSesSubmissionService do
           submission: submission,
           files: { "govuk_forms_a_great_form_#{submission_reference}.csv" => expected_csv_content },
           csv_filename: "govuk_forms_a_great_form_#{submission_reference}.csv",
+          json_filename: nil,
         ).once
       end
 
@@ -196,6 +199,7 @@ RSpec.describe AwsSesSubmissionService do
                 question.email_filename => file_content,
               },
               csv_filename: "govuk_forms_a_great_form_#{submission_reference}.csv",
+              json_filename: nil,
             ).once
           end
         end
@@ -214,6 +218,7 @@ RSpec.describe AwsSesSubmissionService do
                 JSON.parse(json)["form_name"] == "A great form"
               end,
             },
+            json_filename: "govuk_forms_a_great_form_#{submission_reference}.json",
           ),
         ).and_call_original
 
@@ -254,6 +259,7 @@ RSpec.describe AwsSesSubmissionService do
             submission:,
             files: {},
             csv_filename: nil,
+            json_filename: nil,
           ).once
         end
       end
