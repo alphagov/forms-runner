@@ -6,7 +6,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
   let(:timestamp_of_request) { Time.utc(2022, 12, 14, 10, 0o0, 0o0) }
 
   let(:form_data) do
-    build(:v2_form_document, :with_support,
+    build(:v2_form_document, :with_support, :with_submission_email,
           form_id: 2,
           start_page: 1,
           privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
