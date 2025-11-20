@@ -29,11 +29,17 @@ private
   def process_bounce(submission, ses_message)
     set_submission_logging_attributes(submission)
 
+    bounce_object = ses_message["bounce"] || {}
+
     # Don't mark preview submissions as bounced, just log that they bounced. We don't need to attempt to resend preview
     # submissions so these can be deleted as normal by the deletion job.
-    submission.bounced! unless submission.preview?
-
-    bounce_object = ses_message["bounce"] || {}
+    unless submission.preview?
+      bounced_timestamp = Time.zone.parse(bounce_object["timestamp"])
+      submission.update!(
+        delivery_status: :bounced,
+        bounced_at: bounced_timestamp,
+      )
+    end
 
     ses_bounce = {
       bounce_type: bounce_object["bounceType"],

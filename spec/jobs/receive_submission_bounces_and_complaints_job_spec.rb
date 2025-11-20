@@ -74,9 +74,23 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
     end
 
     context "when it is for a live submission" do
+      let(:bounce_timestamp) { "2023-01-01T12:00:00Z" }
+      let(:ses_message_body) do
+        {
+          "mail" => { "messageId" => mail_message_id },
+          "eventType" => event_type,
+          "bounce" => { "timestamp" => bounce_timestamp },
+        }
+      end
+
       it "updates the submission mail status to bounced" do
         perform_enqueued_jobs
         expect(submission.reload.bounced?).to be true
+      end
+
+      it "updates the submission bounced_at timestamp" do
+        perform_enqueued_jobs
+        expect(submission.reload.bounced_at).to eq(Time.zone.parse(bounce_timestamp))
       end
 
       it "doesn't change the mail status for other submissions" do
@@ -145,7 +159,8 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
 
     context "when there is a bounce object with detailed information" do
       let(:ses_message_body) { { "mail" => { "messageId" => mail_message_id }, "eventType" => event_type, "bounce" => bounce } }
-      let(:bounce) { { "bounceType" => "Permanent", "bounceSubType" => "General", "bouncedRecipients" => bounced_recipients } }
+      let(:bounce) { { "bounceType" => "Permanent", "bounceSubType" => "General", "bouncedRecipients" => bounced_recipients, "timestamp" => bounce_timestamp } }
+      let(:bounce_timestamp) { "2023-01-01T12:00:00Z" }
       let(:bounced_recipients) { [{ "emailAddress" => "bounce@example.com" }] }
 
       it "logs the bounce details" do
