@@ -57,7 +57,7 @@ module Forms
 
     def setup_instance_vars_for_view
       @is_question = true
-      @question_edit_link = "#{Settings.forms_admin.base_url}/forms/#{@form.id}/pages/#{@step.id}/edit/question"
+      @question_edit_link = "#{Settings.forms_admin.base_url}/forms/#{@form.id}/pages-by-external-id/#{@step.id}/edit-question"
       @save_url = save_url
     end
 
@@ -160,7 +160,7 @@ module Forms
     end
 
     def admin_edit_condition_url(form_id, page_id)
-      "#{Settings.forms_admin.base_url}/forms/#{form_id}/pages/#{page_id}/routes"
+      "#{Settings.forms_admin.base_url}/forms/#{form_id}/pages-by-external-id/#{page_id}/routes"
     end
 
     def is_first_page?
