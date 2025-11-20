@@ -567,7 +567,7 @@ en:
     label:
       international_address:
         country: Country
-        street_address: Street address
+        street_address: Address
       uk_address:
         county: County (optional)
         line_1: Address line 1
