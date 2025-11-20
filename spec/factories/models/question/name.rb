@@ -23,6 +23,12 @@ FactoryBot.define do
     end
 
     factory :first_and_last_name_question do
+      trait :unanswered do
+        title { "" }
+        first_name { "" }
+        last_name { "" }
+      end
+
       transient do
         with_title { "false" }
       end

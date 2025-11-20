@@ -46,7 +46,6 @@ RSpec.describe JsonSubmissionGenerator do
         expect(
           JSON.parse(described_class.generate_submission(form:, all_steps:, submission_reference:, timestamp:, is_s3_submission:)),
         ).to eq({
-          "form_id" => form.id.to_s,
           "form_name" => form.name,
           "submission_reference" => submission_reference,
           "submitted_at" => "2022-09-14T07:00:00.000Z",
@@ -54,13 +53,11 @@ RSpec.describe JsonSubmissionGenerator do
             {
               "question_id" => text_step.page.id,
               "question_text" => "What is the meaning of life?",
-              "answer_type" => "text",
               "answer_text" => text_question.text,
             },
             {
               "question_id" => name_step.page.id,
               "question_text" => "What is your name?",
-              "answer_type" => "name",
               "first_name" => name_question.first_name,
               "last_name" => name_question.last_name,
               "answer_text" => name_question.show_answer,
@@ -68,13 +65,11 @@ RSpec.describe JsonSubmissionGenerator do
             {
               "question_id" => file_step.page.id,
               "question_text" => "Upload a file",
-              "answer_type" => "file",
               "answer_text" => "test_#{submission_reference}.txt",
             },
             {
               "question_id" => address_step.page.id,
               "question_text" => "What is your address?",
-              "answer_type" => "address",
               "address1" => address_question.address1,
               "address2" => "",
               "town_or_city" => address_question.town_or_city,
@@ -85,7 +80,6 @@ RSpec.describe JsonSubmissionGenerator do
             {
               "question_id" => selection_step.page.id,
               "question_text" => "Select your options",
-              "answer_type" => "selection",
               "selections" => ["Option 1", "Option 2"],
               "answer_text" => "Option 1, Option 2",
             },
@@ -101,11 +95,10 @@ RSpec.describe JsonSubmissionGenerator do
         let(:repeatable_step) { build :repeatable_step, page:, questions: [first_answer, second_answer] }
         let(:all_steps) { [repeatable_step, name_step] }
 
-        it "includes an entry for each answer in the JSON" do
+        it "includes an entry for each question in the JSON" do
           expect(
             JSON.parse(described_class.generate_submission(form:, all_steps:, submission_reference:, timestamp:, is_s3_submission:)),
           ).to eq({
-            "form_id" => form.id.to_s,
             "form_name" => form.name,
             "submission_reference" => submission_reference,
             "submitted_at" => "2022-09-14T07:00:00.000Z",
@@ -113,19 +106,12 @@ RSpec.describe JsonSubmissionGenerator do
               {
                 "question_id" => repeatable_step.page.id,
                 "question_text" => "What is the meaning of life?",
-                "answer_type" => "text",
-                "answer_text" => first_answer.text,
-              },
-              {
-                "question_id" => repeatable_step.page.id,
-                "question_text" => "What is the meaning of life?",
-                "answer_type" => "text",
-                "answer_text" => second_answer.text,
+                "can_have_multiple_answers" => true,
+                "answer_text" => [first_answer.text, second_answer.text],
               },
               {
                 "question_id" => name_step.page.id,
                 "question_text" => "What is your name?",
-                "answer_type" => "name",
                 "first_name" => name_question.first_name,
                 "last_name" => name_question.last_name,
                 "answer_text" => name_question.show_answer,
@@ -144,7 +130,6 @@ RSpec.describe JsonSubmissionGenerator do
         expect(json["answers"]).to include({
           "question_id" => file_step.page.id,
           "question_text" => "Upload a file",
-          "answer_type" => "file",
           "answer_text" => "test.txt",
         })
       end

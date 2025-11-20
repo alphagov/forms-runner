@@ -213,30 +213,23 @@ RSpec.describe RepeatableStep, type: :model do
 
       before { repeatable_step.questions = questions }
 
-      it "returns an array containing a hash per answer" do
-        expect(repeatable_step.show_answer_in_json(false)).to eq([
+      it "returns a hash containing arrays with every answer" do
+        expect(repeatable_step.show_answer_in_json(false)).to eq(
           {
             question_id: page.id,
             question_text: page.question_text,
-            answer_type: "name",
-            first_name: first_question.first_name,
-            last_name: first_question.last_name,
-            answer_text: first_question.show_answer,
+            can_have_multiple_answers: true,
+            first_name: [first_question.first_name, second_question.first_name],
+            last_name: [first_question.last_name, second_question.last_name],
+            answer_text: [first_question.show_answer, second_question.show_answer],
           },
-          {
-            question_id: page.id,
-            question_text: page.question_text,
-            answer_type: "name",
-            first_name: second_question.first_name,
-            last_name: second_question.last_name,
-            answer_text: second_question.show_answer,
-          },
-        ])
+        )
       end
 
       [true, false].each do |is_s3_submission|
         context "when is_s3_submission is #{is_s3_submission}" do
           it "passes is_s3_submission argument to the question" do
+            allow(first_question).to receive(:show_answer_in_json).and_call_original
             expect(first_question).to receive(:show_answer_in_json).with(is_s3_submission).and_call_original
             expect(second_question).to receive(:show_answer_in_json).with(is_s3_submission).and_call_original
             repeatable_step.show_answer_in_json(is_s3_submission)
@@ -246,18 +239,20 @@ RSpec.describe RepeatableStep, type: :model do
     end
 
     context "when the question is optional and has no answers" do
-      let(:page) { build(:page, :with_text_settings, id: 2) }
-      let(:question) { build :text, question_text: page.question_text }
+      let(:page) { build(:page, :with_name_settings, id: 2) }
+      let(:question) { build :first_and_last_name_question, :unanswered, question_text: page.question_text }
 
-      it "returns an array with a single entry with a blank answer" do
-        expect(repeatable_step.show_answer_in_json(false)).to eq([
+      it "returns a hash with an array containing a blank answer" do
+        expect(repeatable_step.show_answer_in_json(false)).to eq(
           {
             question_id: page.id,
             question_text: page.question_text,
-            answer_type: "text",
-            answer_text: "",
+            can_have_multiple_answers: true,
+            answer_text: [],
+            first_name: [],
+            last_name: [],
           },
-        ])
+        )
       end
     end
   end
