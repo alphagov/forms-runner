@@ -96,6 +96,30 @@ feature "Fill in and submit a form with a file upload question", type: :feature 
     end
   end
 
+  context "when client-side file validation is active" do
+    let(:scan_status) { "NO_THREATS_FOUND" }
+    let(:large_test_file) { "tmp/large-file.txt" }
+
+    before do
+      # Create a file larger than 7MB
+      File.write(large_test_file, "a" * (7 * 1024 * 1024 + 1))
+    end
+
+    after do
+      File.delete(large_test_file) if File.exist?(large_test_file)
+    end
+
+    scenario "when the user tries to upload a file that is too large" do
+      when_i_visit_the_form_start_page
+      then_i_should_see_the_first_question
+      then_i_see_the_file_upload_component
+      then_the_file_input_has_max_size_validation
+      when_i_upload_a_large_file
+      then_i_see_a_client_side_file_size_error
+      and_the_file_input_is_cleared
+    end
+  end
+
   def when_i_visit_the_form_start_page
     visit form_path(mode: "form", form_id: 1, form_slug: "fill-in-this-form")
     expect_page_to_have_no_axe_errors(page)
@@ -159,5 +183,27 @@ feature "Fill in and submit a form with a file upload question", type: :feature 
   def then_i_see_an_error_message_that_the_file_contains_a_virus
     expect(page.find(".govuk-error-summary")).to have_text "The selected file contains a virus"
     expect(page).to have_css("input[type=file]")
+  end
+
+  def then_the_file_input_has_max_size_validation
+    file_input = page.find("input[type=file]")
+    expect(file_input["data-max-file-size"]).to eq((Question::File::FILE_UPLOAD_MAX_SIZE_IN_MB * 1024 * 1024).to_s)
+  end
+
+  def when_i_upload_a_large_file
+    attach_file question_text, large_test_file
+    # Give JavaScript time to process the file and show the error
+    sleep 0.5
+  end
+
+  def then_i_see_a_client_side_file_size_error
+    expect(page).to have_css(".govuk-form-group--error")
+    expect(page).to have_css(".govuk-error-message", text: /The selected file must be smaller than 7MB/)
+    expect(page).to have_css(".govuk-file-upload--error")
+  end
+
+  def and_the_file_input_is_cleared
+    file_input = page.find("input[type=file]")
+    expect(file_input.value).to be_empty
   end
 end
