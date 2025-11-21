@@ -368,7 +368,6 @@ RSpec.describe Step do
       expect(step.show_answer_in_json(is_s3_submission)).to eq({
         question_id: page.id,
         question_text: question.question_text,
-        answer_type: "name",
         first_name: question.first_name,
         last_name: question.last_name,
         answer_text: question.show_answer,

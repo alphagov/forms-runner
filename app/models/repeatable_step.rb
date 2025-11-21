@@ -78,36 +78,38 @@ class RepeatableStep < Step
   end
 
   def show_answer_in_email
-    if questions.present?
-      questions.map.with_index(1) { |question, index|
-        "#{index}. #{question.show_answer_in_email}"
-      }.join("\n\n")
-    end
+    questions.map.with_index(1) { |question, index|
+      "#{index}. #{question.show_answer_in_email}"
+    }.join("\n\n")
   end
 
   def show_answer_in_csv(is_s3_submission)
-    if questions.present?
-      header_values_hash = {}
-      questions.each.with_index(1) do |question, index|
-        question.show_answer_in_csv(is_s3_submission:).each do |header, value|
-          header_values_hash[I18n.t("submission_csv.repeatable_answer_header", header:, index:)] = value
-        end
+    header_values_hash = {}
+    questions.each.with_index(1) do |question, index|
+      question.show_answer_in_csv(is_s3_submission:).each do |header, value|
+        header_values_hash[I18n.t("submission_csv.repeatable_answer_header", header:, index:)] = value
       end
-      header_values_hash
     end
+    header_values_hash
   end
 
   def show_answer_in_json(is_s3_submission)
-    return nil if questions.blank?
+    answer_hash = questions.first.show_answer_in_json.keys.index_with { [] }
 
-    questions.map do |question|
-      {
-        question_id: page&.id,
-        question_text: question.question_text,
-        answer_type: page.answer_type,
-        **question.show_answer_in_json(is_s3_submission),
-      }
+    unless questions.one? && questions.first.show_answer.blank?
+      questions.each do |question|
+        question.show_answer_in_json(is_s3_submission).each do |key, value|
+          answer_hash[key] << value
+        end
+      end
     end
+
+    {
+      question_id: page&.id,
+      question_text: page.question_text,
+      can_have_multiple_answers: true,
+      **answer_hash,
+    }
   end
 
   def remove_answer(answer_index)
