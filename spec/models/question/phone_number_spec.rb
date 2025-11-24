@@ -25,6 +25,7 @@ RSpec.describe Question::PhoneNumber, type: :model do
       "+447123123123",
       "01234 123 123 --()+ ",
       "01234 123 123 ext 123",
+      "01234 123 123 est 123",
       "01234 123 123 x123",
       "(01234) 123123",
       "(12345) 123123",
@@ -32,9 +33,12 @@ RSpec.describe Question::PhoneNumber, type: :model do
       "+44 (0) 123 4567 123",
       "123 1234 1234 ext 123",
       "12345 123456 ext 123",
+      "123 1234 1234 ext 123",
+      "12345 123456 est 123",
       "12345 123456 ext. 123",
       "12345 123456 ext123",
       "01234123456 ext 123",
+      "01234123456 est 123",
       "123 1234 1234 x123",
       "12345 123456 x123",
       "12345123456 x123",
@@ -42,7 +46,17 @@ RSpec.describe Question::PhoneNumber, type: :model do
       "1234 123 1234 x123",
       "1234 123 1234 ext 1234",
       "1234 123 1234  ext 123",
+      "1234 123 1234 est 1234",
+      "1234 123 1234  est 123",
       "+44(0)123 12 12345",
+    ]
+  end
+
+  let(:invalid_phone_numbers) do
+    [
+      "not a phone number",
+      "01234 123 123 xt 123",
+      "01234 123 123 (daytime only)",
     ]
   end
 
@@ -132,6 +146,17 @@ RSpec.describe Question::PhoneNumber, type: :model do
       expect(question).not_to be_valid
 
       expect(question.errors[:phone_number]).to include(I18n.t("activemodel.errors.models.question/phone_number.attributes.phone_number.phone_too_short"))
+    end
+  end
+
+  context "when phone number doesn't match the specified format" do
+    it "returns invalid with invalid phone number" do
+      invalid_phone_numbers.each do |number|
+        question.phone_number = number
+        expect(question).not_to be_valid
+
+        expect(question.errors[:phone_number]).to include(I18n.t("activemodel.errors.models.question/phone_number.attributes.phone_number.invalid_phone_number"))
+      end
     end
   end
 

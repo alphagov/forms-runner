@@ -157,7 +157,7 @@ cy:
           attributes:
             number:
               blank: Rhowch rif
-              greater_than_or_equal_to: Rhaid i’r ateb fod yn fwy na 10 neu’n hafal i 0
+              greater_than_or_equal_to: Rhaid i’r ateb fod yn fwy na 0 neu’n hafal i 0
               not_a_number: Rhaid i’r ateb fod yn rhif
               too_long: The number must be shorter than 500 digits
         question/organisation_name:
@@ -302,7 +302,7 @@ cy:
     incomplete_submission:
       body_html: |
         <p>Efallai eich bod chi wedi cyflwyno’r ffurflen yn barod.</p>
-        <p><a href="%{link_url}">Atebwch y cwestiynau sy’n dal ar ôl er mwyn parhau</a> parhau.</p>
+        <p><a href="%{link_url}">Atebwch y cwestiynau sy’n dal ar ôl</a> er mwyn parhau.</p>
       title: Rydych chi wedi ceisio cyflwyno ffurflen anghyflawn
     internal_server_error:
       body: Rhowch gynnig arall arni yn nes ymlaen.
