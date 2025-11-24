@@ -302,7 +302,7 @@ cy:
     incomplete_submission:
       body_html: |
         <p>Efallai eich bod chi wedi cyflwyno’r ffurflen yn barod.</p>
-        <p><a href="%{link_url}">Atebwch y cwestiynau sy’n dal ar ôl er mwyn parhau</a> parhau.</p>
+        <p><a href="%{link_url}">Atebwch y cwestiynau sy’n dal ar ôl</a> er mwyn parhau.</p>
       title: Rydych chi wedi ceisio cyflwyno ffurflen anghyflawn
     internal_server_error:
       body: Rhowch gynnig arall arni yn nes ymlaen.
