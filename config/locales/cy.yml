@@ -157,7 +157,7 @@ cy:
           attributes:
             number:
               blank: Rhowch rif
-              greater_than_or_equal_to: Rhaid i’r ateb fod yn fwy na 10 neu’n hafal i 0
+              greater_than_or_equal_to: Rhaid i’r ateb fod yn fwy na 0 neu’n hafal i 0
               not_a_number: Rhaid i’r ateb fod yn rhif
               too_long: The number must be shorter than 500 digits
         question/organisation_name:
