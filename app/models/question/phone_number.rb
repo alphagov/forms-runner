@@ -6,7 +6,7 @@ module Question
     # We check the characters and that the number is in a reasonable range
     # some code and tests inspired by https://github.com/DFE-Digital/apply-for-teacher-training
 
-    PHONE_REGEX = /\A[ext\-()+.\s 0-9]+\z/
+    PHONE_REGEX = /\A([-()+.\s 0-9]|x|ext|est)+\z/
     attribute :phone_number
     validates :phone_number, presence: true, unless: :is_optional?
     validates :phone_number, format: { with: PHONE_REGEX, message: :invalid_phone_number }, allow_blank: true
