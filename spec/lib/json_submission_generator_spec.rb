@@ -46,6 +46,7 @@ RSpec.describe JsonSubmissionGenerator do
         expect(
           JSON.parse(described_class.generate_submission(form:, all_steps:, submission_reference:, timestamp:, is_s3_submission:)),
         ).to eq({
+          "$schema" => "http://localhost:3002/json-submissions/v1/schema",
           "form_name" => form.name,
           "submission_reference" => submission_reference,
           "submitted_at" => "2022-09-14T07:00:00.000Z",
@@ -99,6 +100,7 @@ RSpec.describe JsonSubmissionGenerator do
           expect(
             JSON.parse(described_class.generate_submission(form:, all_steps:, submission_reference:, timestamp:, is_s3_submission:)),
           ).to eq({
+            "$schema" => "http://localhost:3002/json-submissions/v1/schema",
             "form_name" => form.name,
             "submission_reference" => submission_reference,
             "submitted_at" => "2022-09-14T07:00:00.000Z",
