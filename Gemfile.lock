@@ -110,7 +110,7 @@ GEM
     ast (2.4.3)
     aws-eventstream (1.4.0)
     aws-partitions (1.1187.0)
-    aws-sdk-cloudwatch (1.123.0)
+    aws-sdk-cloudwatch (1.124.0)
       aws-sdk-core (~> 3, >= 3.234.0)
       aws-sigv4 (~> 1.5)
     aws-sdk-codepipeline (1.108.0)
@@ -592,7 +592,7 @@ CHECKSUMS
   ast (2.4.3) sha256=954615157c1d6a382bc27d690d973195e79db7f55e9765ac7c481c60bdb4d383
   aws-eventstream (1.4.0) sha256=116bf85c436200d1060811e6f5d2d40c88f65448f2125bc77ffce5121e6e183b
   aws-partitions (1.1187.0) sha256=77157ba65f856a1c2a177e8b203abe1c37d9fe5a6ff8f4706cf0fde5f635c5af
-  aws-sdk-cloudwatch (1.123.0) sha256=e5e830a10bf6f66487c582ea23d10e445ad6f8e6a781bb5cc027267dc716a05b
+  aws-sdk-cloudwatch (1.124.0) sha256=0a9dae04c49510a6e1b2fe98d0494d25aa2d2b00a59d16c0d807b000050bd1eb
   aws-sdk-codepipeline (1.108.0) sha256=caaa2a67de328d7ea871ca28d67cd8784f8cf8cec0f1fb23aa2d85d60acf6bc9
   aws-sdk-core (3.239.1) sha256=60bc83b0ae61442c47c6ea674fc03c68ba9eb48a19b9de8575ff9614bca6b252
   aws-sdk-kms (1.117.0) sha256=d3d655ae825ca0d6715555e2543e062fe14ccacf30bace04f3aefd6005b76c14
