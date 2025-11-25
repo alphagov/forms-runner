@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :page, class: "Page" do
-    id { Faker::Number.number(digits: 2) }
+    id { Faker::Alphanumeric.alphanumeric(number: 8) }
     question_text { Faker::Lorem.question }
     answer_type { "number" }
     is_optional { nil }
