@@ -113,4 +113,7 @@ group :test do
 
   # axe-core for running automated accessibility checks
   gem "axe-core-rspec"
+
+  # For validating against the JSON schema for form submissions
+  gem "json_schemer"
 end

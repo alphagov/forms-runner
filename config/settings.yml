@@ -9,6 +9,10 @@ forms_api:
   # URL to form-admin API endpoints
   base_url: http://localhost:3000
 
+forms_product_page:
+  # URL to link to the JSON schema hosted on the product page
+  base_url: http://localhost:3002
+
 # Settings for GOV.UK Notify api & email templates
 govuk_notify:
   api_key: changeme

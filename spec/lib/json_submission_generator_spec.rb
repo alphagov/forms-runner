@@ -19,6 +19,10 @@ RSpec.describe JsonSubmissionGenerator do
   end
 
   describe ".generate_submission" do
+    subject(:json_submission) { described_class.generate_submission(form:, all_steps:, submission_reference:, timestamp:, is_s3_submission:) }
+
+    let(:parsed_json) { JSON.parse(json_submission) }
+
     context "when the submission is being sent by email" do
       let(:is_s3_submission) { false }
 
@@ -27,25 +31,28 @@ RSpec.describe JsonSubmissionGenerator do
       end
 
       it "returns a string" do
-        expect(described_class.generate_submission(form:, all_steps:, submission_reference:, timestamp:, is_s3_submission:)).to be_a(String)
+        expect(json_submission).to be_a(String)
       end
 
       it "returns JSON" do
-        expect {
-          JSON.parse(described_class.generate_submission(form:, all_steps:, submission_reference:, timestamp:, is_s3_submission:))
-        }.not_to raise_error
+        expect { parsed_json }.not_to raise_error
       end
 
       it "outputs pretty printed JSON" do
-        json_string = described_class.generate_submission(form:, all_steps:, submission_reference:, timestamp:, is_s3_submission:)
+        json_string = json_submission
         expect(json_string).to include("\n  \"form_name\":")
         expect(json_string).to include("\n  \"answers\": [\n")
       end
 
+      it "generate a JSON file that validates against the schema" do
+        # this schema is copied from forms-product-page, update the fixture if we change the schema
+        schema = JSON.load_file("spec/fixtures/json_submission_schema_v1.json")
+        expect(JSONSchemer.schema(schema).valid?(parsed_json)).to be true
+      end
+
       it "generates the submission JSON" do
-        expect(
-          JSON.parse(described_class.generate_submission(form:, all_steps:, submission_reference:, timestamp:, is_s3_submission:)),
-        ).to eq({
+        expect(parsed_json).to eq({
+          "$schema" => "http://localhost:3002/json-submissions/v1/schema",
           "form_name" => form.name,
           "submission_reference" => submission_reference,
           "submitted_at" => "2022-09-14T07:00:00.000Z",
@@ -96,9 +103,8 @@ RSpec.describe JsonSubmissionGenerator do
         let(:all_steps) { [repeatable_step, name_step] }
 
         it "includes an entry for each question in the JSON" do
-          expect(
-            JSON.parse(described_class.generate_submission(form:, all_steps:, submission_reference:, timestamp:, is_s3_submission:)),
-          ).to eq({
+          expect(parsed_json).to eq({
+            "$schema" => "http://localhost:3002/json-submissions/v1/schema",
             "form_name" => form.name,
             "submission_reference" => submission_reference,
             "submitted_at" => "2022-09-14T07:00:00.000Z",
@@ -126,8 +132,7 @@ RSpec.describe JsonSubmissionGenerator do
       let(:is_s3_submission) { true }
 
       it "generates JSON without including the submission reference in the filename for the file upload question" do
-        json = JSON.parse(described_class.generate_submission(form:, all_steps:, submission_reference:, timestamp:, is_s3_submission:))
-        expect(json["answers"]).to include({
+        expect(parsed_json["answers"]).to include({
           "question_id" => file_step.page.id,
           "question_text" => "Upload a file",
           "answer_text" => "test.txt",

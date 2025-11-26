@@ -32,6 +32,12 @@ describe "Settings" do
     include_examples expected_value_test, :base_url, forms_api, "http://localhost:3000"
   end
 
+  describe ".forms_product_page" do
+    forms_product_page = settings[:forms_product_page]
+
+    include_examples expected_value_test, :base_url, forms_product_page, "http://localhost:3002"
+  end
+
   describe ".govuk_notify" do
     govuk_notify = settings[:govuk_notify]
 
