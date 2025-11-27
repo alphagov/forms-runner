@@ -5,16 +5,20 @@ RSpec.describe Api::V2::FormDocumentRepository do
 
   let(:form_id) { "1" }
   let(:api_v2_response_data) { JSON.load_file("spec/fixtures/all_question_types_form.json") }
+  let(:api_v2_welsh_response_data) { api_v2_response_data.merge(name: "Welsh form", language: "cy") }
 
   describe ".find" do
     let(:form_id) { "1" }
     let(:tag) { :live }
     let(:response_data) { api_v2_response_data.to_json }
+    let(:welsh_response_data) { api_v2_welsh_response_data.to_json }
     let(:status) { 200 }
+    let(:language) { nil }
 
     before do
       ActiveResource::HttpMock.respond_to do |mock|
         mock.get "/api/v2/forms/#{form_id}/#{tag}", req_headers, response_data, status
+        mock.get "/api/v2/forms/#{form_id}/#{tag}?language=cy", req_headers, welsh_response_data, status
       end
     end
 
@@ -80,6 +84,27 @@ RSpec.describe Api::V2::FormDocumentRepository do
         expect {
           described_class.find(tag:, form_id:)
         }.to raise_error(ActiveResource::ResourceNotFound)
+      end
+    end
+
+    context "when given language makes correct request" do
+      let(:request_with_no_language_param) { ActiveResource::Request.new(:get, "/api/v2/forms/#{form_id}/#{tag}", req_headers) }
+      let(:request_with_language_param_cy) { ActiveResource::Request.new(:get, "/api/v2/forms/#{form_id}/#{tag}?language=cy", req_headers) }
+
+      before do
+        mock_response = ActiveResource::Response.new(response_data)
+        ActiveResource::HttpMock.respond_to(request_with_no_language_param => mock_response,
+                                            request_with_language_param_cy => mock_response)
+      end
+
+      it "given :en makes request wihout the language param" do
+        described_class.find(tag:, form_id:, language: :en)
+        expect(ActiveResource::HttpMock.requests).to include request_with_no_language_param
+      end
+
+      it "given :cy makes request with the language param" do
+        described_class.find(tag:, form_id:, language: :cy)
+        expect(ActiveResource::HttpMock.requests).to include request_with_language_param_cy
       end
     end
   end
@@ -162,6 +187,19 @@ RSpec.describe Api::V2::FormDocumentRepository do
         form = described_class.find_with_mode(form_id: "Alpha123", mode: Mode.new("preview-draft"))
 
         expect(form).to have_attributes(form_id: "Alpha123", name: "All question types form")
+      end
+    end
+
+    context "when Welsh form requested" do
+      before do
+        ActiveResource::HttpMock.respond_to do |mock|
+          mock.get "/api/v2/forms/1/live?language=cy", req_headers, api_v2_welsh_response_data.to_json, 200
+        end
+      end
+
+      it "returns Welsh form model" do
+        form = described_class.find_with_mode(form_id: "1", mode: Mode.new("live"), language: :cy)
+        expect(form).to have_attributes(form_id: "1", name: "Welsh form", language: "cy")
       end
     end
   end
