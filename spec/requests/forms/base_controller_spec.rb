@@ -55,7 +55,9 @@ RSpec.describe Forms::BaseController, type: :request do
   before do
     ActiveResource::HttpMock.respond_to do |mock|
       mock.get "/api/v2/forms/2#{api_url_suffix}", req_headers, form_response_data.to_json, 200
+      mock.get "/api/v2/forms/2#{api_url_suffix}?language=cy", req_headers, form_response_data.to_json, 200
       mock.get "/api/v2/forms/9999#{api_url_suffix}", req_headers, no_data_found_response, 404
+      mock.get "/api/v2/forms/9999#{api_url_suffix}?language=cy", req_headers, no_data_found_response, 404
     end
   end
 
@@ -385,6 +387,11 @@ RSpec.describe Forms::BaseController, type: :request do
         it "renders links with the default locale scope" do
           expect(response.body).to include(form_privacy_path(form_id: 2, form_slug: form_response_data.form_slug))
         end
+
+        it "requests the form in English" do
+          expect(ActiveResource::HttpMock.requests)
+            .to include ActiveResource::Request.new(:get, "/api/v2/forms/2/live", nil, req_headers)
+        end
       end
 
       context "when the locale param is set to Welsh" do
@@ -396,6 +403,11 @@ RSpec.describe Forms::BaseController, type: :request do
 
         it "renders links with the cy locale scope" do
           expect(response.body).to include(form_privacy_path(form_id: 2, form_slug: form_response_data.form_slug, locale: :cy))
+        end
+
+        it "requests the form in Welsh" do
+          expect(ActiveResource::HttpMock.requests)
+            .to include ActiveResource::Request.new(:get, "/api/v2/forms/2/live?language=cy", nil, req_headers)
         end
       end
 
