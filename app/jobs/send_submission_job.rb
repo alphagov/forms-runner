@@ -19,7 +19,7 @@ class SendSubmissionJob < ApplicationJob
     )
 
     milliseconds_since_scheduled = (sent_at - scheduled_at_or_enqueued_at).in_milliseconds.round
-    EventLogger.log_form_event("submission_sent", { milliseconds_since_scheduled: })
+    LogEventService.log_submission_sent(submission, milliseconds_since_scheduled:)
     CloudWatchService.record_submission_sent_metric(milliseconds_since_scheduled)
   rescue StandardError
     CloudWatchService.record_job_failure_metric(self.class.name)
