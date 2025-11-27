@@ -88,6 +88,20 @@ RSpec.describe Api::V2::FormDocumentResource do
           .to include ActiveResource::Request.new(:get, "/api/v2/forms/1/archived", nil, req_headers)
       end
     end
+
+    context "when given params" do
+      let(:request_with_language_param) { ActiveResource::Request.new(:get, "/api/v2/forms/1/live?language=cy") }
+
+      before do
+        mock_response = ActiveResource::Response.new("{}")
+        ActiveResource::HttpMock.respond_to(request_with_language_param => mock_response)
+      end
+
+      it "adds params to the request" do
+        described_class.get(1, :live, language: :cy)
+        expect(ActiveResource::HttpMock.requests).to include request_with_language_param
+      end
+    end
   end
 
   describe ".get" do
@@ -165,6 +179,20 @@ RSpec.describe Api::V2::FormDocumentResource do
 
         expect(ActiveResource::HttpMock.requests)
           .to include ActiveResource::Request.new(:get, "/api/v2/forms/1/archived", nil, req_headers)
+      end
+    end
+
+    context "when given options" do
+      let(:request_with_param) { ActiveResource::Request.new(:get, "/api/v2/forms/1/live?another=1&param=value") }
+
+      before do
+        mock_response = ActiveResource::Response.new("{}")
+        ActiveResource::HttpMock.respond_to(request_with_param => mock_response)
+      end
+
+      it "adds params to the request" do
+        described_class.get(1, :live, param: :value, another: 1)
+        expect(ActiveResource::HttpMock.requests).to include request_with_param
       end
     end
   end
