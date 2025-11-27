@@ -18,6 +18,8 @@
   "what_happens_next_markdown": "Test",
   "payment_url": null,
   "start_page": 1,
+  "language": "en",
+  "available_languages": ["en", "cy"],
   "steps": [
     {
       "id": 1,
