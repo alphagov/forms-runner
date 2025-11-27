@@ -10,18 +10,12 @@ class Api::V2::FormDocumentResource < ActiveResource::Base
   end
 
   class << self
-    def find(form_id, tag)
-      super(:one, from: document_path(form_id, tag))
+    def find(form_id, tag, params: {})
+      super(:one, from: "#{prefix}#{collection_name}/#{form_id}/#{tag}", params:)
     end
 
-    def get(form_id, tag)
-      super("#{form_id}/#{tag}")
-    end
-
-  private
-
-    def document_path(form_id, tag)
-      "#{prefix}forms/#{form_id}/#{tag}"
+    def get(form_id, tag, **options)
+      super("#{form_id}/#{tag}", **options)
     end
   end
 end
