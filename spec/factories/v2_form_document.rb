@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :v2_form_document, class: DataStruct do
-    form_id { Faker::Alphanumeric.alphanumeric(number: 8) }
+    form_id { Faker::Number.number(digits: 5) }
 
     sequence(:name) { |n| "Form #{n}" }
     form_slug { name ? name.parameterize : nil }
