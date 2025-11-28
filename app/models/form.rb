@@ -27,7 +27,6 @@ class Form < ActiveResource::Base
         "id" => step["id"],
         "position" => step["position"],
         "next_page" => step["next_step_id"],
-        "database_id" => step["database_id"], # temporary attribute while we switch to using external IDs
       }
       if step["type"] == "question_page"
         attrs.merge!(step["data"])
