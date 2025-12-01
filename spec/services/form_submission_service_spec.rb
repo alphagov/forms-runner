@@ -132,13 +132,7 @@ RSpec.describe FormSubmissionService do
         let(:aws_ses_submission_service_spy) { instance_double(AwsSesSubmissionService) }
         let(:mail_message_id) { "1234" }
 
-        let(:req_headers) { { "Accept" => "application/json" } }
-
         before do
-          ActiveResource::HttpMock.respond_to do |mock|
-            mock.get "/api/v2/forms/1/live", req_headers, form.to_json, 200
-          end
-
           allow(Flow::Journey).to receive(:new)
 
           allow(AwsSesSubmissionService).to receive(:new).and_return(aws_ses_submission_service_spy)
