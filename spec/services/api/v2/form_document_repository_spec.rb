@@ -199,7 +199,7 @@ RSpec.describe Api::V2::FormDocumentRepository do
 
       it "returns Welsh form model" do
         form = described_class.find_with_mode(form_id: "1", mode: Mode.new("live"), language: :cy)
-        expect(form).to have_attributes(form_id: "1", name: "Welsh form", language: "cy")
+        expect(form).to have_attributes(form_id: "1", name: "Welsh form", language: :cy)
       end
     end
   end
