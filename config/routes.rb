@@ -15,9 +15,17 @@ Rails.application.routes.draw do
   get "/submission" => "submission_status#status", as: :status
   get "/.well-known/security.txt" => redirect("https://vulnerability-reporting.service.security.gov.uk/.well-known/security.txt")
 
+  form_id_constraints = { form_id: Form::FORM_ID_REGEX }
+  form_constraints = {
+    **form_id_constraints,
+    locale: /(en|cy)/,
+    form_slug: Form::FORM_SLUG_REGEX,
+  }
+
+  # If we make changes to allowed mode values, update the WAF rules first
   scope "/:mode", mode: /preview-draft|preview-archived|preview-live|form/ do
-    get "/:form_id" => "forms/base#redirect_to_friendly_url_start", as: :form_id
-    scope "/:form_id/:form_slug(.:locale)", constraints: { locale: /(en|cy)/ } do
+    get "/:form_id" => "forms/base#redirect_to_friendly_url_start", as: :form_id, constraints: form_id_constraints
+    scope "/:form_id/:form_slug(.:locale)", constraints: form_constraints do
       get "/" => "forms/base#redirect_to_friendly_url_start", as: :form
       get "/#{CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG}" => "forms/check_your_answers#show", as: :check_your_answers
       post "/#{CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG}" => "forms/check_your_answers#submit_answers", as: :form_submit_answers
