@@ -23,6 +23,7 @@ class FormSubmissionService
   end
 
   def submit
+    ensure_form_english
     validate_submission
 
     confirmation_mail = setup_confirmation_email if requested_confirmation?
@@ -40,6 +41,14 @@ private
     return if form.english?
 
     fetch_english_language_form
+  end
+
+  def fetch_english_language_form
+    @form = Api::V2::FormDocumentRepository.find_with_mode(form_id: form.id, mode:)
+  end
+
+  def validate_submission
+    raise StandardError, "Form id(#{form.id}) has no completed steps i.e questions/answers to submit" if current_context.completed_steps.blank?
   end
 
   def deliver_submission
