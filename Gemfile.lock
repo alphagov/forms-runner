@@ -211,7 +211,7 @@ GEM
       raabro (~> 1.4)
     globalid (1.3.0)
       activesupport (>= 6.1)
-    govuk-components (5.13.0)
+    govuk-components (5.13.1)
       html-attributes-utils (~> 1.0.0, >= 1.0.0)
       pagy (>= 6, < 10)
       view_component (>= 4.0, < 4.2)
@@ -644,7 +644,7 @@ CHECKSUMS
   faker (3.5.2) sha256=f9a80291b2e3f259801d1dd552f0732fe04dce5d1f74e798365bc0413789c473
   fugit (1.12.1) sha256=5898f478ede9b415f0804e42b8f3fd53f814bd85eebffceebdbc34e1107aaf68
   globalid (1.3.0) sha256=05c639ad6eb4594522a0b07983022f04aa7254626ab69445a0e493aa3786ff11
-  govuk-components (5.13.0) sha256=d36569e1ee9a082a6fd9293f3e8a0c5919daec657a84ab4bfa4e595faabfd423
+  govuk-components (5.13.1) sha256=74808d8188a7de2c5e83e5a829c5f8ac3851df27f82410a4a2444cf53c24cfe5
   govuk-forms-markdown (0.6.0)
   govuk_design_system_formbuilder (5.11.0) sha256=15a65152008a839aa3ac391f0896614ab90f5ced226a5fa8ab6da93173b0a6f8
   govuk_notify_rails (3.0.0) sha256=e0e1b8b0a7c47f90963034f290fb2982652aa8051a733c25c178680d44f2d7aa
