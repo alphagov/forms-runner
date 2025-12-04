@@ -29,10 +29,15 @@ class ReceiveSubmissionDeliveriesJob < ApplicationJob
 
 private
 
-  def process_delivery(submission, **attributes)
+  def process_delivery(submission, delivered_at:)
     set_submission_logging_attributes(submission)
 
-    submission.update! attributes
+    # Don't process delivery if already bounced. Bounces can occur asynchronously
+    # and out of order from the initial delivery notification.
+    # https://docs.aws.amazon.com/ses/latest/dg/send-email-concepts-deliverability.html
+    unless submission.bounced?
+      submission.update!(delivered_at: delivered_at, delivery_status: :delivered)
+    end
 
     EventLogger.log_form_event("submission_delivered")
   end
