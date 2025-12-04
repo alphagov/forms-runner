@@ -67,4 +67,16 @@ class Form < ActiveResource::Base
       url_text: support_url_text,
     })
   end
+
+  def language
+    @attributes["language"]&.to_sym || :en
+  end
+
+  def english?
+    language == :en
+  end
+
+  def welsh?
+    language == :cy
+  end
 end

@@ -155,4 +155,54 @@ RSpec.describe Form, type: :model do
       expect(support_details.call_charges_url).to eq("https://www.gov.uk/call-charges")
     end
   end
+
+  describe "#language" do
+    context "when the form is initialised with \"cy\" attribute language" do
+      let(:attributes) { { id: 1, name: "form name", language: "cy" } }
+
+      it "returns the language of the form" do
+        expect(form.language).to eq(:cy)
+      end
+
+      it "#english? returns false" do
+        expect(form.english?).to be false
+      end
+
+      it "#welsh? returns true" do
+        expect(form.welsh?).to be true
+      end
+    end
+
+    context "when the form is initialised without attribute language" do
+      let(:attributes) { { id: 1, name: "form name" } }
+
+      it "returns the default language of the form" do
+        expect(form.language).to eq(:en)
+      end
+
+      it "#english? returns true" do
+        expect(form.english?).to be true
+      end
+
+      it "#welsh? returns false" do
+        expect(form.welsh?).to be false
+      end
+    end
+
+    context "when the form is initialised with attribute language as nil" do
+      let(:attributes) { { id: 1, name: "form name", language: nil } }
+
+      it "returns the default language of the form" do
+        expect(form.language).to eq(:en)
+      end
+
+      it "#english? returns true" do
+        expect(form.english?).to be true
+      end
+
+      it "#welsh? returns false" do
+        expect(form.welsh?).to be false
+      end
+    end
+  end
 end

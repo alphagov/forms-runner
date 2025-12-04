@@ -42,7 +42,7 @@ module Forms
     def set_form
       begin
         form_id = params.require(:form_id)
-        @form = Api::V2::FormDocumentRepository.find_with_mode(form_id:, mode:)
+        @form = Api::V2::FormDocumentRepository.find_with_mode(form_id:, mode:, language: locale)
       rescue ActiveResource::ResourceNotFound
         archived_form = Api::V2::FormDocumentRepository.find(form_id:, tag: :archived)
         return render template: "forms/archived/show", locals: { form_name: archived_form.name }, status: :not_found if archived_form.present?

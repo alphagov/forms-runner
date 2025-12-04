@@ -9,6 +9,7 @@ RSpec.describe FormSubmissionService do
   let(:confirmation_email_address) { "testing@gov.uk" }
   let(:email_confirmation_input) { build :email_confirmation_input_opted_in, confirmation_email_address: }
   let(:form) { build(:form, **document_json, document_json:) }
+  let(:welsh_form) { build(:form, **welsh_document_json, document_json: welsh_document_json) }
 
   let(:document_json) do
     build(
@@ -25,8 +26,11 @@ RSpec.describe FormSubmissionService do
       submission_type:,
       submission_format:,
       steps:,
+      language:,
     ).as_json
   end
+
+  let(:welsh_document_json) { document_json.merge("language" => "cy", "name" => "Welsh Form 1") }
 
   let(:steps) { [build(:v2_question_page_step, id: 2, answer_type: "text")] }
   let(:submission_type) { "email" }
@@ -38,6 +42,7 @@ RSpec.describe FormSubmissionService do
   let(:support_url_text) { Faker::Lorem.sentence(word_count: 1, random_words_to_add: 4) }
   let(:payment_url) { nil }
   let(:submission_email) { "testing@gov.uk" }
+  let(:language) { "en" }
 
   let(:reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
 
@@ -132,13 +137,7 @@ RSpec.describe FormSubmissionService do
         let(:aws_ses_submission_service_spy) { instance_double(AwsSesSubmissionService) }
         let(:mail_message_id) { "1234" }
 
-        let(:req_headers) { { "Accept" => "application/json" } }
-
         before do
-          ActiveResource::HttpMock.respond_to do |mock|
-            mock.get "/api/v2/forms/1/live", req_headers, form.to_json, 200
-          end
-
           allow(Flow::Journey).to receive(:new)
 
           allow(AwsSesSubmissionService).to receive(:new).and_return(aws_ses_submission_service_spy)
@@ -242,6 +241,34 @@ RSpec.describe FormSubmissionService do
           it "raises an error" do
             expect { result }.to raise_error("Form id(1) has no completed steps i.e questions/answers to submit")
           end
+        end
+      end
+
+      context "when form is not in english" do
+        let(:submission_type) { "email" }
+        let(:submission_format) { [] }
+
+        let(:current_context) { instance_double(Flow::Context, form: welsh_form, journey:, completed_steps: all_steps, answers:) }
+
+        before do
+          ActiveResource::HttpMock.respond_to do |mock|
+            mock.get "/api/v2/forms/1/live", {}, document_json.to_json, 200
+          end
+        end
+
+        it "fetches the default language form" do
+          service.submit
+          expect(ActiveResource::HttpMock.requests).to include ActiveResource::Request.new(:get, "/api/v2/forms/1/live")
+        end
+
+        it "saves the submission data with the English version of the form" do
+          expect {
+            service.submit
+          }.to change(Submission, :count).by(1)
+
+          # expect(Submission.last).to have_attributes(form_id: form.id, answers: answers.deep_stringify_keys, form_document: document_json)
+          expect(Submission.last.form_document["language"]).to eq("en")
+          expect(Submission.last.form_document["name"]).to eq("Form 1")
         end
       end
     end
