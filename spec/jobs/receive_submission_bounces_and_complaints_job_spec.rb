@@ -29,7 +29,7 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
   let(:mail_message_id) { "mail-message-id" }
   let(:reference) { "submission-reference" }
   let!(:submission) { create :submission, mail_message_id:, reference:, form_id: form_with_file_upload.form_id, form_document: form_with_file_upload, answers: form_with_file_upload_answers }
-  let!(:other_submission) { create :submission, mail_message_id: "abc", delivery_status: :pending, reference: "other-submission-reference", form_id: 2, answers: form_with_file_upload_answers }
+  let!(:other_submission) { create :submission, mail_message_id: "abc", reference: "other-submission-reference", form_id: 2, answers: form_with_file_upload_answers }
 
   let(:output) { StringIO.new }
   let(:logger) do

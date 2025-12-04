@@ -5,10 +5,23 @@ class Submission < ApplicationRecord
 
   encrypts :answers
 
-  enum :delivery_status, {
-    pending: "pending",
-    bounced: "bounced",
-  }
+  scope :pending, -> { where(delivered_at: nil, bounced_at: nil) }
+  scope :delivered, -> { where.not(delivered_at: nil).where("bounced_at IS NULL OR delivered_at < bounced_at") }
+  scope :bounced, -> { where.not(bounced_at: nil).where("delivered_at IS NULL OR bounced_at <= delivered_at") }
+
+  def status
+    return :pending if delivered_at.nil? && bounced_at.nil?
+    return :delivered if delivered_at.present? && bounced_at.nil?
+    return :bounced if bounced_at.present? && delivered_at.nil?
+
+    delivered_at < bounced_at ? :delivered : :bounced
+  end
+
+  %i[pending delivered bounced].each do |status|
+    define_method("#{status}?") do
+      self.status == status
+    end
+  end
 
   def journey
     @journey ||= Flow::Journey.new(answer_store:, form:)

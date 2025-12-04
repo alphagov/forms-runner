@@ -5,7 +5,7 @@ RSpec.describe SendSubmissionJob, type: :job do
   include ActiveJob::TestHelper
 
   let(:submission_created_at) { Time.utc(2022, 12, 14, 13, 0o0, 0o0) }
-  let(:submission) { create :submission, form_document:, delivery_status: :pending, created_at: submission_created_at }
+  let(:submission) { create :submission, form_document:, created_at: submission_created_at }
   let(:form_document) { build(:v2_form_document, name: "Form 1") }
   let(:question) { build :text, question_text: "What is the meaning of life?", text: "42" }
   let(:step) { build :step, question: }

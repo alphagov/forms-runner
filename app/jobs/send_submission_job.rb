@@ -13,7 +13,8 @@ class SendSubmissionJob < ApplicationJob
 
     submission.update!(
       mail_message_id: message_id,
-      delivery_status: :pending,
+      bounced_at: nil,
+      delivered_at: nil,
       last_delivery_attempt: Time.zone.now,
     )
 

@@ -36,7 +36,6 @@ private
     unless submission.preview?
       bounced_timestamp = Time.zone.parse(bounce_object["timestamp"])
       submission.update!(
-        delivery_status: :bounced,
         bounced_at: bounced_timestamp,
       )
     end

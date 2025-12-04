@@ -12,7 +12,7 @@ namespace :submissions do
       form_ids: submissions.map(&:form_id).uniq,
     }
     submissions.find_each do |submission|
-      Rails.logger.info "Submission reference: #{submission.reference}, form ID: #{submission.form_id}, delivery_status: #{submission.delivery_status}, created_at: #{submission.created_at}, last_delivery_attempt: #{submission.last_delivery_attempt}"
+      Rails.logger.info "Submission reference: #{submission.reference}, form ID: #{submission.form_id}, delivery_status: #{submission.status}, created_at: #{submission.created_at}, last_delivery_attempt: #{submission.last_delivery_attempt}"
     end
   end
 
@@ -104,7 +104,7 @@ namespace :submissions do
       if dry_run
         Rails.logger.info "Would disregard bounce of submission with reference #{submission.reference} which was created at #{submission.created_at}"
       else
-        submission.pending!
+        submission.update!(bounced_at: nil)
         Rails.logger.info "Disregarded bounce of submission with reference #{submission.reference}"
       end
     end
@@ -228,5 +228,5 @@ def disregard_bounced_submission(reference)
   end
 
   Rails.logger.info "Disregarding bounce of submission with reference #{submission.reference}"
-  submission.pending!
+  submission.update!(bounced_at: nil)
 end

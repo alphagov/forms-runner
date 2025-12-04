@@ -17,7 +17,6 @@ FactoryBot.define do
     end
     mode { is_preview ? "preview-live" : "live" }
     form_document { build :v2_form_document }
-    delivery_status { :pending }
 
     transient do
       is_preview { false }
@@ -30,7 +29,8 @@ FactoryBot.define do
 
     trait :bounced do
       sent
-      delivery_status { :bounced }
+      bounced_at { created_at + 2.minutes }
+      delivered_at { nil }
     end
 
     trait :preview do

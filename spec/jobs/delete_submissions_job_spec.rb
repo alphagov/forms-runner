@@ -52,6 +52,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
              form_id: form_with_file_upload.form_id,
              form_document: form_with_file_upload,
              last_delivery_attempt: 8.days.ago,
+             delivered_at: 8.days.ago,
              answers: form_with_file_upload_answers
     end
     let!(:sent_submission_sent_7_days_ago) do
@@ -60,7 +61,8 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
              reference: "SENT7DAYS",
              form_id: form_without_file_upload.form_id,
              form_document: form_without_file_upload,
-             last_delivery_attempt: 7.days.ago
+             last_delivery_attempt: 7.days.ago,
+             delivered_at: 7.days.ago
     end
     let!(:sent_submission_sent_6_days_ago) do
       create :submission,
@@ -68,7 +70,8 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
              reference: "SENT6DAYS",
              form_id: form_without_file_upload.form_id,
              form_document: form_without_file_upload,
-             last_delivery_attempt: 6.days.ago
+             last_delivery_attempt: 6.days.ago,
+             delivered_at: 6.days.ago
     end
     let!(:bounced_submission) do
       create :submission,
@@ -77,7 +80,8 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
              form_id: form_without_file_upload.form_id,
              form_document: form_without_file_upload,
              last_delivery_attempt: 7.days.ago,
-             delivery_status: :bounced
+             bounced_at: 6.days.ago,
+             delivered_at: nil
     end
     let!(:unsent_submission) { create :submission, reference: "UNSENT", last_delivery_attempt: nil }
 
@@ -119,7 +123,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
           hash_including(
             "level" => "INFO",
             "message" => "Form event",
-            "delivery_status" => "pending",
+            "delivery_status" => "delivered",
             "event" => "form_submission_deleted",
             "form_id" => form_with_file_upload.form_id,
             "form_name" => form_with_file_upload.name,
@@ -131,7 +135,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
           hash_including(
             "level" => "INFO",
             "message" => "Form event",
-            "delivery_status" => "pending",
+            "delivery_status" => "delivered",
             "event" => "form_submission_deleted",
             "form_id" => form_without_file_upload.form_id,
             "form_name" => form_without_file_upload.name,
@@ -150,7 +154,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
 
       it "sends cloudwatch metric for each submission deleted" do
         perform_enqueued_jobs
-        expect(CloudWatchService).to have_received(:record_submission_deleted_metric).twice.with("pending")
+        expect(CloudWatchService).to have_received(:record_submission_deleted_metric).twice.with(:delivered)
       end
     end
 
@@ -195,7 +199,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
 
       it "sends cloudwatch metric for the deleted submission only" do
         perform_enqueued_jobs
-        expect(CloudWatchService).to have_received(:record_submission_deleted_metric).once.with("pending")
+        expect(CloudWatchService).to have_received(:record_submission_deleted_metric).once.with(:delivered)
       end
     end
   end
@@ -206,7 +210,8 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
              :sent,
              reference: "BOUNCED_29_DAYS",
              created_at: 31.days.ago,
-             delivery_status: :bounced
+             bounced_at: 30.days.ago,
+             delivered_at: nil
     end
     let!(:bounced_submission_created_31_days_ago) do
       create :submission,
@@ -215,7 +220,8 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
              form_id: form_without_file_upload.form_id,
              form_document: form_without_file_upload,
              created_at: 31.days.ago,
-             delivery_status: :bounced
+             bounced_at: 30.days.ago,
+             delivered_at: nil
     end
     let!(:not_sent_submission_created_31_days_ago) do
       create :submission,
