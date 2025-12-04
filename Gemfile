@@ -79,7 +79,7 @@ gem "csv"
 # the hash, also change in package.json
 gem "dfe-autocomplete", require: "dfe/autocomplete", github: "DFE-Digital/dfe-autocomplete", ref: "1d4cc65039e11cc3ba9e7217a719b8128d0e4d53"
 
-gem "rails-i18n", "~> 8.0"
+gem "rails-i18n", "~> 8.1"
 
 # IDNA conversion needed for validating email addresses
 gem "uri-idna"
