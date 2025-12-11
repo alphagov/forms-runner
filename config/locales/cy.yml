@@ -30,26 +30,26 @@ cy:
       other_problems:
         heading: Problemau eraill wrth ddefnyddio’r rhyngwyneb
         other_problems_list:
-          list_item_0: Nid yw’r crynodeb gwall e-bost cadarnhau ar y dudalen ‘Gwirio eich atebion’ yn cysylltu â’r maes penodol sydd gyda’r gwall. Mae hyn yn ei gwneud hi’n anoddach llywio o fewn y dudalen ac i ddeall sut i ddatrys y broblem.
-          list_item_1: Pan fydd gwall dilysu ar y dudalen ‘Gwirio eich atebion’, nid yw teitl y dudalen yn newid i gynnwys y gair ‘Gwall’ ar y dechrau. Os ydych yn defnyddio darllenydd sgrin mae hyn yn ei gwneud hi’n anoddach deall eich bod ar dudalen gwall pan fydd y dudalen yn adnewyddu.
+          list_item_0: Nid yw’r crynodeb gwall e-bost cadarnhau ar y dudalen ‘Edrychwch dros eich atebion’ yn cysylltu â’r maes penodol sydd gyda’r gwall. Mae hyn yn ei gwneud hi’n anoddach llywio o fewn y dudalen ac i ddeall sut i ddatrys y broblem.
+          list_item_1: Pan fydd gwall dilysu ar y dudalen ‘Edrychwch dros eich atebion’, nid yw teitl y dudalen yn newid i gynnwys y gair ‘Gwall’ ar y dechrau. Os ydych yn defnyddio darllenydd sgrin mae hyn yn ei gwneud hi’n anoddach deall eich bod ar dudalen gwall pan fydd y dudalen yn adnewyddu.
           list_item_2: Pan fyddwch yn clicio ar ‘Cael help gyda’r ffurflen hon’, mae’r penawdau dull cyswllt yn H3s, ond nid oes H2. Gall hepgor lefelau pennawd fod yn ddryslyd os ydych yn defnyddio darllenydd sgrin ac nid yw’n arfer gorau.
           list_item_3: Ar dudalennau cwestiynau, mae’r ddolen yn ôl yn diflannu pan fydd gwall yn bresennol. Gallai hyn ei gwneud hi’n anoddach llywio allan o dudalennau pan fyddwch wedi gwneud camgymeriad.
           list_item_4: Lle mae opsiwn i ychwanegu teitl rhywun ar gwestiynau enw, nid yw’r mewnbwn teitl wedi’i farcio fel dewisol. Gallai hyn achosi i chi lenwi’r maes yma pan nad ydych eisiau neu nad oes angen.
           list_item_5:
             list_item_0: chanllawiau a ddarperir cyn cwestiwn
-            list_item_1: cynnwys rhestr crynodeb ar y dudalen ‘Gwirio eich atebion’
+            list_item_1: cynnwys rhestr crynodeb ar y dudalen ‘Edrychwch dros eich atebion’
             list_item_2: peth o’r cynnwys ar y dudalen sy’n cadarnhau bod eich ffurflen wedi’i chyflwyno
             list_item_3: rhai penawdau ar dudalennau cwestiynau sydd â sawl maes
             preamble: 'Mae VoiceOver ar iOS (System Weithredu iPhone) 17 yn darllen rhai llinellau o gynnwys ddwywaith. Mae hyn yn digwydd gyda:'
           list_item_6: Pan fyddwch yn clicio ar ‘Cael help gyda’r ffurflen hon’, nid yw VoiceOver ar iOS 17 yn cyhoeddi bod mwy o gynnwys i’w ddangos. Gallai hyn ei gwneud hi’n anoddach cael help gyda’r ffurflen.
-          list_item_7: Ar y dudalen ‘Gwirio eich atebion’, nid yw VoiceOver ar iOS 17 bob amser yn darllen y ddolen ‘Newid’. Gallai hyn ei gwneud hi’n anoddach i chi newid eich ateb.
+          list_item_7: Ar y dudalen ‘Edrychwch dros eich atebion’, nid yw VoiceOver ar iOS 17 bob amser yn darllen y ddolen ‘Newid’. Gallai hyn ei gwneud hi’n anoddach i chi newid eich ateb.
           list_item_8: Gall fod yn anodd agor y ddolen ‘Cael help gyda’r ffurflen hon’ wrth ddefnyddio estyniad gwe Dragon ar Chrome. Gallai hyn ei gwneud hi’n anoddach cael help gyda’r ffurflen.
         preamble: Er nad yw’r materion canlynol yn methu WCAG 2.2 AA, rydym yn bwriadu ymchwilio iddynt a’u cywiro cyn gynted â phosibl.
       preamble: Nid yw’r cynnwys a restrir isod yn hygyrch am y rhesymau canlynol.
     preamble: Mae’r datganiad hygyrchedd hwn yn berthnasol i ffurflenni ar-lein gydag URL sy’n dechrau gyda https://submit.forms.service.gov.uk.
     reporting:
       email_html: Os ydych yn dod o hyd i unrhyw broblemau, neu os ydych yn meddwl nad ydym yn bodloni gofynion hygyrchedd, anfonwch e-bost atom yn <a href="mailto:govuk-forms@digital.cabinet-office.gov.uk">govuk-forms@digital.cabinet-office.gov.uk</a>.
-      heading: Rhoi gwybod am broblemau hygyrchedds
+      heading: Rhoi gwybod am broblemau hygyrchedd
       text: Rydym bob amser yn ceisio gwella hygyrchedd ffurflenni a gynhyrchir gyda GOV.UK Forms.
     statement_preparation:
       WCAG_version: Asesodd GDS y ffurflenni yn erbyn Canllawiau Hygyrchedd Cynnwys y We WCAG 2.2.
@@ -494,7 +494,7 @@ cy:
         list_item_1: monitro’r defnydd o’r wefan ar gyfer bygythiadau diogelwch
         list_item_2: monitro perfformiad y wefan i nodi aneffeithlonrwydd a gwallau JavaScript
       section_2: Rydym yn casglu’r wybodaeth hon mewn logiau system. Mae’r logiau hyn yn cael eu cadw yn Amazon Web Services yn Iwerddon.
-      section_3: Rydym yn symud rhywfaint o’r wybodaeth hon i’n teclynau monitro diogelwch a rhwydwaith yn Iwerddon ar UDA, sy’n cael eu darparu gan gwmnïau sy’n gweithredu fel ein proseswyr data.
+      section_3: Rydym yn symud rhywfaint o’r wybodaeth hon i’n teclynau monitro diogelwch a rhwydwaith yn Iwerddon a’r UDA, sy’n cael eu darparu gan gwmnïau sy’n gweithredu fel ein proseswyr data.
       section_4: Efallai y byddwn hefyd yn defnyddio’r wybodaeth hon i gynhyrchu adroddiadau dienw am wasanaeth GOV.UK Forms. Mae hyn yn ein helpu i ddeall ble y gallwn wneud gwelliannau. Efallai y byddwn yn rhannu’r wybodaeth hon gyda rheolydd data y ffurflen.
       section_5: Os byddwch yn anfon adborth atom am y ffurflen hon, byddwn yn casglu eich cyfeiriad e-bost ac unrhyw wybodaeth bersonol arall rydych yn dewis ei chynnwys yn eich e-bost.
       section_6: Efallai y byddwn yn rhannu eich data gyda rheolwyr data lle mae’n briodol. Er enghraifft, os ydych yn darparu adborth sy’n ymwneud â’u swyddogaeth neu os ydych yn gwneud cais diogelu data.
