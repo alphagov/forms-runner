@@ -49,7 +49,7 @@ cy:
     preamble: Mae’r datganiad hygyrchedd hwn yn berthnasol i ffurflenni ar-lein gydag URL sy’n dechrau gyda https://submit.forms.service.gov.uk.
     reporting:
       email_html: Os ydych yn dod o hyd i unrhyw broblemau, neu os ydych yn meddwl nad ydym yn bodloni gofynion hygyrchedd, anfonwch e-bost atom yn <a href="mailto:govuk-forms@digital.cabinet-office.gov.uk">govuk-forms@digital.cabinet-office.gov.uk</a>.
-      heading: Rhoi gwybod am broblemau hygyrchedds
+      heading: Rhoi gwybod am broblemau hygyrchedd
       text: Rydym bob amser yn ceisio gwella hygyrchedd ffurflenni a gynhyrchir gyda GOV.UK Forms.
     statement_preparation:
       WCAG_version: Asesodd GDS y ffurflenni yn erbyn Canllawiau Hygyrchedd Cynnwys y We WCAG 2.2.
@@ -494,7 +494,7 @@ cy:
         list_item_1: monitro’r defnydd o’r wefan ar gyfer bygythiadau diogelwch
         list_item_2: monitro perfformiad y wefan i nodi aneffeithlonrwydd a gwallau JavaScript
       section_2: Rydym yn casglu’r wybodaeth hon mewn logiau system. Mae’r logiau hyn yn cael eu cadw yn Amazon Web Services yn Iwerddon.
-      section_3: Rydym yn symud rhywfaint o’r wybodaeth hon i’n teclynau monitro diogelwch a rhwydwaith yn Iwerddon ar UDA, sy’n cael eu darparu gan gwmnïau sy’n gweithredu fel ein proseswyr data.
+      section_3: Rydym yn symud rhywfaint o’r wybodaeth hon i’n teclynau monitro diogelwch a rhwydwaith yn Iwerddon a’r UDA, sy’n cael eu darparu gan gwmnïau sy’n gweithredu fel ein proseswyr data.
       section_4: Efallai y byddwn hefyd yn defnyddio’r wybodaeth hon i gynhyrchu adroddiadau dienw am wasanaeth GOV.UK Forms. Mae hyn yn ein helpu i ddeall ble y gallwn wneud gwelliannau. Efallai y byddwn yn rhannu’r wybodaeth hon gyda rheolydd data y ffurflen.
       section_5: Os byddwch yn anfon adborth atom am y ffurflen hon, byddwn yn casglu eich cyfeiriad e-bost ac unrhyw wybodaeth bersonol arall rydych yn dewis ei chynnwys yn eich e-bost.
       section_6: Efallai y byddwn yn rhannu eich data gyda rheolwyr data lle mae’n briodol. Er enghraifft, os ydych yn darparu adborth sy’n ymwneud â’u swyddogaeth neu os ydych yn gwneud cais diogelu data.
