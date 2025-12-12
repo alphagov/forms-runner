@@ -74,8 +74,8 @@ RSpec.describe Submission, type: :model do
 
     describe "delivery_status enum" do
       it "returns a list of delivery statuses" do
-        expect(described_class.delivery_statuses.keys).to eq(%w[pending bounced])
-        expect(described_class.delivery_statuses.values).to eq(%w[pending bounced])
+        expect(described_class.delivery_statuses.keys).to eq(%w[pending delivered bounced])
+        expect(described_class.delivery_statuses.values).to eq(%w[pending delivered bounced])
       end
     end
   end
