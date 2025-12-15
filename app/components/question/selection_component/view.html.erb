@@ -1,4 +1,4 @@
-<% if question.answer_settings.selection_options.count > 30 %>
+<% if question.autocomplete_component? %>
   <%= render DfE::Autocomplete::View.new(
     form_builder,
     attribute_name: :selection,

@@ -3,12 +3,15 @@ require "rails_helper"
 RSpec.describe Question::Selection, type: :model do
   subject(:question) { described_class.new({}, options) }
 
+  let(:selection_options) { [OpenStruct.new({ name: "option 1" }), OpenStruct.new({ name: "option 2" })] }
+  let(:is_optional) { false }
+  let(:only_one_option) { "false" }
   let(:options) do
     {
       is_optional:,
       answer_settings: OpenStruct.new({
         only_one_option:,
-        selection_options: [OpenStruct.new({ name: "option 1" }), OpenStruct.new({ name: "option 2" })],
+        selection_options:,
       }),
       question_text:,
     }
@@ -21,7 +24,7 @@ RSpec.describe Question::Selection, type: :model do
 
     it_behaves_like "a question model"
 
-    context "when created without attriibutes" do
+    context "when created without attributes" do
       it "returns invalid" do
         expect(question).not_to be_valid
         expect(question.errors[:selection]).to include(I18n.t("activemodel.errors.models.question/selection.attributes.selection.checkbox_blank"))
@@ -336,6 +339,24 @@ RSpec.describe Question::Selection, type: :model do
 
       it "does not include 'None of the above'" do
         expect(question.selection_options_with_none_of_the_above).not_to include(none_of_the_above_option)
+      end
+    end
+  end
+
+  describe "#autocomplete_component?" do
+    context "when there are 30 selection options" do
+      let(:selection_options) { Array.new(30).map { |_index| OpenStruct.new(name: Faker::Lorem.sentence) } }
+
+      it "returns false" do
+        expect(question.autocomplete_component?).to be false
+      end
+    end
+
+    context "when there are more than 30 selection options" do
+      let(:selection_options) { Array.new(31).map { |_index| OpenStruct.new(name: Faker::Lorem.sentence) } }
+
+      it "returns true" do
+        expect(question.autocomplete_component?).to be true
       end
     end
   end

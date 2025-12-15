@@ -42,6 +42,10 @@ module Question
       [*options, none_of_the_above_option]
     end
 
+    def autocomplete_component?
+      answer_settings.selection_options.count > 30
+    end
+
   private
 
     def allowed_options
