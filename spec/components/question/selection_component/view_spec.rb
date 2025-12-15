@@ -14,6 +14,42 @@ RSpec.describe Question::SelectionComponent::View, type: :component do
     render_inline(described_class.new(form_builder:, question:, extra_question_text_suffix:))
   end
 
+  shared_examples "None of the above question field" do
+    context "when a 'None of the above' question is not defined" do
+      it "does not render a conditional text field for the 'None of the above' option" do
+        expect(page).not_to have_css("input[type='text'][name='form[none_of_the_above_answer]']")
+      end
+    end
+
+    context "when a 'None of the above' question is defined" do
+      let(:none_of_the_above_question_text_is_optional) { "true" }
+      let(:question) do
+        build(:single_selection_question,
+              :with_none_of_the_above_question,
+              none_of_the_above_question_text: "Enter another answer",
+              none_of_the_above_question_text_is_optional:)
+      end
+
+      it "renders a conditional text field for the 'None of the above' option" do
+        expect(page).to have_css("input[type='text'][name='form[none_of_the_above_answer]']")
+      end
+
+      context "when the 'None of the above' question is optional" do
+        it "has the question text with an optional suffix as the label for the field" do
+          expect(page).to have_css("label[for='form-none-of-the-above-answer-field']", text: "Enter another answer (optional)")
+        end
+      end
+
+      context "when the 'None of the above' question is mandatory" do
+        let(:none_of_the_above_question_text_is_optional) { "false" }
+
+        it "has the question text as the label for the field" do
+          expect(page).to have_css("label[for='form-none-of-the-above-answer-field']", text: "Enter another answer")
+        end
+      end
+    end
+  end
+
   describe "when component is select one from a list field" do
     context "when there are 30 or fewer options" do
       let(:question) { build :single_selection_question, is_optional:, selection_options: }
@@ -70,6 +106,8 @@ RSpec.describe Question::SelectionComponent::View, type: :component do
         it "contains the 'None of the above' option" do
           expect(page).to have_css("input[type='radio'] + label", text: "None of the above")
         end
+
+        include_examples "None of the above question field"
       end
 
       context "when question has guidance" do
@@ -197,6 +235,8 @@ RSpec.describe Question::SelectionComponent::View, type: :component do
       it "contains the 'None of the above' option" do
         expect(page).to have_css("input[type='checkbox'] + label", text: "None of the above")
       end
+
+      include_examples "None of the above question field"
     end
 
     context "when question has guidance" do

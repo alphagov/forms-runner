@@ -1,6 +1,7 @@
 module Question
   class Selection < QuestionBase
     attribute :selection
+    attribute :none_of_the_above_answer
     validates :selection, presence: true
     validate :selection, :validate_checkbox, if: :allow_multiple_answers?
     validate :selection, :validate_radio, unless: :allow_multiple_answers?

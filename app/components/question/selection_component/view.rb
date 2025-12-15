@@ -36,15 +36,35 @@ module Question
       def none_of_the_above_radio_button
         return nil unless question.is_optional?
 
-        option = form_builder.govuk_radio_button :selection, I18n.t("page.none_of_the_above"), label: { text: I18n.t("page.none_of_the_above") }
+        option = form_builder.govuk_radio_button :selection,
+                                                 I18n.t("page.none_of_the_above"),
+                                                 label: { text: I18n.t("page.none_of_the_above") },
+                                                 &method(:none_of_the_above_question_field)
         safe_join([divider, option])
       end
 
       def none_of_the_above_checkbox
         return nil unless question.is_optional?
 
-        option = form_builder.govuk_check_box :selection, I18n.t("page.none_of_the_above"), exclusive: true, label: { text: I18n.t("page.none_of_the_above") }
+        option = form_builder.govuk_check_box :selection,
+                                              I18n.t("page.none_of_the_above"),
+                                              exclusive: true,
+                                              label: { text: I18n.t("page.none_of_the_above") },
+                                              &method(:none_of_the_above_question_field)
         safe_join([divider, option])
+      end
+
+      def none_of_the_above_question_field
+        if question.has_none_of_the_above_question?
+          form_builder.govuk_text_field :none_of_the_above_answer, label: { text: none_of_the_above_question_text }, width: "three-quarters"
+        end
+      end
+
+      def none_of_the_above_question_text
+        none_of_the_above_question = question.answer_settings.none_of_the_above_question
+        return none_of_the_above_question.question_text if none_of_the_above_question.is_optional != "true"
+
+        "#{none_of_the_above_question.question_text} #{I18n.t('page.optional')}"
       end
 
       def radio_button_options
