@@ -308,6 +308,118 @@ RSpec.describe Question::Selection, type: :model do
     end
   end
 
+  context "when there is a none of the above question configured" do
+    let(:is_optional) { true }
+    let(:none_of_the_above_question_is_optional) { "true" }
+    let(:none_of_the_above_question) { Struct.new(:question_text, :is_optional).new(Faker::Lorem.sentence, none_of_the_above_question_is_optional) }
+    let(:answer_settings) do
+      Struct.new(:only_one_option, :selection_options, :none_of_the_above_question)
+            .new(only_one_option, selection_options, none_of_the_above_question)
+    end
+
+    context "when there fewer than 31 selection options" do
+      context "when only_one_option is false" do
+        let(:only_one_option) { "false" }
+
+        context "when none_of_the_above_question is optional" do
+          context "when 'None of the above' is selected" do
+            before do
+              question.selection = [I18n.t("page.none_of_the_above")]
+            end
+
+            it "is valid when there is no none_of_the_above_answer" do
+              expect(question).to be_valid
+              expect(question.errors[:none_of_the_above_answer]).to be_empty
+            end
+
+            it "is invalid when the none_of_the_above answer is too long" do
+              question.none_of_the_above_answer = "a" * 500
+              expect(question).not_to be_valid
+              expect(question.errors[:none_of_the_above_answer]).to include(I18n.t("activemodel.errors.models.question/selection.attributes.none_of_the_above_answer.too_long"))
+            end
+          end
+        end
+
+        context "when none_of_the_above_question is mandatory" do
+          let(:none_of_the_above_question_is_optional) { "false" }
+
+          context "when 'None of the above' is selected" do
+            before do
+              question.selection = [I18n.t("page.none_of_the_above")]
+            end
+
+            it "is invalid when there is no none_of_the_above_answer" do
+              expect(question).not_to be_valid
+              expect(question.errors[:none_of_the_above_answer]).to include(I18n.t("activemodel.errors.models.question/selection.attributes.none_of_the_above_answer.blank"))
+            end
+
+            it "is valid when there is a none_of_the_above_answer" do
+              question.none_of_the_above_answer = "Some answer"
+              expect(question).to be_valid
+              expect(question.errors[:none_of_the_above_answer]).to be_empty
+            end
+          end
+
+          context "when 'None of the above' is not selected" do
+            before do
+              question.selection = ["option 1"]
+            end
+
+            it "is valid when there is no none_of_the_above_answer" do
+              expect(question).to be_valid
+              expect(question.errors[:none_of_the_above_answer]).to be_empty
+            end
+
+            it "is valid when there is a none_of_the_above_answer that is too long" do
+              question.none_of_the_above_answer = "a" * 500
+              expect(question).to be_valid
+              expect(question.errors[:none_of_the_above_answer]).to be_empty
+            end
+          end
+        end
+      end
+
+      context "when only_one_option is true" do
+        let(:only_one_option) { "true" }
+        let(:none_of_the_above_question_is_optional) { "false" }
+
+        context "when 'None of the above' is selected" do
+          before do
+            question.selection = I18n.t("page.none_of_the_above")
+          end
+
+          it "is invalid when there is no none_of_the_above_answer" do
+            expect(question).not_to be_valid
+            expect(question.errors[:none_of_the_above_answer]).to include(I18n.t("activemodel.errors.models.question/selection.attributes.none_of_the_above_answer.blank"))
+          end
+
+          it "is invalid when the none_of_the_above answer is too long" do
+            question.none_of_the_above_answer = "a" * 500
+            expect(question).not_to be_valid
+            expect(question.errors[:none_of_the_above_answer]).to include(I18n.t("activemodel.errors.models.question/selection.attributes.none_of_the_above_answer.too_long"))
+          end
+        end
+
+        context "when 'None of the above' is not selected" do
+          before do
+            question.selection = "option 1"
+          end
+
+          it "is valid when there is no none_of_the_above_answer" do
+            expect(question).to be_valid
+            expect(question.errors[:none_of_the_above_answer]).to be_empty
+          end
+
+          it "is valid when there is a none_of_the_above_answer that is too long" do
+            question.none_of_the_above_answer = "a" * 500
+            expect(question).to be_valid
+            expect(question.errors[:none_of_the_above_answer]).to be_empty
+          end
+        end
+      end
+    end
+  end
+
   describe "#selection_options_with_none_of_the_above" do
     let(:only_one_option) { "true" }
     let(:none_of_the_above_option) { OpenStruct.new(name: I18n.t("page.none_of_the_above")) }
