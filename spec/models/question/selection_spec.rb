@@ -6,13 +6,11 @@ RSpec.describe Question::Selection, type: :model do
   let(:selection_options) { [OpenStruct.new({ name: "option 1" }), OpenStruct.new({ name: "option 2" })] }
   let(:is_optional) { false }
   let(:only_one_option) { "false" }
+  let(:answer_settings) { Struct.new(:only_one_option, :selection_options).new(only_one_option, selection_options) }
   let(:options) do
     {
       is_optional:,
-      answer_settings: OpenStruct.new({
-        only_one_option:,
-        selection_options:,
-      }),
+      answer_settings:,
       question_text:,
     }
   end
@@ -318,7 +316,7 @@ RSpec.describe Question::Selection, type: :model do
       let(:is_optional) { true }
 
       it "includes the selection options" do
-        question.answer_settings.each do |option|
+        question.answer_settings.selection_options.each do |option|
           expect(question.selection_options_with_none_of_the_above).to include(option)
         end
       end
@@ -357,6 +355,47 @@ RSpec.describe Question::Selection, type: :model do
 
       it "returns true" do
         expect(question.autocomplete_component?).to be true
+      end
+    end
+  end
+
+  describe "#has_none_of_the_above_question?" do
+    let(:is_optional) { true }
+
+    context "when there is a none of the above question configured" do
+      let(:none_of_the_above_question) { Struct.new(:question_text, :is_optional).new(Faker::Lorem.sentence, "true") }
+      let(:answer_settings) do
+        Struct.new(:only_one_option, :selection_options, :none_of_the_above_question)
+              .new(only_one_option, selection_options, none_of_the_above_question)
+      end
+
+      it "returns true" do
+        expect(question.has_none_of_the_above_question?).to be true
+      end
+
+      context "when the question is not optional" do
+        let(:is_optional) { false }
+
+        it "returns false" do
+          expect(question.has_none_of_the_above_question?).to be false
+        end
+      end
+    end
+
+    context "when there is no none of the above question configured" do
+      it "returns false" do
+        expect(question.has_none_of_the_above_question?).to be false
+      end
+    end
+
+    context "when the none_of_the_above_question has no question_text" do
+      let(:answer_settings) do
+        Struct.new(:only_one_option, :selection_options, :none_of_the_above_question)
+              .new(only_one_option, selection_options, Struct.new)
+      end
+
+      it "returns false" do
+        expect(question.has_none_of_the_above_question?).to be false
       end
     end
   end

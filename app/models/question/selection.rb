@@ -46,6 +46,14 @@ module Question
       answer_settings.selection_options.count > 30
     end
 
+    def has_none_of_the_above_question?
+      return false unless is_optional?
+      return false unless answer_settings.respond_to?(:none_of_the_above_question)
+      return false unless answer_settings.none_of_the_above_question.respond_to?(:question_text)
+
+      true
+    end
+
   private
 
     def allowed_options
