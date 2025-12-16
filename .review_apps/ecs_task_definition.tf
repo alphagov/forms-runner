@@ -46,7 +46,7 @@ locals {
     { name = "SETTINGS__FORMS_ENV", value = "review" },
     { name = "SETTINGS__FORMS_RUNNER__URL", value = "https://${local.runner_review_app_hostname}" },
     { name = "ALLOWED_HOST_PATTERNS", value = "localhost:3000" },
-    { name = "SETTINGS__FEATURES__JSON_SUBMISSION_ENABLED", value = "true" }
+    { name = "SETTINGS__FEATURES__DESCRIBE_NONE_OF_THE_ABOVE_ENABLED", value = "true" }
   ]
 }
 
