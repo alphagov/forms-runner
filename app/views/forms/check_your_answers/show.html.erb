@@ -17,18 +17,7 @@
     </div>
   </div>
 
-  <div class="govuk-grid-row">
-    <div class="<%= @full_width ? 'govuk-grid-column-full' : 'govuk-grid-column-two-thirds-from-desktop' %>">
-      <%if @rows %>
-        <%= govuk_summary_list(rows: @rows.map { |row|
-            { key: row[:key],
-              value: { text: format_paragraphs(row[:value][:text].present? ? row[:value][:text] : t('form.check_your_answers.not_completed')) },
-              actions: row[:actions]
-            } })
-          %>
-      <% end %>
-    </div>
-  </div>
+  <%= render CheckYourAnswersComponent::View.new(form: @form, steps: @steps, mode: @mode) %>
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds-from-desktop">

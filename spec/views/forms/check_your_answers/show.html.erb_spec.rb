@@ -7,20 +7,16 @@ describe "forms/check_your_answers/show.html.erb" do
   let(:full_width) { false }
   let(:declaration_text) { nil }
   let(:email_confirmation_input) { build :email_confirmation_input }
-  let(:rows) do
-    [
-      { key: { text: "Do you want to remain anonymous?" },
-        value: { text: "Yes" },
-        actions: [{ href: "/change", visually_hidden_text: "Do you want to remain anonymous?" }] },
-    ]
-  end
+  let(:question) { build :text, question_text: "Do you want to remain anonymous?", text: "Yes" }
+  let(:steps) { [build(:step, question:, page: build(:page, :with_text_settings))] }
 
   before do
     assign(:current_context, context)
-    assign(:mode, OpenStruct.new(preview_draft?: false, preview_archived?: false, preview_live?: false))
+    assign(:mode, Mode.new("form"))
     assign(:form_submit_path, "/")
     assign(:full_width, full_width)
-    assign(:rows, rows)
+    assign(:steps, steps)
+    assign(:form, form)
     assign(:support_details, support_details)
     render template: "forms/check_your_answers/show", locals: { email_confirmation_input: }
   end
@@ -58,25 +54,6 @@ describe "forms/check_your_answers/show.html.erb" do
   it "displays the email confirmation form at two-thirds width" do
     expect(rendered).not_to have_css(".govuk-grid-column-full input[type='radio']")
     expect(rendered).to have_css(".govuk-grid-column-two-thirds-from-desktop input[type='radio']")
-  end
-
-  context "when full_width is true" do
-    let(:full_width) { true }
-
-    it "displays the summary list full width" do
-      expect(rendered).not_to have_css(".govuk-grid-column-two-thirds-from-desktop .govuk-summary-list")
-      expect(rendered).to have_css(".govuk-grid-column-full .govuk-summary-list")
-    end
-
-    it "displays the title at two-thirds width" do
-      expect(rendered).not_to have_css(".govuk-grid-column-full h1")
-      expect(rendered).to have_css(".govuk-grid-column-two-thirds-from-desktop h1")
-    end
-
-    it "displays the email confirmation form at two-thirds width" do
-      expect(rendered).not_to have_css(".govuk-grid-column-full input[type='radio']")
-      expect(rendered).to have_css(".govuk-grid-column-two-thirds-from-desktop input[type='radio']")
-    end
   end
 
   it "contains a hidden notify reference for the confirmation email" do
@@ -133,6 +110,4 @@ describe "forms/check_your_answers/show.html.erb" do
       end
     end
   end
-
-  # TODO: add view tests for playing back questions and Answers
 end

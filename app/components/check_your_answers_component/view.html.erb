@@ -1,0 +1,7 @@
+<div class="govuk-grid-row">
+  <div class="<%= full_width? ? 'govuk-grid-column-full' : 'govuk-grid-column-two-thirds-from-desktop' %>">
+    <% if rows %>
+      <%= govuk_summary_list(rows: rows) %>
+    <% end %>
+  </div>
+</div>

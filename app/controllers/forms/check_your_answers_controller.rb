@@ -57,43 +57,18 @@ module Forms
 
   private
 
-    def step_to_row(step)
-      question_name = step.question.question_text_for_check_your_answers
-      {
-        key: { text: helpers.sanitize(question_name) },
-        value: { text: step.show_answer },
-        actions: [{ text: I18n.t("govuk_components.govuk_summary_list.change"), href: change_link(step), visually_hidden_text: helpers.strip_tags(question_name) }],
-      }
-    end
-
-    def change_link(step)
-      return change_add_another_answer_path(@form.id, @form.form_slug, step.id) if step.repeatable? && step.show_answer.present?
-
-      form_change_answer_path(@form.id, @form.form_slug, step.id)
-    end
-
-    def check_your_answers_rows
-      current_context.completed_steps.map { |step| step_to_row(step) }
-    end
-
-    def answers_need_full_width
-      @full_width = current_context.completed_steps.any? { |step| step.question.has_long_answer? }
-    end
-
     def email_confirmation_input_params
       params.require(:email_confirmation_input).permit(:send_confirmation, :confirmation_email_address, :confirmation_email_reference)
     end
 
     def setup_check_your_answers
       @back_link = back_link
-      @rows = check_your_answers_rows
+      @steps = current_context.completed_steps
       @form_submit_path = form_submit_answers_path
 
       unless mode.preview?
         EventLogger.log_form_event("check_answers")
       end
-
-      answers_need_full_width
     end
 
     def back_link
