@@ -338,6 +338,15 @@ RSpec.describe Question::Selection, type: :model do
               expect(question.errors[:none_of_the_above_answer]).to include(I18n.t("activemodel.errors.models.question/selection.attributes.none_of_the_above_answer.too_long"))
             end
           end
+
+          context "when 'None of the above' is not selected" do
+            it "clears the none_of_the_above_answer before validating" do
+              question.selection = ["option 1"]
+              question.none_of_the_above_answer = "Some answer"
+              expect(question).to be_valid
+              expect(question.none_of_the_above_answer).to be_nil
+            end
+          end
         end
 
         context "when none_of_the_above_question is mandatory" do
@@ -357,6 +366,7 @@ RSpec.describe Question::Selection, type: :model do
               question.none_of_the_above_answer = "Some answer"
               expect(question).to be_valid
               expect(question.errors[:none_of_the_above_answer]).to be_empty
+              expect(question.none_of_the_above_answer).to eq("Some answer")
             end
           end
 
@@ -374,6 +384,12 @@ RSpec.describe Question::Selection, type: :model do
               question.none_of_the_above_answer = "a" * 500
               expect(question).to be_valid
               expect(question.errors[:none_of_the_above_answer]).to be_empty
+            end
+
+            it "clears the none_of_the_above_answer before validating" do
+              question.none_of_the_above_answer = "Some answer"
+              expect(question).to be_valid
+              expect(question.none_of_the_above_answer).to be_nil
             end
           end
         end

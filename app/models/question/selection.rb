@@ -2,10 +2,13 @@ module Question
   class Selection < QuestionBase
     attribute :selection
     attribute :none_of_the_above_answer
+
+    before_validation :clear_none_of_the_above_answer_if_not_selected
+
     validates :selection, presence: true
     validate :selection, :validate_checkbox, if: :allow_multiple_answers?
     validate :selection, :validate_radio, unless: :allow_multiple_answers?
-    validates :none_of_the_above_answer, length: { maximum: 499 }, if: :none_of_the_above_selected?
+    validates :none_of_the_above_answer, length: { maximum: 499 }
 
     with_options unless: :autocomplete_component? do
       validates :none_of_the_above_answer, presence: true, if: :validate_none_of_the_above_answer_presence?
@@ -57,6 +60,10 @@ module Question
     end
 
   private
+
+    def clear_none_of_the_above_answer_if_not_selected
+      self.none_of_the_above_answer = nil unless none_of_the_above_selected?
+    end
 
     def allowed_options
       selection_options_with_none_of_the_above.map(&:name)
