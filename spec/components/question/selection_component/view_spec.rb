@@ -22,12 +22,12 @@ RSpec.describe Question::SelectionComponent::View, type: :component do
     end
 
     context "when a 'None of the above' question is defined" do
-      let(:none_of_the_above_question_text_is_optional) { "true" }
+      let(:none_of_the_above_question_is_optional) { "true" }
       let(:question) do
         build(:single_selection_question,
               :with_none_of_the_above_question,
               none_of_the_above_question_text: "Enter another answer",
-              none_of_the_above_question_text_is_optional:)
+              none_of_the_above_question_is_optional:)
       end
 
       it "renders a conditional text field for the 'None of the above' option" do
@@ -41,7 +41,7 @@ RSpec.describe Question::SelectionComponent::View, type: :component do
       end
 
       context "when the 'None of the above' question is mandatory" do
-        let(:none_of_the_above_question_text_is_optional) { "false" }
+        let(:none_of_the_above_question_is_optional) { "false" }
 
         it "has the question text as the label for the field" do
           expect(page).to have_css("label[for='form-none-of-the-above-answer-field']", text: "Enter another answer")

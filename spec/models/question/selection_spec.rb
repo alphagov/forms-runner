@@ -1,19 +1,11 @@
 require "rails_helper"
 
 RSpec.describe Question::Selection, type: :model do
-  subject(:question) { described_class.new({}, options) }
+  subject(:question) { build :selection, only_one_option:, selection_options:, is_optional:, question_text: }
 
   let(:selection_options) { [OpenStruct.new({ name: "option 1" }), OpenStruct.new({ name: "option 2" })] }
   let(:is_optional) { false }
   let(:only_one_option) { "false" }
-  let(:answer_settings) { Struct.new(:only_one_option, :selection_options).new(only_one_option, selection_options) }
-  let(:options) do
-    {
-      is_optional:,
-      answer_settings:,
-      question_text:,
-    }
-  end
   let(:question_text) { Faker::Lorem.question }
 
   context "when the selection question is a checkbox" do
@@ -309,13 +301,13 @@ RSpec.describe Question::Selection, type: :model do
   end
 
   context "when there is a none of the above question configured" do
+    subject(:question) do
+      build(:selection, :with_none_of_the_above_question, only_one_option:, selection_options:, is_optional:,
+                                                          none_of_the_above_question_is_optional:)
+    end
+
     let(:is_optional) { true }
     let(:none_of_the_above_question_is_optional) { "true" }
-    let(:none_of_the_above_question) { Struct.new(:question_text, :is_optional).new(Faker::Lorem.sentence, none_of_the_above_question_is_optional) }
-    let(:answer_settings) do
-      Struct.new(:only_one_option, :selection_options, :none_of_the_above_question)
-            .new(only_one_option, selection_options, none_of_the_above_question)
-    end
 
     context "when there fewer than 31 selection options" do
       context "when only_one_option is false" do
@@ -491,11 +483,12 @@ RSpec.describe Question::Selection, type: :model do
     let(:is_optional) { true }
 
     context "when there is a none of the above question configured" do
-      let(:none_of_the_above_question) { Struct.new(:question_text, :is_optional).new(Faker::Lorem.sentence, "true") }
-      let(:answer_settings) do
-        Struct.new(:only_one_option, :selection_options, :none_of_the_above_question)
-              .new(only_one_option, selection_options, none_of_the_above_question)
+      subject(:question) do
+        build(:selection, :with_none_of_the_above_question, only_one_option:, selection_options:, is_optional:,
+                                                            none_of_the_above_question_is_optional:)
       end
+
+      let(:none_of_the_above_question_is_optional) { "true" }
 
       it "returns true" do
         expect(question.has_none_of_the_above_question?).to be true
@@ -517,9 +510,12 @@ RSpec.describe Question::Selection, type: :model do
     end
 
     context "when the none_of_the_above_question has no question_text" do
-      let(:answer_settings) do
-        Struct.new(:only_one_option, :selection_options, :none_of_the_above_question)
-              .new(only_one_option, selection_options, Struct.new)
+      subject(:question) do
+        build(:selection,
+              is_optional:,
+              only_one_option:,
+              selection_options:,
+              none_of_the_above_question: Struct.new)
       end
 
       it "returns false" do

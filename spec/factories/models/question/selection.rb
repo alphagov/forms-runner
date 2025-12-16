@@ -30,12 +30,12 @@ FactoryBot.define do
     trait :with_none_of_the_above_question do
       transient do
         none_of_the_above_question_text { Faker::Lorem.question }
-        none_of_the_above_question_text_is_optional { "false" }
+        none_of_the_above_question_is_optional { "false" }
       end
       is_optional { true }
       none_of_the_above_question do
         Struct.new(:question_text, :is_optional)
-              .new(none_of_the_above_question_text, none_of_the_above_question_text_is_optional)
+              .new(none_of_the_above_question_text, none_of_the_above_question_is_optional)
       end
     end
 
