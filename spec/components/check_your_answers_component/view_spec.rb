@@ -78,4 +78,59 @@ RSpec.describe CheckYourAnswersComponent::View, type: :component do
       expect(page).to have_css("span.govuk-caption-m", text: question.page_heading)
     end
   end
+
+  context "when there is a selection question with a 'None of the above' question" do
+    let(:question_text) { "Select an option" }
+    let(:none_of_the_above_question_text) { "What would you pick then?" }
+    let(:selection) { nil }
+    let(:none_of_the_above_answer) { nil }
+    let(:none_of_the_above_question_is_optional) { "false" }
+    let(:question) do
+      build(
+        :single_selection_question,
+        :with_none_of_the_above_question,
+        question_text:,
+        none_of_the_above_question_text:,
+        selection:,
+        none_of_the_above_answer:,
+        none_of_the_above_question_is_optional:,
+      )
+    end
+
+    context "when 'None of the above' is not selected" do
+      it "does not display the 'None of the above' question in the answers" do
+        expect(page).to have_css(".govuk-summary-list__key", text: question_text)
+        expect(page).not_to have_css(".govuk-summary-list__key", text: none_of_the_above_question_text)
+      end
+    end
+
+    context "when 'None of the above' is selected" do
+      let(:selection) { "None of the above" }
+
+      context "and an answer is provided for the 'None of the above' question" do
+        let(:none_of_the_above_answer) { "This one" }
+
+        it "displays the 'None of the above' question and answer in the answers" do
+          expect(page).to have_css(".govuk-summary-list__key", text: question_text)
+          expect(page).to have_css(".govuk-summary-list__value", text: selection)
+          expect(page).to have_css(".govuk-summary-list__key", text: none_of_the_above_question_text)
+          expect(page).to have_css(".govuk-summary-list__value", text: none_of_the_above_answer)
+        end
+      end
+
+      context "when 'None of the above' question is optional" do
+        let(:none_of_the_above_question_is_optional) { "true" }
+
+        it "displays '(optional)' in the 'None of the above' question text" do
+          expect(page).to have_css(".govuk-summary-list__key", text: "#{none_of_the_above_question_text} (optional)")
+        end
+
+        context "and no answer is provided for the 'None of the above' question" do
+          it "displays 'Not completed' for the 'None of the above' question" do
+            expect(page).to have_css(".govuk-summary-list__value", text: "Not completed")
+          end
+        end
+      end
+    end
+  end
 end
