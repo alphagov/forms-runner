@@ -18,6 +18,12 @@ module Question
       answer_settings.only_one_option != "true"
     end
 
+    def answered?
+      return false if show_none_of_the_above_question? && none_of_the_above_answer.nil?
+
+      super()
+    end
+
     def show_answer
       return selection_without_blanks.map { |selected| name_from_value(selected) }.join(", ") if allow_multiple_answers?
 

@@ -431,6 +431,69 @@ RSpec.describe Question::Selection, type: :model do
     end
   end
 
+  describe "#answered?" do
+    context "when there is a none of the above question configured" do
+      subject(:question) do
+        build(:single_selection_question,
+              :with_none_of_the_above_question,
+              selection_options:,
+              none_of_the_above_question_is_optional: "true",
+              selection:)
+      end
+
+      context "when 'None of the above' is selected" do
+        let(:selection) { I18n.t("page.none_of_the_above") }
+
+        it "returns false when no none_of_the_above_answer is present" do
+          question.none_of_the_above_answer = nil
+          expect(question.answered?).to be false
+        end
+
+        it "returns true when a none_of_the_above_answer is present" do
+          question.none_of_the_above_answer = "Some answer"
+          expect(question.answered?).to be true
+        end
+
+        it "returns true when a none_of_the_above_answer is present and blank" do
+          question.none_of_the_above_answer = ""
+          expect(question.answered?).to be true
+        end
+      end
+
+      context "when 'None of the above' is not selected" do
+        context "when an answer is present" do
+          let(:selection) { "option 1" }
+
+          it "returns true" do
+            expect(question.answered?).to be true
+          end
+        end
+
+        context "when an answer is not present" do
+          let(:selection) { nil }
+
+          it "returns false" do
+            expect(question.answered?).to be false
+          end
+        end
+      end
+    end
+
+    context "when there is no none of the above question configured" do
+      subject(:question) do
+        build(:single_selection_question, selection_options:, selection:)
+      end
+
+      context "when 'None of the above' is selected" do
+        let(:selection) { I18n.t("page.none_of_the_above") }
+
+        it "returns true" do
+          expect(question.answered?).to be true
+        end
+      end
+    end
+  end
+
   describe "#selection_options_with_none_of_the_above" do
     let(:only_one_option) { "true" }
     let(:none_of_the_above_option) { OpenStruct.new(name: I18n.t("page.none_of_the_above"), value: I18n.t("page.none_of_the_above")) }
@@ -487,8 +550,12 @@ RSpec.describe Question::Selection, type: :model do
 
     context "when there is a none of the above question configured" do
       subject(:question) do
-        build(:selection, :with_none_of_the_above_question, only_one_option:, selection_options:, is_optional:,
-                                                            none_of_the_above_question_is_optional:)
+        build(:selection,
+              :with_none_of_the_above_question,
+              only_one_option:,
+              selection_options:,
+              is_optional:,
+              none_of_the_above_question_is_optional:)
       end
 
       let(:none_of_the_above_question_is_optional) { "true" }
