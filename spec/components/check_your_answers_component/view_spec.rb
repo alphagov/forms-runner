@@ -48,7 +48,7 @@ RSpec.describe CheckYourAnswersComponent::View, type: :component do
   end
 
   context "when a step is repeatable and has an answer" do
-    let(:steps) { [ build(:repeatable_step, question: question, page: build(:page, :with_text_settings)) ] }
+    let(:steps) { [build(:repeatable_step, question: question, page: build(:page, :with_text_settings))] }
 
     it "uses the add another answer path for the change link" do
       expect(page).to have_link("Change", href: change_add_another_answer_path(mode: mode, form_id: form.id, form_slug: form.form_slug, page_slug: steps[0].id))
@@ -68,6 +68,14 @@ RSpec.describe CheckYourAnswersComponent::View, type: :component do
     it "displays the summary list at two-thirds width" do
       expect(page).not_to have_css(".govuk-grid-column-full .govuk-summary-list")
       expect(page).to have_css(".govuk-grid-column-two-thirds-from-desktop .govuk-summary-list")
+    end
+  end
+
+  context "when there is a file upload question with a page heading" do
+    let(:question) { build :file, :with_uploaded_file, question_text: "Do you want to remain anonymous?", page_heading: "A heading" }
+
+    it "displays the page heading as a caption" do
+      expect(page).to have_css("span.govuk-caption-m", text: question.page_heading)
     end
   end
 end
