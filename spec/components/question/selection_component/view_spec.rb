@@ -55,8 +55,7 @@ RSpec.describe Question::SelectionComponent::View, type: :component do
       let(:question) { build :single_selection_question, is_optional:, selection_options: }
 
       let(:selection_options) do
-        option_text = Faker::Lorem.sentence
-        Array.new(30).map { |_index| OpenStruct.new(name: option_text, value: option_text) }
+        Array.new(30).map { |_index| OpenStruct.new(name: Faker::Lorem.sentence) }
       end
 
       it "renders the question text as a heading" do
