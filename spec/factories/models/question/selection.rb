@@ -14,7 +14,7 @@ FactoryBot.define do
 
     transient do
       only_one_option { "true" }
-      selection_options { [DataStruct.new(name: "Option 1", value: "Option 1"), DataStruct.new(name: "Option 2", value: "Option 2")] }
+      selection_options { [DataStruct.new(name: "Option 1"), DataStruct.new(name: "Option 2")] }
       none_of_the_above_question { nil }
     end
 
