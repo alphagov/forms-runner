@@ -3,7 +3,10 @@ require "rails_helper"
 RSpec.describe Question::Selection, type: :model do
   subject(:question) { build :selection, only_one_option:, selection_options:, is_optional:, question_text: }
 
-  let(:selection_options) { [OpenStruct.new({ name: "option 1" }), OpenStruct.new({ name: "option 2" })] }
+  # We use different values for name and value to make it clear which is which in the tests.
+  # Name would be the text in current locale and value doesn't change between locales.
+  # For English forms they would be the same, but for Welsh forms they would be different.
+  let(:selection_options) { [OpenStruct.new({ name: "display option 1", value: "option 1" }), OpenStruct.new({ name: "display option 2", value: "option 2" })] }
   let(:is_optional) { false }
   let(:only_one_option) { "false" }
   let(:question_text) { Faker::Lorem.question }
@@ -64,21 +67,21 @@ RSpec.describe Question::Selection, type: :model do
 
     context "when selection has a value" do
       before do
-        question.selection = %w[something]
+        question.selection = ["option 1"]
       end
 
       it "shows the answer" do
-        expect(question.show_answer).to eq("something")
+        expect(question.show_answer).to eq("display option 1")
       end
 
       it "shows the answer in show_answer_in_csv" do
-        expect(question.show_answer_in_csv).to eq(Hash[question_text, "something"])
+        expect(question.show_answer_in_csv).to eq(Hash[question_text, "display option 1"])
       end
 
       it "returns a hash for show_answer_in_json" do
         expect(question.show_answer_in_json).to eq({
-          selections: %w[something],
-          answer_text: "something",
+          selections: ["option 1"],
+          answer_text: "display option 1",
         })
       end
     end
@@ -152,21 +155,21 @@ RSpec.describe Question::Selection, type: :model do
 
       context "when selection has a value" do
         before do
-          question.selection = %w[something]
+          question.selection = ["option 1"]
         end
 
         it "shows the answer" do
-          expect(question.show_answer).to eq("something")
+          expect(question.show_answer).to eq("display option 1")
         end
 
         it "shows the answer in show_answer_in_csv" do
-          expect(question.show_answer_in_csv).to eq(Hash[question_text, "something"])
+          expect(question.show_answer_in_csv).to eq(Hash[question_text, "display option 1"])
         end
 
         it "returns a hash for show_answer_in_json" do
           expect(question.show_answer_in_json).to eq({
-            selections: %w[something],
-            answer_text: "something",
+            selections: ["option 1"],
+            answer_text: "display option 1",
           })
         end
       end
@@ -210,20 +213,20 @@ RSpec.describe Question::Selection, type: :model do
 
     context "when selection has a value" do
       before do
-        question.selection = "something"
+        question.selection = "option 1"
       end
 
       it "shows the answer" do
-        expect(question.show_answer).to eq("something")
+        expect(question.show_answer).to eq("display option 1")
       end
 
       it "shows the answer in show_answer_in_csv" do
-        expect(question.show_answer_in_csv).to eq(Hash[question_text, "something"])
+        expect(question.show_answer_in_csv).to eq(Hash[question_text, "display option 1"])
       end
 
       it "returns a hash for show_answer_in_json" do
         expect(question.show_answer_in_json).to eq({
-          answer_text: "something",
+          answer_text: "display option 1",
         })
       end
     end
@@ -280,20 +283,20 @@ RSpec.describe Question::Selection, type: :model do
 
       context "when selection has a value" do
         before do
-          question.selection = "something"
+          question.selection = "option 1"
         end
 
         it "shows the answer" do
-          expect(question.show_answer).to eq("something")
+          expect(question.show_answer).to eq("display option 1")
         end
 
         it "shows the answer in show_answer_in_csv" do
-          expect(question.show_answer_in_csv).to eq(Hash[question_text, "something"])
+          expect(question.show_answer_in_csv).to eq(Hash[question_text, "display option 1"])
         end
 
         it "returns a hash for show_answer_in_json" do
           expect(question.show_answer_in_json).to eq({
-            answer_text: "something",
+            answer_text: "display option 1",
           })
         end
       end
@@ -430,7 +433,7 @@ RSpec.describe Question::Selection, type: :model do
 
   describe "#selection_options_with_none_of_the_above" do
     let(:only_one_option) { "true" }
-    let(:none_of_the_above_option) { OpenStruct.new(name: I18n.t("page.none_of_the_above")) }
+    let(:none_of_the_above_option) { OpenStruct.new(name: I18n.t("page.none_of_the_above"), value: I18n.t("page.none_of_the_above")) }
 
     context "when the user can select 'None of the above'" do
       let(:is_optional) { true }
@@ -463,7 +466,7 @@ RSpec.describe Question::Selection, type: :model do
 
   describe "#autocomplete_component?" do
     context "when there are 30 selection options" do
-      let(:selection_options) { Array.new(30).map { |_index| OpenStruct.new(name: Faker::Lorem.sentence) } }
+      let(:selection_options) { Array.new(30).map { |_index| OpenStruct.new(name: Faker::Lorem.sentence, value: Faker::Lorem.sentence) } }
 
       it "returns false" do
         expect(question.autocomplete_component?).to be false
@@ -471,7 +474,7 @@ RSpec.describe Question::Selection, type: :model do
     end
 
     context "when there are more than 30 selection options" do
-      let(:selection_options) { Array.new(31).map { |_index| OpenStruct.new(name: Faker::Lorem.sentence) } }
+      let(:selection_options) { Array.new(31).map { |_index| OpenStruct.new(name: Faker::Lorem.sentence, value: Faker::Lorem.sentence) } }
 
       it "returns true" do
         expect(question.autocomplete_component?).to be true
