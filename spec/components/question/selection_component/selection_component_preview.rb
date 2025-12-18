@@ -14,7 +14,7 @@ class Question::SelectionComponent::SelectionComponentPreview < ViewComponent::P
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::SelectionComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::SelectionComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 
   def select_multiple_from_a_list_field_with_hint
@@ -33,7 +33,7 @@ class Question::SelectionComponent::SelectionComponentPreview < ViewComponent::P
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::SelectionComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::SelectionComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 
   def select_multiple_from_a_list_optional_field
@@ -51,7 +51,7 @@ class Question::SelectionComponent::SelectionComponentPreview < ViewComponent::P
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::SelectionComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::SelectionComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 
   def select_multiple_from_a_list_optional_field_with_hint
@@ -70,7 +70,7 @@ class Question::SelectionComponent::SelectionComponentPreview < ViewComponent::P
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::SelectionComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::SelectionComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 
   def select_single_from_a_list_field
@@ -86,7 +86,7 @@ class Question::SelectionComponent::SelectionComponentPreview < ViewComponent::P
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::SelectionComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::SelectionComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 
   def select_single_from_a_list_field_with_hint
@@ -103,7 +103,7 @@ class Question::SelectionComponent::SelectionComponentPreview < ViewComponent::P
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::SelectionComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::SelectionComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 
   def select_single_from_a_list_optional_field
@@ -121,7 +121,7 @@ class Question::SelectionComponent::SelectionComponentPreview < ViewComponent::P
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::SelectionComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::SelectionComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 
   def select_single_from_a_list_optional_field_with_hint
@@ -140,7 +140,7 @@ class Question::SelectionComponent::SelectionComponentPreview < ViewComponent::P
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::SelectionComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::SelectionComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 
   def select_single_with_more_than_30_options
@@ -194,6 +194,6 @@ class Question::SelectionComponent::SelectionComponentPreview < ViewComponent::P
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::SelectionComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::SelectionComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 end

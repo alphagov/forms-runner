@@ -9,7 +9,7 @@ class Question::AddressComponent::AddressComponentPreview < ViewComponent::Previ
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::AddressComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::AddressComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 
   def international_address_field_with_hint
@@ -23,7 +23,7 @@ class Question::AddressComponent::AddressComponentPreview < ViewComponent::Previ
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::AddressComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::AddressComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 
   def uk_address_field
@@ -39,7 +39,7 @@ class Question::AddressComponent::AddressComponentPreview < ViewComponent::Previ
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::AddressComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::AddressComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 
   def uk_address_field_with_hint
@@ -56,7 +56,7 @@ class Question::AddressComponent::AddressComponentPreview < ViewComponent::Previ
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::AddressComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::AddressComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 
   def any_address_field
@@ -70,7 +70,7 @@ class Question::AddressComponent::AddressComponentPreview < ViewComponent::Previ
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::AddressComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::AddressComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 
   def any_address_field_with_hint
@@ -84,6 +84,6 @@ class Question::AddressComponent::AddressComponentPreview < ViewComponent::Previ
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::AddressComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::AddressComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 end

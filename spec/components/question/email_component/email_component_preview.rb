@@ -7,7 +7,7 @@ class Question::EmailComponent::EmailComponentPreview < ViewComponent::Preview
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::EmailComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::EmailComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 
   def email_field_with_hint
@@ -19,6 +19,6 @@ class Question::EmailComponent::EmailComponentPreview < ViewComponent::Preview
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::EmailComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::EmailComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 end

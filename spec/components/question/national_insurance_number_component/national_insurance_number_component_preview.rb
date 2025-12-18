@@ -7,7 +7,7 @@ class Question::NationalInsuranceNumberComponent::NationalInsuranceNumberCompone
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::NationalInsuranceNumberComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::NationalInsuranceNumberComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 
   def national_insurance_number_field_with_hint
@@ -19,6 +19,6 @@ class Question::NationalInsuranceNumberComponent::NationalInsuranceNumberCompone
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::NationalInsuranceNumberComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::NationalInsuranceNumberComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 end

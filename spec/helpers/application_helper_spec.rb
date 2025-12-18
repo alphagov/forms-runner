@@ -23,18 +23,19 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
   end
 
-  describe "#hidden_text_mode" do
+  describe "#question_text_with_hidden_mode" do
+    let(:question_text) { "What is your name?" }
     let(:mode) { OpenStruct.new(preview?: false) }
 
-    it "returns empty string by default if not in some preview mode" do
-      expect(helper.hidden_text_mode(mode)).to eq ""
+    it "returns just the question text by default if not in some preview mode" do
+      expect(helper.question_text_with_hidden_mode(question_text, mode)).to eq "What is your name?"
     end
 
     context "when previewing in draft mode" do
       let(:mode) { OpenStruct.new(preview?: true, preview_draft?: true, preview_live?: false) }
 
       it "returns a visually hidden span with the mode name" do
-        expect(helper.hidden_text_mode(mode)).to eq "<span class='govuk-visually-hidden'>&nbsp;draft preview</span>"
+        expect(helper.question_text_with_hidden_mode(question_text, mode)).to eq "What is your name? <span class='govuk-visually-hidden'>&nbsp;draft preview</span>"
       end
     end
 
@@ -42,7 +43,7 @@ RSpec.describe ApplicationHelper, type: :helper do
       let(:mode) { OpenStruct.new(preview?: true, preview_draft?: false, preview_live?: true) }
 
       it "returns a visually hidden span with the mode name" do
-        expect(helper.hidden_text_mode(mode)).to eq "<span class='govuk-visually-hidden'>&nbsp;live preview</span>"
+        expect(helper.question_text_with_hidden_mode(question_text, mode)).to eq "What is your name? <span class='govuk-visually-hidden'>&nbsp;live preview</span>"
       end
     end
   end

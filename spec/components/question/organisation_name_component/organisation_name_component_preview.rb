@@ -7,7 +7,7 @@ class Question::OrganisationNameComponent::OrganisationNameComponentPreview < Vi
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::OrganisationNameComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::OrganisationNameComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 
   def organisation_name_field_with_hint
@@ -19,6 +19,6 @@ class Question::OrganisationNameComponent::OrganisationNameComponentPreview < Vi
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::OrganisationNameComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::OrganisationNameComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 end

@@ -4,14 +4,14 @@ RSpec.describe Question::SelectionComponent::View, type: :component do
   let(:only_one_option) { "false" }
   let(:is_optional) { false }
   let(:answer_text) { nil }
-  let(:extra_question_text_suffix) { nil }
+  let(:mode) { Mode.new("form") }
   let(:form_builder) do
     GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                   ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
   end
 
   before do
-    render_inline(described_class.new(form_builder:, question:, extra_question_text_suffix:))
+    render_inline(described_class.new(form_builder:, question:, mode:))
   end
 
   shared_examples "None of the above question field" do
@@ -78,20 +78,20 @@ RSpec.describe Question::SelectionComponent::View, type: :component do
         end
       end
 
-      context "when there is extra suffix to be added to heading" do
-        let(:extra_question_text_suffix) { "Some extra text to add to the question text" }
+      context "when the mode is preview" do
+        let(:mode) { Mode.new("preview-draft") }
 
         it "renders the question text and extra suffix as a heading" do
-          expect(page.find("legend h1")).to have_text("#{question.question_text} #{extra_question_text_suffix}")
+          expect(page.find("legend h1").native.inner_html).to eq("#{question.question_text} <span class=\"govuk-visually-hidden\">\u{00A0}#{I18n.t('page.draft_preview')}</span>")
         end
       end
 
       context "with unsafe question text" do
         let(:question) { build :single_selection_question, question_text: "What is your name? <script>alert(\"Hi\")</script>", selection_options: }
-        let(:extra_question_text_suffix) { "<span>Some trusted html</span>" }
+        let(:mode) { Mode.new("preview-draft") }
 
         it "returns the escaped title with the optional suffix" do
-          expected_output = "What is your name? &lt;script&gt;alert(\"Hi\")&lt;/script&gt; <span>Some trusted html</span>"
+          expected_output = "What is your name? &lt;script&gt;alert(\"Hi\")&lt;/script&gt; <span class=\"govuk-visually-hidden\">\u{00A0}#{I18n.t('page.draft_preview')}</span>"
           expect(page.find("h1").native.inner_html).to eq(expected_output)
         end
       end
@@ -159,21 +159,21 @@ RSpec.describe Question::SelectionComponent::View, type: :component do
         end
       end
 
-      context "when there is extra suffix to be added to heading" do
-        let(:extra_question_text_suffix) { "Some extra text to add to the question text" }
+      context "when the mode is preview" do
+        let(:mode) { Mode.new("preview-draft") }
 
         it "renders the question text and extra suffix as a heading" do
-          expect(page.find("h1")).to have_text("#{question.question_text} #{extra_question_text_suffix}")
+          expect(page.find("h1 label").native.inner_html).to eq("#{question.question_text} <span class=\"govuk-visually-hidden\">\u{00A0}#{I18n.t('page.draft_preview')}</span>")
         end
       end
 
       context "with unsafe question text" do
         let(:question) { build :single_selection_question, question_text: "What is your name? <script>alert(\"Hi\")</script>", selection_options: }
-        let(:extra_question_text_suffix) { "<span>Some trusted html</span>" }
+        let(:mode) { Mode.new("preview-draft") }
 
         it "returns the escaped title with the optional suffix" do
-          expected_output = "<label for=\"form-selection-field\" class=\"govuk-label govuk-label--l\">What is your name? &lt;script&gt;alert(\"Hi\")&lt;/script&gt; <span>Some trusted html</span></label>"
-          expect(page.find("h1").native.inner_html).to eq(expected_output)
+          expected_output = "What is your name? &lt;script&gt;alert(\"Hi\")&lt;/script&gt; <span class=\"govuk-visually-hidden\">\u{00A0}#{I18n.t('page.draft_preview')}</span>"
+          expect(page.find("h1 .govuk-label").native.inner_html).to eq(expected_output)
         end
       end
 
@@ -207,20 +207,20 @@ RSpec.describe Question::SelectionComponent::View, type: :component do
       end
     end
 
-    context "when there is extra suffix to be added to heading" do
-      let(:extra_question_text_suffix) { "Some extra text to add to the question text" }
+    context "when the mode is preview" do
+      let(:mode) { Mode.new("preview-draft") }
 
       it "renders the question text and extra suffix as a heading" do
-        expect(page.find("h1")).to have_text("#{question.question_text} #{extra_question_text_suffix}")
+        expect(page.find("h1").native.inner_html).to eq("#{question.question_text} <span class=\"govuk-visually-hidden\">\u{00A0}#{I18n.t('page.draft_preview')}</span>")
       end
     end
 
     context "with unsafe question text" do
       let(:question) { build :multiple_selection_question, question_text: "What is your name? <script>alert(\"Hi\")</script>" }
-      let(:extra_question_text_suffix) { "<span>Some trusted html</span>" }
+      let(:mode) { Mode.new("preview-draft") }
 
       it "returns the escaped title with the optional suffix" do
-        expected_output = "What is your name? &lt;script&gt;alert(\"Hi\")&lt;/script&gt; <span>Some trusted html</span>"
+        expected_output = "What is your name? &lt;script&gt;alert(\"Hi\")&lt;/script&gt; <span class=\"govuk-visually-hidden\">\u{00A0}#{I18n.t('page.draft_preview')}</span>"
         expect(page.find("h1").native.inner_html).to eq(expected_output)
       end
     end

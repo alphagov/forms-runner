@@ -7,7 +7,7 @@ class Question::DateComponent::DateComponentPreview < ViewComponent::Preview
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::DateComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::DateComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 
   def other_date_field_with_hint
@@ -19,7 +19,7 @@ class Question::DateComponent::DateComponentPreview < ViewComponent::Preview
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::DateComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::DateComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 
   def date_of_birth_field
@@ -30,7 +30,7 @@ class Question::DateComponent::DateComponentPreview < ViewComponent::Preview
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::DateComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::DateComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 
   def date_of_birth_field_with_hint
@@ -42,6 +42,6 @@ class Question::DateComponent::DateComponentPreview < ViewComponent::Preview
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::DateComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::DateComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 end
