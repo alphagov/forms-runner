@@ -51,7 +51,6 @@ RSpec.describe FooterComponent::View, type: :component do
   end
 
   context "when a form is not present for the request" do
-    let(:mode) { nil }
     let(:form) { nil }
 
     it "does not include the privacy link" do

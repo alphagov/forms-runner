@@ -5,7 +5,7 @@ class Question::FileComponent::FileComponentPreview < ViewComponent::Preview
                               answer_settings: nil)
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
-    render(Question::FileComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::FileComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 
   def file_field_with_hint
@@ -15,6 +15,6 @@ class Question::FileComponent::FileComponentPreview < ViewComponent::Preview
                               answer_settings: nil)
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
-    render(Question::FileComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::FileComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 end

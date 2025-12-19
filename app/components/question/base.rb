@@ -1,17 +1,17 @@
 module Question
   class Base < ApplicationComponent
-    attr_accessor :form_builder, :question, :extra_question_text_suffix, :hint_id
+    attr_accessor :form_builder, :question, :mode, :hint_id
 
-    def initialize(form_builder:, question:, extra_question_text_suffix:)
+    def initialize(form_builder:, question:, mode:)
       @form_builder = form_builder
       @question = question
-      @extra_question_text_suffix = extra_question_text_suffix
+      @mode = mode
       @hint_id = question.hint_text.present? ? "govuk-address-hint" : ""
       super()
     end
 
     def question_text_with_extra_suffix
-      [CGI.escapeHTML(question.question_text_with_optional_suffix), extra_question_text_suffix].compact_blank.join(" ").html_safe
+      helpers.question_text_with_hidden_mode(question.question_text_with_optional_suffix, mode)
     end
 
     def hint_text

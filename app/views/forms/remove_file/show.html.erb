@@ -8,7 +8,7 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <%= render Question::FileRemoveComponent::View.new(question: @step.question, extra_question_text_suffix: hidden_text_mode(@mode).html_safe, remove_file_url: @remove_file_url, remove_input: @remove_input ) %>
+    <%= render Question::FileRemoveComponent::View.new(question: @step.question, mode: @mode, remove_file_url: @remove_file_url, remove_input: @remove_input ) %>
 
     <%= render SupportDetailsComponent::View.new(@support_details) %>
   </div>

@@ -7,11 +7,11 @@ RSpec.describe Question::FileReviewComponent::View, type: :component do
   let(:page_heading) { nil }
   let(:hint_text) { nil }
   let(:question) { build :file, :with_uploaded_file, question_text:, is_optional:, page_heading:, hint_text: }
-  let(:extra_question_text_suffix) { nil }
+  let(:mode) { Mode.new("form") }
   let(:remove_file_confirmation_url) { "/remove_file_confirmation" }
 
   before do
-    render_inline(described_class.new(question:, extra_question_text_suffix:, remove_file_confirmation_url:))
+    render_inline(described_class.new(question:, mode:, remove_file_confirmation_url:))
   end
 
   it "renders the question text as a h1" do
@@ -44,20 +44,20 @@ RSpec.describe Question::FileReviewComponent::View, type: :component do
     expect(page).to have_css(".govuk-visually-hidden", text: I18n.t("forms.review_file.show.your_file"))
   end
 
-  context "when there is an extra suffix to be added to the heading" do
-    let(:extra_question_text_suffix) { "Some extra text to add to the question text" }
+  context "when the mode is preview" do
+    let(:mode) { Mode.new("preview-draft") }
 
     it "renders the question text and extra suffix as a heading" do
-      expect(page.find("h1")).to have_text("#{question.question_text} #{extra_question_text_suffix}")
+      expect(page.find("h1").native.inner_html).to eq("#{question.question_text} <span class=\"govuk-visually-hidden\">\u{00A0}#{I18n.t('page.draft_preview')}</span>")
     end
   end
 
   context "with unsafe question text" do
     let(:question_text) { "What is your name? <script>alert(\"Hi\")</script>" }
-    let(:extra_question_text_suffix) { "<span>Some trusted html</span>" }
+    let(:mode) { Mode.new("preview-draft") }
 
     it "returns the escaped title with the optional suffix" do
-      expected_output = "What is your name? &lt;script&gt;alert(\"Hi\")&lt;/script&gt; <span>Some trusted html</span>"
+      expected_output = "What is your name? &lt;script&gt;alert(\"Hi\")&lt;/script&gt; <span class=\"govuk-visually-hidden\">\u{00A0}#{I18n.t('page.draft_preview')}</span>"
       expect(page.find("h1").native.inner_html).to eq(expected_output)
     end
   end
