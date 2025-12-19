@@ -102,7 +102,7 @@ RSpec.describe Question::TextComponent::View, type: :component do
       let(:question_page) { build :page, :with_hints, :with_text_settings, input_type: }
 
       it "outputs the hint text" do
-        expect(page.find(".govuk-hint")).to have_text(question.hint_text)
+        expect(page.find("#form-text-hint.govuk-hint")).to have_text(question.hint_text)
       end
     end
 
