@@ -85,11 +85,13 @@ RSpec.describe CheckYourAnswersComponent::View, type: :component do
     let(:selection) { nil }
     let(:none_of_the_above_answer) { nil }
     let(:none_of_the_above_question_is_optional) { "false" }
+    let(:selection_options) { [DataStruct.new(name: "Option 1", value: "Option 1"), DataStruct.new(name: "Option 2", value: "Option 2")] }
     let(:question) do
       build(
         :single_selection_question,
         :with_none_of_the_above_question,
         question_text:,
+        selection_options:,
         none_of_the_above_question_text:,
         selection:,
         none_of_the_above_answer:,
@@ -116,6 +118,10 @@ RSpec.describe CheckYourAnswersComponent::View, type: :component do
           expect(page).to have_css(".govuk-summary-list__key", text: none_of_the_above_question_text)
           expect(page).to have_css(".govuk-summary-list__value", text: none_of_the_above_answer)
         end
+
+        it "has a change link for the 'None of the above' question" do
+          expect(page).to have_link("Change", href: form_change_answer_path(mode: mode, form_id: form.id, form_slug: form.form_slug, page_slug: steps[0].id))
+        end
       end
 
       context "when 'None of the above' question is optional" do
@@ -129,6 +135,14 @@ RSpec.describe CheckYourAnswersComponent::View, type: :component do
           it "displays 'Not completed' for the 'None of the above' question" do
             expect(page).to have_css(".govuk-summary-list__value", text: "Not completed")
           end
+        end
+      end
+
+      context "when selection question uses an autocomplete component" do
+        let(:selection_options) { Array.new(31).map { |i| OpenStruct.new(name: "Option #{i}", value: "Option #{i}") } }
+
+        it "has a change link to the 'None of the above' specific path" do
+          expect(page).to have_link("Change", href: change_selection_none_of_the_above_path(mode: mode, form_id: form.id, form_slug: form.form_slug, page_slug: steps[0].id))
         end
       end
     end
