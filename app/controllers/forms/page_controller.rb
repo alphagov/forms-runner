@@ -56,7 +56,6 @@ module Forms
     end
 
     def setup_instance_vars_for_view
-      @is_question = true
       @question_edit_link = "#{Settings.forms_admin.base_url}/forms/#{@form.id}/pages-by-external-id/#{@step.id}/edit-question"
       @save_url = save_url
     end
