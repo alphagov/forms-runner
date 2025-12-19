@@ -3,6 +3,7 @@ FactoryBot.define do
     question_text { Faker::Lorem.question }
     hint_text { nil }
     is_optional { false }
+    none_of_the_above_answer { nil }
     answer_settings do
       if none_of_the_above_question
         Struct.new(:only_one_option, :selection_options, :none_of_the_above_question)

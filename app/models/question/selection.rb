@@ -55,8 +55,19 @@ module Question
       answer_settings.selection_options.count > 30
     end
 
+    def show_none_of_the_above_question?
+      has_none_of_the_above_question? && none_of_the_above_selected?
+    end
+
     def has_none_of_the_above_question?
       none_of_the_above_question.present?
+    end
+
+    def none_of_the_above_question_text
+      return nil unless has_none_of_the_above_question?
+      return none_of_the_above_question.question_text if none_of_the_above_question.is_optional != "true"
+
+      "#{none_of_the_above_question.question_text} #{I18n.t('page.optional')}"
     end
 
   private
