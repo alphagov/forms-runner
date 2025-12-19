@@ -68,6 +68,10 @@ Rails.application.routes.draw do
 
       # We don't currently support adding another answer for selection questions, so these routes don't include an
       # `answer_index` param
+      get "/:page_slug/none-of-the-above/change" => "forms/selection_none_of_the_above#show",
+          as: :change_selection_none_of_the_above,
+          constraints: page_constraints,
+          defaults: { changing_existing_answer: true }
       get "/:page_slug/none-of-the-above" => "forms/selection_none_of_the_above#show",
           as: :selection_none_of_the_above,
           constraints: page_constraints
