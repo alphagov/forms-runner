@@ -415,7 +415,9 @@ RSpec.describe Forms::PageController, type: :request do
     shared_examples "for validating answer" do
       context "when the form is invalid" do
         before do
-          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id), params: { question: { text: "" }, changing_existing_answer: false }
+          allow_any_instance_of(Flow::Context).to receive(:can_visit?).and_return(true)
+          allow_any_instance_of(Flow::Context).to receive(:previous_step).and_return(OpenStruct.new(page_id: 1))
+          post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: second_step_in_form.id), params: { question: { text: "" }, changing_existing_answer: false }
         end
 
         it "renders the show page template" do
@@ -428,6 +430,10 @@ RSpec.describe Forms::PageController, type: :request do
 
         it "adds validation_errors logging attribute" do
           expect(log_lines[0]["validation_errors"]).to eq(["text: blank"])
+        end
+
+        it "assigns a back link to the previous page" do
+          expect(assigns(:back_link)).to eq(form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id))
         end
       end
     end
