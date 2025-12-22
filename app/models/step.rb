@@ -50,7 +50,6 @@ class Step
 
   def update!(params)
     question.assign_attributes(params)
-    question.valid?
   end
 
   def params

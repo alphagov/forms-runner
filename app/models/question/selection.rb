@@ -14,8 +14,22 @@ module Question
       validates :none_of_the_above_answer, presence: true, if: :validate_none_of_the_above_answer_presence?
     end
 
+    with_options on: :none_of_the_above_page do
+      validates :none_of_the_above_answer, presence: true, if: :validate_none_of_the_above_answer_presence?
+    end
+
     def allow_multiple_answers?
       answer_settings.only_one_option != "true"
+    end
+
+    def with_none_of_the_above_selected
+      self.selection = allow_multiple_answers? ? [I18n.t("page.none_of_the_above")] : I18n.t("page.none_of_the_above")
+    end
+
+    def answered?
+      return false if show_none_of_the_above_question? && none_of_the_above_answer.nil?
+
+      super()
     end
 
     def show_answer
