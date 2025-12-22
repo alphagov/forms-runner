@@ -12,7 +12,6 @@ module Forms
       return redirect_to form_page_path(@form.id, @form.form_slug, current_context.next_page_slug) unless current_context.can_visit?(@step.id)
       return redirect_to review_file_page if answered_file_question?
 
-      back_link(@step.id)
       setup_instance_vars_for_view
     end
 
@@ -58,6 +57,7 @@ module Forms
     def setup_instance_vars_for_view
       @question_edit_link = "#{Settings.forms_admin.base_url}/forms/#{@form.id}/pages-by-external-id/#{@step.id}/edit-question"
       @save_url = save_url
+      @back_link = back_link(@step.id)
     end
 
     def changing_existing_answer
@@ -65,12 +65,15 @@ module Forms
     end
 
     def back_link(page_slug)
-      previous_step = current_context.previous_step(page_slug)
+      return check_your_answers_path(form_id: current_context.form.id) if changing_existing_answer
 
-      if changing_existing_answer
-        @back_link = check_your_answers_path(form_id: current_context.form.id)
-      elsif previous_step
-        @back_link = previous_step.repeatable? ? add_another_answer_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug, page_slug: previous_step.id) : form_page_path(@form.id, @form.form_slug, previous_step.page_id)
+      previous_step = current_context.previous_step(page_slug)
+      return nil unless previous_step
+
+      if previous_step.repeatable?
+        add_another_answer_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug, page_slug: previous_step.id)
+      else
+        form_page_path(@form.id, @form.form_slug, previous_step.page_id)
       end
     end
 
