@@ -88,6 +88,7 @@ module Forms
     def redirect_post_save
       return redirect_to review_file_page, success: t("banner.success.file_uploaded") if answered_file_question?
       return redirect_to exit_page_path(form_id: @form.id, form_slug: @form.form_slug, page_slug: @step.id) if @step.exit_page_condition_matches?
+      return redirect_to selection_none_of_the_above_page if redirect_to_none_of_the_above_page?
 
       redirect_to next_page
     end
@@ -102,8 +103,16 @@ module Forms
       @step.question.is_a?(Question::File) && @step.question.file_uploaded?
     end
 
+    def redirect_to_none_of_the_above_page?
+      @step.question.is_a?(Question::Selection) && @step.question.show_none_of_the_above_question? && @step.question.autocomplete_component?
+    end
+
     def review_file_page
       review_file_path(form_id: @form.id, form_slug: @form.form_slug, page_slug: @step.id, changing_existing_answer:)
+    end
+
+    def selection_none_of_the_above_page
+      selection_none_of_the_above_path(form_id: @form.id, form_slug: @form.form_slug, page_slug: @step.id)
     end
 
     def next_page
