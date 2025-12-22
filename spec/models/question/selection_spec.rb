@@ -429,6 +429,34 @@ RSpec.describe Question::Selection, type: :model do
         end
       end
     end
+
+    context "when there are more than 30 selection options and none of the above is selected" do
+      let(:selection_options) { Array.new(31).map { |i| OpenStruct.new(name: "Option #{i}", value: "Option #{i}") } }
+      let(:none_of_the_above_question_is_optional) { "false" }
+
+      before do
+        question.with_none_of_the_above_selected
+      end
+
+      it "does not validate the none_of_the_above_answer when the validation context is skip_none_of_the_above_question_validation" do
+        expect(question.valid?(:skip_none_of_the_above_question_validation)).to be true
+        expect(question.errors[:none_of_the_above_answer]).to be_empty
+      end
+
+      it "validates the none_of_the_above_answer when there is no validation context" do
+        expect(question).to be_invalid
+        expect(question.errors[:none_of_the_above_answer]).to include(I18n.t("activemodel.errors.models.question/selection.attributes.none_of_the_above_answer.blank"))
+      end
+
+      context "when the none of the above question is optional" do
+        let(:none_of_the_above_question_is_optional) { "true" }
+
+        it "is valid when the none_of_the_above_answer is not present in the none_of_the_above_page context" do
+          expect(question.valid?(:none_of_the_above_page)).to be true
+          expect(question.errors[:none_of_the_above_answer]).to be_empty
+        end
+      end
+    end
   end
 
   describe "#answered?" do

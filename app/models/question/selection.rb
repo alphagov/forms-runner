@@ -10,9 +10,13 @@ module Question
     validate :selection, :validate_radio, unless: :allow_multiple_answers?
     validates :none_of_the_above_answer, length: { maximum: 499 }
 
-    with_options unless: :autocomplete_component? do
-      validates :none_of_the_above_answer, presence: true, if: :validate_none_of_the_above_answer_presence?
-    end
+    # In the case of a selection component that uses an autocomplete UI component, we show the input for the none
+    # of the above question on a separate page, so we provide a context to skip the validation of
+    # none_of_the_above_answer for the first page.
+    validates :none_of_the_above_answer,
+              presence: true,
+              if: :validate_none_of_the_above_answer_presence?,
+              unless: -> { validation_context == :skip_none_of_the_above_question_validation }
 
     def allow_multiple_answers?
       answer_settings.only_one_option != "true"
