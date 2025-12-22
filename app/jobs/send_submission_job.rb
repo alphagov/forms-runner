@@ -10,15 +10,16 @@ class SendSubmissionJob < ApplicationJob
     set_submission_logging_attributes(submission)
 
     message_id = AwsSesSubmissionService.new(submission:).submit
+    sent_at = Time.zone.now
 
     submission.update!(
       mail_message_id: message_id,
       delivery_status: :pending,
-      last_delivery_attempt: Time.zone.now,
+      last_delivery_attempt: sent_at,
     )
 
-    milliseconds_since_scheduled = (Time.current - scheduled_at_or_enqueued_at).in_milliseconds.round
-    EventLogger.log_form_event("submission_email_sent", { milliseconds_since_scheduled: })
+    milliseconds_since_scheduled = (sent_at - scheduled_at_or_enqueued_at).in_milliseconds.round
+    LogEventService.log_submission_sent(submission, milliseconds_since_scheduled:)
     CloudWatchService.record_submission_sent_metric(milliseconds_since_scheduled)
   rescue StandardError
     CloudWatchService.record_job_failure_metric(self.class.name)
