@@ -55,9 +55,17 @@ module Forms
     end
 
     def setup_instance_vars_for_view
-      @question_edit_link = "#{Settings.forms_admin.base_url}/forms/#{@form.id}/pages-by-external-id/#{@step.id}/edit-question"
+      @question_edit_link = question_edit_link
       @save_url = save_url
       @back_link = back_link(@step.id)
+    end
+
+    def question_edit_link
+      "#{Settings.forms_admin.base_url}/forms/#{@form.id}/pages-by-external-id/#{@step.id}/edit-question"
+    end
+
+    def save_url
+      save_form_page_path(@form.id, @form.form_slug, @step.id, changing_existing_answer: @changing_existing_answer, answer_index:)
     end
 
     def changing_existing_answer
@@ -167,10 +175,6 @@ module Forms
 
     def is_first_page?
       current_context.form.start_page.to_s == @step.id
-    end
-
-    def save_url
-      save_form_page_path(@form.id, @form.form_slug, @step.id, changing_existing_answer: @changing_existing_answer, answer_index:)
     end
   end
 end
