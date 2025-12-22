@@ -122,6 +122,10 @@ class Step
     question.is_a?(Question::File) && question.file_uploaded?
   end
 
+  def autocomplete_selection_question?
+    question.is_a?(Question::Selection) && question.autocomplete_component?
+  end
+
 private
 
   def goto_condition_page_slug(condition)

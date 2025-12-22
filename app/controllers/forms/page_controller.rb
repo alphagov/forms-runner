@@ -19,8 +19,13 @@ module Forms
       page_params = params.fetch(:question, {}).permit(*@step.params)
       @step.update!(page_params)
 
-      if current_context.save_step(@step)
-        current_context.clear_submission_details if is_first_page?
+      current_context.clear_submission_details if is_first_page?
+
+      validation_context = @step.autocomplete_selection_question? ? :skip_none_of_the_above_question_validation : nil
+      if current_context.save_step(@step, context: validation_context)
+        # Redirect before logging when the question has multiple pages so that we don't send multiple form started
+        # metrics to CloudWatch if this is the first question.
+        return redirect_to selection_none_of_the_above_page if redirect_to_none_of_the_above_page?
 
         unless mode.preview?
           LogEventService.new(current_context, @step, request, changing_existing_answer, page_params).log_page_save
@@ -86,7 +91,7 @@ module Forms
     end
 
     def redirect_post_save
-      return redirect_to review_file_page, success: t("banner.success.file_uploaded") if answered_file_question?
+      return redirect_to review_file_page, success: t("banner.success.file_uploaded") if @step.answered_file_question?
       return redirect_to exit_page_path(form_id: @form.id, form_slug: @form.form_slug, page_slug: @step.id) if @step.exit_page_condition_matches?
 
       redirect_to next_page
@@ -98,8 +103,16 @@ module Forms
       end
     end
 
+    def redirect_to_none_of_the_above_page?
+      @step.autocomplete_selection_question? && @step.question.show_none_of_the_above_question?
+    end
+
     def review_file_page
       review_file_path(form_id: @form.id, form_slug: @form.form_slug, page_slug: @step.id, changing_existing_answer:)
+    end
+
+    def selection_none_of_the_above_page
+      selection_none_of_the_above_path(form_id: @form.id, form_slug: @form.form_slug, page_slug: @step.id)
     end
 
     def next_page

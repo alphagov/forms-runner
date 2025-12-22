@@ -717,6 +717,67 @@ RSpec.describe Forms::PageController, type: :request do
       end
     end
 
+    context "when the page is a selection question with a none of the above question" do
+      let(:first_step_in_form) do
+        build(:v2_selection_question_page_step,
+              :with_none_of_the_above_question,
+              id: 1,
+              next_step_id: 2,
+              selection_options:)
+      end
+
+      before do
+        allow(EventLogger).to receive(:log_page_event)
+        allow(CloudWatchService).to receive(:record_form_start_metric)
+        post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id, params:)
+      end
+
+      context "when there are less than 31 options and none of the above is selected" do
+        let(:selection_options) { [{ name: "Option 1", value: "Option 1" }, { name: "Option 2", value: "Option 2" }] }
+        let(:params) { { question: { selection: I18n.t("page.none_of_the_above"), none_of_the_above_answer: "Another option" }, changing_existing_answer: false } }
+
+        it "redirects to the next step in the form" do
+          expect(response).to redirect_to form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2)
+        end
+
+        it "logs a page save event" do
+          expect(EventLogger).to have_received(:log_page_event)
+        end
+
+        it "sends a started metric to CloudWatch" do
+          expect(CloudWatchService).to have_received(:record_form_start_metric)
+        end
+      end
+
+      context "when there are more than 30 options" do
+        let(:selection_options) { 31.times.map { |i| { name: "Option #{i}", value: "Option #{i}" } } }
+
+        context "when none of the above is selected" do
+          let(:params) { { question: { selection: I18n.t("page.none_of_the_above") }, changing_existing_answer: false } }
+
+          it "redirects to the none of the above page" do
+            expect(response).to redirect_to selection_none_of_the_above_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id)
+          end
+
+          it "does not log a page save event" do
+            expect(EventLogger).not_to have_received(:log_page_event)
+          end
+
+          it "does not send a started metric to CloudWatch" do
+            expect(CloudWatchService).not_to have_received(:record_form_start_metric)
+          end
+        end
+
+        context "when none of the above is not selected" do
+          let(:params) { { question: { selection: selection_options[0][:name] }, changing_existing_answer: false } }
+
+          it "redirects to the next step in the form" do
+            expect(response).to redirect_to form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2)
+          end
+        end
+      end
+    end
+
     context "when the page is a an exit question" do
       let(:first_step_in_form) do
         build :v2_selection_question_page_step,

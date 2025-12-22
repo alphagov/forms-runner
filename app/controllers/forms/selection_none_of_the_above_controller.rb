@@ -13,7 +13,7 @@ module Forms
       @step.question.with_none_of_the_above_selected
       @step.update!(page_params)
 
-      if current_context.save_step(@step, context: :none_of_the_above_page)
+      if current_context.save_step(@step)
         unless mode.preview?
           LogEventService.new(current_context, @step, request, changing_existing_answer, page_params).log_page_save
         end
