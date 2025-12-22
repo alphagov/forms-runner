@@ -126,8 +126,8 @@ RSpec.describe RepeatableStep, type: :model do
 
   describe "#show_answer" do
     let(:questions) { [first_question, second_question] }
-    let(:first_question) { OpenStruct.new({ show_answer: "first answer" }) }
-    let(:second_question) { OpenStruct.new({ show_answer: "second answer" }) }
+    let(:first_question) { instance_double(Question::QuestionBase, show_answer: "first answer") }
+    let(:second_question) { instance_double(Question::QuestionBase, show_answer: "second answer") }
 
     before { repeatable_step.questions = questions }
 
@@ -136,7 +136,7 @@ RSpec.describe RepeatableStep, type: :model do
     end
 
     context "when the question is optional and has been skipped" do
-      let(:questions) { [OpenStruct.new({ show_answer: "" })] }
+      let(:questions) { [instance_double(Question::QuestionBase, show_answer: "")] }
 
       it "returns blank" do
         expect(repeatable_step.show_answer).to be_blank
@@ -146,8 +146,8 @@ RSpec.describe RepeatableStep, type: :model do
 
   describe "#show_answer_in_email" do
     let(:questions) { [first_question, second_question] }
-    let(:first_question) { OpenStruct.new({ show_answer_in_email: "first answer" }) }
-    let(:second_question) { OpenStruct.new({ show_answer_in_email: "second answer" }) }
+    let(:first_question) { instance_double(Question::QuestionBase, show_answer_in_email: "first answer") }
+    let(:second_question) { instance_double(Question::QuestionBase, show_answer_in_email: "second answer") }
 
     before { repeatable_step.questions = questions }
 
@@ -259,8 +259,8 @@ RSpec.describe RepeatableStep, type: :model do
 
   describe "#remove_answer" do
     let(:questions) { [first_question, second_question] }
-    let(:first_question) { OpenStruct.new({ show_answer_in_email: "first answer" }) }
-    let(:second_question) { OpenStruct.new({ show_answer_in_email: "second answer" }) }
+    let(:first_question) { instance_double(Question::QuestionBase, show_answer_in_email: "first answer") }
+    let(:second_question) { instance_double(Question::QuestionBase, show_answer_in_email: "second answer") }
 
     before { repeatable_step.questions = questions }
 
@@ -283,8 +283,8 @@ RSpec.describe RepeatableStep, type: :model do
 
   describe "#valid?" do
     let(:questions) { [first_question, second_question] }
-    let(:first_question) { OpenStruct.new({ valid?: true }) }
-    let(:second_question) { OpenStruct.new({ valid?: true }) }
+    let(:first_question) { instance_double(Question::QuestionBase, valid?: true) }
+    let(:second_question) { instance_double(Question::QuestionBase, valid?: true) }
 
     before { repeatable_step.questions = questions }
 
@@ -295,7 +295,7 @@ RSpec.describe RepeatableStep, type: :model do
     end
 
     context "when a questions is not valid" do
-      let(:second_question) { OpenStruct.new({ valid?: false }) }
+      let(:second_question) { instance_double(Question::QuestionBase, valid?: false) }
 
       it "returns true" do
         expect(repeatable_step).not_to be_valid
@@ -308,7 +308,7 @@ RSpec.describe RepeatableStep, type: :model do
 
     context "when there is one value in questions" do
       let(:questions) { [first_question] }
-      let(:first_question) { OpenStruct.new }
+      let(:first_question) { instance_double(Question::QuestionBase) }
 
       it "returns true" do
         expect(repeatable_step).to be_min_answers
@@ -325,8 +325,8 @@ RSpec.describe RepeatableStep, type: :model do
 
     context "when there are at least two values in questions" do
       let(:questions) { [first_question, second_question] }
-      let(:first_question) { OpenStruct.new }
-      let(:second_question) { OpenStruct.new }
+      let(:first_question) { instance_double(Question::QuestionBase) }
+      let(:second_question) { instance_double(Question::QuestionBase) }
 
       it "returns true" do
         expect(repeatable_step).not_to be_min_answers
