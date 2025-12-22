@@ -107,6 +107,18 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
         perform_enqueued_jobs
         expect(Sentry).to have_received(:capture_message)
       end
+
+      it "sets status to 'bounced' from 'delivered'" do
+        submission.update!(delivery_status: :delivered, delivered_at: Time.zone.now)
+        perform_enqueued_jobs
+        expect(submission.reload.delivery_status).to eq("bounced")
+      end
+
+      it "clears delivered_at for delivered submissions" do
+        submission.update!(delivery_status: :delivered, delivered_at: Time.zone.now)
+        perform_enqueued_jobs
+        expect(submission.reload.delivered_at).to be_nil
+      end
     end
 
     context "when it is for a preview submission" do
