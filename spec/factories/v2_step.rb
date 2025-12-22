@@ -41,14 +41,36 @@ FactoryBot.define do
         )
       end
 
-      trait :with_selections_settings do
+      factory :v2_selection_question_page_step do
+        answer_type { "selection" }
+        answer_settings do
+          if none_of_the_above_question
+            Struct.new(:only_one_option, :selection_options, :none_of_the_above_question)
+                  .new(only_one_option, selection_options, none_of_the_above_question)
+          else
+            Struct.new(:only_one_option, :selection_options).new(only_one_option, selection_options)
+          end
+        end
+
         transient do
           only_one_option { "true" }
           selection_options { [{ name: "Option 1", value: "Option 1" }, { name: "Option 2", value: "Option 2" }] }
+          none_of_the_above_question { nil }
         end
 
-        answer_type { "selection" }
-        answer_settings { DataStruct.new(only_one_option:, selection_options:) }
+        trait :with_none_of_the_above_question do
+          is_optional { true }
+
+          transient do
+            none_of_the_above_question_text { Faker::Lorem.question }
+            none_of_the_above_question_is_optional { "false" }
+          end
+
+          none_of_the_above_question do
+            Struct.new(:question_text, :is_optional)
+                  .new(none_of_the_above_question_text, none_of_the_above_question_is_optional)
+          end
+        end
       end
 
       trait :with_text_settings do
