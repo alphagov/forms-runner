@@ -22,6 +22,10 @@ module Question
       answer_settings.only_one_option != "true"
     end
 
+    def with_none_of_the_above_selected
+      self.selection = allow_multiple_answers? ? [I18n.t("page.none_of_the_above")] : I18n.t("page.none_of_the_above")
+    end
+
     def answered?
       return false if show_none_of_the_above_question? && none_of_the_above_answer.nil?
 
