@@ -19,9 +19,9 @@ module Question
     end
 
     def show_answer
-      return selection_without_blanks.join(", ") if allow_multiple_answers?
+      return selection_without_blanks.map { |selected| name_from_value(selected) }.join(", ") if allow_multiple_answers?
 
-      selection
+      selection_name
     end
 
     def show_answer_in_email
@@ -37,6 +37,20 @@ module Question
       hash[:answer_text] = show_answer
 
       hash
+    end
+
+    def selection_name
+      return nil if selection.nil?
+      return "" if selection.blank?
+
+      name_from_value(selection)
+    end
+
+    # Show the selection option name, which can be different to the value. Value
+    # should stay the same across FormDocuments in different languages.
+    def name_from_value(selected)
+      @options_by_value ||= answer_settings.selection_options.index_by(&:value)
+      @options_by_value[selected]&.name
     end
 
     def show_optional_suffix
@@ -77,11 +91,11 @@ module Question
     end
 
     def allowed_options
-      selection_options_with_none_of_the_above.map(&:name)
+      selection_options_with_none_of_the_above.map(&:value)
     end
 
     def none_of_the_above_option
-      OpenStruct.new(name: I18n.t("page.none_of_the_above"))
+      OpenStruct.new(name: I18n.t("page.none_of_the_above"), value: I18n.t("page.none_of_the_above"))
     end
 
     def selection_without_blanks
