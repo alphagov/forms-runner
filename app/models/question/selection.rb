@@ -49,7 +49,7 @@ module Question
     # Show the selection option name, which can be different to the value. Value
     # should stay the same across FormDocuments in different languages.
     def name_from_value(selected)
-      @options_by_value ||= answer_settings.selection_options.index_by(&:value)
+      @options_by_value ||= selection_options_with_none_of_the_above.index_by(&:value)
       @options_by_value[selected]&.name
     end
 
