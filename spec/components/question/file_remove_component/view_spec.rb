@@ -7,11 +7,11 @@ RSpec.describe Question::FileRemoveComponent::View, type: :component do
   let(:page_heading) { nil }
   let(:hint_text) { nil }
   let(:question) { build :file, :with_uploaded_file, question_text:, is_optional:, page_heading:, hint_text: }
-  let(:extra_question_text_suffix) { nil }
+  let(:mode) { Mode.new("form") }
   let(:remove_file_url) { "/remove_file" }
 
   before do
-    render_inline(described_class.new(question:, extra_question_text_suffix:, remove_file_url:, remove_input: RemoveInput.new))
+    render_inline(described_class.new(question:, mode:, remove_file_url:, remove_input: RemoveInput.new))
   end
 
   it "renders the correct h1" do

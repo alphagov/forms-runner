@@ -339,6 +339,35 @@ RSpec.describe Question::File, type: :model do
     end
   end
 
+  describe "#question_text_for_check_your_answers" do
+    context "when page_heading is blank" do
+      let(:options) { { is_optional:, question_text: } }
+
+      it "returns the question text" do
+        expect(question.question_text_for_check_your_answers).to eq question.question_text
+      end
+
+      it "returns the question text with optional suffix when the question is optional" do
+        question.is_optional = true
+        expect(question.question_text_for_check_your_answers).to eq "#{question.question_text} #{I18n.t('page.optional')}"
+      end
+    end
+
+    context "when page_heading is set" do
+      let(:page_heading) { Faker::Lorem.sentence }
+      let(:options) { { is_optional:, question_text:, page_heading: } }
+
+      it "returns the page heading in a caption before the question text" do
+        expect(question.question_text_for_check_your_answers).to eq "<span class=\"govuk-caption-m govuk-!-margin-bottom-1\">#{page_heading}</span> #{question.question_text}"
+      end
+
+      it "returns the page heading in a caption before the question text with optional suffix when the question is optional" do
+        question.is_optional = true
+        expect(question.question_text_for_check_your_answers).to eq "<span class=\"govuk-caption-m govuk-!-margin-bottom-1\">#{page_heading}</span> #{question.question_text} #{I18n.t('page.optional')}"
+      end
+    end
+  end
+
   describe "validations" do
     context "when the question is mandatory" do
       context "when no file is set" do

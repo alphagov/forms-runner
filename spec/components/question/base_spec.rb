@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe Question::Base, type: :component do
-  let(:extra_question_text_suffix) { nil }
+  let(:mode) { Mode.new("form") }
   let(:form_builder) do
     GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                   ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
@@ -10,7 +10,7 @@ RSpec.describe Question::Base, type: :component do
   let(:guidance_markdown) { "## National insurance number\n\nYou can find this on your National insurance card." }
   let(:question) { build :full_name_question, page_heading:, guidance_markdown: }
 
-  let(:question_base) { described_class.new(form_builder:, question:, extra_question_text_suffix:) }
+  let(:question_base) { described_class.new(form_builder:, question:, mode:) }
 
   describe "#question_text_size_and_tag" do
     context "when both guidance fields are present" do

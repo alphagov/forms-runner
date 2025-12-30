@@ -2,23 +2,24 @@ require "rails_helper"
 
 RSpec.describe Question::PhoneNumberComponent::View, type: :component do
   let(:question_page) { build :page, answer_type: "phone_number" }
-  let(:answer_text) { nil }
+  let(:phone_number) { nil }
   let(:question) do
-    OpenStruct.new(phone_number: answer_text,
-                   question_text_with_optional_suffix: question_page.question_text,
-                   hint_text: question_page.hint_text,
-                   answer_settings: nil,
-                   page_heading: question_page.page_heading,
-                   guidance_markdown: question_page.guidance_markdown)
+    Question::PhoneNumber.new({ phone_number: phone_number }, {
+      question_text: question_page.question_text,
+      hint_text: question_page.hint_text,
+      answer_settings: nil,
+      page_heading: question_page.page_heading,
+      guidance_markdown: question_page.guidance_markdown,
+    })
   end
-  let(:extra_question_text_suffix) { nil }
+  let(:mode) { Mode.new("form") }
   let(:form_builder) do
     GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                   ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
   end
 
   before do
-    render_inline(described_class.new(form_builder:, question:, extra_question_text_suffix:))
+    render_inline(described_class.new(form_builder:, question:, mode:))
   end
 
   describe "when component is phone number field" do
@@ -39,10 +40,10 @@ RSpec.describe Question::PhoneNumberComponent::View, type: :component do
     end
 
     context "when the user has provided an answer" do
-      let(:answer_text) { 8 }
+      let(:phone_number) { 8 }
 
       it "sets the field value" do
-        expect(page.find("input[type='tel'][name='form[phone_number]']").value).to eq answer_text.to_s
+        expect(page.find("input[type='tel'][name='form[phone_number]']").value).to eq phone_number.to_s
       end
     end
 
@@ -54,20 +55,20 @@ RSpec.describe Question::PhoneNumberComponent::View, type: :component do
       end
     end
 
-    context "when there is extra suffix to be added to heading" do
-      let(:extra_question_text_suffix) { "Some extra text to add to the question text" }
+    context "when the mode is preview" do
+      let(:mode) { Mode.new("preview-draft") }
 
       it "renders the question text and extra suffix as a heading" do
-        expect(page.find("h1 label")).to have_text("#{question.question_text} #{extra_question_text_suffix}")
+        expect(page.find("h1 label").native.inner_html).to eq("#{question.question_text} <span class=\"govuk-visually-hidden\">\u{00A0}#{I18n.t('page.draft_preview')}</span>")
       end
     end
 
     context "with unsafe question text" do
       let(:question_page) { build :page, answer_type: "phone_number", question_text: "What is your phone number? <script>alert(\"Hi\")</script>" }
-      let(:extra_question_text_suffix) { "<span>Some trusted html</span>" }
+      let(:mode) { Mode.new("preview-draft") }
 
       it "returns the escaped title with the optional suffix" do
-        expected_output = "What is your phone number? &lt;script&gt;alert(\"Hi\")&lt;/script&gt; <span>Some trusted html</span>"
+        expected_output = "What is your phone number? &lt;script&gt;alert(\"Hi\")&lt;/script&gt; <span class=\"govuk-visually-hidden\">\u{00A0}#{I18n.t('page.draft_preview')}</span>"
         expect(page.find("h1 .govuk-label").native.inner_html).to eq(expected_output)
       end
     end

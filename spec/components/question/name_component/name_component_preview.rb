@@ -7,7 +7,7 @@ class Question::NameComponent::NameComponentPreview < ViewComponent::Preview
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::NameComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::NameComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 
   def full_name_with_no_title_field_with_hint
@@ -19,7 +19,7 @@ class Question::NameComponent::NameComponentPreview < ViewComponent::Preview
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::NameComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::NameComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 
   def full_name_with_title_field
@@ -30,7 +30,7 @@ class Question::NameComponent::NameComponentPreview < ViewComponent::Preview
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::NameComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::NameComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 
   def full_name_with_title_field_with_hint
@@ -42,7 +42,7 @@ class Question::NameComponent::NameComponentPreview < ViewComponent::Preview
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::NameComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::NameComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 
   def first_and_last_name_with_title_field
@@ -54,7 +54,7 @@ class Question::NameComponent::NameComponentPreview < ViewComponent::Preview
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::NameComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::NameComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 
   def first_and_last_name_with_title_field_with_hint
@@ -67,7 +67,7 @@ class Question::NameComponent::NameComponentPreview < ViewComponent::Preview
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::NameComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::NameComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 
   def first_and_last_name_with_no_title_field
@@ -79,7 +79,7 @@ class Question::NameComponent::NameComponentPreview < ViewComponent::Preview
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::NameComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::NameComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 
   def first_and_last_name_with_no_title_field_with_hint
@@ -92,7 +92,7 @@ class Question::NameComponent::NameComponentPreview < ViewComponent::Preview
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::NameComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::NameComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 
   def first_middle_and_last_name_with_title_field
@@ -105,7 +105,7 @@ class Question::NameComponent::NameComponentPreview < ViewComponent::Preview
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::NameComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::NameComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 
   def first_middle_and_last_name_with_title_field_with_hint
@@ -119,7 +119,7 @@ class Question::NameComponent::NameComponentPreview < ViewComponent::Preview
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::NameComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::NameComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 
   def first_middle_and_last_name_with_no_title_field
@@ -132,7 +132,7 @@ class Question::NameComponent::NameComponentPreview < ViewComponent::Preview
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::NameComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::NameComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 
   def first_middle_and_last_name_with_no_title_field_with_hint
@@ -146,6 +146,6 @@ class Question::NameComponent::NameComponentPreview < ViewComponent::Preview
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::NameComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::NameComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 end

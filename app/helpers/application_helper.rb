@@ -19,17 +19,8 @@ module ApplicationHelper
     "#{t('page_titles.error_prefix') if error}#{page_name}#{mode_string} - #{form_name}"
   end
 
-  def hidden_text_mode(mode)
-    return "" unless mode.preview?
-
-    mode_name = if mode.preview_draft?
-                  "draft"
-                elsif mode.preview_archived?
-                  "archived"
-                elsif mode.preview_live?
-                  "live"
-                end
-    "<span class='govuk-visually-hidden'>&nbsp;#{t("page.#{mode_name}_preview".to_s)}</span>".html_safe
+  def question_text_with_hidden_mode(question_text, mode)
+    [CGI.escapeHTML(question_text), hidden_text_mode(mode)].compact_blank.join(" ").html_safe
   end
 
   def format_paragraphs(text)
@@ -69,5 +60,18 @@ private
 
   def join_title_elements(title_elements)
     title_elements.compact.join(" – ")
+  end
+
+  def hidden_text_mode(mode)
+    return "" unless mode.preview?
+
+    mode_name = if mode.preview_draft?
+                  "draft"
+                elsif mode.preview_archived?
+                  "archived"
+                elsif mode.preview_live?
+                  "live"
+                end
+    "<span class='govuk-visually-hidden'>&nbsp;#{t("page.#{mode_name}_preview")}</span>".html_safe
   end
 end

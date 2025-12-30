@@ -7,7 +7,7 @@ class Question::TextComponent::TextComponentPreview < ViewComponent::Preview
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::TextComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::TextComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 
   def short_text_field_with_hint
@@ -19,7 +19,7 @@ class Question::TextComponent::TextComponentPreview < ViewComponent::Preview
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::TextComponent::View.new(form_builder:, question:, extra_question_text_suffix: ""))
+    render(Question::TextComponent::View.new(form_builder:, question:, mode: Mode.new("form")))
   end
 
   def multiline_text_field
@@ -30,7 +30,7 @@ class Question::TextComponent::TextComponentPreview < ViewComponent::Preview
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::TextComponent::View.new(form_builder:, question:, extra_question_text_suffix: nil))
+    render(Question::TextComponent::View.new(form_builder:, question:, mode: nil))
   end
 
   def multiline_text_field_with_hints
@@ -42,6 +42,6 @@ class Question::TextComponent::TextComponentPreview < ViewComponent::Preview
     form_builder = GOVUKDesignSystemFormBuilder::FormBuilder.new(:form, question,
                                                                  ActionView::Base.new(ActionView::LookupContext.new(nil), {}, nil), {})
 
-    render(Question::TextComponent::View.new(form_builder:, question:, extra_question_text_suffix: nil))
+    render(Question::TextComponent::View.new(form_builder:, question:, mode: nil))
   end
 end

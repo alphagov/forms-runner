@@ -56,15 +56,8 @@ module Question
 
       def none_of_the_above_question_field
         if question.has_none_of_the_above_question?
-          form_builder.govuk_text_field :none_of_the_above_answer, label: { text: none_of_the_above_question_text }, width: "three-quarters"
+          form_builder.govuk_text_field :none_of_the_above_answer, label: { text: question.none_of_the_above_question_text }, width: "three-quarters"
         end
-      end
-
-      def none_of_the_above_question_text
-        none_of_the_above_question = question.answer_settings.none_of_the_above_question
-        return none_of_the_above_question.question_text if none_of_the_above_question.is_optional != "true"
-
-        "#{none_of_the_above_question.question_text} #{I18n.t('page.optional')}"
       end
 
       def radio_button_options

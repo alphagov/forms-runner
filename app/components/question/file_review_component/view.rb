@@ -2,9 +2,9 @@
 
 module Question::FileReviewComponent
   class View < Question::Base
-    def initialize(question:, extra_question_text_suffix:, remove_file_confirmation_url:)
+    def initialize(question:, mode:, remove_file_confirmation_url:)
       @remove_file_confirmation_url = remove_file_confirmation_url
-      super(form_builder: nil, question:, extra_question_text_suffix:)
+      super(form_builder: nil, question:, mode:)
     end
   end
 end
