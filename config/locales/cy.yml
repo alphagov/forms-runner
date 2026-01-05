@@ -468,8 +468,8 @@ cy:
   page_titles:
     error_prefix: 'Gwall: '
   preview_banner:
-    heading: This is a preview of this form. Do not enter personal information.
-    title: Important
+    heading: Dyma ragolwg o'r ffurflen hon. Peidiwch â rhoi gwybodaeth bersonol.
+    title: Pwysig
   preview_header:
     your_questions: Your questions
   privacy:
