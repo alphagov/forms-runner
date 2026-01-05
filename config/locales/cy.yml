@@ -94,23 +94,23 @@ cy:
           attributes:
             address1:
               blank: Rhowch linell gyntaf y cyfeiriad
-              too_long: The first line of the address must be shorter than 500 characters
+              too_long: Rhaid i linell gyntaf y cyfeiriad fod yn fyrrach na 500 nod
             address2:
-              too_long: The second line of the address must be shorter than 500 characters
+              too_long: Rhaid i ail linell y cyfeiriad fod yn fyrrach na 500 nod
             country:
               blank: Rhowch y wlad
-              too_long: The country must be shorter than 500 characters
+              too_long: Rhaid i'r wlad fod yn fyrrach na 500 nod
             county:
-              too_long: The county must be shorter than 500 characters
+              too_long: Rhaid i'r sir fod yn fyrrach na 500 nod
             postcode:
               blank: Rhowch y cod post
               invalid_postcode: Rhowch god post gwirioneddol
             street_address:
               blank: Rhowch y cyfeiriad
-              too_long: The address must be shorter than 5,000 characters
+              too_long: Rhaid i'r cyfeiriad fod yn fyrrach na 5,000 nod
             town_or_city:
               blank: Rhowch y dref neu’r ddinas
-              too_long: The town or city must be shorter than 500 characters
+              too_long: Rhaid i'r dref neu'r ddinas fod yn fyrrach na 500 nod
         question/date:
           attributes:
             date:
@@ -137,17 +137,17 @@ cy:
           attributes:
             first_name:
               blank: Rhowch enw cyntaf
-              too_long: The first name must be shorter than 500 characters
+              too_long: Rhaid i'r enw cyntaf fod yn fyrrach na 500 nod
             full_name:
               blank: Rhowch enw
-              too_long: The name must be shorter than 500 characters
+              too_long: Rhaid i'r enw fod yn fyrrach na 500 nod
             last_name:
               blank: Rhowch enw olaf
-              too_long: The last name must be shorter than 500 characters
+              too_long: Rhaid i'r enw olaf fod yn fyrrach na 500 nod
             middle_names:
-              too_long: The middle name must be shorter than 500 characters
+              too_long: Rhaid i'r enw canol fod yn fyrrach na 500 nod
             title:
-              too_long: The title must be shorter than 100 characters
+              too_long: Rhaid i'r teitl fod yn fyrrach na 100 nod
         question/national_insurance_number:
           attributes:
             national_insurance_number:
@@ -159,7 +159,7 @@ cy:
               blank: Rhowch rif
               greater_than_or_equal_to: Rhaid i’r ateb fod yn fwy na 0 neu’n hafal i 0
               not_a_number: Rhaid i’r ateb fod yn rhif
-              too_long: The number must be shorter than 500 digits
+              too_long: Rhaid i'r rhif fod yn fyrrach na 500 o ddigidau
         question/organisation_name:
           attributes:
             text:
