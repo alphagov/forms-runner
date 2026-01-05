@@ -522,13 +522,13 @@ cy:
       heading: Sut rydym yn diogelu eich data a’i gadw’n ddiogel
       section_0: Rydym wedi ymrwymo i wneud popeth y gallwn i gadw’ch data yn ddiogel. Er mwyn atal mynediad neu ddatgelu anawdurdodedig, rydym wedi rhoi gweithdrefnau technegol a sefydliadol ar waith i ddiogelu’r data rydym yn ei gasglu amdanoch chi – er enghraifft, rydym yn diogelu’ch data gan ddefnyddio lefelau amrywiol o amgryptio. Rydym hefyd yn sicrhau bod gan unrhyw drydydd partïon rydym yn delio â nhw rwymedigaeth i gadw’r holl ddata personol y maent yn ei brosesu ar ein rhan yn ddiogel.
     preamble:
-      section_0: 'Last updated: 25 June 2025'
-      section_1: This form was created using GOV.UK Forms. GOV.UK Forms is a product provided by the Government Digital Service (GDS) which is part of the Department for Science, Innovation and Technology. It lets UK government teams create online forms to collect information from people and organisations.
-      section_2: The organisation that created this online form using GOV.UK Forms is the data controller of personal data they collect using the form, whilst the Department for Science, Innovation and Technology, through GDS, is the data processor. The data controller must tell you about what they are doing with your personal data - %{privacy_policy_link}.
-      section_2_link_text: read the data controller’s privacy information for this form
-      section_3: The Department for Science, Innovation and Technology also collects some data as a data controller. This privacy notice explains what personal data the Department for Science, Innovation and Technology collects and processes as a data controller through forms made with GOV.UK Forms.
+      section_0: 'Diweddarwyd ddiwethaf: 25 Mehefin 2025'
+      section_1: Crëwyd y ffurflen hon gan ddefnyddio GOV.UK Forms. Mae GOV.UK Forms yn gynnyrch a ddarperir gan Wasanaeth Digidol y Llywodraeth (GDS) sy'n rhan o'r Adran Gwyddoniaeth, Arloesi a Thechnoleg. Mae'n caniatáu i dimau llywodraeth y DU greu ffurflenni ar-lein i gasglu gwybodaeth gan bobl a sefydliadau.
+      section_2: Y sefydliad a greodd y ffurflen ar-lein hon gan ddefnyddio GOV.UK Forms yw rheolydd data y data personol y maent yn ei gasglu gan ddefnyddio'r ffurflen, a'r Adran Gwyddoniaeth, Arloesi a Thechnoleg, trwy GDS, yw'r prosesydd data. Rhaid i'r rheolydd data ddweud wrthych am yr hyn maent yn ei wneud gyda'ch data personol - %{privacy_policy_link}.
+      section_2_link_text: darllenwch wybodaeth preifatrwydd y rheolydd data ar gyfer y ffurflen hon
+      section_3: Mae'r Adran Gwyddoniaeth, Arloesi a Thechnoleg hefyd yn casglu rhywfaint o ddata fel rheolydd data. Mae'r hysbysiad preifatrwydd hwn yn esbonio pa ddata personol y mae'r Adran Gwyddoniaeth, Arloesi a Thechnoleg yn ei gasglu a'i brosesu fel rheolydd data trwy ffurflenni a greir gyda GOV.UK Forms.
       section_4: Darllenwch %{dppr_link} i gael rhagor o wybodaeth.
-      section_4_link_text: the Department for Science, Innovation and Technology’s entry in the Data Protection Public Register
+      section_4_link_text: cofnod yr Adran Gwyddoniaeth, Arloesi a Thechnoleg yn y Gofrestr Gyhoeddus Diogelu Data
     questions_and_complaints:
       heading: Cwestiynau a chwynion
       section_0:
@@ -536,7 +536,7 @@ cy:
         list_item_0: gyda chwestiynau am unrhyw beth yn y ddogfen hon
         list_item_1: yn meddwl bod eich data personol wedi cael ei gamddefnyddio neu ei gam-drin
       section_1:
-        line_0: You can also contact our Data Protection Officer.
+        line_0: Gallwch hefyd gysylltu â'n Swyddog Diogelu Data.
         line_1: DSIT Data Protection Officer
         line_2: Department for Science, Innovation and Technology
         line_3: 22-26 Whitehall
