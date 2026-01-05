@@ -20,6 +20,8 @@ class LogEventService
 
       EventLogger.log_form_event("requested_email_confirmation") if requested_email_confirmation
 
+      FormMetricsService.record_form_submitted(form_id: context.form.id)
+
       # Logging to CloudWatch
       begin
         CloudWatchService.record_form_submission_metric(form_id: context.form.id)
@@ -32,6 +34,8 @@ class LogEventService
   def log_page_save
     EventLogger.log_page_event(log_event, @step.question.question_text, skipped_question?)
     if is_starting_form?
+      FormMetricsService.record_form_started(form_id: @current_context.form.id)
+
       begin
         CloudWatchService.record_form_start_metric(form_id: @current_context.form.id) # Logging to CloudWatch
       rescue StandardError => e
