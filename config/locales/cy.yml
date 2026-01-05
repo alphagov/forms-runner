@@ -53,7 +53,7 @@ cy:
       text: Rydym bob amser yn ceisio gwella hygyrchedd ffurflenni a gynhyrchir gyda GOV.UK Forms.
     statement_preparation:
       WCAG_version: Asesodd GDS y ffurflenni yn erbyn Canllawiau Hygyrchedd Cynnwys y We WCAG 2.2.
-      date: Paratowyd y datganiad hwn ar 20 Chwefror 2024. It was last reviewed and updated on 19 August 2025.
+      date: Paratowyd y datganiad hwn ar 20 Chwefror 2024. Fe'i hadolygwyd a'i ddiweddaru ddiwethaf ar 19 Awst 2025.
       heading: Paratoi’r datganiad hygyrchedd hwn
       last_tested: Profwyd ffurflenni a grëwyd gan ddefnyddio platfform GOV.UK Forms ddiwethaf ar 9 Ionawr 2024. Cynhaliwyd y prawf gan GDS.
     technical_information:
