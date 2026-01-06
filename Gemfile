@@ -117,3 +117,9 @@ group :test do
   # For validating against the JSON schema for form submissions
   gem "json_schemer"
 end
+
+gem "opentelemetry-sdk", "~> 1.10"
+gem "opentelemetry-instrumentation-all", "~> 0.89.1"
+
+gem "opentelemetry-exporter-otlp", "~> 0.31.1"
+gem "opentelemetry-propagator-xray", "~> 0.26.0"
