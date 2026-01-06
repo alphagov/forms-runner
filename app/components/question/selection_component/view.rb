@@ -61,14 +61,14 @@ module Question
       end
 
       def radio_button_options
-        question.answer_settings.selection_options.map.with_index do |option, index|
-          form_builder.govuk_radio_button :selection, option.name, label: { text: option.name }, link_errors: index.zero?
+        question.selection_options_with_none_of_the_above.map.with_index do |option, index|
+          form_builder.govuk_radio_button :selection, option.value, label: { text: option.name }, link_errors: index.zero?
         end
       end
 
       def checkbox_options
         question.answer_settings.selection_options.map.with_index do |option, index|
-          form_builder.govuk_check_box :selection, option.name, label: { text: option.name }, link_errors: index.zero?
+          form_builder.govuk_check_box :selection, option.value, label: { text: option.name }, link_errors: index.zero?
         end
       end
     end
