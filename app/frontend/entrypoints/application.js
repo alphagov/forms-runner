@@ -14,6 +14,7 @@ import {
 } from '../javascript/utils/google-analytics'
 import { CookieBanner } from '../../components/cookie_banner_component/cookie-banner'
 import { CookiePage } from '../../components/cookie_consent_form_component/cookie-consent-form'
+import { initFileValidation } from '../javascript/utils/file-validation'
 
 const analyticsConsentStatus = loadConsentStatus()
 
@@ -52,5 +53,6 @@ if (document.body.dataset.googleAnalyticsEnabled === 'true') {
 }
 
 initAll()
+initFileValidation()
 
 window.dfeAutocomplete = dfeAutocomplete

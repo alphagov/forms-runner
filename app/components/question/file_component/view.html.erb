@@ -7,5 +7,6 @@
                                     text: question.hint_text,
                                     class: "govuk-!-margin-bottom-7"
                                   },
-                                  accept: Question::File::FILE_TYPES.join(", ")
+                                  accept: Question::File::FILE_TYPES.join(", "),
+                                  data: { max_file_size: Question::File::FILE_UPLOAD_MAX_SIZE_IN_MB * 1024 * 1024 }
 %>
