@@ -61,7 +61,7 @@ module Question
       end
 
       def radio_button_options
-        question.selection_options_with_none_of_the_above.map.with_index do |option, index|
+        question.answer_settings.selection_options.map.with_index do |option, index|
           form_builder.govuk_radio_button :selection, option.value, label: { text: option.name }, link_errors: index.zero?
         end
       end
