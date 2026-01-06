@@ -2,10 +2,13 @@ require "rails_helper"
 
 RSpec.describe LogEventService do
   let(:request) { "request" }
-  let(:current_context) { OpenStruct.new(form:) }
+  let(:current_context) { instance_double(Flow::Context, form:, completed_steps:) }
   let(:form) { OpenStruct.new(id: 3, start_page: 1) }
+  let(:completed_steps) { [] }
 
   describe "#log_page_save" do
+    subject(:log_event_service) { described_class.new(current_context, step, request, changing_answers, answers) }
+
     let(:changing_answers) { true }
     let(:step) { OpenStruct.new(id: step_id, question:) }
     let(:step_id) { "2" }
@@ -14,8 +17,6 @@ RSpec.describe LogEventService do
 
     it "calls the event logger with log_page_event" do
       allow(EventLogger).to receive(:log_page_event).and_return(true)
-
-      log_event_service = described_class.new(current_context, step, request, changing_answers, answers)
 
       log_event_service.log_page_save
       expect(EventLogger).to have_received(:log_page_event).with(
@@ -36,8 +37,6 @@ RSpec.describe LogEventService do
       it "calls the CloudWatchService with .record_form_start_metric" do
         allow(CloudWatchService).to receive(:record_form_start_metric).and_return(true)
 
-        log_event_service = described_class.new(current_context, step, request, changing_answers, answers)
-
         log_event_service.log_page_save
 
         expect(CloudWatchService).to have_received(:record_form_start_metric).with(form_id: current_context.form.id)
@@ -45,8 +44,6 @@ RSpec.describe LogEventService do
 
       it "Sentry doesn't receive an error" do
         allow(CloudWatchService).to receive(:record_form_start_metric).and_return(true)
-
-        log_event_service = described_class.new(current_context, step, request, changing_answers, answers)
 
         log_event_service.log_page_save
 
@@ -57,12 +54,19 @@ RSpec.describe LogEventService do
         it "raises the error to Sentry" do
           allow(CloudWatchService).to receive(:record_form_start_metric).and_raise(StandardError)
 
-          log_event_service = described_class.new(current_context, step, request, changing_answers, answers)
-
           log_event_service.log_page_save
 
           expect(Sentry).to have_received(:capture_exception)
         end
+      end
+    end
+
+    context "when the form has previously been started" do
+      let(:completed_steps) { [step] }
+
+      it "does not call the CloudWatchService" do
+        expect(CloudWatchService).not_to receive(:record_form_start_metric)
+        log_event_service.log_page_save
       end
     end
   end

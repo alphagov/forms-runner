@@ -47,7 +47,7 @@ private
 
     if @changing_answer
       "change_answer_#{page_optional}_save"
-    elsif is_starting_form?
+    elsif is_first_page?
       "first_#{page_optional}_save"
     else
       "#{page_optional}_save"
@@ -59,6 +59,10 @@ private
   end
 
   def is_starting_form?
+    @current_context.completed_steps.empty?
+  end
+
+  def is_first_page?
     @current_context.form.start_page.to_s == @step.id
   end
 end
