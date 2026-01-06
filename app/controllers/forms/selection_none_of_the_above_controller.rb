@@ -11,7 +11,7 @@ module Forms
     def save
       page_params = params.fetch(:question, {}).permit(*@step.params)
       @step.question.with_none_of_the_above_selected
-      @step.update!(page_params)
+      @step.assign_question_attributes(page_params)
 
       if current_context.save_step(@step)
         unless mode.preview?

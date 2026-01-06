@@ -48,7 +48,7 @@ class Step
     self
   end
 
-  def update!(params)
+  def assign_question_attributes(params)
     question.assign_attributes(params)
   end
 

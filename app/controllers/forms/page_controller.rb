@@ -17,7 +17,7 @@ module Forms
 
     def save
       page_params = params.fetch(:question, {}).permit(*@step.params)
-      @step.update!(page_params)
+      @step.assign_question_attributes(page_params)
 
       current_context.clear_submission_details if is_first_page?
 
