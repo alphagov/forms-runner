@@ -10,7 +10,7 @@ module Forms
 
     def show
       return redirect_to form_page_path(@form.id, @form.form_slug, current_context.next_page_slug) unless current_context.can_visit?(@step.id)
-      return redirect_to review_file_page if answered_file_question?
+      return redirect_to review_file_page if @step.answered_file_question?
 
       setup_instance_vars_for_view
     end
@@ -93,13 +93,9 @@ module Forms
     end
 
     def redirect_if_not_answered_file_question
-      unless @step.question.is_a?(Question::File) && @step.question.file_uploaded?
+      unless @step.answered_file_question?
         redirect_to form_page_path(@form.id, @form.form_slug, @step.id)
       end
-    end
-
-    def answered_file_question?
-      @step.question.is_a?(Question::File) && @step.question.file_uploaded?
     end
 
     def review_file_page
