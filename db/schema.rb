@@ -10,22 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_25_142056) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_20_114903) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   create_table "submissions", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "reference"
-    t.string "mail_message_id"
-    t.integer "form_id"
     t.jsonb "answers"
-    t.string "mode"
-    t.jsonb "form_document"
-    t.string "delivery_status", default: "pending", null: false
-    t.datetime "last_delivery_attempt"
+    t.datetime "bounced_at"
+    t.datetime "created_at", null: false
     t.datetime "delivered_at"
+    t.string "delivery_status", default: "pending", null: false
+    t.jsonb "form_document"
+    t.integer "form_id"
+    t.datetime "last_delivery_attempt"
+    t.string "mail_message_id"
+    t.string "mode"
+    t.string "reference"
+    t.datetime "updated_at", null: false
     t.index ["last_delivery_attempt"], name: "index_submissions_on_last_delivery_attempt"
     t.index ["mail_message_id"], name: "index_submissions_on_mail_message_id"
   end
