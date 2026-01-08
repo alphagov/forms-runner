@@ -39,6 +39,10 @@ module Forms
       { mode:, locale: locale_param }
     end
 
+    def set_available_languages
+      @available_languages = current_context.form.available_languages if current_context.form.multilingual?
+    end
+
     def set_form
       begin
         form_id = params.require(:form_id)

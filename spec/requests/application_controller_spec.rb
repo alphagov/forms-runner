@@ -12,6 +12,11 @@ RSpec.describe ApplicationController, type: :request do
       expect(response).to have_http_status(:ok)
     end
 
+    it "includes the language switcher" do
+      get accessibility_statement_path
+      expect(response.body).to include(I18n.t("language_switcher.nav_label"))
+    end
+
     context "when no language query parameter is provided" do
       it "renders the page in English" do
         get accessibility_statement_path
@@ -45,6 +50,11 @@ RSpec.describe ApplicationController, type: :request do
     it "returns http code 200" do
       get cookies_path
       expect(response).to have_http_status(:ok)
+    end
+
+    it "includes the language switcher" do
+      get accessibility_statement_path
+      expect(response.body).to include(I18n.t("language_switcher.nav_label"))
     end
 
     context "when language query parameter is set to Welsh" do

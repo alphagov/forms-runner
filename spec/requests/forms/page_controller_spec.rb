@@ -11,6 +11,7 @@ RSpec.describe Forms::PageController, type: :request do
           privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
           what_happens_next_markdown: "Good things come to those that wait",
           declaration_text: "agree to the declaration",
+          available_languages:,
           steps: steps_data)
   end
 
@@ -39,6 +40,8 @@ RSpec.describe Forms::PageController, type: :request do
   let(:steps_data) { [first_step_in_form, second_step_in_form] }
 
   let(:is_optional) { false }
+
+  let(:available_languages) { %w[en] }
 
   let(:req_headers) { { "Accept" => "application/json" } }
 
@@ -167,6 +170,11 @@ RSpec.describe Forms::PageController, type: :request do
         get form_change_answer_path(form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id, mode:)
         expect(response.body).to include(save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id, changing_existing_answer: true, answer_index: 1))
       end
+
+      it_behaves_like "a translatable page" do
+        let(:english_url) { form_change_answer_path(form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id, mode:, locale: "en") }
+        let(:welsh_url) { form_change_answer_path(form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id, mode:, locale: "cy") }
+      end
     end
 
     context "with no questions answered" do
@@ -174,6 +182,30 @@ RSpec.describe Forms::PageController, type: :request do
         get check_your_answers_path(2, form_data.form_slug, mode:)
         expect(response).to have_http_status(:found)
         expect(response.location).to eq(form_page_url(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id))
+      end
+    end
+  end
+
+  shared_examples "a translatable page" do
+    let(:english_url) { form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id, locale: "en") }
+    let(:welsh_url) { form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id, locale: "cy") }
+
+    context "when the form is not multilingual" do
+      let(:available_languages) { %w[en] }
+
+      it "does not include the language switcher" do
+        get english_url
+        expect(response.body).not_to include(I18n.t("language_switcher.nav_label"))
+      end
+    end
+
+    context "when the form is multilingual" do
+      let(:available_languages) { %w[en cy] }
+
+      it "includes the language switcher" do
+        get english_url
+        expect(response.body).to include(I18n.t("language_switcher.nav_label"))
+        expect(response.body).to include(welsh_url)
       end
     end
   end
@@ -188,6 +220,8 @@ RSpec.describe Forms::PageController, type: :request do
       it_behaves_like "page with footer"
 
       it_behaves_like "question page"
+
+      it_behaves_like "a translatable page"
     end
 
     context "with preview mode off" do
@@ -230,6 +264,8 @@ RSpec.describe Forms::PageController, type: :request do
       it_behaves_like "page with footer"
 
       it_behaves_like "question page"
+
+      it_behaves_like "a translatable page"
     end
 
     context "when viewing a live form with no routing_conditions" do
@@ -405,6 +441,8 @@ RSpec.describe Forms::PageController, type: :request do
         end
       end
     end
+
+    it_behaves_like "a translatable page"
   end
 
   describe "#save" do

@@ -92,7 +92,13 @@ private
     SessionHasher.new(request).request_to_session_hash
   end
 
+  def set_available_languages
+    @available_languages = I18n.available_locales
+  end
+
   def set_locale(&action)
+    set_available_languages
+
     I18n.with_locale(locale, &action)
   end
 
@@ -103,12 +109,12 @@ private
   end
 
   def locale_param
-    return nil if is_default_locale?(params[:locale])
+    return nil if default_locale?(params[:locale])
 
     params[:locale]
   end
 
-  def is_default_locale?(locale)
+  def default_locale?(locale)
     return true if locale.nil?
     return true if locale.to_sym == I18n.default_locale
 
