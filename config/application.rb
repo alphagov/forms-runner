@@ -46,9 +46,9 @@ module FormsRunner
 
     # Use custom error pages
     config.exceptions_app = routes
-    config.view_component.preview_paths = [Rails.root.join("spec/components")]
-    config.view_component.preview_route = "/preview"
-    config.view_component.preview_controller = "ComponentPreviewController"
+    config.view_component.previews.paths = [Rails.root.join("spec/components")]
+    config.view_component.previews.route = "/preview"
+    config.view_component.previews.controller = "ComponentPreviewController"
     # Replace with value which will be true in local dev
     config.view_component.show_previews = HostingEnvironment.test_environment?
 
