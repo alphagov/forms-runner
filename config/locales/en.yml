@@ -421,6 +421,7 @@ en:
     legend:
       email_confirmation_input:
         send_confirmation: Do you want to get an email confirming your form has been submitted?
+  language_name: English
   layout:
     skip_link: Skip to main content
   mailer:
