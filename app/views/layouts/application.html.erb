@@ -8,8 +8,8 @@
 
 <% content_for :before_content do %>
   <%= render(PreviewComponent::View.new(mode: @mode, question_edit_link: @question_edit_link)) %>
-  <%= yield :back_link %>
   <%= render LanguageSwitcherComponent::View.new(languages: @available_languages) %>
+  <%= yield :back_link %>
 <% end %>
 
 <% content_for :footer do %>

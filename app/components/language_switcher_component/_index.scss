@@ -1,0 +1,23 @@
+.app-language-switcher {
+  max-width: 100%;
+}
+
+.app-language-switcher ul {
+  display: flex;
+  gap: 0.25em;
+  margin: 15px 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.app-language-switcher li {
+  font-size: 1rem;
+  margin: 0;
+  padding-right: 0.25em;
+  border-right: 1px solid $govuk-border-colour;
+}
+
+.app-language-switcher li:last-child {
+  padding: 0;
+  border: none;
+}
