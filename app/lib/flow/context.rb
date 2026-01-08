@@ -14,8 +14,8 @@ module Flow
     delegate :clear_stored_answer, :clear, :form_submitted?, :answers, to: :answer_store
     delegate :save_submission_details, :get_submission_reference, :requested_email_confirmation?, :clear_submission_details, to: :confirmation_details_store
 
-    def save_step(step)
-      return false unless step.valid?
+    def save_step(step, context: nil)
+      return false unless step.valid?(context)
 
       step.save_to_store(@answer_store)
     end

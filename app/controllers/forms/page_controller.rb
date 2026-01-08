@@ -10,18 +10,22 @@ module Forms
 
     def show
       return redirect_to form_page_path(@form.id, @form.form_slug, current_context.next_page_slug) unless current_context.can_visit?(@step.id)
-      return redirect_to review_file_page if answered_file_question?
+      return redirect_to review_file_page if @step.answered_file_question?
 
-      back_link(@step.id)
       setup_instance_vars_for_view
     end
 
     def save
       page_params = params.fetch(:question, {}).permit(*@step.params)
-      @step.update!(page_params)
+      @step.assign_question_attributes(page_params)
 
-      if current_context.save_step(@step)
-        current_context.clear_submission_details if is_first_page?
+      current_context.clear_submission_details if is_first_page?
+
+      validation_context = @step.autocomplete_selection_question? ? :skip_none_of_the_above_question_validation : nil
+      if current_context.save_step(@step, context: validation_context)
+        # Redirect before logging when the question has multiple pages so that we don't send multiple form started
+        # metrics to CloudWatch if this is the first question.
+        return redirect_to selection_none_of_the_above_page if redirect_to_none_of_the_above_page?
 
         unless mode.preview?
           LogEventService.new(current_context, @step, request, changing_existing_answer, page_params).log_page_save
@@ -56,9 +60,17 @@ module Forms
     end
 
     def setup_instance_vars_for_view
-      @is_question = true
-      @question_edit_link = "#{Settings.forms_admin.base_url}/forms/#{@form.id}/pages-by-external-id/#{@step.id}/edit-question"
+      @question_edit_link = question_edit_link
       @save_url = save_url
+      @back_link = back_link(@step.id)
+    end
+
+    def question_edit_link
+      "#{Settings.forms_admin.base_url}/forms/#{@form.id}/pages-by-external-id/#{@step.id}/edit-question"
+    end
+
+    def save_url
+      save_form_page_path(@form.id, @form.form_slug, @step.id, changing_existing_answer: @changing_existing_answer, answer_index:)
     end
 
     def changing_existing_answer
@@ -66,34 +78,41 @@ module Forms
     end
 
     def back_link(page_slug)
-      previous_step = current_context.previous_step(page_slug)
+      return check_your_answers_path(form_id: current_context.form.id) if changing_existing_answer
 
-      if changing_existing_answer
-        @back_link = check_your_answers_path(form_id: current_context.form.id)
-      elsif previous_step
-        @back_link = previous_step.repeatable? ? add_another_answer_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug, page_slug: previous_step.id) : form_page_path(@form.id, @form.form_slug, previous_step.page_id)
+      previous_step = current_context.previous_step(page_slug)
+      return nil unless previous_step
+
+      if previous_step.repeatable?
+        add_another_answer_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug, page_slug: previous_step.id)
+      else
+        form_page_path(@form.id, @form.form_slug, previous_step.page_id)
       end
     end
 
     def redirect_post_save
-      return redirect_to review_file_page, success: t("banner.success.file_uploaded") if answered_file_question?
+      return redirect_to review_file_page, success: t("banner.success.file_uploaded") if @step.answered_file_question?
       return redirect_to exit_page_path(form_id: @form.id, form_slug: @form.form_slug, page_slug: @step.id) if @step.exit_page_condition_matches?
 
       redirect_to next_page
     end
 
     def redirect_if_not_answered_file_question
-      unless @step.question.is_a?(Question::File) && @step.question.file_uploaded?
+      unless @step.answered_file_question?
         redirect_to form_page_path(@form.id, @form.form_slug, @step.id)
       end
     end
 
-    def answered_file_question?
-      @step.question.is_a?(Question::File) && @step.question.file_uploaded?
+    def redirect_to_none_of_the_above_page?
+      @step.autocomplete_selection_question? && @step.question.show_none_of_the_above_question?
     end
 
     def review_file_page
       review_file_path(form_id: @form.id, form_slug: @form.form_slug, page_slug: @step.id, changing_existing_answer:)
+    end
+
+    def selection_none_of_the_above_page
+      selection_none_of_the_above_path(form_id: @form.id, form_slug: @form.form_slug, page_slug: @step.id)
     end
 
     def next_page
@@ -165,10 +184,6 @@ module Forms
 
     def is_first_page?
       current_context.form.start_page.to_s == @step.id
-    end
-
-    def save_url
-      save_form_page_path(@form.id, @form.form_slug, @step.id, changing_existing_answer: @changing_existing_answer, answer_index:)
     end
   end
 end

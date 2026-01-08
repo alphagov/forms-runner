@@ -29,7 +29,7 @@ module CheckYourAnswersComponent
     def none_of_the_above_answer_row(step)
       question_name = step.question.none_of_the_above_question_text
       answer = step.question.none_of_the_above_answer
-      row(question_name:, answer:, change_link: change_link(step))
+      row(question_name:, answer:, change_link: none_of_the_above_change_link(step))
     end
 
     def row(question_name:, answer:, change_link:)
@@ -51,6 +51,14 @@ module CheckYourAnswersComponent
     def change_link(step)
       if step.repeatable? && step.show_answer.present?
         change_add_another_answer_path(mode: @mode, form_id: @form.id, form_slug: @form.form_slug, page_slug: step.id)
+      else
+        form_change_answer_path(mode: @mode, form_id: @form.id, form_slug: @form.form_slug, page_slug: step.id)
+      end
+    end
+
+    def none_of_the_above_change_link(step)
+      if step.autocomplete_selection_question?
+        change_selection_none_of_the_above_path(mode: @mode, form_id: @form.id, form_slug: @form.form_slug, page_slug: step.id)
       else
         form_change_answer_path(mode: @mode, form_id: @form.id, form_slug: @form.form_slug, page_slug: step.id)
       end

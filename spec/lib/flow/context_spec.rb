@@ -42,7 +42,7 @@ RSpec.describe Flow::Context do
         current_step = @context.find_or_create(@context.next_page_slug)
 
         input[:answers].each do |answer|
-          current_step.update!(answer)
+          current_step.assign_question_attributes(answer)
           @context.save_step(current_step)
           next_page_slug = current_step.next_page_slug
           break if next_page_slug.nil?
@@ -84,7 +84,7 @@ RSpec.describe Flow::Context do
       # submit an answer to our page
       context1 = described_class.new(form:, store:)
       current_step = context1.find_or_create("1")
-      current_step.update!({ text: "This is a text answer" })
+      current_step.assign_question_attributes({ text: "This is a text answer" })
       context1.save_step(current_step)
 
       # change the page's answer_type to another value

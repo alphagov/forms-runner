@@ -429,6 +429,97 @@ RSpec.describe Question::Selection, type: :model do
         end
       end
     end
+
+    context "when there are more than 30 selection options and none of the above is selected" do
+      let(:selection_options) { Array.new(31).map { |i| OpenStruct.new(name: "Option #{i}", value: "Option #{i}") } }
+      let(:none_of_the_above_question_is_optional) { "false" }
+
+      before do
+        question.with_none_of_the_above_selected
+      end
+
+      it "does not validate the none_of_the_above_answer when the validation context is skip_none_of_the_above_question_validation" do
+        expect(question.valid?(:skip_none_of_the_above_question_validation)).to be true
+        expect(question.errors[:none_of_the_above_answer]).to be_empty
+      end
+
+      it "validates the none_of_the_above_answer when there is no validation context" do
+        expect(question).to be_invalid
+        expect(question.errors[:none_of_the_above_answer]).to include(I18n.t("activemodel.errors.models.question/selection.attributes.none_of_the_above_answer.blank"))
+      end
+
+      context "when the none of the above question is optional" do
+        let(:none_of_the_above_question_is_optional) { "true" }
+
+        it "is valid when the none_of_the_above_answer is not present in the none_of_the_above_page context" do
+          expect(question.valid?(:none_of_the_above_page)).to be true
+          expect(question.errors[:none_of_the_above_answer]).to be_empty
+        end
+      end
+    end
+  end
+
+  describe "#answered?" do
+    context "when there is a none of the above question configured" do
+      subject(:question) do
+        build(:single_selection_question,
+              :with_none_of_the_above_question,
+              selection_options:,
+              none_of_the_above_question_is_optional: "true",
+              selection:)
+      end
+
+      context "when 'None of the above' is selected" do
+        let(:selection) { I18n.t("page.none_of_the_above") }
+
+        it "returns false when no none_of_the_above_answer is present" do
+          question.none_of_the_above_answer = nil
+          expect(question.answered?).to be false
+        end
+
+        it "returns true when a none_of_the_above_answer is present" do
+          question.none_of_the_above_answer = "Some answer"
+          expect(question.answered?).to be true
+        end
+
+        it "returns true when a none_of_the_above_answer is present and blank" do
+          question.none_of_the_above_answer = ""
+          expect(question.answered?).to be true
+        end
+      end
+
+      context "when 'None of the above' is not selected" do
+        context "when an answer is present" do
+          let(:selection) { "option 1" }
+
+          it "returns true" do
+            expect(question.answered?).to be true
+          end
+        end
+
+        context "when an answer is not present" do
+          let(:selection) { nil }
+
+          it "returns false" do
+            expect(question.answered?).to be false
+          end
+        end
+      end
+    end
+
+    context "when there is no none of the above question configured" do
+      subject(:question) do
+        build(:single_selection_question, selection_options:, selection:)
+      end
+
+      context "when 'None of the above' is selected" do
+        let(:selection) { I18n.t("page.none_of_the_above") }
+
+        it "returns true" do
+          expect(question.answered?).to be true
+        end
+      end
+    end
   end
 
   describe "#selection_options_with_none_of_the_above" do
@@ -487,8 +578,12 @@ RSpec.describe Question::Selection, type: :model do
 
     context "when there is a none of the above question configured" do
       subject(:question) do
-        build(:selection, :with_none_of_the_above_question, only_one_option:, selection_options:, is_optional:,
-                                                            none_of_the_above_question_is_optional:)
+        build(:selection,
+              :with_none_of_the_above_question,
+              only_one_option:,
+              selection_options:,
+              is_optional:,
+              none_of_the_above_question_is_optional:)
       end
 
       let(:none_of_the_above_question_is_optional) { "true" }

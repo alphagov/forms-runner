@@ -48,9 +48,8 @@ class Step
     self
   end
 
-  def update!(params)
+  def assign_question_attributes(params)
     question.assign_attributes(params)
-    question.valid?
   end
 
   def params
@@ -117,6 +116,14 @@ class Step
 
   def exit_page_condition_matches?
     first_condition_matches? && has_exit_page_condition?
+  end
+
+  def answered_file_question?
+    question.is_a?(Question::File) && question.file_uploaded?
+  end
+
+  def autocomplete_selection_question?
+    question.is_a?(Question::Selection) && question.autocomplete_component?
   end
 
 private

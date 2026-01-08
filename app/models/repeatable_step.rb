@@ -59,8 +59,8 @@ class RepeatableStep < Step
     questions.length >= MAX_ANSWERS
   end
 
-  def valid?
-    questions.all?(&:valid?)
+  def valid?(context = nil)
+    questions.all? { |q| q.valid?(context) }
   end
 
   def show_answer
