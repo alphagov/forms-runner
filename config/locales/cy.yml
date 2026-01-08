@@ -421,6 +421,7 @@ cy:
     legend:
       email_confirmation_input:
         send_confirmation: Ydych chi eisiau derbyn e-bost yn cadarnhau bod eich ffurflen wedi’i chyflwyno?
+  language_name: Cymraeg
   layout:
     skip_link: Neidio i’r prif gynnwys
   mailer:
