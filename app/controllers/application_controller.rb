@@ -92,7 +92,13 @@ private
     SessionHasher.new(request).request_to_session_hash
   end
 
+  def set_available_languages
+    @available_languages = I18n.available_locales
+  end
+
   def set_locale(&action)
+    set_available_languages
+
     I18n.with_locale(locale, &action)
   end
 
