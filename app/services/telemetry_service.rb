@@ -67,9 +67,10 @@ class TelemetryService
   # Create a custom span for wrapping important operations
   # Usage: TelemetryService.trace('operation.name', attributes: {...}) { ... }
   def self.trace(span_name, attributes: {}, &block)
-    return yield unless defined?(OpenTelemetry)
+    return yield(NoOpSpan.new) unless defined?(OpenTelemetry)
 
-    tracer = OpenTelemetry.tracer_provider.tracer("forms-runner", version: "1.0")
+    # Get tracer
+    tracer = OpenTelemetry.tracer_provider.tracer("forms-runner")
 
     # Sanitize attributes to ensure they're primitives
     sanitized = attributes.compact.transform_values { |v| sanitize_attribute_value(v) }
@@ -77,7 +78,9 @@ class TelemetryService
     tracer.in_span(span_name, attributes: sanitized, &block)
   rescue StandardError => e
     Sentry.capture_exception(e) if defined?(Sentry)
-    yield # Still execute the block even if tracing fails
+    # If tracing fails, still execute the block with a no-op span
+    # This ensures business logic runs even if telemetry breaks
+    yield(NoOpSpan.new)
   end
 
   def self.current_span
@@ -98,4 +101,17 @@ class TelemetryService
     end
   end
   private_class_method :sanitize_attribute_value
+
+  # No-op span that safely ignores all method calls
+  # Used as a fallback when tracing is disabled or fails
+  class NoOpSpan
+    def method_missing(method_name, *args, **kwargs, &block)
+      # Silently ignore all method calls (set_attribute, add_event, etc.)
+      nil
+    end
+
+    def respond_to_missing?(method_name, include_private = false)
+      true
+    end
+  end
 end
