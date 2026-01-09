@@ -17,23 +17,36 @@ class S3SubmissionService
     raise StandardError, "S3 bucket account ID is not set on the form" if @form.s3_bucket_aws_account_id.nil?
     raise StandardError, "S3 bucket region is not set on the form" if @form.s3_bucket_region.nil?
 
-    # We send the uploaded files before the submissions CSV so that processors can have automations run when the CSV
-    # file arrives and the referenced files will already be present
-    copy_uploaded_files_to_bucket
+    file_count = @journey.completed_file_upload_questions.count
 
-    submission_content, key =
-      case @form.submission_format
-      when %w[csv]
-        [generate_csv_submission, generate_key("form_submission.csv")]
-      when %w[json]
-        [generate_json_submission, generate_key("form_submission.json")]
-      else
-        raise StandardError, "Unsupported submission format: #{@form.submission_format.inspect}"
-      end
+    TelemetryService.trace("submission.s3.upload", attributes: {
+      "s3.bucket" => @form.s3_bucket_name,
+      "s3.region" => @form.s3_bucket_region,
+      "submission.format" => @form.submission_format.join(","),
+      "submission.reference" => @submission_reference,
+      "submission.file_count" => file_count,
+    }) do |span|
+      # We send the uploaded files before the submissions CSV so that processors can have automations run when the CSV
+      # file arrives and the referenced files will already be present
+      copy_uploaded_files_to_bucket
 
-    upload_submission_to_s3(submission_content, key)
+      submission_content, key =
+        case @form.submission_format
+        when %w[csv]
+          [generate_csv_submission, generate_key("form_submission.csv")]
+        when %w[json]
+          [generate_json_submission, generate_key("form_submission.json")]
+        else
+          raise StandardError, "Unsupported submission format: #{@form.submission_format.inspect}"
+        end
 
-    delete_uploaded_files_from_our_bucket
+      span.set_attribute("submission.size_bytes", submission_content.bytesize)
+      span.set_attribute("s3.key", key)
+
+      upload_submission_to_s3(submission_content, key)
+
+      delete_uploaded_files_from_our_bucket
+    end
   end
 
 private
