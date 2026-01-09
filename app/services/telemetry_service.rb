@@ -12,7 +12,7 @@ class TelemetryService
 
     # Ensure all values are primitives (string, number, boolean, nil)
     sanitized = attrs.compact.transform_values { |v| sanitize_attribute_value(v) }
-    current_span.set_attributes(sanitized.transform_keys(&:to_s))
+    current_span.add_attributes(sanitized.transform_keys(&:to_s))
   rescue StandardError => e
     Sentry.capture_exception(e) if defined?(Sentry)
   end
@@ -34,7 +34,7 @@ class TelemetryService
     }.compact
 
     sanitized = attrs.transform_values { |v| sanitize_attribute_value(v) }
-    current_span.set_attributes(sanitized)
+    current_span.add_attributes(sanitized)
   rescue StandardError => e
     Sentry.capture_exception(e) if defined?(Sentry)
   end
@@ -50,7 +50,7 @@ class TelemetryService
     }
 
     sanitized = attrs.transform_values { |v| sanitize_attribute_value(v) }
-    current_span.set_attributes(sanitized)
+    current_span.add_attributes(sanitized)
   rescue StandardError => e
     # Silently fail - don't break the app if telemetry has issues
     Sentry.capture_exception(e) if defined?(Sentry)
@@ -105,12 +105,12 @@ class TelemetryService
   # No-op span that safely ignores all method calls
   # Used as a fallback when tracing is disabled or fails
   class NoOpSpan
-    def method_missing(method_name, *args, **kwargs, &block)
+    def method_missing(_method_name, *_args, **_kwargs, &_block)
       # Silently ignore all method calls (set_attribute, add_event, etc.)
       nil
     end
 
-    def respond_to_missing?(method_name, include_private = false)
+    def respond_to_missing?(_method_name, _include_private = false)
       true
     end
   end
