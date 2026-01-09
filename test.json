@@ -1,0 +1,37 @@
+ {
+  "cluster": "arn:aws:ecs:eu-west-2:498160065950:cluster/forms-dev",
+  "taskDefinition": "arn:aws:ecs:eu-west-2:498160065950:task-definition/dev_forms-runner:2302",
+  "count": 1,
+  "launchType": "FARGATE",
+  "overrides": {
+    "containerOverrides": [
+      {
+        "name": "forms-runner
+aws-otel-collector",
+        "command": [
+          "rake",
+          "db:migrate"
+        ],
+        "environment": [
+          {
+            "name": "VERBOSE",
+            "value": "true"
+          }
+        ]
+      }
+    ]
+  },
+  "networkConfiguration": {
+    "awsvpcConfiguration": {
+      "subnets": [
+        "subnet-030052b4ca48d34b0",
+        "subnet-04c8edf6108a7f220",
+        "subnet-0ef9b39314732cebc"
+      ],
+      "securityGroups": [
+        "sg-0d9e6335679f29e70"
+      ],
+      "assignPublicIp": "DISABLED"
+    }
+  }
+}

@@ -17,5 +17,5 @@ OpenTelemetry::SDK.configure do |c|
   # The X-Ray Propagator injects the X-Ray Tracing Header into downstream calls
   c.propagators = [OpenTelemetry::Propagator::XRay::TextMapPropagator.new]
 
-  c.use_all()
+  c.use_all { 'OpenTelemetry::Instrumentation::Rack' => { untraced_endpoints: ['/up'] } }
 end
