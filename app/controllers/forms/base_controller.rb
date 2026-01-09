@@ -23,6 +23,14 @@ module Forms
       super
       CurrentRequestLoggingAttributes.form_name = @form.name
       CurrentRequestLoggingAttributes.preview = mode.preview?
+
+      # Add form-level attributes to OpenTelemetry span
+      TelemetryService.set_request_attributes({
+        "form.name" => @form.name,
+        "form.slug" => @form.form_slug,
+        "mode.type" => mode.mode,
+        "mode.preview" => mode.preview?,
+      })
     end
 
   private

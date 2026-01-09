@@ -35,6 +35,16 @@ class ApplicationController < ActionController::Base
     CurrentRequestLoggingAttributes.page_slug = params[:page_slug] if params[:page_slug].present?
     CurrentRequestLoggingAttributes.session_id_hash = session_id_hash
     CurrentRequestLoggingAttributes.trace_id = request.env["HTTP_X_AMZN_TRACE_ID"] if request.env["HTTP_X_AMZN_TRACE_ID"].present?
+
+    # Add same attributes to OpenTelemetry span for journey tracking
+    TelemetryService.set_request_attributes({
+      "session.id_hash" => session_id_hash,
+      "request.host" => request.host,
+      "request.id" => request.request_id,
+      "form.id" => params[:form_id],
+      "page.id" => params[:page_slug]&.match(Page::PAGE_ID_REGEX) ? params[:page_slug] : nil,
+      "page.slug" => params[:page_slug],
+    })
   end
 
   def log_rescued_exception(exception)
