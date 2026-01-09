@@ -10,7 +10,9 @@ class TelemetryService
   def self.set_request_attributes(attrs)
     return unless defined?(OpenTelemetry)
 
-    current_span.set_attributes(attrs.compact.transform_keys(&:to_s))
+    # Ensure all values are primitives (string, number, boolean, nil)
+    sanitized = attrs.compact.transform_values { |v| sanitize_attribute_value(v) }
+    current_span.set_attributes(sanitized.transform_keys(&:to_s))
   rescue StandardError => e
     Sentry.capture_exception(e) if defined?(Sentry)
   end
@@ -20,7 +22,7 @@ class TelemetryService
   def self.set_question_attributes(step, form)
     return unless defined?(OpenTelemetry)
 
-    current_span.set_attributes({
+    attrs = {
       "question.type" => step.question.class.name,
       "question.id" => step.page_id,
       "question.text" => step.question_text,
@@ -29,7 +31,10 @@ class TelemetryService
       "question.is_optional" => step.question.is_optional?,
       "question.is_repeatable" => step.repeatable?,
       "form.submission_type" => form.submission_type,
-    }.compact)
+    }.compact
+
+    sanitized = attrs.transform_values { |v| sanitize_attribute_value(v) }
+    current_span.set_attributes(sanitized)
   rescue StandardError => e
     Sentry.capture_exception(e) if defined?(Sentry)
   end
@@ -37,12 +42,15 @@ class TelemetryService
   def self.record_validation_failure(step)
     return unless defined?(OpenTelemetry)
 
-    current_span.set_attributes({
+    attrs = {
       "validation.failed" => true,
       "validation.error_count" => step.question.errors.count,
       "validation.errors" => step.question.errors.full_messages.join(", "),
       "validation.error_attributes" => step.question.errors.attribute_names.map(&:to_s).join(", "),
-    })
+    }
+
+    sanitized = attrs.transform_values { |v| sanitize_attribute_value(v) }
+    current_span.set_attributes(sanitized)
   rescue StandardError => e
     # Silently fail - don't break the app if telemetry has issues
     Sentry.capture_exception(e) if defined?(Sentry)
@@ -63,7 +71,10 @@ class TelemetryService
 
     tracer = OpenTelemetry.tracer_provider.tracer("forms-runner", version: "1.0")
 
-    tracer.in_span(span_name, attributes: attributes, &block)
+    # Sanitize attributes to ensure they're primitives
+    sanitized = attributes.compact.transform_values { |v| sanitize_attribute_value(v) }
+
+    tracer.in_span(span_name, attributes: sanitized, &block)
   rescue StandardError => e
     Sentry.capture_exception(e) if defined?(Sentry)
     yield # Still execute the block even if tracing fails
@@ -73,4 +84,18 @@ class TelemetryService
     OpenTelemetry::Trace.current_span
   end
   private_class_method :current_span
+
+  # Sanitize attribute values to ensure they're primitives (String, Integer, Float, Boolean)
+  # OpenTelemetry requires attribute values to be primitives, not complex objects
+  def self.sanitize_attribute_value(value)
+    case value
+    when String, Integer, Float, TrueClass, FalseClass, NilClass
+      value
+    when Array
+      value.join(", ")
+    else
+      value.to_s
+    end
+  end
+  private_class_method :sanitize_attribute_value
 end

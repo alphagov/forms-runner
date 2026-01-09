@@ -28,7 +28,7 @@ module Forms
       TelemetryService.set_request_attributes({
         "form.name" => @form.name,
         "form.slug" => @form.form_slug,
-        "mode.type" => mode.mode,
+        "mode.type" => mode.to_s,
         "mode.preview" => mode.preview?,
       })
     end
