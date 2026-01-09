@@ -1,5 +1,8 @@
 require 'opentelemetry/sdk'
 require 'opentelemetry/instrumentation/all'
+
+return unless defined?(Rails::Server) || ENV['ENABLE_OTEL'] == 'true'
+
 OpenTelemetry::SDK.configure do |c|
   c.service_name = 'forms-runner'
 
