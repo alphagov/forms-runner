@@ -15,6 +15,14 @@ module Forms
       setup_instance_vars_for_view
     end
 
+    def change
+      return redirect_to form_page_path(@form.id, @form.form_slug, current_context.next_page_slug) unless current_context.can_visit?(@step.id)
+      return redirect_to review_file_page if @step.answered_file_question?
+
+      setup_instance_vars_for_view
+      render :show
+    end
+
     def save
       page_params = params.fetch(:question, {}).permit(*@step.params)
       @step.assign_question_attributes(page_params)

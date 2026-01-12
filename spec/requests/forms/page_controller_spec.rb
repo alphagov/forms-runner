@@ -160,23 +160,6 @@ RSpec.describe Forms::PageController, type: :request do
       end
     end
 
-    context "with a change answers page" do
-      it "Displays a back link to the check your answers page" do
-        get form_change_answer_path(form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id, mode:)
-        expect(response.body).to include(check_your_answers_path(2, form_data.form_slug, mode:))
-      end
-
-      it "Passes the changing answers parameter in its submit request" do
-        get form_change_answer_path(form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id, mode:)
-        expect(response.body).to include(save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id, changing_existing_answer: true, answer_index: 1))
-      end
-
-      it_behaves_like "a translatable page" do
-        let(:english_url) { form_change_answer_path(form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id, mode:, locale: "en") }
-        let(:welsh_url) { form_change_answer_path(form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id, mode:, locale: "cy") }
-      end
-    end
-
     context "with no questions answered" do
       it "redirects if a later page is requested" do
         get check_your_answers_path(2, form_data.form_slug, mode:)
@@ -205,8 +188,25 @@ RSpec.describe Forms::PageController, type: :request do
       it "includes the language switcher" do
         get english_url
         expect(response.body).to include(I18n.t("language_switcher.nav_label"))
-        expect(response.body).to include(welsh_url)
+        expect(response.body).to include("href=\"#{welsh_url}\"")
       end
+    end
+  end
+
+  shared_examples "a change answer page" do
+    it "Displays a back link to the check your answers page" do
+      get form_change_answer_path(form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id, mode:)
+      expect(response.body).to include(check_your_answers_path(2, form_data.form_slug, mode:))
+    end
+
+    it "Passes the changing answers parameter in its submit request" do
+      get form_change_answer_path(form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id, mode:)
+      expect(response.body).to include(save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id, changing_existing_answer: true, answer_index: 1))
+    end
+
+    it_behaves_like "a translatable page" do
+      let(:english_url) { form_change_answer_path(form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id, mode:, locale: "en") }
+      let(:welsh_url) { form_change_answer_path(form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id, mode:, locale: "cy") }
     end
   end
 
@@ -443,6 +443,239 @@ RSpec.describe Forms::PageController, type: :request do
     end
 
     it_behaves_like "a translatable page"
+  end
+
+  describe "#change" do
+    context "with preview mode on" do
+      let(:api_url_suffix) { "/draft" }
+      let(:mode) { "preview-draft" }
+
+      it_behaves_like "ordered steps"
+
+      it_behaves_like "page with footer"
+
+      it_behaves_like "question page"
+
+      it_behaves_like "a change answer page"
+    end
+
+    context "with preview mode off" do
+      let(:api_url_suffix) { "/live" }
+      let(:mode) { "form" }
+
+      [
+        "/form/2/1/check_your_answers_trailing",
+        "/form/2/1/leading_check_your_answers",
+        "/form/2/1/1/check_your_answers",
+        "/form/2/1/1/ChEck_YouR_aNswers",
+        "/form/2/1/1/%20123",
+        "/form/2/1/__",
+        "/form/2/1/debug.cgi",
+        "/form/2/1/hsqldb%0A",
+        "/form/2/1/index_sso.php",
+        "/form/2/1/setup.php",
+        "/form/2/1/test.cgi",
+        "/form/2/1/x",
+        "/form/2/1/toolongforanid0",
+      ].each do |path|
+        context "with an invalid URL: #{path}" do
+          before do
+            allow(Sentry).to receive(:capture_exception)
+            get path
+          end
+
+          it "returns a 404" do
+            expect(response).to have_http_status(:not_found)
+          end
+
+          it "does not send an exception to sentry" do
+            expect(Sentry).not_to have_received(:capture_exception)
+          end
+        end
+      end
+
+      it_behaves_like "ordered steps"
+
+      it_behaves_like "page with footer"
+
+      it_behaves_like "question page"
+
+      it_behaves_like "a change answer page"
+    end
+
+    context "when viewing a live form with no routing_conditions" do
+      let(:mode) { "preview-live" }
+
+      let(:first_step_in_form) do
+        step_without_routing_conditions = attributes_for(:v2_question_page_step, :with_text_settings,
+                                                         id: 1,
+                                                         next_step_id: 2,
+                                                         is_optional: false).except(:routing_conditions)
+
+        DataStruct.new(step_without_routing_conditions)
+      end
+
+      it "Returns a 200" do
+        get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id)
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context "when page has routing conditions" do
+      let(:first_step_in_form) do
+        page_with_routing
+      end
+
+      let(:validation_errors) { [] }
+
+      let(:second_step_in_form) do
+        build :page, :with_text_settings,
+              id: 2,
+              next_step_id: 3,
+              is_optional:
+      end
+
+      let(:third_step_in_form) do
+        build :page, :with_text_settings,
+              id: 3,
+              is_optional:
+      end
+
+      let(:pages_data) { [third_step_in_form, first_step_in_form, second_step_in_form] }
+
+      let(:api_url_suffix) { "/draft" }
+      let(:mode) { "preview-draft" }
+
+      context "when the routing has a cannot_have_goto_page_before_routing_page error" do
+        let(:pages_data) { [first_step_in_form, second_step_in_form, third_step_in_form] }
+        let(:validation_errors) { [{ name: "cannot_have_goto_page_before_routing_page" }] }
+
+        it "returns a 422 response" do
+          get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id)
+          expect(response).to have_http_status(:unprocessable_content)
+        end
+
+        it "shows the error page" do
+          get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id)
+          link_url = "#{Settings.forms_admin.base_url}/forms/2/pages-by-external-id/1/routes"
+          question_number = first_step_in_form.position
+          expect(response.body).to include(I18n.t("errors.goto_page_routing_error.cannot_have_goto_page_before_routing_page.body_html", link_url:, question_number:))
+        end
+
+        it "logs an error event" do
+          expect(EventLogger).to receive(:log_page_event).with("goto_page_before_routing_page_error", first_step_in_form.data.question_text, nil)
+          get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id)
+        end
+
+        context "when the route is a secondary skip" do
+          let(:page_with_secondary_skip) do
+            build :v2_selection_question_page_step,
+                  id: 4,
+                  next_step_id: nil,
+                  skip_to_end: true,
+                  routing_conditions: [DataStruct.new(id: 2, routing_page_id: 4, check_page_id: 1, goto_page_id: 3, validation_errors:)],
+                  is_optional: false
+          end
+
+          let(:steps_data) { [third_step_in_form, first_step_in_form, second_step_in_form, page_with_secondary_skip] }
+
+          it "returns a 422 response" do
+            get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 4)
+            expect(response).to have_http_status(:unprocessable_content)
+          end
+
+          it "shows the error page" do
+            get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 4)
+            link_url = "#{Settings.forms_admin.base_url}/forms/2/pages-by-external-id/1/routes"
+            question_number = first_step_in_form.position
+            expect(response.body).to include(I18n.t("errors.goto_page_routing_error.cannot_have_goto_page_before_routing_page.body_html", link_url:, question_number:))
+          end
+        end
+      end
+
+      context "when the routing has a goto_page which does not exist" do
+        let(:pages_data) { [first_step_in_form, second_step_in_form, third_step_in_form] }
+        let(:validation_errors) { [{ name: "goto_page_doesnt_exist" }] }
+
+        it "returns a 422 response" do
+          get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id)
+          expect(response).to have_http_status(:unprocessable_content)
+        end
+
+        it "shows the error page" do
+          get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id)
+          link_url = "#{Settings.forms_admin.base_url}/forms/2/pages-by-external-id/1/routes"
+          question_number = first_step_in_form.position
+          expect(response.body).to include(I18n.t("errors.goto_page_routing_error.goto_page_doesnt_exist.body_html", link_url:, question_number:))
+        end
+
+        it "logs an error event" do
+          expect(EventLogger).to receive(:log_page_event).with("goto_page_doesnt_exist_error", first_step_in_form.data.question_text, nil)
+          get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id)
+        end
+      end
+    end
+
+    context "when page is repeatable" do
+      let(:mode) { "form" }
+
+      let(:first_step_in_form) { build :v2_question_page_step, :with_repeatable, id: 1, next_step_id: second_step_in_form.id }
+
+      it "shows the page as normal when there are no stored answers" do
+        get form_page_path(mode:, form_id: form_data.form_id, form_slug: form_data.form_slug, page_slug: first_step_in_form.id, answer_index: 1)
+        expect(response).to have_http_status(:ok)
+      end
+
+      it "returns 404 when given an invalid answer_index" do
+        get form_page_path(mode:, form_id: form_data.form_id, form_slug: form_data.form_slug, page_slug: first_step_in_form.id, answer_index: 12)
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
+    context "when the page is a file upload question" do
+      let(:first_step_in_form) do
+        build :v2_question_page_step,
+              id: 1,
+              next_step_id: 2,
+              answer_type: "file",
+              is_optional: true
+      end
+
+      before do
+        allow(Flow::Context).to receive(:new).and_wrap_original do |original_method, *args|
+          context_spy = original_method.call(form: args[0][:form], store:)
+          context_spy
+        end
+        get form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id)
+      end
+
+      context "when the question has already been answered" do
+        let(:store) do
+          {
+            answers: {
+              form_data.form_id.to_s => {
+                first_step_in_form.id.to_s => {
+                  "original_filename" => "foo.png",
+                  "uploaded_file_key" => "bar",
+                },
+              },
+            },
+          }
+        end
+
+        it "redirects to the review file route" do
+          expect(response).to redirect_to review_file_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id)
+        end
+      end
+
+      context "when the question hasn't been answered" do
+        let(:store) { { answers: {} } }
+
+        it "renders the show page template" do
+          expect(response).to render_template("forms/page/show")
+        end
+      end
+    end
   end
 
   describe "#save" do
