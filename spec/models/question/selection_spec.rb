@@ -3,10 +3,16 @@ require "rails_helper"
 RSpec.describe Question::Selection, type: :model do
   subject(:question) { build :selection, only_one_option:, selection_options:, is_optional:, question_text: }
 
-  # We use different values for name and value to make it clear which is which in the tests.
-  # Name would be the text in current locale and value doesn't change between locales.
-  # For English forms they would be the same, but for Welsh forms they would be different.
-  let(:selection_options) { [OpenStruct.new({ name: "display option 1", value: "option 1" }), OpenStruct.new({ name: "display option 2", value: "option 2" })] }
+  # For an English form the name and value are the same, for Welsh forms they would be different.
+  # For form translations the name is the text in the current locale, but the value is always equal
+  # to the name in the English form, i.e. the value doesn't change between locales.
+  # The name is rendered for form fillers, but the value is stored.
+  # For form processors we always want to show the English text, but we use the English form document
+  # when generating submssions so the behaviour with the Welsh translation shouldn't matter.
+  let(:selection_options) { cy_selection_options }
+  let(:en_selection_options) { [OpenStruct.new({ name: "Option 1", value: "Option 1" }), OpenStruct.new({ name: "Option 2", value: "Option 2" })] }
+  let(:cy_selection_options) { [OpenStruct.new({ name: "Opsiwn 1", value: "Option 1" }), OpenStruct.new({ name: "Opsiwn 2", value: "Option 2" })] }
+
   let(:is_optional) { false }
   let(:only_one_option) { "false" }
   let(:question_text) { Faker::Lorem.question }
@@ -67,39 +73,47 @@ RSpec.describe Question::Selection, type: :model do
 
     context "when selection has a value" do
       before do
-        question.selection = ["option 1"]
+        question.selection = ["Option 1"]
       end
 
       it "shows the answer" do
-        expect(question.show_answer).to eq("display option 1")
+        expect(question.show_answer).to eq("Opsiwn 1")
       end
 
-      it "shows the answer in show_answer_in_csv" do
-        expect(question.show_answer_in_csv).to eq(Hash[question_text, "display option 1"])
-      end
+      context "when creating a submission for a form processor" do
+        let(:selection_options) { en_selection_options }
 
-      it "returns a hash for show_answer_in_json" do
-        expect(question.show_answer_in_json).to eq({
-          selections: ["option 1"],
-          answer_text: "display option 1",
-        })
+        it "shows the answer" do
+          expect(question.show_answer).to eq("Option 1")
+        end
+
+        it "shows the answer in show_answer_in_csv" do
+          expect(question.show_answer_in_csv).to eq(Hash[question_text, "Option 1"])
+        end
+
+        it "returns a hash for show_answer_in_json" do
+          expect(question.show_answer_in_json).to eq({
+            selections: ["Option 1"],
+            answer_text: "Option 1",
+          })
+        end
       end
     end
 
     it "returns invalid when selection is not one of the options" do
-      question.selection = ["option 1000"]
+      question.selection = ["Option 1000"]
       expect(question).not_to be_valid
       expect(question.errors[:selection]).to include(I18n.t("activemodel.errors.models.question/selection.attributes.selection.inclusion"))
     end
 
     it "returns valid with one item selected" do
-      question.selection = ["option 1"]
+      question.selection = ["Option 1"]
       expect(question).to be_valid
       expect(question.errors[:selection]).to be_empty
     end
 
     it "returns valid with two items selected" do
-      question.selection = ["option 1", "option 2"]
+      question.selection = ["Option 1", "Option 2"]
       expect(question).to be_valid
       expect(question.errors[:selection]).to be_empty
     end
@@ -144,7 +158,7 @@ RSpec.describe Question::Selection, type: :model do
       end
 
       it "returns invalid with both an item and none selected" do
-        question.selection = ["option 1", I18n.t("page.none_of_the_above")]
+        question.selection = ["Option 1", I18n.t("page.none_of_the_above")]
         expect(question).not_to be_valid
         expect(question.errors[:selection]).to include(I18n.t("activemodel.errors.models.question/selection.attributes.selection.both_none_and_value_selected"))
       end
@@ -155,22 +169,30 @@ RSpec.describe Question::Selection, type: :model do
 
       context "when selection has a value" do
         before do
-          question.selection = ["option 1"]
+          question.selection = ["Option 1"]
         end
 
         it "shows the answer" do
-          expect(question.show_answer).to eq("display option 1")
+          expect(question.show_answer).to eq("Opsiwn 1")
         end
 
-        it "shows the answer in show_answer_in_csv" do
-          expect(question.show_answer_in_csv).to eq(Hash[question_text, "display option 1"])
-        end
+        context "when creating a submission for a form processor" do
+          let(:selection_options) { en_selection_options }
 
-        it "returns a hash for show_answer_in_json" do
-          expect(question.show_answer_in_json).to eq({
-            selections: ["option 1"],
-            answer_text: "display option 1",
-          })
+          it "shows the answer" do
+            expect(question.show_answer).to eq("Option 1")
+          end
+
+          it "shows the answer in show_answer_in_csv" do
+            expect(question.show_answer_in_csv).to eq(Hash[question_text, "Option 1"])
+          end
+
+          it "returns a hash for show_answer_in_json" do
+            expect(question.show_answer_in_json).to eq({
+              selections: ["Option 1"],
+              answer_text: "Option 1",
+            })
+          end
         end
       end
     end
@@ -213,32 +235,40 @@ RSpec.describe Question::Selection, type: :model do
 
     context "when selection has a value" do
       before do
-        question.selection = "option 1"
+        question.selection = "Option 1"
       end
 
       it "shows the answer" do
-        expect(question.show_answer).to eq("display option 1")
+        expect(question.show_answer).to eq("Opsiwn 1")
       end
 
-      it "shows the answer in show_answer_in_csv" do
-        expect(question.show_answer_in_csv).to eq(Hash[question_text, "display option 1"])
-      end
+      context "when creting a submission for a form form processor" do
+        let(:selection_options) { en_selection_options }
 
-      it "returns a hash for show_answer_in_json" do
-        expect(question.show_answer_in_json).to eq({
-          answer_text: "display option 1",
-        })
+        it "shows the answer" do
+          expect(question.show_answer).to eq("Option 1")
+        end
+
+        it "shows the answer in show_answer_in_csv" do
+          expect(question.show_answer_in_csv).to eq(Hash[question_text, "Option 1"])
+        end
+
+        it "returns a hash for show_answer_in_json" do
+          expect(question.show_answer_in_json).to eq({
+            answer_text: "Option 1",
+          })
+        end
       end
     end
 
     it "returns invalid when selection is not one of the options" do
-      question.selection = "option 1000"
+      question.selection = "Option 1000"
       expect(question).not_to be_valid
       expect(question.errors[:selection]).to include(I18n.t("activemodel.errors.models.question/selection.attributes.selection.inclusion"))
     end
 
     it "returns valid with one item selected" do
-      question.selection = "option 1"
+      question.selection = "Option 1"
       expect(question).to be_valid
       expect(question.errors[:selection]).to be_empty
     end
@@ -283,21 +313,29 @@ RSpec.describe Question::Selection, type: :model do
 
       context "when selection has a value" do
         before do
-          question.selection = "option 1"
+          question.selection = "Option 1"
         end
 
         it "shows the answer" do
-          expect(question.show_answer).to eq("display option 1")
+          expect(question.show_answer).to eq("Opsiwn 1")
         end
 
-        it "shows the answer in show_answer_in_csv" do
-          expect(question.show_answer_in_csv).to eq(Hash[question_text, "display option 1"])
-        end
+        context "when creating a submission for a form processor" do
+          let(:selection_options) { en_selection_options }
 
-        it "returns a hash for show_answer_in_json" do
-          expect(question.show_answer_in_json).to eq({
-            answer_text: "display option 1",
-          })
+          it "shows the answer" do
+            expect(question.show_answer).to eq("Option 1")
+          end
+
+          it "shows the answer in show_answer_in_csv" do
+            expect(question.show_answer_in_csv).to eq(Hash[question_text, "Option 1"])
+          end
+
+          it "returns a hash for show_answer_in_json" do
+            expect(question.show_answer_in_json).to eq({
+              answer_text: "Option 1",
+            })
+          end
         end
       end
     end
@@ -336,7 +374,7 @@ RSpec.describe Question::Selection, type: :model do
 
           context "when 'None of the above' is not selected" do
             it "clears the none_of_the_above_answer before validating" do
-              question.selection = ["option 1"]
+              question.selection = ["Option 1"]
               question.none_of_the_above_answer = "Some answer"
               expect(question).to be_valid
               expect(question.none_of_the_above_answer).to be_nil
@@ -367,7 +405,7 @@ RSpec.describe Question::Selection, type: :model do
 
           context "when 'None of the above' is not selected" do
             before do
-              question.selection = ["option 1"]
+              question.selection = ["Option 1"]
             end
 
             it "is valid when there is no none_of_the_above_answer" do
@@ -413,7 +451,7 @@ RSpec.describe Question::Selection, type: :model do
 
         context "when 'None of the above' is not selected" do
           before do
-            question.selection = "option 1"
+            question.selection = "Option 1"
           end
 
           it "is valid when there is no none_of_the_above_answer" do
@@ -490,7 +528,7 @@ RSpec.describe Question::Selection, type: :model do
 
       context "when 'None of the above' is not selected" do
         context "when an answer is present" do
-          let(:selection) { "option 1" }
+          let(:selection) { "Option 1" }
 
           it "returns true" do
             expect(question.answered?).to be true
