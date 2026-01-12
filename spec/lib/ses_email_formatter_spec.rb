@@ -6,6 +6,20 @@ RSpec.describe SesEmailFormatter do
     let(:text_step) { build :step, question: text_question }
     let(:name_question) { build :first_middle_last_name_question, question_text: "What is your name?" }
     let(:name_step) { build :step, question: name_question }
+    let(:none_of_the_above_question) do
+      build(
+        :selection,
+        :with_none_of_the_above_question,
+        question_text: "What sandwich do you want?",
+        none_of_the_above_question_text: "Specify your desired sandwich",
+        selection: "None of the above",
+        none_of_the_above_answer:,
+        none_of_the_above_question_is_optional:,
+      )
+    end
+    let(:none_of_the_above_answer) { "Cheese and pickle" }
+    let(:none_of_the_above_question_is_optional) { "false" }
+    let(:none_of_the_above_step) { build :step, question: none_of_the_above_question }
     let(:completed_steps) { [text_step] }
 
     context "when there is one step" do
@@ -60,6 +74,25 @@ RSpec.describe SesEmailFormatter do
       end
     end
 
+    context "when none of the above is selected in a none of the above question" do
+      let(:completed_steps) { [none_of_the_above_step] }
+
+      it "returns the sanitized answer including the none of the above answer" do
+        question_answers = described_class.new.build_question_answers_section_html(completed_steps)
+        expect(question_answers).to eq("<h3>What sandwich do you want?</h3><p>None of the above</p><h4>Specify your desired sandwich</h4><p>Cheese and pickle</p>")
+      end
+
+      context "when the none of the above question has no answer is provided" do
+        let(:none_of_the_above_answer) { nil }
+        let(:none_of_the_above_question_is_optional) { "true" }
+
+        it "returns the skipped none of the above answer text" do
+          question_answers = described_class.new.build_question_answers_section_html(completed_steps)
+          expect(question_answers).to eq("<h3>What sandwich do you want?</h3><p>None of the above</p><h4>Specify your desired sandwich (optional)</h4><p>[This question was skipped]</p>")
+        end
+      end
+    end
+
     context "when there is an error formatting an answer" do
       before do
         text_step.page.id = 99
@@ -79,6 +112,20 @@ RSpec.describe SesEmailFormatter do
     let(:text_step) { build :step, question: text_question }
     let(:name_question) { build :first_middle_last_name_question, question_text: "What is your name?" }
     let(:name_step) { build :step, question: name_question }
+    let(:none_of_the_above_question) do
+      build(
+        :selection,
+        :with_none_of_the_above_question,
+        question_text: "What sandwich do you want?",
+        none_of_the_above_question_text: "Specify your desired sandwich",
+        selection: "None of the above",
+        none_of_the_above_answer:,
+        none_of_the_above_question_is_optional:,
+      )
+    end
+    let(:none_of_the_above_answer) { "Cheese and pickle" }
+    let(:none_of_the_above_question_is_optional) { "false" }
+    let(:none_of_the_above_step) { build :step, question: none_of_the_above_question }
     let(:completed_steps) { [text_step] }
 
     context "when there is one step" do
@@ -129,6 +176,25 @@ RSpec.describe SesEmailFormatter do
 
           question_answers = described_class.new.build_question_answers_section_plain_text(completed_steps)
           expect(question_answers).to eq("What is the meaning of life?\n\n#{test_case[:output]}")
+        end
+      end
+    end
+
+    context "when none of the above is selected in a none of the above question" do
+      let(:completed_steps) { [none_of_the_above_step] }
+
+      it "returns the sanitized answer including the none of the above answer" do
+        question_answers = described_class.new.build_question_answers_section_plain_text(completed_steps)
+        expect(question_answers).to eq("What sandwich do you want?\n\nNone of the above\n\nSpecify your desired sandwich\n\nCheese and pickle")
+      end
+
+      context "when the none of the above question is optional and no answer is provided" do
+        let(:none_of_the_above_answer) { nil }
+        let(:none_of_the_above_question_is_optional) { "true" }
+
+        it "returns the skipped none of the above answer text" do
+          question_answers = described_class.new.build_question_answers_section_plain_text(completed_steps)
+          expect(question_answers).to eq("What sandwich do you want?\n\nNone of the above\n\nSpecify your desired sandwich (optional)\n\n[This question was skipped]")
         end
       end
     end

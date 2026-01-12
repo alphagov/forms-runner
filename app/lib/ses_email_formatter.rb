@@ -25,16 +25,32 @@ private
   end
 
   def prep_answer_text_html(step)
-    "<p>#{convert_newlines_to_html(prep_answer_text_plain_text(step))}</p>"
+    if step.question.try(:show_none_of_the_above_question?)
+      prep_html_none_of_the_above_answer_text(step)
+    else
+      "<p>#{convert_newlines_to_html(prep_answer_text(step))}</p>"
+    end
   rescue StandardError
     raise FormattingError, "could not format answer for question page #{step.id}"
+  end
+
+  def prep_html_none_of_the_above_answer_text(step)
+    [
+      "<p>#{convert_newlines_to_html(prep_answer_text(step))}</p>",
+      "<h4>#{convert_newlines_to_html(prep_none_of_the_above_question_text(step))}</h4>",
+      "<p>#{convert_newlines_to_html(prep_none_of_the_above_answer_text(step))}</p>",
+    ]
   end
 
   def prep_question_title_plain_text(step)
     step.question.question_text
   end
 
-  def prep_answer_text_plain_text(step)
+  def prep_none_of_the_above_question_text(step)
+    step.question.none_of_the_above_question_text
+  end
+
+  def prep_answer_text(step)
     answer = step.show_answer_in_email
 
     return "[#{I18n.t('mailer.submission.question_skipped')}]" if answer.blank?
@@ -42,6 +58,32 @@ private
     sanitize(answer)
   rescue StandardError
     raise FormattingError, "could not format answer for question page #{step.id}"
+  end
+
+  def prep_none_of_the_above_answer_text(step)
+    answer = step.question.none_of_the_above_answer
+
+    return "[#{I18n.t('mailer.submission.question_skipped')}]" if answer.blank?
+
+    sanitize(answer)
+  rescue StandardError
+    raise FormattingError, "could not format none of the above answer for question page #{step.id}"
+  end
+
+  def prep_answer_text_plain_text(step)
+    if none_of_the_above_question_selected?(step)
+      prep_plain_text_none_of_the_above_answer_text(step)
+    else
+      prep_answer_text(step)
+    end
+  end
+
+  def prep_plain_text_none_of_the_above_answer_text(step)
+    [
+      prep_answer_text(step),
+      prep_none_of_the_above_question_text(step),
+      prep_none_of_the_above_answer_text(step),
+    ].join("\n\n")
   end
 
   def sanitize(text)
@@ -55,5 +97,9 @@ private
 
   def convert_newlines_to_html(text)
     text.gsub("\n", "<br/>")
+  end
+
+  def none_of_the_above_question_selected?(step)
+    step.question.try(:show_none_of_the_above_question?)
   end
 end
