@@ -371,22 +371,67 @@ RSpec.describe Question::Selection, type: :model do
               expect(question.errors[:none_of_the_above_answer]).to include(I18n.t("activemodel.errors.models.question/selection.attributes.none_of_the_above_answer.too_long"))
             end
 
-            it "shows the none of the above answer as part of #show_answer_in_csv" do
-              question.none_of_the_above_answer = "Some answer"
-              expect(question.show_answer_in_csv).to eq(Hash[question.question_text, "None of the above - Some answer"])
-            end
+            context "when creating a submission for a form processor" do
+              let(:selection_options) { en_selection_options }
 
-            it "is blank where the none of the above answer would be as part of #show_answer_in_csv" do
-              expect(question.show_answer_in_csv).to eq(Hash[question.question_text, "None of the above - "])
+              context "when a different option has been entered" do
+                before do
+                  question.none_of_the_above_answer = "Some answer"
+                end
+
+                it "shows the none of the above answer as part of #show_answer_in_csv" do
+                  expect(question.show_answer_in_csv).to eq(Hash[question.question_text, "None of the above - Some answer"])
+                end
+
+                it "returns a hash with the none of the above answer for show_answer_in_json" do
+                  expect(question.show_answer_in_json).to eq({
+                    selections: ["None of the above"],
+                    none_of_the_above_answer: "Some answer",
+                    answer_text: "None of the above - Some answer",
+                  })
+                end
+              end
+
+              context "when a different option has not been entered" do
+                before do
+                  question.none_of_the_above_answer = ""
+                end
+
+                it "is blank where the none of the above answer would be as part of #show_answer_in_csv" do
+                  expect(question.show_answer_in_csv).to eq(Hash[question.question_text, "None of the above - "])
+                end
+
+                it "returns a hash with 'None of the above' for show_answer_in_json" do
+                  expect(question.show_answer_in_json).to eq({
+                    selections: ["None of the above"],
+                    none_of_the_above_answer: "",
+                    answer_text: "None of the above - ",
+                  })
+                end
+              end
             end
           end
 
           context "when 'None of the above' is not selected" do
-            it "clears the none_of_the_above_answer before validating" do
+            before do
               question.selection = ["Option 1"]
+            end
+
+            it "clears the none_of_the_above_answer before validating" do
               question.none_of_the_above_answer = "Some answer"
               expect(question).to be_valid
               expect(question.none_of_the_above_answer).to be_nil
+            end
+
+            context "when creating a submission for a form processor" do
+              let(:selection_options) { en_selection_options }
+
+              it "returns a hash without the none of the above answer for show_answer_in_json" do
+                expect(question.show_answer_in_json).to eq({
+                  selections: ["Option 1"],
+                  answer_text: "Option 1",
+                })
+              end
             end
           end
         end
@@ -409,6 +454,19 @@ RSpec.describe Question::Selection, type: :model do
               expect(question).to be_valid
               expect(question.errors[:none_of_the_above_answer]).to be_empty
               expect(question.none_of_the_above_answer).to eq("Some answer")
+            end
+
+            context "when creating a submission for a form processor" do
+              let(:selection_options) { en_selection_options }
+
+              it "returns a hash with the none of the above answer for show_answer_in_json" do
+                question.none_of_the_above_answer = "Some answer"
+                expect(question.show_answer_in_json).to eq({
+                  selections: ["None of the above"],
+                  none_of_the_above_answer: "Some answer",
+                  answer_text: "None of the above - Some answer",
+                })
+              end
             end
           end
 
@@ -433,6 +491,17 @@ RSpec.describe Question::Selection, type: :model do
               expect(question).to be_valid
               expect(question.none_of_the_above_answer).to be_nil
             end
+
+            context "when creating a submission for a form processor" do
+              let(:selection_options) { en_selection_options }
+
+              it "returns a hash without the none of the above answer for show_answer_in_json" do
+                expect(question.show_answer_in_json).to eq({
+                  selections: ["Option 1"],
+                  answer_text: "Option 1",
+                })
+              end
+            end
           end
         end
       end
@@ -456,6 +525,19 @@ RSpec.describe Question::Selection, type: :model do
             expect(question).not_to be_valid
             expect(question.errors[:none_of_the_above_answer]).to include(I18n.t("activemodel.errors.models.question/selection.attributes.none_of_the_above_answer.too_long"))
           end
+
+          context "when creating a submission for a form processor" do
+            let(:selection_options) { en_selection_options }
+
+            it "returns a hash with 'None of the above' for show_answer_in_json" do
+              question.none_of_the_above_answer = "something else"
+              expect(question.show_answer_in_json).to eq({
+                selection: "None of the above",
+                none_of_the_above_answer: "something else",
+                answer_text: "None of the above - something else",
+              })
+            end
+          end
         end
 
         context "when 'None of the above' is not selected" do
@@ -472,6 +554,17 @@ RSpec.describe Question::Selection, type: :model do
             question.none_of_the_above_answer = "a" * 500
             expect(question).to be_valid
             expect(question.errors[:none_of_the_above_answer]).to be_empty
+          end
+
+          context "when creating a submission for a form processor" do
+            let(:selection_options) { en_selection_options }
+
+            it "returns a hash without the none of the above answer for show_answer_in_json" do
+              expect(question.show_answer_in_json).to eq({
+                selection: "Option 1",
+                answer_text: "Option 1",
+              })
+            end
           end
         end
       end
