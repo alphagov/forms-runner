@@ -370,6 +370,15 @@ RSpec.describe Question::Selection, type: :model do
               expect(question).not_to be_valid
               expect(question.errors[:none_of_the_above_answer]).to include(I18n.t("activemodel.errors.models.question/selection.attributes.none_of_the_above_answer.too_long"))
             end
+
+            it "shows the none of the above answer as part of #show_answer_in_csv" do
+              question.none_of_the_above_answer = "Some answer"
+              expect(question.show_answer_in_csv).to eq(Hash[question.question_text, "None of the above - Some answer"])
+            end
+
+            it "is blank where the none of the above answer would be as part of #show_answer_in_csv" do
+              expect(question.show_answer_in_csv).to eq(Hash[question.question_text, "None of the above - "])
+            end
           end
 
           context "when 'None of the above' is not selected" do

@@ -480,4 +480,13 @@ RSpec.describe Step do
       end
     end
   end
+
+  describe "#is_selection_with_none_of_the_above_answer?" do
+    let(:question) { instance_double(Question::Selection) }
+
+    it "trys to call show_none_of_the_above_question? on the question" do
+      expect(question).to receive(:show_none_of_the_above_question?)
+      step.is_selection_with_none_of_the_above_answer?
+    end
+  end
 end
