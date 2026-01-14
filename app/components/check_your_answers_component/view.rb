@@ -20,7 +20,7 @@ module CheckYourAnswersComponent
     def step_to_row(step)
       question_name = step.question.question_text_for_check_your_answers
       row = row(question_name:, answer: step.show_answer, change_link: change_link(step))
-      return row unless is_selection_with_none_of_the_above_answer?(step)
+      return row unless step.is_selection_with_none_of_the_above_answer?
 
       none_of_the_above_answer_row = none_of_the_above_answer_row(step)
       [row, none_of_the_above_answer_row]
@@ -38,10 +38,6 @@ module CheckYourAnswersComponent
         value: { text: answer_text(answer) },
         actions: [{ text: I18n.t("govuk_components.govuk_summary_list.change"), href: change_link, visually_hidden_text: helpers.strip_tags(question_name) }],
       }
-    end
-
-    def is_selection_with_none_of_the_above_answer?(step)
-      step.question.try(:show_none_of_the_above_question?)
     end
 
     def answer_text(answer)

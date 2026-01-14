@@ -25,7 +25,7 @@ private
   end
 
   def prep_answer_text_html(step)
-    if step.question.try(:show_none_of_the_above_question?)
+    if step.is_selection_with_none_of_the_above_answer?
       prep_html_none_of_the_above_answer_text(step)
     else
       "<p>#{convert_newlines_to_html(prep_answer_text(step))}</p>"
@@ -71,7 +71,7 @@ private
   end
 
   def prep_answer_text_plain_text(step)
-    if none_of_the_above_question_selected?(step)
+    if step.is_selection_with_none_of_the_above_answer?
       prep_plain_text_none_of_the_above_answer_text(step)
     else
       prep_answer_text(step)
@@ -97,9 +97,5 @@ private
 
   def convert_newlines_to_html(text)
     text.gsub("\n", "<br/>")
-  end
-
-  def none_of_the_above_question_selected?(step)
-    step.question.try(:show_none_of_the_above_question?)
   end
 end

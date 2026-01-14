@@ -126,6 +126,10 @@ class Step
     question.is_a?(Question::Selection) && question.autocomplete_component?
   end
 
+  def is_selection_with_none_of_the_above_answer?
+    question.try(:show_none_of_the_above_question?)
+  end
+
 private
 
   def goto_condition_page_slug(condition)
