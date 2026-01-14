@@ -6,6 +6,9 @@ module Forms
       super
       CurrentRequestLoggingAttributes.question_number = @step.page_number if @step&.page_number
       CurrentRequestLoggingAttributes.answer_type = @step&.page&.answer_type if @step&.page&.answer_type
+
+      # Add question-level attributes to OpenTelemetry span
+      TelemetryService.set_question_attributes(@step, @form) if @step && @form
     end
 
     def show
