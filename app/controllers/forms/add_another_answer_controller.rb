@@ -8,6 +8,13 @@ module Forms
       @add_another_answer_input = AddAnotherAnswerInput.new
     end
 
+    def change
+      @rows = rows
+      back_link(@step.id)
+      @add_another_answer_input = AddAnotherAnswerInput.new
+      render :show
+    end
+
     def save
       @add_another_answer_input = AddAnotherAnswerInput.new(add_another_input_params.merge(max_answers: @step.max_answers?))
 

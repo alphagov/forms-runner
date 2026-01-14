@@ -1,0 +1,25 @@
+$app-language-switcher-list-gap: 0.25em;
+
+.app-language-switcher {
+  max-width: 100%;
+}
+
+.app-language-switcher__list {
+  display: flex;
+  gap: $app-language-switcher-list-gap;
+  margin: govuk-px-to-rem(16) 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.app-language-switcher__list-item {
+  @include govuk-font($size: 16);
+  margin: 0;
+  padding-right: $app-language-switcher-list-gap;
+  border-right: 1px solid $govuk-border-colour;
+}
+
+.app-language-switcher__list-item:last-child {
+  padding: 0;
+  border: none;
+}

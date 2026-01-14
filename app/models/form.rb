@@ -79,4 +79,8 @@ class Form < ActiveResource::Base
   def welsh?
     language == :cy
   end
+
+  def multilingual?
+    @attributes["available_languages"].present? && @attributes["available_languages"].count > 1
+  end
 end

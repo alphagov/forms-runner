@@ -1,0 +1,15 @@
+<nav aria-label="<%= t("language_switcher.nav_label") %>" class="app-language-switcher">
+  <ul class="govuk-list app-language-switcher__list">
+    <% @languages.each do |language| %>
+      <li class="app-language-switcher__list-item">
+        <% if current_locale?(language) %>
+          <%= tag.span lang: language, 'aria-current': true do %>
+            <%= language_local_name(language) %>
+          <% end %>
+        <% else %>
+          <%= govuk_link_to(language_local_name(language), url_for(request.params.merge(locale: locale(language))), lang: language, hreflang: language, rel: "alternate") %>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+</nav>

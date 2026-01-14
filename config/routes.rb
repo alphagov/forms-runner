@@ -40,7 +40,7 @@ Rails.application.routes.draw do
           as: :exit_page,
           constraints: page_constraints
 
-      get "/:page_slug/add-another-answer/change" => "forms/add_another_answer#show",
+      get "/:page_slug/add-another-answer/change" => "forms/add_another_answer#change",
           as: :change_add_another_answer,
           constraints: page_constraints,
           defaults: { changing_existing_answer: true }
@@ -79,7 +79,7 @@ Rails.application.routes.draw do
            as: :save_selection_none_of_the_above,
            constraints: page_constraints
 
-      get "/:page_slug/(/:answer_index)/change" => "forms/page#show",
+      get "/:page_slug/(/:answer_index)/change" => "forms/page#change",
           as: :form_change_answer,
           defaults: page_answer_defaults.merge(changing_existing_answer: true),
           constraints: page_constraints.merge(answer_constraints)

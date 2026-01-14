@@ -205,4 +205,32 @@ RSpec.describe Form, type: :model do
       end
     end
   end
+
+  describe "#multilingual?" do
+    context "when the form does not have an available_languages field" do
+      let(:attributes) { { id: 1, name: "form name", submission_email: "user@example.com", start_page: 1 } }
+
+      it "returns false" do
+        expect(form.multilingual?).to be false
+      end
+    end
+
+    context "when the form has an available_languages field" do
+      context "when the form has only one available language" do
+        let(:attributes) { { id: 1, name: "form name", submission_email: "user@example.com", start_page: 1, available_languages: %w[en] } }
+
+        it "returns false" do
+          expect(form.multilingual?).to be false
+        end
+      end
+
+      context "when the form has more than one available language" do
+        let(:attributes) { { id: 1, name: "form name", submission_email: "user@example.com", start_page: 1, available_languages: %w[en cy] } }
+
+        it "returns true" do
+          expect(form.multilingual?).to be true
+        end
+      end
+    end
+  end
 end

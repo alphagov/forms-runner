@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe Forms::AddAnotherAnswerController, type: :request do
   let(:form) do
-    build(:v2_form_document, :with_support, form_id: 2, start_page: 1, steps:)
+    build(:v2_form_document, :with_support, form_id: 2, start_page: 1, steps:, available_languages:)
   end
 
   let(:steps) { [first_step_in_form, second_step_in_form] }
@@ -27,6 +27,8 @@ RSpec.describe Forms::AddAnotherAnswerController, type: :request do
   let(:stored_answers) do
     [{ text: "answer 1" }, { text: "answer 2" }]
   end
+
+  let(:available_languages) { %w[en] }
 
   before do
     ActiveResource::HttpMock.respond_to do |mock|
@@ -60,6 +62,60 @@ RSpec.describe Forms::AddAnotherAnswerController, type: :request do
 
     it "initializes @add_another_answer_input" do
       expect(assigns(:add_another_answer_input)).to be_a(AddAnotherAnswerInput)
+    end
+
+    context "when the form is not multilingual" do
+      it "does not include the language switcher" do
+        expect(response.body).not_to include(I18n.t("language_switcher.nav_label"))
+      end
+    end
+
+    context "when the form is multilingual" do
+      let(:available_languages) { %w[en cy] }
+
+      it "includes the language switcher" do
+        expect(response.body).to include(I18n.t("language_switcher.nav_label"))
+        expect(response.body).to include("href=\"#{add_another_answer_path(mode: 'preview-draft', form_id: form.form_id, form_slug: form.form_slug, page_slug: first_step_in_form.id, locale: 'cy')}\"")
+      end
+    end
+  end
+
+  describe "GET #change" do
+    before do
+      get change_add_another_answer_path(mode: "preview-draft", form_id: form.form_id, form_slug: form.form_slug, page_slug: first_step_in_form.id)
+    end
+
+    it "renders the show template" do
+      expect(response).to render_template(:show)
+    end
+
+    it "assigns @rows" do
+      expect(assigns(:rows).count).to eq 2
+    end
+
+    it "adds the change and remove links to each row" do
+      expect(assigns(:rows).first[:actions].first[:text]).to eq("Change")
+      expect(assigns(:rows).first[:actions].second[:text]).to eq("Remove")
+      expect(response.body).to include(form_remove_answer_path(form.form_id, form.form_slug, first_step_in_form.id, answer_index: 1, changing_existing_answer: nil))
+    end
+
+    it "initializes @add_another_answer_input" do
+      expect(assigns(:add_another_answer_input)).to be_a(AddAnotherAnswerInput)
+    end
+
+    context "when the form is not multilingual" do
+      it "does not include the language switcher" do
+        expect(response.body).not_to include(I18n.t("language_switcher.nav_label"))
+      end
+    end
+
+    context "when the form is multilingual" do
+      let(:available_languages) { %w[en cy] }
+
+      it "includes the language switcher" do
+        expect(response.body).to include(I18n.t("language_switcher.nav_label"))
+        expect(response.body).to include("href=\"#{change_add_another_answer_path(mode: 'preview-draft', form_id: form.form_id, form_slug: form.form_slug, page_slug: first_step_in_form.id, locale: 'cy')}\"")
+      end
     end
   end
 
