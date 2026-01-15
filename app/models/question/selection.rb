@@ -46,7 +46,7 @@ module Question
 
     def show_answer_in_csv(*)
       if show_none_of_the_above_question?
-        Hash[question_text, show_none_of_the_above_answer_csv]
+        Hash[question_text, show_answer_with_none_of_the_above]
       else
         Hash[question_text, show_answer]
       end
@@ -55,8 +55,18 @@ module Question
     def show_answer_in_json(*)
       hash = {}
 
-      hash[:selections] = selection_without_blanks if allow_multiple_answers?
-      hash[:answer_text] = show_answer
+      if allow_multiple_answers?
+        hash[:selections] = selection_without_blanks
+      elsif has_none_of_the_above_question?
+        hash[:selection] = selection
+      end
+
+      if show_none_of_the_above_question?
+        hash[:none_of_the_above_answer] = none_of_the_above_answer
+        hash[:answer_text] = show_answer_with_none_of_the_above
+      else
+        hash[:answer_text] = show_answer
+      end
 
       hash
     end
@@ -155,7 +165,7 @@ module Question
       selection == I18n.t("page.none_of_the_above")
     end
 
-    def show_none_of_the_above_answer_csv
+    def show_answer_with_none_of_the_above
       "#{I18n.t('page.none_of_the_above')} - #{none_of_the_above_answer}"
     end
   end
