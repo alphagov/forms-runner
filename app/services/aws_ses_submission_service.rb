@@ -63,6 +63,7 @@ private
       submission_reference: @submission.reference,
       timestamp: @submission.submission_time,
       is_s3_submission: false,
+      submission_locale: @submission.submission_locale,
     )
   end
 
