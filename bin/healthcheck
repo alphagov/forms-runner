@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# Healthcheck script for ECS container health checks.
+# Makes a request to the Rails health endpoint and exits with appropriate code.
+
+wget --quiet --tries=1 --spider "http://localhost:${PORT:-3000}/up" || exit 1
