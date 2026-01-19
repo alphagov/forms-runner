@@ -16,6 +16,10 @@
       "type": "string",
       "format": "date-time"
     },
+    "language": {
+      "enum": ["en", "cy"],
+      "description": "The language the form was submitted. If there is a Welsh version of the form then this will be 'cy', otherwise 'en'."
+    },
     "answers": {
       "description": "An array containing all the answers provided.",
       "type": "array",

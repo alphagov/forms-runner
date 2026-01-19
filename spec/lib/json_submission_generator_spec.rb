@@ -14,12 +14,13 @@ RSpec.describe JsonSubmissionGenerator do
   let(:selection_step) { build :step, page: build(:page, :with_selections_settings), question: selection_question }
   let(:all_steps) { [text_step, name_step, file_step, address_step, selection_step] }
   let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
+  let(:submission_locale) { :en }
   let(:timestamp) do
     Time.use_zone("London") { Time.zone.local(2022, 9, 14, 8, 0, 0) }
   end
 
   describe ".generate_submission" do
-    subject(:json_submission) { described_class.generate_submission(form:, all_steps:, submission_reference:, timestamp:, is_s3_submission:) }
+    subject(:json_submission) { described_class.generate_submission(form:, all_steps:, submission_reference:, timestamp:, is_s3_submission:, submission_locale:) }
 
     let(:parsed_json) { JSON.parse(json_submission) }
 
@@ -56,6 +57,7 @@ RSpec.describe JsonSubmissionGenerator do
           "form_name" => form.name,
           "submission_reference" => submission_reference,
           "submitted_at" => "2022-09-14T07:00:00.000Z",
+          "language" => "en",
           "answers" => [
             {
               "question_id" => text_step.page.id,
@@ -108,6 +110,7 @@ RSpec.describe JsonSubmissionGenerator do
             "form_name" => form.name,
             "submission_reference" => submission_reference,
             "submitted_at" => "2022-09-14T07:00:00.000Z",
+            "language" => "en",
             "answers" => [
               {
                 "question_id" => repeatable_step.page.id,
