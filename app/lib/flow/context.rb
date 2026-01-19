@@ -11,13 +11,14 @@ module Flow
 
     delegate :support_details, to: :form
     delegate :find_or_create, :previous_step, :next_page_slug, :next_step, :can_visit?, :completed_steps, :all_steps, to: :journey
-    delegate :clear_stored_answer, :clear, :form_submitted?, :answers, to: :answer_store
+    delegate :clear_stored_answer, :clear, :form_submitted?, :answers, :locales_used, to: :answer_store
     delegate :save_submission_details, :get_submission_reference, :requested_email_confirmation?, :clear_submission_details, to: :confirmation_details_store
 
-    def save_step(step, context: nil)
+    def save_step(step, locale: :en, context: nil)
       return false unless step.valid?(context)
 
-      step.save_to_store(@answer_store)
+      answer_store.add_locale(locale)
+      step.save_to_store(answer_store)
     end
 
   private
