@@ -46,6 +46,7 @@ private
       submission_reference: @submission_reference,
       timestamp: @timestamp,
       is_s3_submission: true,
+      submission_locale: @submission_locale,
     )
   end
 
