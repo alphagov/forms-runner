@@ -479,9 +479,6 @@ en:
     changes:
       heading: Changes to this notice
       section_0: We may modify or amend this privacy notice at our discretion at any time. When we make changes to this notice, we will amend the last modified date at the top of this page. Any modification or amendment to this privacy notice will be applied to you and your data as of that revision date. We encourage you to periodically review this privacy notice to be informed about how we are protecting your data.
-    childrens_privacy:
-      heading: Children’s privacy protection
-      section_0: We understand the importance of protecting children’s privacy online. Our services are not designed for, or intentionally targeted at, children 13 years of age or younger. It is not our policy to intentionally collect or maintain data about anyone under the age of 13.
     cookies:
       heading: Cookies
       section_0: We use cookies to make this form work. %{cookies_link}.
@@ -525,7 +522,7 @@ en:
       heading: How we protect your data and keep it secure
       section_0: We are committed to doing all that we can to keep your data secure. To prevent unauthorised access or disclosure we have put in place technical and organisational procedures to secure the data we collect about you – for example, we protect your data using varying levels of encryption. We also make sure that any third parties that we deal with have an obligation to keep all personal data they process on our behalf secure.
     preamble:
-      section_0: 'Last updated: 25 June 2025'
+      section_0: 'Last updated: 19 January 2026'
       section_1: This form was created using GOV.UK Forms. GOV.UK Forms is a product provided by the Government Digital Service (GDS) which is part of the Department for Science, Innovation and Technology. It lets UK government teams create online forms to collect information from people and organisations.
       section_2: The organisation that created this online form using GOV.UK Forms is the data controller of personal data they collect using the form, whilst the Department for Science, Innovation and Technology, through GDS, is the data processor. The data controller must tell you about what they are doing with your personal data - %{privacy_policy_link}.
       section_2_link_text: read the data controller’s privacy information for this form
