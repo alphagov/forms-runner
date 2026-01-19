@@ -30,7 +30,7 @@ module Forms
       current_context.clear_submission_details if is_first_page?
 
       validation_context = @step.autocomplete_selection_question? ? :skip_none_of_the_above_question_validation : nil
-      if current_context.save_step(@step, context: validation_context)
+      if current_context.save_step(@step, context: validation_context, locale:)
         # Redirect before logging when the question has multiple pages so that we don't send multiple form started
         # metrics to CloudWatch if this is the first question.
         return redirect_to selection_none_of_the_above_page if redirect_to_none_of_the_above_page?

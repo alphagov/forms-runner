@@ -59,7 +59,7 @@ RSpec.describe FormSubmissionService do
       },
     }
   end
-  let(:current_context) { instance_double(Flow::Context, form:, journey:, completed_steps: all_steps, answers:) }
+  let(:current_context) { instance_double(Flow::Context, form:, journey:, completed_steps: all_steps, answers:, locales_used: [:en]) }
 
   let(:output) { StringIO.new }
   let(:logger) do
