@@ -66,7 +66,7 @@ RSpec.describe S3SubmissionService do
       context "when the submission format is CSV" do
         it "calls put_object with a CSV file and filename" do
           expected_key_name = "form_submissions/#{form.id}/#{expected_timestamp}_#{submission_reference}/form_submission.csv"
-          expected_csv_content = "Reference,Submitted at,What is the meaning of life?\n#{submission_reference},2022-09-14T08:24:34+01:00,42\n"
+          expected_csv_content = "Reference,Submitted at,What is the meaning of life?,Language\n#{submission_reference},2022-09-14T08:24:34+01:00,42,en\n"
           expect(mock_s3_client).to receive(:put_object).with(
             {
               body: expected_csv_content,
@@ -113,8 +113,8 @@ RSpec.describe S3SubmissionService do
         context "when the submission format is CSV" do
           it "creates the CSV file with the expected filenames" do
             expected_key_name = "form_submissions/#{form.id}/#{expected_timestamp}_#{submission_reference}/form_submission.csv"
-            expected_csv_content = "Reference,Submitted at,#{first_file_upload_question.question_text},#{second_file_upload_question.question_text}\n" \
-              "#{submission_reference},2022-09-14T08:24:34+01:00,file.txt,file_1.txt\n"
+            expected_csv_content = "Reference,Submitted at,#{first_file_upload_question.question_text},#{second_file_upload_question.question_text},Language\n" \
+              "#{submission_reference},2022-09-14T08:24:34+01:00,file.txt,file_1.txt,en\n"
             expect(mock_s3_client).to receive(:put_object).with(
               {
                 body: expected_csv_content,
@@ -192,7 +192,7 @@ RSpec.describe S3SubmissionService do
 
         it "calls put_object with the 'test_form_submissions/' key prefix" do
           expected_key_name = "test_form_submissions/#{form.id}/#{expected_timestamp}_#{submission_reference}/form_submission.csv"
-          expected_csv_content = "Reference,Submitted at,#{question.question_text}\n#{submission_reference},2022-09-14T08:24:34+01:00,file.txt\n"
+          expected_csv_content = "Reference,Submitted at,#{question.question_text},Language\n#{submission_reference},2022-09-14T08:24:34+01:00,file.txt,en\n"
           expect(mock_s3_client).to receive(:put_object).with({
             body: expected_csv_content,
             bucket: s3_bucket_name,

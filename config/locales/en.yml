@@ -603,6 +603,7 @@ en:
   submission_csv:
     reference: Reference
     repeatable_answer_header: "%{header} - Answer %{index}"
+    submission_locale: Language
     submitted_at: Submitted at
   support_details:
     call_charges: Find out about call charges
