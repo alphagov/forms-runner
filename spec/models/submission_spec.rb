@@ -79,4 +79,12 @@ RSpec.describe Submission, type: :model do
       end
     end
   end
+
+  describe "submission_locale" do
+    subject(:submission) { create :submission }
+
+    it "returns the submission locale" do
+      expect(submission.submission_locale).to eq("en")
+    end
+  end
 end
