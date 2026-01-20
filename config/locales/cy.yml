@@ -479,9 +479,6 @@ cy:
     changes:
       heading: Newidiadau i’r hysbysiad hwn
       section_0: Gallwn addasu neu ddiwygio’r hysbysiad preifatrwydd hwn yn ôl ein disgresiwn ar unrhyw adeg. Pan fyddwn yn gwneud newidiadau i’r hysbysiad hwn, byddwn yn diwygio’r dyddiad addasu diwethaf ar frig y dudalen hon. Bydd unrhyw addasiad neu ddiwygiad i’r hysbysiad preifatrwydd hwn yn cael ei gymhwyso i chi a’ch data ar y dyddiad adolygu hwnnw. Rydym yn eich annog i adolygu’r hysbysiad preifatrwydd hwn o bryd i’w gilydd i gael gwybod am sut rydym yn diogelu’ch data.
-    childrens_privacy:
-      heading: Diogelu preifatrwydd plant
-      section_0: Rydym yn deall pwysigrwydd diogelu preifatrwydd plant ar-lein. Nid yw ein gwasanaethau wedi’u cynllunio ar gyfer plant 13 oed neu iau, nac wedi’u targedu’n fwriadol atynt. Nid ein polisi ni yw casglu neu gynnal data am unrhyw un o dan 13 oed yn fwriadol.
     cookies:
       heading: Cwcis
       section_0: Rydym yn defnyddio cwcis i wneud i’r ffurflen hon weithio. %{cookies_link}.
