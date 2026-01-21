@@ -33,6 +33,12 @@ class FormSubmissionService
     submission_reference
   end
 
+  def submission_locale
+    return :cy if current_context.locales_used.present? && current_context.locales_used.include?(:cy)
+
+    :en
+  end
+
 private
 
   attr_accessor :current_context, :form, :email_confirmation_input, :mode, :timestamp, :submission_reference, :localised_form

@@ -59,7 +59,8 @@ RSpec.describe FormSubmissionService do
       },
     }
   end
-  let(:current_context) { instance_double(Flow::Context, form:, journey:, completed_steps: all_steps, answers:, locales_used: [:en]) }
+  let(:locales_used) { [:en] }
+  let(:current_context) { instance_double(Flow::Context, form:, journey:, completed_steps: all_steps, answers:, locales_used:) }
 
   let(:output) { StringIO.new }
   let(:logger) do
@@ -248,7 +249,7 @@ RSpec.describe FormSubmissionService do
         let(:submission_type) { "email" }
         let(:submission_format) { [] }
 
-        let(:current_context) { instance_double(Flow::Context, form: welsh_form, journey:, completed_steps: all_steps, answers:) }
+        let(:current_context) { instance_double(Flow::Context, form: welsh_form, journey:, completed_steps: all_steps, answers:, locales_used:) }
 
         before do
           ActiveResource::HttpMock.respond_to do |mock|
@@ -325,6 +326,32 @@ RSpec.describe FormSubmissionService do
           service.submit
           expect(FormSubmissionConfirmationMailer).not_to have_received(:send_confirmation_email)
         end
+      end
+    end
+  end
+
+  describe "#submission_locale" do
+    context "when the context includes :cy in locales_used" do
+      let(:locales_used) { %i[en cy] }
+
+      it "the submission locale is decided as :cy" do
+        expect(service.submission_locale).to eq(:cy)
+      end
+    end
+
+    context "when the context does not include :cy in locales_used" do
+      let(:locales_used) { [:en] }
+
+      it "the submission locale is decided as :en" do
+        expect(service.submission_locale).to eq(:en)
+      end
+    end
+
+    context "when the context returns an empty array for locales_used" do
+      let(:locales_used) { [] }
+
+      it "the submission locale is decided as :en" do
+        expect(service.submission_locale).to eq(:en)
       end
     end
   end
