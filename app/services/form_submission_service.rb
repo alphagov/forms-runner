@@ -83,6 +83,7 @@ private
       timestamp: timestamp,
       submission_reference: submission_reference,
       is_preview: mode.preview?,
+      submission_locale:,
     )
 
     s3_submission_service.submit

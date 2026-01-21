@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe S3SubmissionService do
   subject(:service) do
-    described_class.new(journey:, form:, timestamp:, submission_reference:, is_preview:)
+    described_class.new(journey:, form:, timestamp:, submission_reference:, is_preview:, submission_locale:)
   end
 
   let(:form) do
@@ -21,6 +21,7 @@ RSpec.describe S3SubmissionService do
   let(:s3_bucket_region) { "eu-west-1" }
   let(:file_upload_bucket) { "file-upload-bucket" }
   let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
+  let(:submission_locale) { :en }
   let(:timestamp) do
     Time.use_zone("London") { Time.zone.local(2022, 9, 14, 8, 24, 34) }
   end

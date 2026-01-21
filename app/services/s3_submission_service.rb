@@ -3,13 +3,15 @@ class S3SubmissionService
                  form:,
                  timestamp:,
                  submission_reference:,
-                 is_preview:)
+                 is_preview:,
+                 submission_locale:)
     @journey = journey
     @form = form
     @timestamp = timestamp
     @submission_reference = submission_reference
     @is_preview = is_preview
     @file_upload_bucket_name = Settings.aws.file_upload_s3_bucket_name
+    @submission_locale = submission_locale
   end
 
   def submit
