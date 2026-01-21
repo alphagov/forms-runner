@@ -124,6 +124,7 @@ RSpec.describe FormSubmissionService do
               timestamp: Time.zone.now,
               submission_reference: reference,
               is_preview: mode.preview?,
+              submission_locale: :en,
             ).once
           end
         end
