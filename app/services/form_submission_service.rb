@@ -96,6 +96,7 @@ private
       answers: current_context.answers,
       mode: mode,
       form_document: form.document_json,
+      submission_locale:,
     )
 
     SendSubmissionJob.perform_later(submission) do |job|

@@ -165,7 +165,7 @@ RSpec.describe FormSubmissionService do
 
           expect(Submission.last).to have_attributes(reference:, form_id: form.id, answers: answers.deep_stringify_keys,
                                                      mode: "form", mail_message_id: nil, form_document: document_json,
-                                                     last_delivery_attempt: nil)
+                                                     last_delivery_attempt: nil, submission_locale: "en")
         end
 
         context "when the job fails to enqueue" do
