@@ -10,6 +10,11 @@
   <%= I18n.t("mailer.submission.time", time: @submission.submission_time.strftime("%l:%M%P").strip, date: @submission.submission_time.strftime("%-d %B %Y") ) %>
 </p>
 <p>
+  <% if @welsh_submission %>
+  <%= I18n.t("mailer.submission.welsh_submission") %>
+  <% end %>
+</p>
+<p>
   <%= I18n.t("mailer.submission.reference", submission_reference: @submission.reference) %>
 </p>
 

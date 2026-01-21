@@ -10,6 +10,7 @@ class AwsSesFormSubmissionMailer < ApplicationMailer
     @subject = email_subject
     @csv_filename = csv_filename
     @json_filename = json_filename
+    @welsh_submission = submission.submission_locale.to_sym == :cy
 
     files.each do |name, file|
       attachments[name] = {
