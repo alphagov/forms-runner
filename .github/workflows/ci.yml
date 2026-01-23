@@ -1,0 +1,169 @@
+# This workflow uses actions that are not certified by GitHub.  They are
+# provided by a third-party and are governed by separate terms of service,
+# privacy policy, and support documentation.
+#
+# This workflow will install a prebuilt Ruby version, install dependencies, and
+# run tests and linters.
+
+name: "CI"
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  merge_group:
+    types: [checks_requested]
+
+jobs:
+  lint-ruby:
+    name: Lint Ruby
+    uses: alphagov/govuk-infrastructure/.github/workflows/rubocop.yml@59fd794d40eef8c53f0973c3b6080f94f056ba6d
+
+  lint-scss:
+    name: Lint SCSS
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+
+      - name: Install Node.js
+        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+
+      - name: Install JavaScript dependencies
+        run: npm ci
+
+      - name: Run linter
+        run: npm run lint:scss
+
+  lint-javascript:
+    name: Lint JavaScript
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+
+      - name: Install Node.js
+        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+
+      - name: Install JavaScript dependencies
+        run: npm ci
+
+      - name: Run linter
+        run: npm run lint:javascript
+
+  test-ruby:
+    name: Run RSpec
+    runs-on: ubuntu-latest
+    env:
+      RAILS_ENV: "test"
+      DATABASE_URL: "postgres://postgres:postgres@localhost:5432/forms_runner_test"
+      QUEUE_DATABASE_URL: "postgres://postgres:postgres@localhost:5432/forms_runner_test_queue"
+    steps:
+      - name: Setup Postgres
+        id: setup-postgres
+        uses: alphagov/govuk-infrastructure/.github/actions/setup-postgres@59fd794d40eef8c53f0973c3b6080f94f056ba6d
+        with:
+          POSTGRES_DB: forms_runner_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+      
+      - name: Setup ChromeDriver
+        uses: nanasess/setup-chromedriver@e93e57b843c0c92788f22483f1a31af8ee48db25 # v2.3.0
+        with:
+          chromedriver-version: '128.0.6613.8600'
+          chromeapp: chrome
+
+      - name: Purge Google Chrome
+        run: |
+          sudo apt-get purge google-chrome-stable
+          
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@b94431e051d1c52dcbe9a7092a4f10f827795416 # v2.1.0
+        with:
+          chrome-version: 128
+          install-chromedriver: 'false'
+
+      - name: Checkout repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@f8d7259c7a66155a7c4a157a1a10ca601f186594
+        with:
+          bundler-cache: true
+
+      - name: Install Node.js
+        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+      
+      - name: Install JavaScript dependencies
+        run: npm ci
+
+      - name: Run Vite build
+        run: bin/vite build
+
+      - name: Initialize database
+        run: bundle exec rails db:setup
+
+      - name: Run RSpec
+        run: bundle exec rake spec
+
+  test-javascript:
+    name: Test JavaScript
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@f8d7259c7a66155a7c4a157a1a10ca601f186594
+        with:
+          bundler-cache: true
+
+      - name: Install Node.js
+        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+
+      - name: Install JavaScript dependencies
+        run: npm ci
+
+      - name: Run Vite build
+        run: bin/vite build
+
+      - name: Run Vitest
+        run: npm run test
+  
+  security-analysis:
+    name: Security Analysis
+    uses: alphagov/govuk-infrastructure/.github/workflows/brakeman.yml@59fd794d40eef8c53f0973c3b6080f94f056ba6d
+    secrets: inherit
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+
+  audit-dependencies:
+    name: Audit dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@f8d7259c7a66155a7c4a157a1a10ca601f186594
+        with:
+          bundler-cache: true
+
+      - name: Run bundle audit
+        run: bundle exec bundle-audit check --update
+
