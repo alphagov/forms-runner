@@ -27,14 +27,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
 
-      - name: Install Node.js
-        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f
-        with:
-          node-version-file: ".nvmrc"
-          cache: "npm"
-
-      - name: Install JavaScript dependencies
-        run: npm ci
+      - name: Setup Node
+        uses: alphagov/forms-deploy/.github/actions/setup-node@48a6fef99868dd81c5b9da3b0ca2a4c31787a674
 
       - name: Run linter
         run: npm run lint:scss
@@ -46,14 +40,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
 
-      - name: Install Node.js
-        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f
-        with:
-          node-version-file: ".nvmrc"
-          cache: "npm"
-
-      - name: Install JavaScript dependencies
-        run: npm ci
+      - name: Setup Node
+        uses: alphagov/forms-deploy/.github/actions/setup-node@48a6fef99868dd81c5b9da3b0ca2a4c31787a674
 
       - name: Run linter
         run: npm run lint:javascript
@@ -75,20 +63,7 @@ jobs:
           POSTGRES_PASSWORD: postgres
       
       - name: Setup ChromeDriver
-        uses: nanasess/setup-chromedriver@e93e57b843c0c92788f22483f1a31af8ee48db25 # v2.3.0
-        with:
-          chromedriver-version: '128.0.6613.8600'
-          chromeapp: chrome
-
-      - name: Purge Google Chrome
-        run: |
-          sudo apt-get purge google-chrome-stable
-          
-      - name: Setup Chrome
-        uses: browser-actions/setup-chrome@b94431e051d1c52dcbe9a7092a4f10f827795416 # v2.1.0
-        with:
-          chrome-version: 128
-          install-chromedriver: 'false'
+        uses: alphagov/forms-deploy/.github/actions/setup-chromedriver@48a6fef99868dd81c5b9da3b0ca2a4c31787a674
 
       - name: Checkout repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -98,14 +73,8 @@ jobs:
         with:
           bundler-cache: true
 
-      - name: Install Node.js
-        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f
-        with:
-          node-version-file: ".nvmrc"
-          cache: "npm"
-      
-      - name: Install JavaScript dependencies
-        run: npm ci
+      - name: Setup Node
+        uses: alphagov/forms-deploy/.github/actions/setup-node@48a6fef99868dd81c5b9da3b0ca2a4c31787a674
 
       - name: Run Vite build
         run: bin/vite build
@@ -128,17 +97,8 @@ jobs:
         with:
           bundler-cache: true
 
-      - name: Install Node.js
-        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f
-        with:
-          node-version-file: ".nvmrc"
-          cache: "npm"
-
-      - name: Install JavaScript dependencies
-        run: npm ci
-
-      - name: Run Vite build
-        run: bin/vite build
+      - name: Setup Node
+        uses: alphagov/forms-deploy/.github/actions/setup-node@48a6fef99868dd81c5b9da3b0ca2a4c31787a674
 
       - name: Run Vitest
         run: npm run test
