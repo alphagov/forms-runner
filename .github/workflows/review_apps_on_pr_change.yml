@@ -1,18 +1,15 @@
 name: "Review apps: on PR change"
 on:
   pull_request:
-    # being explicit about what to trigger on.
-    # matches the docs for the default types
-    # https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/events-that-trigger-workflows#pull_request
     types: [opened, reopened, synchronize]
 
 concurrency:
   group: "review-apps-forms-runner-pr-${{ github.event.pull_request.number }}"
   cancel-in-progress: false
+
 jobs:
   update-review-app:
     runs-on: ubuntu-24.04-arm
-
     permissions:
       id-token: write
       contents: read
@@ -24,63 +21,61 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::842676007477:role/review-github-actions-forms-runner
           aws-region: eu-west-2
-      - name: Generate container image URI
-        run: |
-          echo "CONTAINER_IMAGE_URI=842676007477.dkr.ecr.eu-west-2.amazonaws.com/forms-runner:pr-${{github.event.pull_request.number}}-${{github.event.pull_request.head.sha}}-$(date +%s)" >> "$GITHUB_ENV"
 
       - name: Checkout code
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
-      - name: Build container
+      - name: Generate container image URI
         run: |
-          docker build \
-            --tag "${{env.CONTAINER_IMAGE_URI}}" \
-            .
+          echo "CONTAINER_IMAGE_URI=842676007477.dkr.ecr.eu-west-2.amazonaws.com/forms-runner:pr-${{github.event.pull_request.number}}-${{github.event.pull_request.head.sha}}-$(date +%s)" >> "$GITHUB_ENV"
+
+      - name: Build container
+        run: docker build --tag "${{env.CONTAINER_IMAGE_URI}}" .
 
       - name: Push container
-        id: build-container
         run: |
           aws ecr get-login-password --region eu-west-2 \
           | docker login --username AWS --password-stdin 842676007477.dkr.ecr.eu-west-2.amazonaws.com
-
-          echo "Pushing container image"
-          echo "${{env.CONTAINER_IMAGE_URI}}"
-
           docker push "${CONTAINER_IMAGE_URI}"
 
-      - name: Determine Terraform version
-        id: terraform-version
-        run: |
-          echo "TF_VERSION=$(< .review_apps/.terraform-version)" >> "$GITHUB_OUTPUT"
-
-      - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3.1.2
+      - name: Deploy review app via CodeBuild
+        id: codebuild
+        uses: aws-actions/aws-codebuild-run-build@4d15a47425739ac2296ba5e7eee3bdd4bfbdd767 # v1.0.18
         with:
-          terraform_version: ${{steps.terraform-version.outputs.TF_VERSION}}
+          project-name: review-forms-runner-deploy
+          env-vars-for-codebuild: |
+            PR_NUMBER,
+            CONTAINER_IMAGE
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          CONTAINER_IMAGE: ${{ env.CONTAINER_IMAGE_URI }}
 
-      - name: Deploy review app
-        id: deploy
+      - name: Fetch terraform outputs
+        id: outputs
         run: |
-          cd .review_apps/
+          # Extract build UUID from ARN (format: arn:aws:codebuild:region:account:build/project:uuid)
+          BUILD_ID="${{ steps.codebuild.outputs.aws-build-id }}"
+          BUILD_UUID="${BUILD_ID##*:}"
 
-          terraform init -backend-config="key=review-apps/forms-runner/pr-${{github.event.pull_request.number}}.tfstate"
+          # Download artifact
+          aws s3 cp "s3://forms-review-codebuild-artifacts/${BUILD_UUID}/review-forms-runner-deploy/outputs.json" outputs.json
 
-          terraform apply \
-            -var "pull_request_number=${{github.event.pull_request.number}}" \
-            -var "forms_runner_container_image=${{env.CONTAINER_IMAGE_URI}}" \
-            -no-color \
-            -auto-approve
+          # Parse outputs
+          {
+            echo "REVIEW_APP_URL=$(jq -r '.review_app_url.value' outputs.json)"
+            echo "ADMIN_APP_URL=$(jq -r '.admin_app_url.value' outputs.json)"
+            echo "ECS_CLUSTER_ID=$(jq -r '.review_app_ecs_cluster_id.value' outputs.json)"
+            echo "ECS_SERVICE_NAME=$(jq -r '.review_app_ecs_service_name.value' outputs.json)"
+          } >> "$GITHUB_OUTPUT"
 
-            # shellcheck disable=SC2129 # SC2129 is "mainly a stylistic issue" and it breaks our flow
-            echo "REVIEW_APP_URL=$(terraform output -raw review_app_url)" >> "$GITHUB_OUTPUT"
-            echo "ADMIN_APP_URL=$(terraform output -raw admin_app_url)" >> "$GITHUB_OUTPUT"
-            echo "ECS_CLUSTER_ID=$(terraform output -raw review_app_ecs_cluster_id)" >> "$GITHUB_OUTPUT"
-            echo "ECS_SERVICE_NAME=$(terraform output -raw review_app_ecs_service_name)" >> "$GITHUB_OUTPUT"
+          # Clean up artifact
+          aws s3 rm "s3://forms-review-codebuild-artifacts/${BUILD_UUID}/review-forms-runner-deploy/outputs.json"
 
       - name: Wait for AWS ECS deployments to finish
         run: |
           aws ecs wait services-stable \
-            --cluster "${{steps.deploy.outputs.ECS_CLUSTER_ID}}" \
-            --services "${{steps.deploy.outputs.ECS_SERVICE_NAME}}"
+            --cluster "${{ steps.outputs.outputs.ECS_CLUSTER_ID }}" \
+            --services "${{ steps.outputs.outputs.ECS_SERVICE_NAME }}"
 
       - name: Comment on PR
         env:
@@ -90,8 +85,8 @@ jobs:
           cat <<EOF > "${{runner.temp}}/pr-comment.md"
           :tada: A review copy of this PR has been deployed! It is made of up two components
 
-          1. [A review copy of forms-runner](${{steps.deploy.outputs.REVIEW_APP_URL}})
-          2. [A production copy of forms-admin](${{steps.deploy.outputs.ADMIN_APP_URL}})
+          1. [A review copy of forms-runner](${{steps.outputs.outputs.REVIEW_APP_URL}})
+          2. [A production copy of forms-admin](${{steps.outputs.outputs.ADMIN_APP_URL}})
 
           > [!IMPORTANT]
           > Not all of the functionality of forms-runner is present in review apps.
@@ -109,9 +104,7 @@ jobs:
           $COMMENT_MARKER
           EOF
 
-          # shellcheck disable=SC2016
-          # `jq` uses single-quote characters on Unix shells
-          old_comment_ids=$(gh api "repos/{owner}/{repo}/issues/${{github.event.pull_request.number}}/comments" --jq 'map(select((.user.login == "github-actions[bot]") and (.body | endswith($ENV.COMMENT_MARKER + "\n")))) | .[].id')
+          old_comment_ids=$(gh api "repos/{owner}/{repo}/issues/${{github.event.pull_request.number}}/comments" --jq "map(select((.user.login == \"github-actions[bot]\") and (.body | endswith(\$ENV.COMMENT_MARKER + \"\n\")))) | .[].id")
           for comment_id in $old_comment_ids; do
             gh api -X DELETE "repos/{owner}/{repo}/issues/comments/${comment_id}"
           done
