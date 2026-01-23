@@ -6,20 +6,7 @@ on:
     paths:
       - '.github/workflows/*.yml'
       - '.github/workflows/*.yaml'
-permissions:
-  contents: read
+
 jobs:
-  actionlint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-      - name: Download actionlint
-        id: get_actionlint
-        run: |
-          curl -L "https://github.com/rhysd/actionlint/releases/download/v1.7.7/actionlint_1.7.7_linux_amd64.tar.gz" | tar -xvz actionlint
-          chmod +x actionlint
-          sudo mv actionlint /usr/local/bin/actionlint
-        shell: bash
-      - name: Check workflow files
-        run: actionlint -color
-        shell: bash
+  lint-workflows:
+    uses: alphagov/forms-deploy/.github/workflows/reusable-lint-workflows.yml@main
