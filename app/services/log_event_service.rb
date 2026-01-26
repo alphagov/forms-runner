@@ -29,6 +29,19 @@ class LogEventService
     end
   end
 
+  def self.log_submission_sent(submission, **kwargs)
+    additional_context = {
+      submission_type: submission.form.submission_type,
+      submission_format: submission.form.submission_format,
+    }.merge(kwargs)
+
+    if submission.preview?
+      EventLogger.log_form_event("preview_submission_sent", additional_context)
+    else
+      EventLogger.log_form_event("submission_sent", additional_context)
+    end
+  end
+
   def log_page_save
     EventLogger.log_page_event(log_event, @step.question.question_text, skipped_question?)
     if is_starting_form?
