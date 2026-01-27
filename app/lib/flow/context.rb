@@ -15,7 +15,15 @@ module Flow
     delegate :save_submission_details, :get_submission_reference, :requested_email_confirmation?, :clear_submission_details, to: :confirmation_details_store
 
     def save_step(step, context: nil)
-      return false unless step.valid?(context)
+      is_valid = step.valid?(context)
+
+      if is_valid
+        TelemetryService.record_validation_success
+      else
+        TelemetryService.record_validation_failure(step)
+      end
+
+      return false unless is_valid
 
       step.save_to_store(@answer_store)
     end

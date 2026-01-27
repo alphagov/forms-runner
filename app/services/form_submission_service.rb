@@ -23,14 +23,22 @@ class FormSubmissionService
   end
 
   def submit
-    ensure_form_english
-    validate_submission
+    TelemetryService.trace("form.submission.process", attributes: {
+      "submission.type" => form.submission_type,
+      "submission.format" => form.submission_format,
+      "submission.reference" => submission_reference,
+      "form.id" => form.id.to_s,
+      "confirmation.requested" => requested_confirmation?,
+    }) do
+      ensure_form_english
+      validate_submission
 
-    confirmation_mail = setup_confirmation_email if requested_confirmation?
-    deliver_submission
-    send_confirmation_email(confirmation_mail) if confirmation_mail.present?
+      confirmation_mail = setup_confirmation_email if requested_confirmation?
+      deliver_submission
+      send_confirmation_email(confirmation_mail) if confirmation_mail.present?
 
-    submission_reference
+      submission_reference
+    end
   end
 
 private
@@ -71,31 +79,42 @@ private
   end
 
   def deliver_submission_via_s3
-    s3_submission_service = S3SubmissionService.new(
-      journey: current_context.journey,
-      form: form,
-      timestamp: timestamp,
-      submission_reference: submission_reference,
-      is_preview: mode.preview?,
-    )
+    TelemetryService.trace("form.submission.deliver_s3", attributes: {
+      "submission.reference" => submission_reference,
+      "submission.format" => form.submission_format,
+      "form.id" => form.id.to_s,
+    }) do
+      s3_submission_service = S3SubmissionService.new(
+        journey: current_context.journey,
+        form: form,
+        timestamp: timestamp,
+        submission_reference: submission_reference,
+        is_preview: mode.preview?,
+      )
 
-    s3_submission_service.submit
+      s3_submission_service.submit
+    end
   end
 
   def deliver_submission_via_email
-    submission = Submission.create!(
-      reference: submission_reference,
-      form_id: form.id,
-      answers: current_context.answers,
-      mode: mode,
-      form_document: form.document_json,
-    )
+    TelemetryService.trace("form.submission.deliver_email", attributes: {
+      "submission.reference" => submission_reference,
+      "form.id" => form.id.to_s,
+    }) do
+      submission = Submission.create!(
+        reference: submission_reference,
+        form_id: form.id,
+        answers: current_context.answers,
+        mode: mode,
+        form_document: form.document_json,
+      )
 
-    SendSubmissionJob.perform_later(submission) do |job|
-      unless job.successfully_enqueued?
-        submission.destroy!
-        message_suffix = ": #{job.enqueue_error&.message}" if job.enqueue_error
-        raise StandardError, "Failed to enqueue submission for reference #{submission_reference}#{message_suffix}"
+      SendSubmissionJob.perform_later(submission) do |job|
+        unless job.successfully_enqueued?
+          submission.destroy!
+          message_suffix = ": #{job.enqueue_error&.message}" if job.enqueue_error
+          raise StandardError, "Failed to enqueue submission for reference #{submission_reference}#{message_suffix}"
+        end
       end
     end
   end
