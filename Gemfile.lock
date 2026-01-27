@@ -109,14 +109,14 @@ GEM
       public_suffix (>= 2.0.2, < 6.0)
     ast (2.4.3)
     aws-eventstream (1.4.0)
-    aws-partitions (1.1203.0)
-    aws-sdk-cloudwatch (1.127.0)
-      aws-sdk-core (~> 3, >= 3.241.0)
+    aws-partitions (1.1209.0)
+    aws-sdk-cloudwatch (1.129.0)
+      aws-sdk-core (~> 3, >= 3.241.4)
       aws-sigv4 (~> 1.5)
-    aws-sdk-codepipeline (1.110.0)
-      aws-sdk-core (~> 3, >= 3.241.0)
+    aws-sdk-codepipeline (1.112.0)
+      aws-sdk-core (~> 3, >= 3.241.4)
       aws-sigv4 (~> 1.5)
-    aws-sdk-core (3.241.3)
+    aws-sdk-core (3.241.4)
       aws-eventstream (~> 1, >= 1.3.0)
       aws-partitions (~> 1, >= 1.992.0)
       aws-sigv4 (~> 1.9)
@@ -124,18 +124,18 @@ GEM
       bigdecimal
       jmespath (~> 1, >= 1.6.1)
       logger
-    aws-sdk-kms (1.119.0)
-      aws-sdk-core (~> 3, >= 3.241.0)
+    aws-sdk-kms (1.121.0)
+      aws-sdk-core (~> 3, >= 3.241.4)
       aws-sigv4 (~> 1.5)
-    aws-sdk-s3 (1.210.0)
-      aws-sdk-core (~> 3, >= 3.241.0)
+    aws-sdk-s3 (1.212.0)
+      aws-sdk-core (~> 3, >= 3.241.4)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.5)
-    aws-sdk-sesv2 (1.93.0)
-      aws-sdk-core (~> 3, >= 3.241.0)
+    aws-sdk-sesv2 (1.95.0)
+      aws-sdk-core (~> 3, >= 3.241.4)
       aws-sigv4 (~> 1.5)
-    aws-sdk-sqs (1.108.0)
-      aws-sdk-core (~> 3, >= 3.241.0)
+    aws-sdk-sqs (1.110.0)
+      aws-sdk-core (~> 3, >= 3.241.4)
       aws-sigv4 (~> 1.5)
     aws-sdk-sts (1.12.0)
       aws-sdk-core (~> 3, >= 3.110.0)
@@ -735,7 +735,7 @@ DEPENDENCIES
   active_kms
   activeresource
   aws-sdk-cloudwatch
-  aws-sdk-codepipeline (~> 1.110)
+  aws-sdk-codepipeline (~> 1.112)
   aws-sdk-kms
   aws-sdk-s3
   aws-sdk-sesv2
@@ -802,14 +802,14 @@ CHECKSUMS
   addressable (2.8.6) sha256=798f6af3556641a7619bad1dce04cdb6eb44b0216a991b0396ea7339276f2b47
   ast (2.4.3) sha256=954615157c1d6a382bc27d690d973195e79db7f55e9765ac7c481c60bdb4d383
   aws-eventstream (1.4.0) sha256=116bf85c436200d1060811e6f5d2d40c88f65448f2125bc77ffce5121e6e183b
-  aws-partitions (1.1203.0) sha256=a821fef3d5e64d4cff00ceeacfb61bfae32e023d28b12c42066219a2045b2608
-  aws-sdk-cloudwatch (1.127.0) sha256=7b5a863366ddf70feaeeb3ec1bc3a383c19b76811ba1708c39b95e77683f3da5
-  aws-sdk-codepipeline (1.110.0) sha256=25c6edbd4569846e16675eba0b8a3ee63a7384ab0481a6646e502b9dbc567508
-  aws-sdk-core (3.241.3) sha256=c7c445ecf1c601c860fd537458b2eb8df0c5df01e63c371849e6594e6b1d4f47
-  aws-sdk-kms (1.119.0) sha256=f599c93faf18943d8a8e3ae1b186d60794c39c28d020991d4195bc18ed7e3372
-  aws-sdk-s3 (1.210.0) sha256=8ee0036e6575897dfbdf702a164fb0b57858366186175cc9ea073a67c292fcc8
-  aws-sdk-sesv2 (1.93.0) sha256=863994d8501a591a1480f5b6cbcc26a75a3414df64906ee13d4bf0b8099f7de8
-  aws-sdk-sqs (1.108.0) sha256=76a0f0cc2ef297efe73bcd60a90f7f3825942c92003dbe1f5371eb0c7793a02d
+  aws-partitions (1.1209.0) sha256=c60a2e305dfdd9e21ecb92f8f78befe95c31eaa984750a733b16903928922981
+  aws-sdk-cloudwatch (1.129.0) sha256=3fa45aaf60f92908b28e855db4ef466b93d907a451e8c1a98edacc2247a170ee
+  aws-sdk-codepipeline (1.112.0) sha256=5c02dddb8371559c69364ad60ddd7783a09f1b19484c40e9e6228cd2adb61ee4
+  aws-sdk-core (3.241.4) sha256=a42ccba8c24ea9800e7b6c40aa201c967458f7c460044a6eebf64fbf1226e4fd
+  aws-sdk-kms (1.121.0) sha256=d563c1cfb4b5754efbc671216c8eca875338748adad0f42518c28dfa0a2d01e0
+  aws-sdk-s3 (1.212.0) sha256=1e8ec4eee6914818dc79840e05c04fba9e61e8aa4822eef283fe593b93397c19
+  aws-sdk-sesv2 (1.95.0) sha256=5d3e9db6a5a826bc99946ea17088826fc0e36e7d073eca3cc75711689325be95
+  aws-sdk-sqs (1.110.0) sha256=38b3adc9cabafadb9a8cce24d04178d44092f1a1cb1cf11f45c510fc66d62781
   aws-sdk-sts (1.12.0) sha256=9bbd64223dd2423540291d9faaac4a169ace8cfe123b1075c9a127fcd65e061f
   aws-sigv4 (1.12.1) sha256=6973ff95cb0fd0dc58ba26e90e9510a2219525d07620c8babeb70ef831826c00
   axe-core-api (4.11.0) sha256=3d9c94e3c8f8f9b8f154a3ce036b3dec2dabf7bb7de5e51d663b18bd8a0d691b
