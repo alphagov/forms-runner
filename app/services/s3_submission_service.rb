@@ -46,7 +46,7 @@ private
       submission_reference: @submission_reference,
       timestamp: @timestamp,
       is_s3_submission: true,
-      submission_locale: @submission_locale,
+      language:,
     )
   end
 
@@ -57,7 +57,7 @@ private
       submission_reference: @submission_reference,
       timestamp: @timestamp,
       is_s3_submission: true,
-      submission_locale: @submission_locale,
+      language:,
     )
   end
 
@@ -124,5 +124,11 @@ private
     folder = @is_preview ? "test_form_submissions" : "form_submissions"
     formatted_timestamp = @timestamp.utc.strftime("%Y%m%dT%H%M%SZ")
     "#{folder}/#{@form.id}/#{formatted_timestamp}_#{@submission_reference}/#{filename}"
+  end
+
+  def language
+    return nil unless @form.multilingual?
+
+    @submission_locale
   end
 end

@@ -5,20 +5,22 @@ RSpec.describe AwsSesSubmissionService do
 
   let(:submission) do
     build(:submission, form_document:, reference: submission_reference, is_preview: is_preview,
-                       created_at: Time.utc(2022, 12, 14, 8, 0o0, 0o0))
+                       created_at: Time.utc(2022, 12, 14, 8, 0o0, 0o0), submission_locale:)
   end
-  let(:form_document) { build(:v2_form_document, name: "A great form", submission_type:, submission_format:, submission_email:, payment_url:) }
+  let(:form_document) { build(:v2_form_document, name: "A great form", submission_type:, submission_format:, submission_email:, payment_url:, available_languages:) }
   let(:all_steps) { [step] }
   let(:journey) { instance_double(Flow::Journey, completed_steps: all_steps, all_steps:, completed_file_upload_questions: []) }
   let(:question) { build :text, question_text: "What is the meaning of life?", text: "42" }
   let(:step) { build :step, question: }
   let(:is_preview) { false }
   let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
+  let(:submission_locale) { "en" }
   let(:payment_url) { nil }
   let(:submission_type) { "email" }
   let(:submission_format) { [] }
   let(:submission_email) { "submissions@example.gov.uk" }
   let(:from_email_address) { "govukforms@example.gov.uk" }
+  let(:available_languages) { %i[en] }
 
   let(:output) { StringIO.new }
   let(:logger) do
@@ -158,7 +160,7 @@ RSpec.describe AwsSesSubmissionService do
         allow(AwsSesFormSubmissionMailer).to receive(:submission_email).and_call_original
 
         service.submit
-        expected_csv_content = "Reference,Submitted at,What is the meaning of life?,Language\n#{submission_reference},2022-12-14T08:00:00+00:00,42,en\n"
+        expected_csv_content = "Reference,Submitted at,What is the meaning of life?\n#{submission_reference},2022-12-14T08:00:00+00:00,42\n"
 
         expect(AwsSesFormSubmissionMailer).to have_received(:submission_email).with(
           answer_content_html: "<h3>What is the meaning of life?</h3><p>42</p>",
@@ -187,7 +189,7 @@ RSpec.describe AwsSesSubmissionService do
 
             service.submit
 
-            expected_csv_content = "Reference,Submitted at,#{question.question_text},Language\n#{submission_reference},2022-12-14T08:00:00+00:00,#{question.email_filename},en\n"
+            expected_csv_content = "Reference,Submitted at,#{question.question_text}\n#{submission_reference},2022-12-14T08:00:00+00:00,#{question.email_filename}\n"
 
             expect(AwsSesFormSubmissionMailer).to have_received(:submission_email).with(
               answer_content_html: "<h3>#{question.question_text}</h3><p>#{I18n.t('mailer.submission.file_attached', filename: question.email_filename)}</p>",
@@ -201,6 +203,22 @@ RSpec.describe AwsSesSubmissionService do
               json_filename: nil,
             ).once
           end
+        end
+      end
+
+      context "when the submission is Welsh and the form is multilingual" do
+        let(:submission_locale) { "cy" }
+        let(:available_languages) { %i[en cy] }
+
+        it "calls AwsSesFormSubmissionMailer with a CSV file with language set to 'cy'" do
+          allow(AwsSesFormSubmissionMailer).to receive(:submission_email).and_call_original
+
+          service.submit
+          expected_csv_content = "Reference,Submitted at,What is the meaning of life?,Language\n#{submission_reference},2022-12-14T08:00:00+00:00,42,cy\n"
+
+          expect(AwsSesFormSubmissionMailer).to have_received(:submission_email).with(
+            hash_including(files: { "govuk_forms_a_great_form_#{submission_reference}.csv" => expected_csv_content }),
+          ).once
         end
       end
     end
@@ -222,6 +240,21 @@ RSpec.describe AwsSesSubmissionService do
         ).and_call_original
 
         service.submit
+      end
+
+      context "when the submission is Welsh" do
+        let(:submission_locale) { "cy" }
+        let(:available_languages) { %i[en cy] }
+
+        it "calls AwsSesFormSubmissionMailer with a JSON file with language set to 'cy'" do
+          allow(AwsSesFormSubmissionMailer).to receive(:submission_email).and_call_original
+
+          service.submit
+
+          expect(AwsSesFormSubmissionMailer).to have_received(:submission_email).with(
+            hash_including(files: { "govuk_forms_a_great_form_#{submission_reference}.json" => satisfy { |json| JSON.parse(json)["language"] == "cy" } }),
+          ).once
+        end
       end
     end
 
