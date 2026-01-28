@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe S3SubmissionService do
   subject(:service) do
-    described_class.new(journey:, form:, timestamp:, submission_reference:, is_preview:)
+    described_class.new(journey:, form:, timestamp:, submission_reference:, is_preview:, submission_locale:)
   end
 
   let(:form) do
@@ -12,7 +12,8 @@ RSpec.describe S3SubmissionService do
           submission_format:,
           s3_bucket_name:,
           s3_bucket_aws_account_id:,
-          s3_bucket_region:)
+          s3_bucket_region:,
+          available_languages:)
   end
   let(:submission_type) { "s3" }
   let(:submission_format) { %w[csv] }
@@ -21,6 +22,7 @@ RSpec.describe S3SubmissionService do
   let(:s3_bucket_region) { "eu-west-1" }
   let(:file_upload_bucket) { "file-upload-bucket" }
   let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
+  let(:submission_locale) { :en }
   let(:timestamp) do
     Time.use_zone("London") { Time.zone.local(2022, 9, 14, 8, 24, 34) }
   end
@@ -31,6 +33,7 @@ RSpec.describe S3SubmissionService do
   let(:question) { build :text, question_text: "What is the meaning of life?", text: "42" }
   let(:step) { build :step, question: }
   let(:is_preview) { false }
+  let(:available_languages) { %i[en] }
 
   describe "#submit" do
     let(:mock_credentials) { { foo: "bar" } }
@@ -77,6 +80,18 @@ RSpec.describe S3SubmissionService do
 
           service.submit
         end
+
+        context "when the submssion is Welsh" do
+          let(:submission_locale) { "cy" }
+          let(:available_languages) { %i[en cy] }
+
+          it "generates the submission CSV with the language field" do
+            expected_csv_content = "Reference,Submitted at,What is the meaning of life?,Language\n#{submission_reference},2022-09-14T08:24:34+01:00,42,cy\n"
+            expect(mock_s3_client).to receive(:put_object).with(hash_including(body: expected_csv_content))
+
+            service.submit
+          end
+        end
       end
 
       context "when the submission format is JSON" do
@@ -95,6 +110,17 @@ RSpec.describe S3SubmissionService do
           )
 
           service.submit
+        end
+
+        context "when the submssion is Welsh" do
+          let(:submission_locale) { "cy" }
+          let(:available_languages) { %i[en cy] }
+
+          it "generates the submission JSON with the language field" do
+            expect(mock_s3_client).to receive(:put_object).with(hash_including(body: satisfy { |args| JSON.parse(args)["language"] == "cy" }))
+
+            service.submit
+          end
         end
       end
 

@@ -33,6 +33,12 @@ class FormSubmissionService
     submission_reference
   end
 
+  def submission_locale
+    return :cy if current_context.locales_used.present? && current_context.locales_used.include?(:cy)
+
+    :en
+  end
+
 private
 
   attr_accessor :current_context, :form, :email_confirmation_input, :mode, :timestamp, :submission_reference, :localised_form
@@ -77,6 +83,7 @@ private
       timestamp: timestamp,
       submission_reference: submission_reference,
       is_preview: mode.preview?,
+      submission_locale:,
     )
 
     s3_submission_service.submit
@@ -89,6 +96,7 @@ private
       answers: current_context.answers,
       mode: mode,
       form_document: form.document_json,
+      submission_locale:,
     )
 
     SendSubmissionJob.perform_later(submission) do |job|

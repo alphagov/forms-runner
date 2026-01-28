@@ -1,5 +1,5 @@
 class JsonSubmissionGenerator
-  def self.generate_submission(form:, all_steps:, submission_reference:, timestamp:, is_s3_submission:)
+  def self.generate_submission(form:, all_steps:, submission_reference:, timestamp:, is_s3_submission:, language:)
     submission = {
       "$schema" => "#{Settings.forms_product_page.base_url}/json-submissions/v1/schema",
       form_name: form.name,
@@ -7,6 +7,11 @@ class JsonSubmissionGenerator
       submitted_at: timestamp.getutc.iso8601(3),
       answers: all_steps.flat_map { |step| step.show_answer_in_json(is_s3_submission) },
     }
+
+    if language.present?
+      submission[:language] = language
+    end
+
     JSON.pretty_generate(submission)
   end
 end
