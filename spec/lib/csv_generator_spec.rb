@@ -16,7 +16,7 @@ RSpec.describe CsvGenerator do
   end
 
   describe "#generate_submission" do
-    subject(:csv) { described_class.generate_submission(all_steps:, submission_reference:, timestamp:, is_s3_submission:, submission_locale: :en) }
+    subject(:csv) { described_class.generate_submission(all_steps:, submission_reference:, timestamp:, is_s3_submission:, language: :en) }
 
     context "when the submission is being sent by email" do
       let(:is_s3_submission) { false }

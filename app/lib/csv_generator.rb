@@ -1,7 +1,7 @@
 require "csv"
 
 class CsvGenerator
-  def self.generate_submission(all_steps:, submission_reference:, timestamp:, is_s3_submission:, submission_locale:)
+  def self.generate_submission(all_steps:, submission_reference:, timestamp:, is_s3_submission:, language:)
     headers = [I18n.t("submission_csv.reference"), I18n.t("submission_csv.submitted_at")]
     values = [submission_reference, timestamp.iso8601]
     all_steps.map do |step|
@@ -10,8 +10,10 @@ class CsvGenerator
       values.push(*answer_parts.values)
     end
 
-    headers.push(I18n.t("submission_csv.submission_locale"))
-    values.push(submission_locale)
+    if language.present?
+      headers.push(I18n.t("submission_csv.language"))
+      values.push(language)
+    end
 
     CSV.generate do |csv|
       csv << headers
