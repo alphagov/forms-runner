@@ -3,13 +3,15 @@ class S3SubmissionService
                  form:,
                  timestamp:,
                  submission_reference:,
-                 is_preview:)
+                 is_preview:,
+                 submission_locale:)
     @journey = journey
     @form = form
     @timestamp = timestamp
     @submission_reference = submission_reference
     @is_preview = is_preview
     @file_upload_bucket_name = Settings.aws.file_upload_s3_bucket_name
+    @submission_locale = submission_locale
   end
 
   def submit
@@ -44,6 +46,7 @@ private
       submission_reference: @submission_reference,
       timestamp: @timestamp,
       is_s3_submission: true,
+      language:,
     )
   end
 
@@ -54,6 +57,7 @@ private
       submission_reference: @submission_reference,
       timestamp: @timestamp,
       is_s3_submission: true,
+      language:,
     )
   end
 
@@ -120,5 +124,11 @@ private
     folder = @is_preview ? "test_form_submissions" : "form_submissions"
     formatted_timestamp = @timestamp.utc.strftime("%Y%m%dT%H%M%SZ")
     "#{folder}/#{@form.id}/#{formatted_timestamp}_#{@submission_reference}/#{filename}"
+  end
+
+  def language
+    return nil unless @form.multilingual?
+
+    @submission_locale
   end
 end

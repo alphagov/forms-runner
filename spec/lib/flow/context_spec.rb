@@ -123,5 +123,68 @@ RSpec.describe Flow::Context do
       end
     end
   end
+
+  describe "#save_step" do
+    let(:answer_store) { instance_double(Store::SessionAnswerStore) }
+    let(:step) { instance_double(Step) }
+    let(:context_instance) { described_class.new(form:, store: {}) }
+
+    before do
+      allow(context_instance).to receive(:answer_store).and_return(answer_store)
+    end
+
+    context "when the step is valid" do
+      before do
+        allow(step).to receive_messages(valid?: true, save_to_store: true)
+        allow(answer_store).to receive(:add_locale)
+      end
+
+      it "saves the step to the answer store" do
+        expect(step).to receive(:save_to_store).with(answer_store)
+        context_instance.save_step(step)
+      end
+
+      it "adds the locale to the answer store" do
+        expect(answer_store).to receive(:add_locale).with(:en)
+        context_instance.save_step(step)
+      end
+
+      it "passes the context to the valid? method if provided" do
+        custom_context = { some: "context" }
+        expect(step).to receive(:valid?).with(custom_context)
+        context_instance.save_step(step, context: custom_context)
+      end
+
+      it "uses the provided locale" do
+        custom_locale = :cy
+        expect(answer_store).to receive(:add_locale).with(custom_locale)
+        context_instance.save_step(step, locale: custom_locale)
+      end
+
+      it "returns truthy" do
+        expect(context_instance.save_step(step)).to be_truthy
+      end
+    end
+
+    context "when the step is invalid" do
+      before do
+        allow(step).to receive(:valid?).and_return(false)
+      end
+
+      it "does not save the step to the answer store" do
+        expect(step).not_to receive(:save_to_store)
+        context_instance.save_step(step)
+      end
+
+      it "does not add the locale to the answer store" do
+        expect(answer_store).not_to receive(:add_locale)
+        context_instance.save_step(step)
+      end
+
+      it "returns false" do
+        expect(context_instance.save_step(step)).to be false
+      end
+    end
+  end
 end
 # rubocop:enable RSpec/InstanceVariable

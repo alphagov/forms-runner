@@ -52,6 +52,7 @@ private
       submission_reference: @submission.reference,
       timestamp: @submission.submission_time,
       is_s3_submission: false,
+      language:,
     )
   end
 
@@ -62,6 +63,7 @@ private
       submission_reference: @submission.reference,
       timestamp: @submission.submission_time,
       is_s3_submission: false,
+      language:,
     )
   end
 
@@ -100,5 +102,11 @@ private
 
   def generate_json_filename
     SubmissionFilenameGenerator.json_filename(form_name: @form.name, submission_reference: @submission.reference)
+  end
+
+  def language
+    return nil unless @form.multilingual?
+
+    @submission.submission_locale
   end
 end

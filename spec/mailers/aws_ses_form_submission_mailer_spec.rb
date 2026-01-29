@@ -5,7 +5,7 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
 
   let(:submission) do
     build(:submission, form_document: form_document, created_at: submission_timestamp,
-                       reference: submission_reference, is_preview:)
+                       reference: submission_reference, is_preview:, submission_locale:)
   end
   let(:form_document) { build(:v2_form_document, name: form_name, submission_email: submission_email_address, payment_url:) }
   let(:form_name) { "Form 1" }
@@ -19,6 +19,7 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
   let(:csv_filename) { nil }
   let(:json_filename) { nil }
   let(:submission_timestamp) { Time.utc(2022, 12, 14, 13, 0o0, 0o0) }
+  let(:submission_locale) { :en }
 
   context "when form filler submits a completed form" do
     context "when form is not in preview" do
@@ -92,6 +93,22 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
             end
           end
         end
+
+        describe "submission_locale" do
+          context "with a submission in English" do
+            it "does not include the Welsh submission text" do
+              expect(part.body).not_to match("Welsh")
+            end
+          end
+
+          context "with a submission in Welsh" do
+            let(:submission_locale) { :cy }
+
+            it "includes the Welsh submission text" do
+              expect(part.body).to match("Welsh")
+            end
+          end
+        end
       end
 
       describe "the plaintext part" do
@@ -145,6 +162,22 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
 
             it "includes the date and time the user submitted the form" do
               expect(part.body).to match("Submitted at: 1:00pm on 14 December 2022")
+            end
+          end
+        end
+
+        describe "submission_locale" do
+          context "with a submission in English" do
+            it "does not include the Welsh submission text" do
+              expect(part.body).not_to match("Welsh")
+            end
+          end
+
+          context "with a submission in Welsh" do
+            let(:submission_locale) { :cy }
+
+            it "includes the Welsh submission text" do
+              expect(part.body).to match("Welsh")
             end
           end
         end

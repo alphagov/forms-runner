@@ -28,6 +28,15 @@ class AwsSesFormSubmissionMailerPreview < ActionMailer::Preview
                                                 files: {})
   end
 
+  def submission_email_with_welsh
+    form_document = build(:v2_form_document, submission_email: "testing@gov.uk", payment_url: "https://www.gov.uk/payments/your-payment-link")
+    submission = build(:submission, form_document:, is_preview: false, submission_locale: :cy)
+    AwsSesFormSubmissionMailer.submission_email(answer_content_html: "<h3>What's your email address?</h3><p>forms@example.gov.uk</p>",
+                                                answer_content_plain_text: "What's your email address?\n\nforms@example.gov.uk",
+                                                submission:,
+                                                files: {})
+  end
+
   def submission_email_with_csv
     form_document = build(:v2_form_document, submission_email: "testing@gov.uk", payment_url: "https://www.gov.uk/payments/your-payment-link")
     submission = build(:submission, form_document:, is_preview: false)

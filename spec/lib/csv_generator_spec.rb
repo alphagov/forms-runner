@@ -16,7 +16,7 @@ RSpec.describe CsvGenerator do
   end
 
   describe "#generate_submission" do
-    subject(:csv) { described_class.generate_submission(all_steps:, submission_reference:, timestamp:, is_s3_submission:) }
+    subject(:csv) { described_class.generate_submission(all_steps:, submission_reference:, timestamp:, is_s3_submission:, language: :en) }
 
     context "when the submission is being sent by email" do
       let(:is_s3_submission) { false }
@@ -32,8 +32,8 @@ RSpec.describe CsvGenerator do
       it "generates the submission CSV" do
         expect(CSV.parse(csv)).to eq(
           [
-            ["Reference", "Submitted at", "What is the meaning of life?", "What is your name? - First name", "What is your name? - Last name", "Upload a file"],
-            [submission_reference, "2022-09-14T08:00:00+01:00", text_question.text, name_question.first_name, name_question.last_name, "test_#{submission_reference}.txt"],
+            ["Reference", "Submitted at", "What is the meaning of life?", "What is your name? - First name", "What is your name? - Last name", "Upload a file", "Language"],
+            [submission_reference, "2022-09-14T08:00:00+01:00", text_question.text, name_question.first_name, name_question.last_name, "test_#{submission_reference}.txt", "en"],
           ],
         )
       end
@@ -44,8 +44,8 @@ RSpec.describe CsvGenerator do
         it "generates a CSV including blank column for unanswered optional question" do
           expect(CSV.parse(csv)).to eq(
             [
-              ["Reference", "Submitted at", "What is the meaning of life?", "What is your name? - First name", "What is your name? - Last name", "Upload a file"],
-              [submission_reference, "2022-09-14T08:00:00+01:00", "", name_question.first_name, name_question.last_name, "test_#{submission_reference}.txt"],
+              ["Reference", "Submitted at", "What is the meaning of life?", "What is your name? - First name", "What is your name? - Last name", "Upload a file", "Language"],
+              [submission_reference, "2022-09-14T08:00:00+01:00", "", name_question.first_name, name_question.last_name, "test_#{submission_reference}.txt", "en"],
             ],
           )
         end
@@ -67,6 +67,7 @@ RSpec.describe CsvGenerator do
                 "What is your name? - First name - Answer 2",
                 "What is your name? - Last name - Answer 2",
                 "Upload a file",
+                "Language",
               ],
               [
                 submission_reference,
@@ -77,6 +78,7 @@ RSpec.describe CsvGenerator do
                 name_question_repeated.first_name,
                 name_question_repeated.last_name,
                 "test_#{submission_reference}.txt",
+                "en",
               ],
             ],
           )
@@ -90,8 +92,8 @@ RSpec.describe CsvGenerator do
       it "generates a CSV without including the submission reference in the filename for the file upload question" do
         expect(CSV.parse(csv)).to eq(
           [
-            ["Reference", "Submitted at", "What is the meaning of life?", "What is your name? - First name", "What is your name? - Last name", "Upload a file"],
-            [submission_reference, "2022-09-14T08:00:00+01:00", text_question.text, name_question.first_name, name_question.last_name, file_question.original_filename],
+            ["Reference", "Submitted at", "What is the meaning of life?", "What is your name? - First name", "What is your name? - Last name", "Upload a file", "Language"],
+            [submission_reference, "2022-09-14T08:00:00+01:00", text_question.text, name_question.first_name, name_question.last_name, file_question.original_filename, "en"],
           ],
         )
       end

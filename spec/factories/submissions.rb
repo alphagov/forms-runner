@@ -18,6 +18,7 @@ FactoryBot.define do
     mode { is_preview ? "preview-live" : "live" }
     form_document { build :v2_form_document }
     delivery_status { :pending }
+    submission_locale { :en }
 
     transient do
       is_preview { false }

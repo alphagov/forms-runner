@@ -40,6 +40,7 @@ RSpec.describe Forms::RemoveAnswerController, type: :request do
     allow(answer_store).to receive(:clear_stored_answer)
     allow(answer_store).to receive(:get_stored_answer).and_return(stored_answers)
     allow(answer_store).to receive(:save_step)
+    allow(answer_store).to receive(:add_locale)
   end
 
   describe "GET #show" do

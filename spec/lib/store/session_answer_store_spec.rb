@@ -63,6 +63,15 @@ RSpec.describe Store::SessionAnswerStore do
       answer_store.clear
       expect(other_form_answer_store.get_stored_answer(other_step)).to eq("other form answer")
     end
+
+    it "clears the locales used" do
+      answer_store.add_locale(:en)
+      answer_store.add_locale(:cy)
+
+      answer_store.clear
+
+      expect(answer_store.locales_used).to eq([])
+    end
   end
 
   describe "#get_stored_answer" do
@@ -121,6 +130,28 @@ RSpec.describe Store::SessionAnswerStore do
 
       it "returns true when a form has been submitted and cleared" do
         expect(answer_store.form_submitted?).to be false
+      end
+    end
+  end
+
+  describe "#locales_used" do
+    context "when no locales have been added" do
+      it "returns []" do
+        expect(answer_store.locales_used).to eq([])
+      end
+    end
+
+    context "when multiple locales exist in the store" do
+      let(:store) do
+        {
+          locales: {
+            form_id.to_s => %i[en cy],
+          },
+        }
+      end
+
+      it "returns the locales used" do
+        expect(answer_store.locales_used).to eq(%i[en cy])
       end
     end
   end

@@ -14,12 +14,13 @@ RSpec.describe JsonSubmissionGenerator do
   let(:selection_step) { build :step, page: build(:page, :with_selections_settings), question: selection_question }
   let(:all_steps) { [text_step, name_step, file_step, address_step, selection_step] }
   let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
+  let(:language) { nil }
   let(:timestamp) do
     Time.use_zone("London") { Time.zone.local(2022, 9, 14, 8, 0, 0) }
   end
 
   describe ".generate_submission" do
-    subject(:json_submission) { described_class.generate_submission(form:, all_steps:, submission_reference:, timestamp:, is_s3_submission:) }
+    subject(:json_submission) { described_class.generate_submission(form:, all_steps:, submission_reference:, timestamp:, is_s3_submission:, language:) }
 
     let(:parsed_json) { JSON.parse(json_submission) }
 
@@ -124,6 +125,16 @@ RSpec.describe JsonSubmissionGenerator do
               },
             ],
           })
+        end
+      end
+
+      context "when the language is not nil'" do
+        let(:language) { :cy }
+
+        it "generates the submission JSON with the language field" do
+          expect(parsed_json).to include(
+            "language" => "cy",
+          )
         end
       end
     end
