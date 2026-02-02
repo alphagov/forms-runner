@@ -10,9 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_20_111541) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_02_165603) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "deliveries", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "delivered_at"
+    t.string "delivery_reference"
+    t.datetime "failed_at"
+    t.string "failure_reason"
+    t.datetime "last_attempt_at"
+    t.datetime "updated_at", null: false
+    t.index ["delivery_reference"], name: "index_deliveries_on_delivery_reference"
+  end
 
   create_table "submissions", force: :cascade do |t|
     t.jsonb "answers"
