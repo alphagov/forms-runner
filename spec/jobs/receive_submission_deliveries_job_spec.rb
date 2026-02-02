@@ -90,6 +90,15 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
       expect(submission.reload.delivered_at).to eq ses_delivery_timestamp
     end
 
+    context "when a delivery record exists" do
+      let!(:delivery) { submission.deliveries.create!(delivery_reference: mail_message_id) }
+
+      it "updates the delivery delivered_at timestamp" do
+        perform_enqueued_jobs
+        expect(delivery.reload.delivered_at).to eq ses_delivery_timestamp
+      end
+    end
+
     it "doesn't change the delivery status for other submissions" do
       perform_enqueued_jobs
       expect(other_submission.reload.bounced?).to be true

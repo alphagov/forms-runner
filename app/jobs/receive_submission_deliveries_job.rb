@@ -34,6 +34,9 @@ private
 
     submission.update! attributes
 
+    delivery = submission.single_submission_delivery
+    delivery.update! attributes if delivery.present?
+
     EventLogger.log_form_event("submission_delivered")
   end
 end

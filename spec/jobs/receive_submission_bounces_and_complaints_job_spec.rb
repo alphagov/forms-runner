@@ -93,6 +93,16 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
         expect(submission.reload.bounced_at).to eq(Time.zone.parse(bounce_timestamp))
       end
 
+      context "when a delivery record exists" do
+        let!(:delivery) { submission.deliveries.create!(delivery_reference: mail_message_id) }
+
+        it "updated the delivery record's failed_at and failure_reason" do
+          perform_enqueued_jobs
+          expect(delivery.reload.failed_at).to eq(Time.zone.parse(bounce_timestamp))
+          expect(delivery.reload.failure_reason).to eq("bounced")
+        end
+      end
+
       it "doesn't change the mail status for other submissions" do
         perform_enqueued_jobs
         expect(other_submission.reload.pending?).to be true
