@@ -29,6 +29,11 @@ class Submission < ApplicationRecord
     form.payment_url_with_reference(reference)
   end
 
+  def single_submission_delivery
+    # The logic to get this will change when we add batching
+    deliveries.sole if deliveries.any?
+  end
+
   def self.emailed?(reference)
     submission = Submission.find_by(reference: reference)
     submission.mail_message_id.present? if submission.present?

@@ -17,6 +17,22 @@ class SendSubmissionJob < ApplicationJob
       last_delivery_attempt: Time.zone.now,
     )
 
+    existing_delivery = submission.single_submission_delivery
+    if existing_delivery.present?
+      existing_delivery.update!(
+        delivery_reference: message_id,
+        last_attempt_at: Time.zone.now,
+        delivered_at: nil,
+        failed_at: nil,
+        failure_reason: nil,
+      )
+    else
+      submission.deliveries.create!(
+        delivery_reference: message_id,
+        last_attempt_at: Time.zone.now,
+      )
+    end
+
     milliseconds_since_scheduled = (Time.current - scheduled_at_or_enqueued_at).in_milliseconds.round
     EventLogger.log_form_event("submission_email_sent", { milliseconds_since_scheduled: })
     CloudWatchService.record_submission_sent_metric(milliseconds_since_scheduled)
