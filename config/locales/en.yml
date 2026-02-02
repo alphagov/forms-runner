@@ -42,7 +42,7 @@ en:
             list_item_3: some headings on question pages that have multiple fields
             preamble: 'VoiceOver on iOS (iPhone Operating System) 17 reads out some lines of content twice. This happens with:'
           list_item_6: When you click on ‘Get help with this form’, VoiceOver on iOS 17 does not announce that there’s more content to be shown. This could make it harder to get help with the form.
-          list_item_7: On the ‘Check your answers’ page, VoiceOver on iOS 17 does not always read out the 'Change' link. This could make it harder for you to change your answer.
+          list_item_7: On the ‘Check your answers’ page, VoiceOver on iOS 17 does not always read out the ‘Change’ link. This could make it harder for you to change your answer.
           list_item_8: It can be difficult to open the ‘Get help with this form’ link when using the Dragon web extension on Chrome. This could make it harder to get help with the form.
         preamble: Although the following issues do not fail WCAG 2.2 AA, we plan to investigate and fix them as soon as possible.
       preamble: The content listed below is non-accessible for the following reasons.
