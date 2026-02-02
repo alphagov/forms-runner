@@ -1,6 +1,9 @@
 class Submission < ApplicationRecord
   self.ignored_columns += %w[mail_status sent_at]
 
+  has_many :submission_deliveries, dependent: :destroy
+  has_many :deliveries, through: :submission_deliveries
+
   delegate :preview?, to: :mode_object
 
   encrypts :answers
