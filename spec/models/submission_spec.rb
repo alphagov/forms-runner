@@ -87,4 +87,44 @@ RSpec.describe Submission, type: :model do
       expect(submission.submission_locale).to eq("en")
     end
   end
+
+  describe "destroy" do
+    subject(:submission) { create :submission }
+
+    context "when there is a delivery only associated to this submission" do
+      let!(:delivery) { submission.deliveries.create!(delivery_reference: "message-id") }
+
+      it "destroys the SubmissionDelivery join record" do
+        expect {
+          submission.destroy
+        }.to change(SubmissionDelivery, :count).by(-1)
+      end
+
+      it "destroys associated delivery record" do
+        submission.destroy!
+        expect(Delivery.exists?(delivery.id)).to be false
+      end
+    end
+
+    context "when there is a delivery associated to multiple submissions" do
+      let(:delivery) { create :delivery, delivery_reference: "message-id" }
+
+      before do
+        other_submission = create :submission
+        SubmissionDelivery.create!(submission: submission, delivery: delivery)
+        SubmissionDelivery.create!(submission: other_submission, delivery: delivery)
+      end
+
+      it "destroys the SubmissionDelivery join record" do
+        expect {
+          submission.destroy
+        }.to change(SubmissionDelivery, :count).by(-1)
+      end
+
+      it "does not destroy associated delivery record" do
+        submission.destroy!
+        expect(Delivery.exists?(delivery.id)).to be true
+      end
+    end
+  end
 end

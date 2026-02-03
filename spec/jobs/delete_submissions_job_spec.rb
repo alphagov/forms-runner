@@ -83,6 +83,16 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
       expect(Submission.exists?(sent_submission_created_30_days_ago.id)).to be false
     end
 
+    context "when there are delivery records" do
+      let!(:delivery) { sent_submission_created_30_days_ago.deliveries.create!(delivery_reference: "a-message-id") }
+
+      it "destroys associated delivery record" do
+        perform_enqueued_jobs
+        expect(Submission.exists?(sent_submission_created_30_days_ago.id)).to be false
+        expect(Delivery.exists?(delivery.id)).to be false
+      end
+    end
+
     it "does not destroy the submission created more recently than 30 days ago" do
       perform_enqueued_jobs
       expect(Submission.exists?(sent_submission_created_29_days_ago.id)).to be true
