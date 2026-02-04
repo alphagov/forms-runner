@@ -5,14 +5,14 @@ RSpec.describe SendSubmissionJob, type: :job do
   include ActiveJob::TestHelper
 
   let(:submission_created_at) { Time.utc(2022, 12, 14, 13, 0o0, 0o0) }
-  let(:submission) { create :submission, form_document:, delivery_status: :pending, created_at: submission_created_at }
+  let(:submission) { create :submission, form_document:, created_at: submission_created_at }
   let(:form_document) { build(:v2_form_document, name: "Form 1") }
   let(:question) { build :text, question_text: "What is the meaning of life?", text: "42" }
   let(:step) { build :step, question: }
   let(:all_steps) { [step] }
   let(:journey) { instance_double(Flow::Journey, completed_steps: all_steps, all_steps:) }
   let(:aws_ses_submission_service_spy) { instance_double(AwsSesSubmissionService) }
-  let(:mail_message_id) { "1234" }
+  let(:delivery_reference) { "1234" }
 
   before do
     allow(Flow::Journey).to receive(:new).and_return(journey)
@@ -22,7 +22,7 @@ RSpec.describe SendSubmissionJob, type: :job do
 
   context "when the job is processed" do
     before do
-      allow(aws_ses_submission_service_spy).to receive(:submit).and_return(mail_message_id)
+      allow(aws_ses_submission_service_spy).to receive(:submit).and_return(delivery_reference)
 
       described_class.perform_later(submission)
       travel 5.seconds do
@@ -35,32 +35,22 @@ RSpec.describe SendSubmissionJob, type: :job do
       expect(aws_ses_submission_service_spy).to have_received(:submit)
     end
 
-    it "updates the submission message ID" do
-      expect(Submission.last).to have_attributes(mail_message_id:)
-    end
+    context "when there is no existing delivery record" do
+      it "creates a delivery record" do
+        expect(submission.reload.deliveries.count).to eq(1)
+      end
 
-    it "updates the submission mail status to pending" do
-      expect(Submission.last.pending?).to be true
-    end
+      it "sets the delivery reference on the delivery record" do
+        expect(submission.reload.deliveries.first.delivery_reference).to eq(delivery_reference)
+      end
 
-    it "updates the sent at time" do
-      expect(submission.reload.last_delivery_attempt).to be_within(1.second).of(@job_ran_at)
-    end
+      it "sets the last attempt time on the delivery record" do
+        expect(submission.reload.deliveries.first.last_attempt_at).to be_within(1.second).of(@job_ran_at)
+      end
 
-    it "creates a delivery record" do
-      expect(submission.reload.deliveries.count).to eq(1)
-    end
-
-    it "sets the delivery reference on the delivery record" do
-      expect(submission.reload.deliveries.first.delivery_reference).to eq(mail_message_id)
-    end
-
-    it "sets the last attempt time on the delivery record" do
-      expect(submission.reload.deliveries.first.last_attempt_at).to be_within(1.second).of(@job_ran_at)
-    end
-
-    it "sends cloudwatch metric for the submission being sent" do
-      expect(CloudWatchService).to have_received(:record_submission_sent_metric).with(be_within(1000).of(5000))
+      it "sends cloudwatch metric for the submission being sent" do
+        expect(CloudWatchService).to have_received(:record_submission_sent_metric).with(be_within(1000).of(5000))
+      end
     end
 
     context "when the delivery is being retried" do
@@ -79,7 +69,7 @@ RSpec.describe SendSubmissionJob, type: :job do
 
       it "updates the existing delivery record" do
         updated_delivery = submission.deliveries.first.reload
-        expect(updated_delivery.delivery_reference).to eq(mail_message_id)
+        expect(updated_delivery.delivery_reference).to eq(delivery_reference)
         expect(updated_delivery.last_attempt_at).to be_within(1.second).of(@job_ran_at)
         expect(updated_delivery.delivered_at).to be_nil
         expect(updated_delivery.failed_at).to be_nil

@@ -11,12 +11,6 @@ class SendSubmissionJob < ApplicationJob
 
     message_id = AwsSesSubmissionService.new(submission:).submit
 
-    submission.update!(
-      mail_message_id: message_id,
-      delivery_status: :pending,
-      last_delivery_attempt: Time.zone.now,
-    )
-
     existing_delivery = submission.single_submission_delivery
     if existing_delivery.present?
       existing_delivery.update!(
