@@ -3,6 +3,14 @@ namespace :submissions do
   task check_submission_statuses: :environment do
     Rails.logger.info "#{Submission.pending.count} pending submissions"
     Rails.logger.info "#{Submission.bounced.count} bounced submissions"
+
+    Rails.logger.info "#{Submission.where(bounced_at: nil, delivered_at: nil).count} submissions with neither bounced_at nor delivered_at set - would be pending"
+
+    Rails.logger.info "#{Submission.where(delivered_at: nil).where.not(bounced_at: nil).count} submissions with only bounced_at set - would be bounced"
+    Rails.logger.info "#{Submission.where.not(bounced_at: nil, delivered_at: nil).where('bounced_at > delivered_at').count} submissions with bounced_at later than delivered_at - would be bounced"
+
+    Rails.logger.info "#{Submission.where(bounced_at: nil).where.not(delivered_at: nil).count} submissions with only delivered_at set - would be delivered"
+    Rails.logger.info "#{Submission.where.not(bounced_at: nil, delivered_at: nil).where('delivered_at > bounced_at').count} submissions with delivered_at later than bounced_at - would be delivered"
   end
 
   desc "List all submissions where delivery was last attempted more than 8 days ago"
