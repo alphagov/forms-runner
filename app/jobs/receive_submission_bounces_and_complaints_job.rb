@@ -39,6 +39,13 @@ private
         delivery_status: :bounced,
         bounced_at: bounced_timestamp,
       )
+      delivery = submission.single_submission_delivery
+      if delivery.present?
+        delivery.update!(
+          failed_at: bounced_timestamp,
+          failure_reason: "bounced",
+        )
+      end
     end
 
     ses_bounce = {

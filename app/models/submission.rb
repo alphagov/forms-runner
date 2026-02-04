@@ -1,6 +1,9 @@
 class Submission < ApplicationRecord
   self.ignored_columns += %w[mail_status sent_at]
 
+  has_many :submission_deliveries, dependent: :destroy
+  has_many :deliveries, through: :submission_deliveries
+
   delegate :preview?, to: :mode_object
 
   encrypts :answers
@@ -24,6 +27,11 @@ class Submission < ApplicationRecord
 
   def payment_url
     form.payment_url_with_reference(reference)
+  end
+
+  def single_submission_delivery
+    # The logic to get this will change when we add batching
+    deliveries.sole if deliveries.any?
   end
 
   def self.emailed?(reference)
