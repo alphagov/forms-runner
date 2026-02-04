@@ -14,19 +14,20 @@ class ReceiveSubmissionBouncesAndComplaintsJob < ApplicationJob
       job_id: job_id,
     )
 
-    poller.poll do |submission, ses_message|
+    poller.poll do |delivery, ses_message|
+      submission = delivery.submissions.first
       ses_event_type = ses_message["eventType"]
 
       raise "Unexpected event type:#{ses_event_type}" unless %w[Bounce Complaint].include?(ses_event_type)
 
-      process_bounce(submission, ses_message) if ses_event_type == "Bounce"
+      process_bounce(delivery, submission, ses_message) if ses_event_type == "Bounce"
       process_complaint(submission) if ses_event_type == "Complaint"
     end
   end
 
 private
 
-  def process_bounce(submission, ses_message)
+  def process_bounce(delivery, submission, ses_message)
     set_submission_logging_attributes(submission)
 
     bounce_object = ses_message["bounce"] || {}
@@ -35,17 +36,11 @@ private
     # submissions so these can be deleted as normal by the deletion job.
     unless submission.preview?
       bounced_timestamp = Time.zone.parse(bounce_object["timestamp"])
-      submission.update!(
-        delivery_status: :bounced,
-        bounced_at: bounced_timestamp,
+
+      delivery.update!(
+        failed_at: bounced_timestamp,
+        failure_reason: "bounced",
       )
-      delivery = submission.single_submission_delivery
-      if delivery.present?
-        delivery.update!(
-          failed_at: bounced_timestamp,
-          failure_reason: "bounced",
-        )
-      end
     end
 
     ses_bounce = {

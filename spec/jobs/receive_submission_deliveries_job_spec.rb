@@ -13,24 +13,10 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
   let(:sns_message_timestamp) { "2025-05-09T10:25:43.972Z" }
   let(:ses_delivery_timestamp) { "2025-05-09T10:25:41.123Z" }
   let(:sns_delivery_message_body) { { "Message" => ses_delivery_message_body.to_json, "Timestamp" => sns_message_timestamp }.to_json }
-  let(:ses_delivery_message_body) { { "mail" => { "messageId" => mail_message_id }, "eventType": event_type, "delivery": { "timestamp": ses_delivery_timestamp } } }
-  let(:file_upload_steps) do
-    [
-      build(:v2_question_page_step, answer_type: "file", id: 1, next_step_id: 2),
-      build(:v2_question_page_step, answer_type: "file", id: 2),
-    ]
-  end
-  let(:form_with_file_upload) { build :v2_form_document, form_id: 1, steps: file_upload_steps, start_page: 1 }
-  let(:form_with_file_upload_answers) do
-    {
-      "1" => { uploaded_file_key: "key1" },
-      "2" => { uploaded_file_key: "key2" },
-    }
-  end
-  let(:mail_message_id) { "mail-message-id" }
+  let(:ses_delivery_message_body) { { "mail" => { "messageId" => delivery_reference }, "eventType": event_type, "delivery": { "timestamp": ses_delivery_timestamp } } }
+  let(:delivery_reference) { "delivery-reference" }
   let(:reference) { "submission-reference" }
-  let!(:submission) { create :submission, created_at: Time.zone.parse("2025-05-09T10:25:35.001Z"), mail_message_id:, reference:, form_id: form_with_file_upload.form_id, form_document: form_with_file_upload, answers: form_with_file_upload_answers }
-  let!(:other_submission) { create :submission, created_at: Time.zone.parse("2025-05-09T10:25:35.001Z"), mail_message_id: "abc", delivery_status: :bounced, reference: "other-submission-reference", form_id: 2, answers: form_with_file_upload_answers }
+  let!(:submission) { create :submission, :sent, delivery_reference:, reference:, created_at: Time.zone.parse("2025-05-09T10:25:35.001Z") }
 
   let(:output) { StringIO.new }
   let(:logger) do
@@ -85,23 +71,9 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
       allow(CloudWatchService).to receive(:record_submission_delivery_latency_metric)
     end
 
-    it "updates the submission delivered_at timestamp" do
+    it "updates the delivery delivered_at timestamp" do
       perform_enqueued_jobs
-      expect(submission.reload.delivered_at).to eq ses_delivery_timestamp
-    end
-
-    context "when a delivery record exists" do
-      let!(:delivery) { submission.deliveries.create!(delivery_reference: mail_message_id) }
-
-      it "updates the delivery delivered_at timestamp" do
-        perform_enqueued_jobs
-        expect(delivery.reload.delivered_at).to eq ses_delivery_timestamp
-      end
-    end
-
-    it "doesn't change the delivery status for other submissions" do
-      perform_enqueued_jobs
-      expect(other_submission.reload.bounced?).to be true
+      expect(submission.deliveries.first.reload.delivered_at).to eq ses_delivery_timestamp
     end
 
     it "logs form event with correct details" do
@@ -111,7 +83,7 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
                                      "level" => "INFO",
                                      "message" => "Form event",
                                      "event" => "form_submission_delivered",
-                                     "form_id" => form_with_file_upload.form_id,
+                                     "form_id" => submission.form_id,
                                      "submission_reference" => reference,
                                      "preview" => "false",
                                      "sns_message_timestamp" => sns_message_timestamp,

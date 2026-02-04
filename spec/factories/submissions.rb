@@ -4,7 +4,7 @@ FactoryBot.define do
     updated_at { created_at }
     last_delivery_attempt { nil }
     reference { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
-    form_id { 1 }
+    form_id { Faker::Number.number(digits: 5) }
     answers do
       {
         "1" => {
@@ -16,7 +16,7 @@ FactoryBot.define do
       }
     end
     mode { is_preview ? "preview-live" : "live" }
-    form_document { build :v2_form_document }
+    form_document { build :v2_form_document, form_id: }
     delivery_status { :pending }
     submission_locale { :en }
 
@@ -27,6 +27,14 @@ FactoryBot.define do
     trait :sent do
       mail_message_id { Faker::Alphanumeric.alphanumeric }
       last_delivery_attempt { created_at + 1.minute }
+
+      transient do
+        delivery_reference { Faker::Alphanumeric.alphanumeric }
+      end
+
+      after(:create) do |submission, evaluator|
+        submission.deliveries << create(:delivery, delivery_reference: evaluator.delivery_reference)
+      end
     end
 
     trait :bounced do

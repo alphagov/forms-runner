@@ -20,7 +20,7 @@ RSpec.describe AwsSesMessagePoller do
   let(:sqs_message_id) { "sqs-message-id" }
   let(:receipt_handle) { "receipt-handle" }
   let(:sns_message_timestamp) { "2025-05-09T10:25:43.972Z" }
-  let(:mail_message_id) { "mail-message-id" }
+  let(:delivery_reference) { "mail-message-id" }
 
   let(:sns_message_body) do
     {
@@ -31,7 +31,7 @@ RSpec.describe AwsSesMessagePoller do
 
   let(:ses_message_body) do
     {
-      "mail" => { "messageId" => mail_message_id },
+      "mail" => { "messageId" => delivery_reference },
       "eventType" => "TestEvent",
     }
   end
@@ -45,7 +45,7 @@ RSpec.describe AwsSesMessagePoller do
     )
   end
 
-  let!(:submission) { create :submission, mail_message_id: mail_message_id }
+  let!(:submission) { create :submission, :sent, delivery_reference: }
 
   let(:output) { StringIO.new }
   let(:logger) do
@@ -84,17 +84,17 @@ RSpec.describe AwsSesMessagePoller do
 
       it "processes messages using the provided block" do
         block_called = false
-        received_submission = nil
+        received_delivery = nil
         received_ses_message = nil
 
-        poller.poll do |submission, ses_message|
+        poller.poll do |delivery, ses_message|
           block_called = true
-          received_submission = submission
+          received_delivery = delivery
           received_ses_message = ses_message
         end
 
         expect(block_called).to be true
-        expect(received_submission).to eq submission
+        expect(received_delivery).to eq submission.deliveries.first
         expect(received_ses_message).to eq ses_message_body
       end
 
@@ -110,7 +110,7 @@ RSpec.describe AwsSesMessagePoller do
       end
 
       it "deletes the message after successful processing" do
-        poller.poll { |_submission, _ses_message| }
+        poller.poll { |_delivery, _ses_message| }
 
         expect(sqs_client).to have_received(:delete_message).with(
           queue_url: queue_url,
@@ -119,7 +119,7 @@ RSpec.describe AwsSesMessagePoller do
       end
 
       it "resets logging attributes after processing" do
-        poller.poll { |_submission, _ses_message| }
+        poller.poll { |_delivery, _ses_message| }
 
         expect(CurrentJobLoggingAttributes.sqs_message_id).to be_nil
         expect(CurrentJobLoggingAttributes.sns_message_timestamp).to be_nil
@@ -140,13 +140,13 @@ RSpec.describe AwsSesMessagePoller do
 
       it "processes all messages" do
         call_count = 0
-        poller.poll { |_submission, _ses_message| call_count += 1 }
+        poller.poll { |_delivery, _ses_message| call_count += 1 }
 
         expect(call_count).to eq 5
       end
 
       it "deletes all messages" do
-        poller.poll { |_submission, _ses_message| }
+        poller.poll { |_delivery, _ses_message| }
 
         expect(sqs_client).to have_received(:delete_message).exactly(5).times
       end
@@ -164,7 +164,7 @@ RSpec.describe AwsSesMessagePoller do
 
       it "logs a warning" do
         call_count = 0
-        poller.poll do |_submission, _ses_message|
+        poller.poll do |_delivery, _ses_message|
           call_count += 1
           raise StandardError, "Test error" if call_count == 1
         end
@@ -179,7 +179,7 @@ RSpec.describe AwsSesMessagePoller do
 
       it "sends the error to Sentry" do
         call_count = 0
-        poller.poll do |_submission, _ses_message|
+        poller.poll do |_delivery, _ses_message|
           call_count += 1
           raise StandardError, "Test error" if call_count == 1
         end
@@ -188,14 +188,14 @@ RSpec.describe AwsSesMessagePoller do
       end
 
       it "does not delete the message when an error occurs" do
-        poller.poll { |_submission, _ses_message| raise StandardError, "Test error" }
+        poller.poll { |_delivery, _ses_message| raise StandardError, "Test error" }
 
         expect(sqs_client).not_to have_received(:delete_message)
       end
 
       it "continues processing subsequent messages" do
         call_count = 0
-        poller.poll do |_submission, _ses_message|
+        poller.poll do |_delivery, _ses_message|
           call_count += 1
           raise StandardError, "Test error" if call_count == 1
         end
@@ -204,7 +204,7 @@ RSpec.describe AwsSesMessagePoller do
       end
 
       it "resets logging attributes even after an error" do
-        poller.poll { |_submission, _ses_message| raise StandardError, "Test error" }
+        poller.poll { |_delivery, _ses_message| raise StandardError, "Test error" }
 
         expect(CurrentJobLoggingAttributes.sqs_message_id).to be_nil
         expect(CurrentJobLoggingAttributes.sns_message_timestamp).to be_nil
@@ -212,7 +212,7 @@ RSpec.describe AwsSesMessagePoller do
       end
     end
 
-    context "when the submission is not found" do
+    context "when the delivery is not found" do
       let(:ses_message_body) do
         {
           "mail" => { "messageId" => "nonexistent-message-id" },
@@ -230,7 +230,7 @@ RSpec.describe AwsSesMessagePoller do
       end
 
       it "captures the error and does not delete the message" do
-        poller.poll { |_submission, _ses_message| }
+        poller.poll { |_delivery, _ses_message| }
 
         expect(Sentry).to have_received(:capture_exception).with(
           an_instance_of(ActiveRecord::RecordNotFound),
@@ -248,7 +248,7 @@ RSpec.describe AwsSesMessagePoller do
 
       it "exits the polling loop immediately" do
         block_called = false
-        poller.poll { |_submission, _ses_message| block_called = true }
+        poller.poll { |_delivery, _ses_message| block_called = true }
 
         expect(block_called).to be false
       end

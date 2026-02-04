@@ -57,10 +57,10 @@ private
       ses_message_id = ses_message["mail"]["messageId"]
       CurrentJobLoggingAttributes.mail_message_id = ses_message_id
 
-      submission = Submission.find_by!(mail_message_id: ses_message_id)
+      delivery = Delivery.find_by!(delivery_reference: ses_message_id)
 
-      # Call the provided block with the submission and ses_message
-      block.call(submission, ses_message)
+      # Call the provided block with the delivery and ses_message
+      block.call(delivery, ses_message)
 
       sqs_client.delete_message(queue_url: queue_url, receipt_handle: receipt_handle)
     rescue StandardError => e
