@@ -1,5 +1,5 @@
 class Submission < ApplicationRecord
-  self.ignored_columns += %w[mail_status sent_at]
+  self.ignored_columns += %w[bounced_at delivered_at delivery_status last_delivery_attempt mail_message_id]
 
   has_many :submission_deliveries, dependent: :destroy
   has_many :deliveries, through: :submission_deliveries
@@ -7,11 +7,6 @@ class Submission < ApplicationRecord
   delegate :preview?, to: :mode_object
 
   encrypts :answers
-
-  enum :delivery_status, {
-    pending: "pending",
-    bounced: "bounced",
-  }
 
   def journey
     @journey ||= Flow::Journey.new(answer_store:, form:)
