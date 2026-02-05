@@ -5,17 +5,19 @@ namespace :submissions do
     Rails.logger.info "#{Submission.bounced.count} bounced submissions"
   end
 
-  desc "List all bounced submissions for the given form ID"
+  desc "List all bounced submission deliveries for the given form ID"
   task :list_bounced_submissions_for_form, %i[form_id] => :environment do |_t, args|
     form_id = args[:form_id]
 
     usage_message = "usage: rake submissions:list_bounced_submissions_for_form[<form_id>]".freeze
     abort usage_message if form_id.blank?
 
-    submissions = Submission.bounced.where(form_id: form_id)
-    Rails.logger.info "Found #{submissions.length} bounced submissions for form with ID #{form_id}"
-    submissions.find_each do |submission|
-      Rails.logger.info "Submission reference: #{submission.reference}, created_at: #{submission.created_at}, last_delivery_attempt: #{submission.last_delivery_attempt}"
+    deliveries = Delivery.failed.joins(:submissions).where(submissions: { form_id: form_id }).distinct
+    Rails.logger.info "Found #{deliveries.length} bounced submission deliveries for form with ID #{form_id}"
+    deliveries.find_each do |delivery|
+      # This will need to be updated when we support batches
+      submission = delivery.submissions.first
+      Rails.logger.info "Submission reference: #{submission.reference}, created_at: #{submission.created_at}, last_attempt_at: #{delivery.last_attempt_at}"
     end
   end
 

@@ -38,8 +38,9 @@ FactoryBot.define do
     end
 
     trait :bounced do
-      sent
-      delivery_status { :bounced }
+      after(:create) do |submission|
+        submission.deliveries << create(:delivery, :failed, failure_reason: "bounced")
+      end
     end
 
     trait :preview do

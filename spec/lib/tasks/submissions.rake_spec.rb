@@ -75,9 +75,9 @@ RSpec.describe "submissions.rake" do
     end
 
     it "logs the bounced submissions" do
-      expect(Rails.logger).to receive(:info).with("Found 2 bounced submissions for form with ID #{form_id}")
-      expect(Rails.logger).to receive(:info).with "Submission reference: #{bounced_submission.reference}, created_at: #{bounced_submission.created_at}, last_delivery_attempt: #{bounced_submission.last_delivery_attempt}"
-      expect(Rails.logger).to receive(:info).with "Submission reference: #{another_bounced_submission.reference}, created_at: #{another_bounced_submission.created_at}, last_delivery_attempt: #{another_bounced_submission.last_delivery_attempt}"
+      expect(Rails.logger).to receive(:info).with("Found 2 bounced submission deliveries for form with ID #{form_id}")
+      expect(Rails.logger).to receive(:info).with "Submission reference: #{bounced_submission.reference}, created_at: #{bounced_submission.created_at}, last_attempt_at: #{bounced_submission.single_submission_delivery.last_attempt_at}"
+      expect(Rails.logger).to receive(:info).with "Submission reference: #{another_bounced_submission.reference}, created_at: #{another_bounced_submission.created_at}, last_attempt_at: #{another_bounced_submission.single_submission_delivery.last_attempt_at}"
       task.invoke(form_id)
     end
   end
