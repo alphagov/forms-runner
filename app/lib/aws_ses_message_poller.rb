@@ -55,7 +55,7 @@ private
 
       ses_message = JSON.parse(sns_message["Message"])
       ses_message_id = ses_message["mail"]["messageId"]
-      CurrentJobLoggingAttributes.mail_message_id = ses_message_id
+      CurrentJobLoggingAttributes.delivery_reference = ses_message_id
 
       delivery = Delivery.find_by!(delivery_reference: ses_message_id)
 

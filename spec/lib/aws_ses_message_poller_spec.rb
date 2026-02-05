@@ -123,7 +123,7 @@ RSpec.describe AwsSesMessagePoller do
 
         expect(CurrentJobLoggingAttributes.sqs_message_id).to be_nil
         expect(CurrentJobLoggingAttributes.sns_message_timestamp).to be_nil
-        expect(CurrentJobLoggingAttributes.mail_message_id).to be_nil
+        expect(CurrentJobLoggingAttributes.delivery_reference).to be_nil
       end
     end
 
@@ -208,7 +208,7 @@ RSpec.describe AwsSesMessagePoller do
 
         expect(CurrentJobLoggingAttributes.sqs_message_id).to be_nil
         expect(CurrentJobLoggingAttributes.sns_message_timestamp).to be_nil
-        expect(CurrentJobLoggingAttributes.mail_message_id).to be_nil
+        expect(CurrentJobLoggingAttributes.delivery_reference).to be_nil
       end
     end
 

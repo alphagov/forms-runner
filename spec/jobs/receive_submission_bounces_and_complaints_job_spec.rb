@@ -87,7 +87,7 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
                                        "form_id" => submission.form_id,
                                        "submission_reference" => reference,
                                        "preview" => "false",
-                                       "mail_message_id" => delivery_reference,
+                                       "delivery_reference" => delivery_reference,
                                        "sqs_message_id" => sqs_message_id,
                                        "sns_message_timestamp" => sns_message_timestamp,
                                        "job_id" => @job_id,
