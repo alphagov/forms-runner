@@ -34,9 +34,9 @@ class Submission < ApplicationRecord
     deliveries.sole if deliveries.any?
   end
 
-  def self.emailed?(reference)
+  def self.sent?(reference)
     submission = Submission.find_by(reference: reference)
-    submission.mail_message_id.present? if submission.present?
+    submission&.single_submission_delivery&.present?
   end
 
 private

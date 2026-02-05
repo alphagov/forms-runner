@@ -1,26 +1,26 @@
 require "rails_helper"
 
 RSpec.describe Submission, type: :model do
-  describe "#emailed?" do
-    context "when the submission has a mail_message_id" do
-      it "returns true" do
-        described_class.create!(reference: "123", mail_message_id: "456")
+  describe "#sent?" do
+    context "when the submission is sent?" do
+      let(:submission) { create :submission, :sent }
 
-        expect(described_class).to be_emailed("123")
+      it "returns true" do
+        expect(described_class).to be_sent(submission.reference)
       end
     end
 
-    context "when there is a submission but no mail_message_id" do
-      it "returns false" do
-        described_class.create!(reference: "789")
+    context "when there is a submission is unsent" do
+      let(:submission) { create :submission }
 
-        expect(described_class).not_to be_emailed("789")
+      it "returns false" do
+        expect(described_class).not_to be_sent(submission.reference)
       end
     end
 
     context "when there is no submission" do
       it "returns false" do
-        expect(described_class).not_to be_emailed("999")
+        expect(described_class).not_to be_sent("999")
       end
     end
   end

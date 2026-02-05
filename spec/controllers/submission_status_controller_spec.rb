@@ -10,9 +10,9 @@ RSpec.describe SubmissionStatusController do
       end
 
       context "when a submission has been emailed" do
-        it "returns a 204 status" do
-          submission = Submission.create!(reference: "123", mail_message_id: "456")
+        let(:submission) { create :submission, :sent }
 
+        it "returns a 204 status" do
           get :status, params: { reference: submission.reference }
 
           expect(response).to have_http_status :no_content
@@ -20,9 +20,9 @@ RSpec.describe SubmissionStatusController do
       end
 
       context "when a submission has not been emailed" do
-        it "returns a 404 status" do
-          submission = Submission.create!(reference: "789")
+        let(:submission) { create :submission }
 
+        it "returns a 404 status" do
           get :status, params: { reference: submission.reference }
 
           expect(response).to have_http_status :not_found
