@@ -75,15 +75,15 @@ namespace :submissions do
     Rails.logger.info "Disregarded bounce of delivery with delivery_reference #{delivery_reference}"
   end
 
-  desc "Disregard bounced submissions created between two timestamps for a specific form"
-  task :disregard_bounced_submissions_for_form, %i[form_id start_timestamp end_timestamp dry_run] => :environment do |_, args|
+  desc "Disregard bounced deliveries created between two timestamps for a specific form"
+  task :disregard_bounced_deliveries_for_form, %i[form_id start_timestamp end_timestamp dry_run] => :environment do |_, args|
     form_id = args[:form_id]
     start_timestamp = args[:start_timestamp]
     end_timestamp = args[:end_timestamp]
     dry_run_arg = args[:dry_run]
     dry_run = dry_run_arg == "true"
 
-    usage_message = "usage: rake submissions:disregard_bounced_submission[<form_id>, <start_timestamp>, <end_timestamp>, <dry_run>]".freeze
+    usage_message = "usage: rake submissions:disregard_bounced_deliveries_for_form[<form_id>, <start_timestamp>, <end_timestamp>, <dry_run>]".freeze
     if form_id.blank? || start_timestamp.blank? || end_timestamp.blank? || !dry_run_arg.in?(%w[true false])
       abort usage_message
     end
@@ -101,16 +101,20 @@ namespace :submissions do
 
     Rails.logger.info "Dry run mode: #{dry_run ? 'enabled' : 'disabled'}"
 
-    submissions = Submission.bounced.where(form_id: form_id, created_at: start_time..end_time)
+    deliveries = Delivery.failed
+                         .joins(:submissions)
+                         .where(submissions: { form_id: form_id })
+                         .where(created_at: start_time..end_time)
+                         .distinct
 
-    Rails.logger.info "Found #{submissions.length} bounced submissions to disregard for form ID #{form_id} in time range: #{start_time} to #{end_time}"
+    Rails.logger.info "Found #{deliveries.length} bounced submission deliveries to disregard for form ID #{form_id} in time range: #{start_time} to #{end_time}"
 
-    submissions.each do |submission|
+    deliveries.each do |delivery|
       if dry_run
-        Rails.logger.info "Would disregard bounce of submission with reference #{submission.reference} which was created at #{submission.created_at}"
+        Rails.logger.info "Would disregard bounce of delivery with delivery_reference #{delivery.delivery_reference} which was created at #{delivery.created_at}"
       else
-        submission.pending!
-        Rails.logger.info "Disregarded bounce of submission with reference #{submission.reference}"
+        delivery.update!(failed_at: nil, failure_reason: nil)
+        Rails.logger.info "Disregarded bounce of delivery with delivery_reference #{delivery.delivery_reference}"
       end
     end
   end
