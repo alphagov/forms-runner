@@ -16,7 +16,7 @@ RSpec.describe "submissions.rake" do
     end
 
     before do
-      create :submission, :sent, delivery_status: :pending, reference: "test_ref"
+      create :submission, :sent, reference: "test_ref"
     end
 
     it "displays submission data when found" do
@@ -32,26 +32,23 @@ RSpec.describe "submissions.rake" do
     end
   end
 
-  describe "submissions:check_submission_statuses" do
+  describe "submissions:check_delivery_statuses" do
     subject(:task) do
-      Rake::Task["submissions:check_submission_statuses"]
+      Rake::Task["submissions:check_delivery_statuses"]
         .tap(&:reenable)
     end
 
     before do
-      create :submission,
-             :sent,
-             delivery_status: :pending
-
-      create_list :submission, 2,
-                  :sent,
-                  delivery_status: :bounced
+      submissions = create_list :submission, 3
+      create :delivery, submissions: [submissions[0]]
+      create :delivery, :failed, submissions: [submissions[1]]
+      create :delivery, :failed, submissions: [submissions[2]]
     end
 
     it "logs how many submissions there are for each mail status" do
       allow(Rails.logger).to receive(:info)
-      expect(Rails.logger).to receive(:info).with("1 pending submissions")
-      expect(Rails.logger).to receive(:info).with("2 bounced submissions")
+      expect(Rails.logger).to receive(:info).with("1 pending deliveries")
+      expect(Rails.logger).to receive(:info).with("2 failed deliveries")
 
       task.invoke
     end

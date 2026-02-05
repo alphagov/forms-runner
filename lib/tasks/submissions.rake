@@ -1,8 +1,8 @@
 namespace :submissions do
-  desc "Check submission statuses"
-  task check_submission_statuses: :environment do
-    Rails.logger.info "#{Submission.pending.count} pending submissions"
-    Rails.logger.info "#{Submission.bounced.count} bounced submissions"
+  desc "Check delivery statuses"
+  task check_delivery_statuses: :environment do
+    Rails.logger.info "#{Delivery.pending.count} pending deliveries"
+    Rails.logger.info "#{Delivery.failed.count} failed deliveries"
   end
 
   desc "List all bounced submission deliveries for the given form ID"
