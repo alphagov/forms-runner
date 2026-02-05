@@ -82,45 +82,32 @@ RSpec.describe "submissions.rake" do
     end
   end
 
-  describe "submissions:retry_bounced_submissions" do
+  describe "submissions:retry_bounced_deliveries" do
     subject(:task) do
-      Rake::Task["submissions:retry_bounced_submissions"]
+      Rake::Task["submissions:retry_bounced_deliveries"]
         .tap(&:reenable)
     end
 
     let(:form_id) { 1 }
     let(:other_form_id) { 2 }
-    let!(:bounced_submission) do
-      create :submission,
-             :sent,
-             form_id:,
-             delivery_status: :bounced
-    end
-    let!(:pending_submission) do
-      create :submission,
-             :sent,
-             form_id:,
-             delivery_status: :pending
-    end
+    let!(:bounced_submission) { create :submission, :bounced, form_id: }
+    let!(:pending_submission) { create :submission, :sent, form_id: }
 
     before do
-      create :submission,
-             :sent,
-             form_id: other_form_id,
-             delivery_status: :pending
+      create :submission, :sent, form_id: other_form_id
     end
 
     context "with valid arguments" do
       let(:valid_args) { [form_id] }
 
-      it "logs how many submissions to retry" do
+      it "logs how many deliveries to retry" do
         allow(Rails.logger).to receive(:info)
-        expect(Rails.logger).to receive(:info).with("1 submissions to retry for form with ID: #{form_id}")
+        expect(Rails.logger).to receive(:info).with("1 submission deliveries to retry for form with ID: #{form_id}")
 
         task.invoke(*valid_args)
       end
 
-      context "with a form ID with bounced submissions" do
+      context "with a form ID with bounced deliveries" do
         it "logs submissions that are being retried" do
           allow(Rails.logger).to receive(:info)
           expect(Rails.logger).to receive(:info).with("Retrying submission with reference #{bounced_submission.reference} for form with ID: #{form_id}")
@@ -159,7 +146,7 @@ RSpec.describe "submissions.rake" do
         expect {
           task.invoke(*invalid_args)
         }.to raise_error(SystemExit)
-               .and output("usage: rake submissions:retry_bounced_submissions[<form_id>]\n").to_stderr
+               .and output("usage: rake submissions:retry_bounced_deliveries[<form_id>]\n").to_stderr
       end
     end
   end
