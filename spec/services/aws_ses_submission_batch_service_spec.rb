@@ -41,7 +41,7 @@ RSpec.describe AwsSesSubmissionBatchService do
       end
 
       it "calls the AwsSesSubmissionBatchMailer to send the email with the generated files" do
-        expect(AwsSesSubmissionBatchMailer).to receive(:batch_submission_email)
+        expect(AwsSesSubmissionBatchMailer).to receive(:daily_submission_batch_email)
           .with(
             form:,
             date:,

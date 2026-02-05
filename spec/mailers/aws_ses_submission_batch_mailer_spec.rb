@@ -1,7 +1,7 @@
 require "rails_helper"
 
 describe AwsSesSubmissionBatchMailer, type: :mailer do
-  subject(:mail) { described_class.batch_submission_email(form:, date:, mode:, files:) }
+  subject(:mail) { described_class.daily_submission_batch_email(form:, date:, mode:, files:) }
 
   let(:form) { build(:form, submission_email: submission_email_address) }
   let(:submission_email_address) { "submission@email.gov.uk" }

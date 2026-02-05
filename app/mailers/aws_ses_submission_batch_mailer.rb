@@ -3,7 +3,7 @@ class AwsSesSubmissionBatchMailer < ApplicationMailer
           reply_to: Settings.ses_submission_email.reply_to_email_address,
           delivery_method: Rails.configuration.x.aws_ses_form_submission_mailer["delivery_method"]
 
-  def batch_submission_email(form:, date:, mode:, files:)
+  def daily_submission_batch_email(form:, date:, mode:, files:)
     @form_name = form.name
     @date = date.strftime("%-d %B %Y")
     @mode = mode

@@ -15,7 +15,7 @@ class AwsSesSubmissionBatchService
       files[filename] = csv
     end
 
-    mail = AwsSesSubmissionBatchMailer.batch_submission_email(form: @form, date:, mode: @mode, files:).deliver_now
+    mail = AwsSesSubmissionBatchMailer.daily_submission_batch_email(form: @form, date:, mode: @mode, files:).deliver_now
 
     CurrentJobLoggingAttributes.delivery_reference = mail.message_id
     mail.message_id
