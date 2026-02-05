@@ -151,67 +151,74 @@ RSpec.describe "submissions.rake" do
     end
   end
 
-  describe "submissions:disregard_bounced_submission" do
+  describe "submissions:disregard_bounced_delivery" do
     subject(:task) do
-      Rake::Task["submissions:disregard_bounced_submission"]
+      Rake::Task["submissions:disregard_bounced_delivery"]
         .tap(&:reenable)
     end
 
+    let(:delivery_reference) { "delivery-reference" }
+    let(:args) { [delivery_reference] }
     let(:form_id) { 1 }
-    let(:delivery_status) { :bounced }
-    let(:reference) { "submission-reference" }
-    let(:args) { [reference] }
-
-    before do
-      create :submission,
-             :sent,
-             form_id:,
-             delivery_status:,
-             reference:
-    end
+    let!(:submission) { create :submission, :bounced, form_id:, reference: "submission-reference" }
+    let!(:delivery) { create :delivery, :failed, submissions: [submission], delivery_reference: delivery_reference }
 
     context "with valid arguments" do
-      it "logs submission bounce that is being disregarded" do
-        allow(Rails.logger).to receive(:info)
-        expect(Rails.logger).to receive(:info).with("Disregarding bounce of submission with reference #{reference}")
+      context "when the delivery is bounced" do
+        it "logs delivery bounce has been disregarded" do
+          allow(Rails.logger).to receive(:info)
+          expect(Rails.logger).to receive(:info).with("Disregarded bounce of delivery with delivery_reference #{delivery_reference}")
 
-        task.invoke(*args)
+          task.invoke(*args)
+        end
+
+        it "clears the bounced status" do
+          task.invoke(*args)
+          delivery.reload
+          expect(delivery.failed_at).to be_nil
+          expect(delivery.failure_reason).to be_nil
+          expect(delivery.reload.pending?).to be true
+        end
       end
 
-      it "updates mail status to pending for bounced submission" do
-        task.invoke(*args)
-        expect(Submission.first.pending?).to be true
+      context "when the delivery has both delivered_at and failed_at set and is considered bounced" do
+        let!(:delivery) { create :delivery, :failed_after_delivery, submissions: [submission], delivery_reference: delivery_reference }
+
+        it "clears the bounced status" do
+          task.invoke(*args)
+          delivery.reload
+          expect(delivery.failed_at).to be_nil
+          expect(delivery.failure_reason).to be_nil
+          expect(delivery.delivered_at).not_to be_nil
+          expect(delivery.reload.delivered?).to be true
+        end
       end
 
-      context "when no submission exists with that reference" do
+      context "when no delivery exists with that delivery_reference" do
         let(:args) { ["non-existent reference"] }
 
-        it "logs that there is no submission" do
+        it "logs that there is no delivery" do
           allow(Rails.logger).to receive(:info)
-          expect(Rails.logger).to receive(:info).with("No submission found with reference non-existent reference")
+          expect(Rails.logger).to receive(:info).with("No delivery found with delivery_reference non-existent reference")
 
           task.invoke(*args)
-        end
-
-        it "does not update the submission delivery_status" do
-          task.invoke(*args)
-          expect(Submission.first.bounced?).to be true
         end
       end
 
-      context "when the submission has not bounced" do
-        let(:delivery_status) { :pending }
+      context "when the delivery has not bounced" do
+        let!(:delivery) { create :delivery, submissions: [submission], delivery_reference: delivery_reference }
 
-        it "logs that there the submission hasn't bounced" do
+        it "logs that the delivery hasn't bounced" do
           allow(Rails.logger).to receive(:info)
-          expect(Rails.logger).to receive(:info).with("Submission with reference #{reference} hasn't bounced")
+          expect(Rails.logger).to receive(:info).with("Delivery with delivery_reference #{delivery_reference} hasn't bounced")
 
           task.invoke(*args)
         end
 
-        it "does not update the submission delivery_status" do
-          task.invoke(*args)
-          expect(Submission.first.pending?).to be true
+        it "does not update the delivery" do
+          expect {
+            task.invoke(*args)
+          }.not_to(change { delivery.reload.attributes })
         end
       end
     end
@@ -223,7 +230,7 @@ RSpec.describe "submissions.rake" do
         expect {
           task.invoke(*invalid_args)
         }.to raise_error(SystemExit)
-               .and output("usage: rake submissions:disregard_bounced_submission[<reference>]\n").to_stderr
+               .and output("usage: rake submissions:disregard_bounced_delivery[<delivery_reference>]\n").to_stderr
       end
     end
   end

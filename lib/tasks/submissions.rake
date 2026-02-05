@@ -52,14 +52,27 @@ namespace :submissions do
     end
   end
 
-  desc "Disregard bounced submission"
-  task :disregard_bounced_submission, %i[reference] => :environment do |_, args|
-    reference = args[:reference]
+  desc "Disregard bounced delivery"
+  task :disregard_bounced_delivery, %i[delivery_reference] => :environment do |_, args|
+    delivery_reference = args[:delivery_reference]
 
-    usage_message = "usage: rake submissions:disregard_bounced_submission[<reference>]".freeze
-    abort usage_message if reference.blank?
+    usage_message = "usage: rake submissions:disregard_bounced_delivery[<delivery_reference>]".freeze
+    abort usage_message if delivery_reference.blank?
 
-    disregard_bounced_submission(reference)
+    delivery = Delivery.find_by(delivery_reference: delivery_reference)
+
+    if delivery.blank?
+      Rails.logger.info "No delivery found with delivery_reference #{delivery_reference}"
+      next
+    end
+
+    unless delivery.failed?
+      Rails.logger.info "Delivery with delivery_reference #{delivery_reference} hasn't bounced"
+      next
+    end
+
+    delivery.update!(failed_at: nil, failure_reason: nil)
+    Rails.logger.info "Disregarded bounce of delivery with delivery_reference #{delivery_reference}"
   end
 
   desc "Disregard bounced submissions created between two timestamps for a specific form"
@@ -204,21 +217,4 @@ namespace :submissions do
       end
     end
   end
-end
-
-def disregard_bounced_submission(reference)
-  submission = Submission.find_by(reference:)
-
-  if submission.blank?
-    Rails.logger.info "No submission found with reference #{reference}"
-    return
-  end
-
-  unless submission.bounced?
-    Rails.logger.info "Submission with reference #{reference} hasn't bounced"
-    return
-  end
-
-  Rails.logger.info "Disregarding bounce of submission with reference #{submission.reference}"
-  submission.pending!
 end
