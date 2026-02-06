@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_02_173033) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_06_111513) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -36,20 +36,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_02_173033) do
 
   create_table "submissions", force: :cascade do |t|
     t.jsonb "answers"
-    t.datetime "bounced_at"
     t.datetime "created_at", null: false
-    t.datetime "delivered_at"
-    t.string "delivery_status", default: "pending", null: false
     t.jsonb "form_document"
     t.integer "form_id"
-    t.datetime "last_delivery_attempt"
-    t.string "mail_message_id"
     t.string "mode"
     t.string "reference"
     t.string "submission_locale", default: "en", null: false, comment: "The language the form was submitted in ISO 2 letter format. Normally either 'en' or 'cy'"
     t.datetime "updated_at", null: false
-    t.index ["last_delivery_attempt"], name: "index_submissions_on_last_delivery_attempt"
-    t.index ["mail_message_id"], name: "index_submissions_on_mail_message_id"
   end
 
   add_foreign_key "submission_deliveries", "deliveries"

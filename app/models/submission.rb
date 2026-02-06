@@ -1,6 +1,4 @@
 class Submission < ApplicationRecord
-  self.ignored_columns += %w[bounced_at delivered_at delivery_status last_delivery_attempt mail_message_id]
-
   has_many :submission_deliveries, dependent: :destroy
   has_many :deliveries, through: :submission_deliveries
 
