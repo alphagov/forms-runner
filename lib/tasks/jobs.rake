@@ -29,4 +29,21 @@ namespace :jobs do
 
     Rails.logger.info "Retried #{failed_jobs.length} failed submission jobs"
   end
+
+  desc "List failed jobs for the given queue"
+  task :list_failed, [:queue_name] => :environment do |_, args|
+    queue_name = args[:queue_name]
+
+    usage_message = "usage: rake jobs:list_failed[<queue_name>]"
+    abort usage_message if queue_name.blank?
+
+    failed_executions = SolidQueue::FailedExecution.joins(:job).where(solid_queue_jobs: { queue_name: queue_name })
+
+    Rails.logger.info "Found #{failed_executions.length} failed jobs on #{queue_name} queue"
+
+    failed_executions.each do |failed_execution|
+      job = failed_execution.job
+      Rails.logger.info "Failed execution - Job ID: #{job.active_job_id}, Job Class: #{job.class_name}, Failed At: #{failed_execution.created_at}, Error Message: #{failed_execution.error.to_s.truncate(500)}"
+    end
+  end
 end

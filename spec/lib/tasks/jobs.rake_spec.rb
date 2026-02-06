@@ -100,4 +100,38 @@ RSpec.describe "jobs.rake" do
       task.invoke
     end
   end
+
+  describe "jobs:list_failed" do
+    subject(:task) do
+      Rake::Task["jobs:list_failed"]
+        .tap(&:reenable)
+    end
+
+    let(:queue_name) { "queue-1" }
+    let(:job) { create :solid_queue_job, queue_name: }
+    let!(:failed_execution) { create :solid_queue_failed_execution, job: job, error: "Error message 1" }
+
+    before do
+      other_queue_job = create :solid_queue_job, queue_name: "queue-2"
+      create :solid_queue_failed_execution, job: other_queue_job
+    end
+
+    it "logs the details of the failed jobs on the specified queue" do
+      expect(Rails.logger).to receive(:info).with("Found 1 failed jobs on #{queue_name} queue")
+      expect(Rails.logger).to receive(:info).with(
+        "Failed execution - Job ID: #{job.active_job_id}, Job Class: #{job.class_name}, Failed At: #{failed_execution.created_at}, Error Message: #{failed_execution.error}",
+      )
+
+      task.invoke(queue_name)
+    end
+
+    context "with invalid arguments" do
+      it "aborts with a usage message" do
+        expect {
+          task.invoke
+        }.to raise_error(SystemExit)
+               .and output("usage: rake jobs:list_failed[<queue_name>]\n").to_stderr
+      end
+    end
+  end
 end
