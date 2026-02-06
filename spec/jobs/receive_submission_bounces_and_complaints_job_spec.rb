@@ -12,25 +12,12 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
   let(:sns_message_timestamp) { "2025-05-09T10:25:43.972Z" }
   let(:sns_message_body) { { "Message" => ses_message_body.to_json, "Timestamp" => sns_message_timestamp }.to_json }
   let(:event_type) { "Bounce" }
-  let(:ses_message_body) { { "mail" => { "messageId" => mail_message_id }, "eventType": event_type } }
-  let(:file_upload_steps) do
-    [
-      build(:v2_question_page_step, answer_type: "file", id: 1, next_step_id: 2),
-      build(:v2_question_page_step, answer_type: "file", id: 2),
-    ]
-  end
-  let(:form_with_file_upload) { build :v2_form_document, form_id: 1, steps: file_upload_steps, start_page: 1 }
-  let(:form_with_file_upload_answers) do
-    {
-      "1" => { uploaded_file_key: "key1" },
-      "2" => { uploaded_file_key: "key2" },
-    }
-  end
-  let(:mail_message_id) { "mail-message-id" }
+  let(:ses_message_body) { { "mail" => { "messageId" => delivery_reference }, "eventType": event_type } }
+  let(:delivery_reference) { "delivery-reference" }
   let(:reference) { "submission-reference" }
-  let!(:submission) { create :submission, mail_message_id:, reference:, form_id: form_with_file_upload.form_id, form_document: form_with_file_upload, answers: form_with_file_upload_answers }
-  let!(:other_submission) { create :submission, mail_message_id: "abc", delivery_status: :pending, reference: "other-submission-reference", form_id: 2, answers: form_with_file_upload_answers }
-
+  let(:mode) { "form" }
+  let(:submission) { create :submission, reference:, mode: }
+  let!(:delivery) { create :delivery, delivery_reference:, submissions: [submission] }
   let(:output) { StringIO.new }
   let(:logger) do
     ApplicationLogger.new(output).tap do |logger|
@@ -77,35 +64,17 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
       let(:bounce_timestamp) { "2023-01-01T12:00:00Z" }
       let(:ses_message_body) do
         {
-          "mail" => { "messageId" => mail_message_id },
+          "mail" => { "messageId" => delivery_reference },
           "eventType" => event_type,
           "bounce" => { "timestamp" => bounce_timestamp },
         }
       end
 
-      it "updates the submission mail status to bounced" do
+      it "updates the delivery record's failed_at and failure_reason" do
         perform_enqueued_jobs
-        expect(submission.reload.bounced?).to be true
-      end
 
-      it "updates the submission bounced_at timestamp" do
-        perform_enqueued_jobs
-        expect(submission.reload.bounced_at).to eq(Time.zone.parse(bounce_timestamp))
-      end
-
-      context "when a delivery record exists" do
-        let!(:delivery) { submission.deliveries.create!(delivery_reference: mail_message_id) }
-
-        it "updated the delivery record's failed_at and failure_reason" do
-          perform_enqueued_jobs
-          expect(delivery.reload.failed_at).to eq(Time.zone.parse(bounce_timestamp))
-          expect(delivery.reload.failure_reason).to eq("bounced")
-        end
-      end
-
-      it "doesn't change the mail status for other submissions" do
-        perform_enqueued_jobs
-        expect(other_submission.reload.pending?).to be true
+        expect(delivery.reload.failed_at).to eq(Time.zone.parse(bounce_timestamp))
+        expect(delivery.reload.failure_reason).to eq("bounced")
       end
 
       it "logs form event with correct details" do
@@ -115,10 +84,10 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
                                        "level" => "INFO",
                                        "message" => "Form event",
                                        "event" => "form_submission_bounced",
-                                       "form_id" => form_with_file_upload.form_id,
+                                       "form_id" => submission.form_id,
                                        "submission_reference" => reference,
                                        "preview" => "false",
-                                       "mail_message_id" => mail_message_id,
+                                       "delivery_reference" => delivery_reference,
                                        "sqs_message_id" => sqs_message_id,
                                        "sns_message_timestamp" => sns_message_timestamp,
                                        "job_id" => @job_id,
@@ -134,19 +103,11 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
     end
 
     context "when it is for a preview submission" do
-      let!(:submission) do
-        create :submission,
-               mail_message_id:,
-               reference:,
-               form_id: form_with_file_upload.form_id,
-               form_document: form_with_file_upload,
-               answers: form_with_file_upload_answers,
-               mode: "preview-live"
-      end
+      let(:mode) { "preview-live" }
 
-      it "does not update the submission mail status to bounced" do
+      it "does not set failed_at on the delivery" do
         perform_enqueued_jobs
-        expect(submission.reload.bounced?).to be false
+        expect(delivery.reload.failed_at).to be_nil
       end
 
       it "logs form event with preview flag" do
@@ -168,7 +129,7 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
     end
 
     context "when there is a bounce object with detailed information" do
-      let(:ses_message_body) { { "mail" => { "messageId" => mail_message_id }, "eventType" => event_type, "bounce" => bounce } }
+      let(:ses_message_body) { { "mail" => { "messageId" => delivery_reference }, "eventType" => event_type, "bounce" => bounce } }
       let(:bounce) { { "bounceType" => "Permanent", "bounceSubType" => "General", "bouncedRecipients" => bounced_recipients, "timestamp" => bounce_timestamp } }
       let(:bounce_timestamp) { "2023-01-01T12:00:00Z" }
       let(:bounced_recipients) { [{ "emailAddress" => "bounce@example.com" }] }
@@ -195,7 +156,7 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
         allow(Sentry).to receive(:capture_message)
         perform_enqueued_jobs
         expect(Sentry).to have_received(:capture_message).with(
-          a_string_including("Submission email bounced for form 1 - ReceiveSubmissionBouncesAndComplaintsJob"),
+          a_string_including("Submission email bounced for form #{submission.form_id} - ReceiveSubmissionBouncesAndComplaintsJob"),
           fingerprint: ["{{ default }}", submission.form_id],
           extra: hash_including(
             ses_bounce: hash_including(
@@ -235,7 +196,7 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
 
       expect(log_lines).to include(hash_including(
                                      "level" => "INFO",
-                                     "form_id" => form_with_file_upload.form_id,
+                                     "form_id" => submission.form_id,
                                      "submission_reference" => reference,
                                      "preview" => "false",
                                      "message" => "Form event",

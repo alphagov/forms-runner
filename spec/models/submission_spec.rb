@@ -1,26 +1,26 @@
 require "rails_helper"
 
 RSpec.describe Submission, type: :model do
-  describe "#emailed?" do
-    context "when the submission has a mail_message_id" do
-      it "returns true" do
-        described_class.create!(reference: "123", mail_message_id: "456")
+  describe "#sent?" do
+    context "when the submission is sent?" do
+      let(:submission) { create :submission, :sent }
 
-        expect(described_class).to be_emailed("123")
+      it "returns true" do
+        expect(described_class).to be_sent(submission.reference)
       end
     end
 
-    context "when there is a submission but no mail_message_id" do
-      it "returns false" do
-        described_class.create!(reference: "789")
+    context "when there is a submission is unsent" do
+      let(:submission) { create :submission }
 
-        expect(described_class).not_to be_emailed("789")
+      it "returns false" do
+        expect(described_class).not_to be_sent(submission.reference)
       end
     end
 
     context "when there is no submission" do
       it "returns false" do
-        expect(described_class).not_to be_emailed("999")
+        expect(described_class).not_to be_sent("999")
       end
     end
   end
@@ -49,33 +49,6 @@ RSpec.describe Submission, type: :model do
 
       it "returns the local time when stringified" do
         expect(submission.submission_time.strftime("%-d %B %Y - %l:%M%P")).to eq("14 December 2022 -  1:00pm")
-      end
-    end
-  end
-
-  describe "delivery_status" do
-    let(:submission) { create :submission }
-
-    describe "validations" do
-      it "is valid for a submission's delivery_status to be pending" do
-        submission.pending!
-        expect(submission).to be_valid
-      end
-
-      it "is valid for a submission's delivery_status to be bounced" do
-        submission.bounced!
-        expect(submission).to be_valid
-      end
-
-      it "is not valid for a submission's delivery_status to be something else" do
-        expect { submission.delivery_status = "some other string" }.to raise_error(ArgumentError).with_message(/is not a valid delivery_status/)
-      end
-    end
-
-    describe "delivery_status enum" do
-      it "returns a list of delivery statuses" do
-        expect(described_class.delivery_statuses.keys).to eq(%w[pending bounced])
-        expect(described_class.delivery_statuses.values).to eq(%w[pending bounced])
       end
     end
   end

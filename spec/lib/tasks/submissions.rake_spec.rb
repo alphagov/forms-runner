@@ -16,7 +16,7 @@ RSpec.describe "submissions.rake" do
     end
 
     before do
-      create :submission, :sent, delivery_status: :pending, reference: "test_ref"
+      create :submission, :sent, reference: "test_ref"
     end
 
     it "displays submission data when found" do
@@ -32,26 +32,23 @@ RSpec.describe "submissions.rake" do
     end
   end
 
-  describe "submissions:check_submission_statuses" do
+  describe "submissions:check_delivery_statuses" do
     subject(:task) do
-      Rake::Task["submissions:check_submission_statuses"]
+      Rake::Task["submissions:check_delivery_statuses"]
         .tap(&:reenable)
     end
 
     before do
-      create :submission,
-             :sent,
-             delivery_status: :pending
-
-      create_list :submission, 2,
-                  :sent,
-                  delivery_status: :bounced
+      submissions = create_list :submission, 3
+      create :delivery, submissions: [submissions[0]]
+      create :delivery, :failed, submissions: [submissions[1]]
+      create :delivery, :failed, submissions: [submissions[2]]
     end
 
     it "logs how many submissions there are for each mail status" do
       allow(Rails.logger).to receive(:info)
-      expect(Rails.logger).to receive(:info).with("1 pending submissions")
-      expect(Rails.logger).to receive(:info).with("2 bounced submissions")
+      expect(Rails.logger).to receive(:info).with("1 pending deliveries")
+      expect(Rails.logger).to receive(:info).with("2 failed deliveries")
 
       task.invoke
     end
@@ -75,52 +72,39 @@ RSpec.describe "submissions.rake" do
     end
 
     it "logs the bounced submissions" do
-      expect(Rails.logger).to receive(:info).with("Found 2 bounced submissions for form with ID #{form_id}")
-      expect(Rails.logger).to receive(:info).with "Submission reference: #{bounced_submission.reference}, created_at: #{bounced_submission.created_at}, last_delivery_attempt: #{bounced_submission.last_delivery_attempt}"
-      expect(Rails.logger).to receive(:info).with "Submission reference: #{another_bounced_submission.reference}, created_at: #{another_bounced_submission.created_at}, last_delivery_attempt: #{another_bounced_submission.last_delivery_attempt}"
+      expect(Rails.logger).to receive(:info).with("Found 2 bounced submission deliveries for form with ID #{form_id}")
+      expect(Rails.logger).to receive(:info).with "Submission reference: #{bounced_submission.reference}, created_at: #{bounced_submission.created_at}, last_attempt_at: #{bounced_submission.single_submission_delivery.last_attempt_at}"
+      expect(Rails.logger).to receive(:info).with "Submission reference: #{another_bounced_submission.reference}, created_at: #{another_bounced_submission.created_at}, last_attempt_at: #{another_bounced_submission.single_submission_delivery.last_attempt_at}"
       task.invoke(form_id)
     end
   end
 
-  describe "submissions:retry_bounced_submissions" do
+  describe "submissions:retry_bounced_deliveries" do
     subject(:task) do
-      Rake::Task["submissions:retry_bounced_submissions"]
+      Rake::Task["submissions:retry_bounced_deliveries"]
         .tap(&:reenable)
     end
 
     let(:form_id) { 1 }
     let(:other_form_id) { 2 }
-    let!(:bounced_submission) do
-      create :submission,
-             :sent,
-             form_id:,
-             delivery_status: :bounced
-    end
-    let!(:pending_submission) do
-      create :submission,
-             :sent,
-             form_id:,
-             delivery_status: :pending
-    end
+    let!(:bounced_submission) { create :submission, :bounced, form_id: }
+    let!(:pending_submission) { create :submission, :sent, form_id: }
 
     before do
-      create :submission,
-             :sent,
-             form_id: other_form_id,
-             delivery_status: :pending
+      create :submission, :sent, form_id: other_form_id
     end
 
     context "with valid arguments" do
       let(:valid_args) { [form_id] }
 
-      it "logs how many submissions to retry" do
+      it "logs how many deliveries to retry" do
         allow(Rails.logger).to receive(:info)
-        expect(Rails.logger).to receive(:info).with("1 submissions to retry for form with ID: #{form_id}")
+        expect(Rails.logger).to receive(:info).with("1 submission deliveries to retry for form with ID: #{form_id}")
 
         task.invoke(*valid_args)
       end
 
-      context "with a form ID with bounced submissions" do
+      context "with a form ID with bounced deliveries" do
         it "logs submissions that are being retried" do
           allow(Rails.logger).to receive(:info)
           expect(Rails.logger).to receive(:info).with("Retrying submission with reference #{bounced_submission.reference} for form with ID: #{form_id}")
@@ -159,72 +143,79 @@ RSpec.describe "submissions.rake" do
         expect {
           task.invoke(*invalid_args)
         }.to raise_error(SystemExit)
-               .and output("usage: rake submissions:retry_bounced_submissions[<form_id>]\n").to_stderr
+               .and output("usage: rake submissions:retry_bounced_deliveries[<form_id>]\n").to_stderr
       end
     end
   end
 
-  describe "submissions:disregard_bounced_submission" do
+  describe "submissions:disregard_bounced_delivery" do
     subject(:task) do
-      Rake::Task["submissions:disregard_bounced_submission"]
+      Rake::Task["submissions:disregard_bounced_delivery"]
         .tap(&:reenable)
     end
 
+    let(:delivery_reference) { "delivery-reference" }
+    let(:args) { [delivery_reference] }
     let(:form_id) { 1 }
-    let(:delivery_status) { :bounced }
-    let(:reference) { "submission-reference" }
-    let(:args) { [reference] }
-
-    before do
-      create :submission,
-             :sent,
-             form_id:,
-             delivery_status:,
-             reference:
-    end
+    let!(:submission) { create :submission, :bounced, form_id:, reference: "submission-reference" }
+    let!(:delivery) { create :delivery, :failed, submissions: [submission], delivery_reference: delivery_reference }
 
     context "with valid arguments" do
-      it "logs submission bounce that is being disregarded" do
-        allow(Rails.logger).to receive(:info)
-        expect(Rails.logger).to receive(:info).with("Disregarding bounce of submission with reference #{reference}")
+      context "when the delivery is bounced" do
+        it "logs delivery bounce has been disregarded" do
+          allow(Rails.logger).to receive(:info)
+          expect(Rails.logger).to receive(:info).with("Disregarded bounce of delivery with delivery_reference #{delivery_reference}")
 
-        task.invoke(*args)
+          task.invoke(*args)
+        end
+
+        it "clears the bounced status" do
+          task.invoke(*args)
+          delivery.reload
+          expect(delivery.failed_at).to be_nil
+          expect(delivery.failure_reason).to be_nil
+          expect(delivery.reload.pending?).to be true
+        end
       end
 
-      it "updates mail status to pending for bounced submission" do
-        task.invoke(*args)
-        expect(Submission.first.pending?).to be true
+      context "when the delivery has both delivered_at and failed_at set and is considered bounced" do
+        let!(:delivery) { create :delivery, :failed_after_delivery, submissions: [submission], delivery_reference: delivery_reference }
+
+        it "clears the bounced status" do
+          task.invoke(*args)
+          delivery.reload
+          expect(delivery.failed_at).to be_nil
+          expect(delivery.failure_reason).to be_nil
+          expect(delivery.delivered_at).not_to be_nil
+          expect(delivery.reload.delivered?).to be true
+        end
       end
 
-      context "when no submission exists with that reference" do
+      context "when no delivery exists with that delivery_reference" do
         let(:args) { ["non-existent reference"] }
 
-        it "logs that there is no submission" do
+        it "logs that there is no delivery" do
           allow(Rails.logger).to receive(:info)
-          expect(Rails.logger).to receive(:info).with("No submission found with reference non-existent reference")
+          expect(Rails.logger).to receive(:info).with("No delivery found with delivery_reference non-existent reference")
 
           task.invoke(*args)
-        end
-
-        it "does not update the submission delivery_status" do
-          task.invoke(*args)
-          expect(Submission.first.bounced?).to be true
         end
       end
 
-      context "when the submission has not bounced" do
-        let(:delivery_status) { :pending }
+      context "when the delivery has not bounced" do
+        let!(:delivery) { create :delivery, submissions: [submission], delivery_reference: delivery_reference }
 
-        it "logs that there the submission hasn't bounced" do
+        it "logs that the delivery hasn't bounced" do
           allow(Rails.logger).to receive(:info)
-          expect(Rails.logger).to receive(:info).with("Submission with reference #{reference} hasn't bounced")
+          expect(Rails.logger).to receive(:info).with("Delivery with delivery_reference #{delivery_reference} hasn't bounced")
 
           task.invoke(*args)
         end
 
-        it "does not update the submission delivery_status" do
-          task.invoke(*args)
-          expect(Submission.first.pending?).to be true
+        it "does not update the delivery" do
+          expect {
+            task.invoke(*args)
+          }.not_to(change { delivery.reload.attributes })
         end
       end
     end
@@ -236,14 +227,14 @@ RSpec.describe "submissions.rake" do
         expect {
           task.invoke(*invalid_args)
         }.to raise_error(SystemExit)
-               .and output("usage: rake submissions:disregard_bounced_submission[<reference>]\n").to_stderr
+               .and output("usage: rake submissions:disregard_bounced_delivery[<delivery_reference>]\n").to_stderr
       end
     end
   end
 
-  describe "submissions:disregard_bounced_submissions_for_form" do
+  describe "submissions:disregard_bounced_deliveries_for_form" do
     subject(:task) do
-      Rake::Task["submissions:disregard_bounced_submissions_for_form"]
+      Rake::Task["submissions:disregard_bounced_deliveries_for_form"]
         .tap(&:reenable)
     end
 
@@ -253,70 +244,72 @@ RSpec.describe "submissions.rake" do
     let(:end_time) { "2024-01-02T00:00:00Z" }
     let(:dry_run) { "false" }
 
-    let!(:early_matching_submission) do
-      create :submission, :bounced, form_id:,
-                                    created_at: Time.parse("2024-01-01T12:00:00Z")
+    let!(:early_matching_delivery) do
+      submission = create(:submission, form_id:)
+      create :delivery, :failed, submissions: [submission], created_at: Time.parse("2024-01-01T12:00:00Z")
     end
 
-    let!(:late_matching_submission) do
-      create :submission, :bounced, form_id:,
-                                    created_at: Time.parse("2024-01-01T18:00:00Z")
+    let!(:late_matching_delivery) do
+      submission = create(:submission, form_id:)
+      create :delivery, :failed, submissions: [submission], created_at: Time.parse("2024-01-01T18:00:00Z")
     end
 
-    let!(:not_bounced_submission) do
-      create :submission, :sent, form_id:,
-                                 created_at: Time.parse("2024-01-01T12:00:00Z")
+    let!(:not_bounced_delivery) do
+      submission = create(:submission, form_id:)
+      create :delivery, submissions: [submission], created_at: Time.parse("2024-01-01T12:00:00Z")
     end
 
-    let!(:non_matching_submission_different_form) do
-      create :submission, :bounced, form_id: other_form_id,
-                                    created_at: Time.parse("2024-01-01T12:00:00Z")
+    let!(:non_matching_delivery_different_form) do
+      submission = create(:submission, form_id: other_form_id)
+      create :delivery, :failed, submissions: [submission], created_at: Time.parse("2024-01-01T12:00:00Z")
     end
 
-    let!(:non_matching_submission_different_time) do
-      create :submission, :bounced, form_id:,
-                                    created_at: Time.parse("2023-12-31T23:59:59Z")
+    let!(:non_matching_delivery_different_time) do
+      submission = create(:submission, form_id:)
+      create :delivery, :failed, submissions: [submission], created_at: Time.parse("2023-12-31T23:59:59Z")
     end
 
     context "with valid arguments" do
       let(:valid_args) { [form_id, start_time, end_time, dry_run] }
 
-      it "changes delivery_status for matched submissions to pending" do
+      it "clears failed_at and failure_reason for matched deliveries" do
         expect {
           task.invoke(*valid_args)
-        }.to change { early_matching_submission.reload.delivery_status }.from("bounced").to("pending")
-                                                                        .and change { late_matching_submission.reload.delivery_status }.from("bounced").to("pending")
+        }.to change { early_matching_delivery.reload.failed_at }.to(nil)
+               .and change { early_matching_delivery.reload.failure_reason }.to(nil)
+               .and change { late_matching_delivery.reload.failed_at }.to(nil)
+               .and change { late_matching_delivery.reload.failure_reason }.to(nil)
       end
 
-      it "does not update non-matching submissions" do
+      it "does not update non-matching deliveries or submissions" do
         expect {
           task.invoke(*valid_args)
-        }.to not_change { not_bounced_submission.reload.updated_at }
-               .and not_change { non_matching_submission_different_form.reload.delivery_status }
-                      .and(not_change { non_matching_submission_different_time.reload.delivery_status })
+        }.to not_change { not_bounced_delivery.reload.attributes }
+               .and not_change { non_matching_delivery_different_form.reload.failed_at }
+               .and(not_change { non_matching_delivery_different_time.reload.failed_at })
       end
 
-      it "logs the submissions to disregard" do
+      it "logs the deliveries to disregard" do
         allow(Rails.logger).to receive(:info)
-        expect(Rails.logger).to receive(:info).with("Found 2 bounced submissions to disregard for form ID #{form_id} in time range: 2024-01-01 00:00:00 UTC to 2024-01-02 00:00:00 UTC").once
-        expect(Rails.logger).to receive(:info).with("Disregarded bounce of submission with reference #{early_matching_submission.reference}")
-        expect(Rails.logger).to receive(:info).with("Disregarded bounce of submission with reference #{late_matching_submission.reference}")
+        expect(Rails.logger).to receive(:info).with("Found 2 bounced submission deliveries to disregard for form ID #{form_id} in time range: #{Time.zone.parse(start_time)} to #{Time.zone.parse(end_time)}").once
+        expect(Rails.logger).to receive(:info).with("Disregarded bounce of delivery with delivery_reference #{early_matching_delivery.delivery_reference}")
+        expect(Rails.logger).to receive(:info).with("Disregarded bounce of delivery with delivery_reference #{late_matching_delivery.delivery_reference}")
         task.invoke(*valid_args)
       end
 
       context "when dry_run is true" do
         let(:dry_run) { "true" }
 
-        it "does not update any submissions" do
+        it "does not update any deliveries" do
           expect {
             task.invoke(*valid_args)
-          }.not_to(change { early_matching_submission.reload.delivery_status })
+          }.not_to(change { early_matching_delivery.reload.failed_at })
         end
 
-        it "logs the submissions that would be disregarded" do
+        it "logs the deliveries that would be disregarded" do
           allow(Rails.logger).to receive(:info)
-          expect(Rails.logger).to receive(:info).with("Would disregard bounce of submission with reference #{early_matching_submission.reference} which was created at #{early_matching_submission.created_at}")
-          expect(Rails.logger).to receive(:info).with("Would disregard bounce of submission with reference #{late_matching_submission.reference} which was created at #{late_matching_submission.created_at}")
+          expect(Rails.logger).to receive(:info).with("Would disregard bounce of delivery with delivery_reference #{early_matching_delivery.delivery_reference} which was created at #{early_matching_delivery.created_at}")
+          expect(Rails.logger).to receive(:info).with("Would disregard bounce of delivery with delivery_reference #{late_matching_delivery.delivery_reference} which was created at #{late_matching_delivery.created_at}")
           task.invoke(*valid_args)
         end
       end
@@ -327,21 +320,21 @@ RSpec.describe "submissions.rake" do
         expect {
           task.invoke("", start_time, end_time, dry_run)
         }.to raise_error(SystemExit)
-               .and output("usage: rake submissions:disregard_bounced_submission[<form_id>, <start_timestamp>, <end_timestamp>, <dry_run>]\n").to_stderr
+               .and output("usage: rake submissions:disregard_bounced_deliveries_for_form[<form_id>, <start_timestamp>, <end_timestamp>, <dry_run>]\n").to_stderr
       end
 
       it "aborts when start_timestamp is missing" do
         expect {
           task.invoke(form_id, "", end_time, dry_run)
         }.to raise_error(SystemExit)
-               .and output("usage: rake submissions:disregard_bounced_submission[<form_id>, <start_timestamp>, <end_timestamp>, <dry_run>]\n").to_stderr
+               .and output("usage: rake submissions:disregard_bounced_deliveries_for_form[<form_id>, <start_timestamp>, <end_timestamp>, <dry_run>]\n").to_stderr
       end
 
       it "aborts when end_timestamp is missing" do
         expect {
           task.invoke(form_id, start_time, "", dry_run)
         }.to raise_error(SystemExit)
-               .and output("usage: rake submissions:disregard_bounced_submission[<form_id>, <start_timestamp>, <end_timestamp>, <dry_run>]\n").to_stderr
+               .and output("usage: rake submissions:disregard_bounced_deliveries_for_form[<form_id>, <start_timestamp>, <end_timestamp>, <dry_run>]\n").to_stderr
       end
 
       it "aborts when start_timestamp is invalid" do
@@ -376,7 +369,7 @@ RSpec.describe "submissions.rake" do
         expect {
           task.invoke(form_id, start_time, start_time, "foo")
         }.to raise_error(SystemExit)
-               .and output("usage: rake submissions:disregard_bounced_submission[<form_id>, <start_timestamp>, <end_timestamp>, <dry_run>]\n").to_stderr
+               .and output("usage: rake submissions:disregard_bounced_deliveries_for_form[<form_id>, <start_timestamp>, <end_timestamp>, <dry_run>]\n").to_stderr
       end
     end
   end

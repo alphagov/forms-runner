@@ -7,6 +7,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
   let(:form_with_file_upload) { build :v2_form_document, form_id: 1, steps: file_upload_steps, start_page: 1 }
   let!(:sent_submission_created_31_days_ago) do
     create :submission,
+           :sent,
            reference: "31DAYS",
            form_id: form_with_file_upload.form_id,
            form_document: form_with_file_upload,
@@ -15,6 +16,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
   end
   let!(:sent_submission_created_30_days_ago) do
     create :submission,
+           :sent,
            reference: "30DAYS",
            form_id: form_without_file_upload.form_id,
            form_document: form_without_file_upload,
@@ -22,6 +24,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
   end
   let!(:sent_submission_created_29_days_ago) do
     create :submission,
+           :sent,
            reference: "29DAYS",
            form_id: form_without_file_upload.form_id,
            form_document: form_without_file_upload,
@@ -83,14 +86,8 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
       expect(Submission.exists?(sent_submission_created_30_days_ago.id)).to be false
     end
 
-    context "when there are delivery records" do
-      let!(:delivery) { sent_submission_created_30_days_ago.deliveries.create!(delivery_reference: "a-message-id") }
-
-      it "destroys associated delivery record" do
-        perform_enqueued_jobs
-        expect(Submission.exists?(sent_submission_created_30_days_ago.id)).to be false
-        expect(Delivery.exists?(delivery.id)).to be false
-      end
+    it "destroys associated delivery and submission_delivery records" do
+      expect { perform_enqueued_jobs }.to change(Delivery, :count).by(-2).and change(SubmissionDelivery, :count).by(-2)
     end
 
     it "does not destroy the submission created more recently than 30 days ago" do
@@ -135,7 +132,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
 
     it "sends cloudwatch metric for each submission deleted" do
       perform_enqueued_jobs
-      expect(CloudWatchService).to have_received(:record_submission_deleted_metric).twice.with("pending")
+      expect(CloudWatchService).to have_received(:record_submission_deleted_metric).twice.with(:pending)
     end
   end
 
@@ -180,7 +177,7 @@ RSpec.describe DeleteSubmissionsJob, type: :job do
 
     it "sends cloudwatch metric for the deleted submission only" do
       perform_enqueued_jobs
-      expect(CloudWatchService).to have_received(:record_submission_deleted_metric).once.with("pending")
+      expect(CloudWatchService).to have_received(:record_submission_deleted_metric).once.with(:pending)
     end
   end
 

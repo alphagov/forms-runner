@@ -14,13 +14,16 @@ class ReceiveSubmissionDeliveriesJob < ApplicationJob
       job_id: job_id,
     )
 
-    poller.poll do |submission, ses_message|
+    poller.poll do |delivery, ses_message|
+      # The delivery-submission relationship is not one-to-one, so once we need to handled batched deliveries this will
+      # not be appropriate
+      submission = delivery.submissions.first
       ses_event_type = ses_message["eventType"]
 
       raise "Unexpected event type:#{ses_event_type}" unless ses_event_type == "Delivery"
 
       delivery_time = Time.zone.parse(ses_message["delivery"]["timestamp"])
-      process_delivery(submission, delivered_at: delivery_time)
+      process_delivery(delivery, submission, delivered_at: delivery_time)
 
       submission_duration_ms = ((delivery_time - submission.created_at) * 1000).round
       CloudWatchService.record_submission_delivery_latency_metric(submission_duration_ms, "Email")
@@ -29,13 +32,10 @@ class ReceiveSubmissionDeliveriesJob < ApplicationJob
 
 private
 
-  def process_delivery(submission, **attributes)
+  def process_delivery(delivery, submission, **attributes)
     set_submission_logging_attributes(submission)
 
-    submission.update! attributes
-
-    delivery = submission.single_submission_delivery
-    delivery.update! attributes if delivery.present?
+    delivery.update! attributes
 
     EventLogger.log_form_event("submission_delivered")
   end

@@ -1,7 +1,7 @@
 class SubmissionStatusController < ApplicationController
   before_action :authenticate_client
   def status
-    if Submission.emailed?(submission_params[:reference])
+    if Submission.sent?(submission_params[:reference])
       head :no_content
     else
       head :not_found

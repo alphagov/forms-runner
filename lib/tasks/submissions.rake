@@ -1,21 +1,23 @@
 namespace :submissions do
-  desc "Check submission statuses"
-  task check_submission_statuses: :environment do
-    Rails.logger.info "#{Submission.pending.count} pending submissions"
-    Rails.logger.info "#{Submission.bounced.count} bounced submissions"
+  desc "Check delivery statuses"
+  task check_delivery_statuses: :environment do
+    Rails.logger.info "#{Delivery.pending.count} pending deliveries"
+    Rails.logger.info "#{Delivery.failed.count} failed deliveries"
   end
 
-  desc "List all bounced submissions for the given form ID"
+  desc "List all bounced submission deliveries for the given form ID"
   task :list_bounced_submissions_for_form, %i[form_id] => :environment do |_t, args|
     form_id = args[:form_id]
 
     usage_message = "usage: rake submissions:list_bounced_submissions_for_form[<form_id>]".freeze
     abort usage_message if form_id.blank?
 
-    submissions = Submission.bounced.where(form_id: form_id)
-    Rails.logger.info "Found #{submissions.length} bounced submissions for form with ID #{form_id}"
-    submissions.find_each do |submission|
-      Rails.logger.info "Submission reference: #{submission.reference}, created_at: #{submission.created_at}, last_delivery_attempt: #{submission.last_delivery_attempt}"
+    deliveries = Delivery.failed.joins(:submissions).where(submissions: { form_id: form_id }).distinct
+    Rails.logger.info "Found #{deliveries.length} bounced submission deliveries for form with ID #{form_id}"
+    deliveries.find_each do |delivery|
+      # This will need to be updated when we support batches
+      submission = delivery.submissions.first
+      Rails.logger.info "Submission reference: #{submission.reference}, created_at: #{submission.created_at}, last_attempt_at: #{delivery.last_attempt_at}"
     end
   end
 
@@ -31,43 +33,57 @@ namespace :submissions do
     end
   end
 
-  desc "Retry bounced submissions"
-  task :retry_bounced_submissions, %i[form_id] => :environment do |_, args|
+  desc "Retry bounced deliveries"
+  task :retry_bounced_deliveries, %i[form_id] => :environment do |_, args|
     form_id = args[:form_id]
 
-    usage_message = "usage: rake submissions:retry_bounced_submissions[<form_id>]".freeze
+    usage_message = "usage: rake submissions:retry_bounced_deliveries[<form_id>]".freeze
     abort usage_message if form_id.blank?
 
-    submissions_to_retry = Submission.where(form_id: form_id)
-                                     .bounced
+    bounced_deliveries = Delivery.failed.joins(:submissions).where(submissions: { form_id: form_id }).distinct
 
-    Rails.logger.info "#{submissions_to_retry.length} submissions to retry for form with ID: #{form_id}"
+    Rails.logger.info "#{bounced_deliveries.length} submission deliveries to retry for form with ID: #{form_id}"
 
-    submissions_to_retry.each do |submission|
+    bounced_deliveries.each do |delivery|
+      # This will need to be updated when we support batches
+      submission = delivery.submissions.first
       Rails.logger.info "Retrying submission with reference #{submission.reference} for form with ID: #{form_id}"
       SendSubmissionJob.perform_later(submission)
     end
   end
 
-  desc "Disregard bounced submission"
-  task :disregard_bounced_submission, %i[reference] => :environment do |_, args|
-    reference = args[:reference]
+  desc "Disregard bounced delivery"
+  task :disregard_bounced_delivery, %i[delivery_reference] => :environment do |_, args|
+    delivery_reference = args[:delivery_reference]
 
-    usage_message = "usage: rake submissions:disregard_bounced_submission[<reference>]".freeze
-    abort usage_message if reference.blank?
+    usage_message = "usage: rake submissions:disregard_bounced_delivery[<delivery_reference>]".freeze
+    abort usage_message if delivery_reference.blank?
 
-    disregard_bounced_submission(reference)
+    delivery = Delivery.find_by(delivery_reference: delivery_reference)
+
+    if delivery.blank?
+      Rails.logger.info "No delivery found with delivery_reference #{delivery_reference}"
+      next
+    end
+
+    unless delivery.failed?
+      Rails.logger.info "Delivery with delivery_reference #{delivery_reference} hasn't bounced"
+      next
+    end
+
+    delivery.update!(failed_at: nil, failure_reason: nil)
+    Rails.logger.info "Disregarded bounce of delivery with delivery_reference #{delivery_reference}"
   end
 
-  desc "Disregard bounced submissions created between two timestamps for a specific form"
-  task :disregard_bounced_submissions_for_form, %i[form_id start_timestamp end_timestamp dry_run] => :environment do |_, args|
+  desc "Disregard bounced deliveries created between two timestamps for a specific form"
+  task :disregard_bounced_deliveries_for_form, %i[form_id start_timestamp end_timestamp dry_run] => :environment do |_, args|
     form_id = args[:form_id]
     start_timestamp = args[:start_timestamp]
     end_timestamp = args[:end_timestamp]
     dry_run_arg = args[:dry_run]
     dry_run = dry_run_arg == "true"
 
-    usage_message = "usage: rake submissions:disregard_bounced_submission[<form_id>, <start_timestamp>, <end_timestamp>, <dry_run>]".freeze
+    usage_message = "usage: rake submissions:disregard_bounced_deliveries_for_form[<form_id>, <start_timestamp>, <end_timestamp>, <dry_run>]".freeze
     if form_id.blank? || start_timestamp.blank? || end_timestamp.blank? || !dry_run_arg.in?(%w[true false])
       abort usage_message
     end
@@ -85,16 +101,20 @@ namespace :submissions do
 
     Rails.logger.info "Dry run mode: #{dry_run ? 'enabled' : 'disabled'}"
 
-    submissions = Submission.bounced.where(form_id: form_id, created_at: start_time..end_time)
+    deliveries = Delivery.failed
+                         .joins(:submissions)
+                         .where(submissions: { form_id: form_id })
+                         .where(created_at: start_time..end_time)
+                         .distinct
 
-    Rails.logger.info "Found #{submissions.length} bounced submissions to disregard for form ID #{form_id} in time range: #{start_time} to #{end_time}"
+    Rails.logger.info "Found #{deliveries.length} bounced submission deliveries to disregard for form ID #{form_id} in time range: #{start_time} to #{end_time}"
 
-    submissions.each do |submission|
+    deliveries.each do |delivery|
       if dry_run
-        Rails.logger.info "Would disregard bounce of submission with reference #{submission.reference} which was created at #{submission.created_at}"
+        Rails.logger.info "Would disregard bounce of delivery with delivery_reference #{delivery.delivery_reference} which was created at #{delivery.created_at}"
       else
-        submission.pending!
-        Rails.logger.info "Disregarded bounce of submission with reference #{submission.reference}"
+        delivery.update!(failed_at: nil, failure_reason: nil)
+        Rails.logger.info "Disregarded bounce of delivery with delivery_reference #{delivery.delivery_reference}"
       end
     end
   end
@@ -201,21 +221,4 @@ namespace :submissions do
       end
     end
   end
-end
-
-def disregard_bounced_submission(reference)
-  submission = Submission.find_by(reference:)
-
-  if submission.blank?
-    Rails.logger.info "No submission found with reference #{reference}"
-    return
-  end
-
-  unless submission.bounced?
-    Rails.logger.info "Submission with reference #{reference} hasn't bounced"
-    return
-  end
-
-  Rails.logger.info "Disregarding bounce of submission with reference #{submission.reference}"
-  submission.pending!
 end

@@ -42,7 +42,7 @@ private
                                                        csv_filename:,
                                                        json_filename:).deliver_now
 
-    CurrentJobLoggingAttributes.mail_message_id = mail.message_id
+    CurrentJobLoggingAttributes.delivery_reference = mail.message_id
     mail.message_id
   end
 
