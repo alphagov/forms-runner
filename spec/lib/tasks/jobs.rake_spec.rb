@@ -9,9 +9,9 @@ RSpec.describe "jobs.rake" do
     Rake::Task.define_task(:environment)
   end
 
-  describe "jobs:retry_failed_send_job" do
+  describe "jobs:retry_failed" do
     subject(:task) do
-      Rake::Task["jobs:retry_failed_send_job"]
+      Rake::Task["jobs:retry_failed"]
         .tap(&:reenable)
     end
 
@@ -37,7 +37,7 @@ RSpec.describe "jobs.rake" do
         end
 
         it "logs that the job was scheduled for retry" do
-          expect(Rails.logger).to receive(:info).with("Scheduled retry for submission job with ID: #{job.active_job_id}")
+          expect(Rails.logger).to receive(:info).with("Scheduled retry for job with ID: #{job.active_job_id}, class: #{job.class_name}")
 
           task.invoke(*valid_args)
         end
@@ -67,7 +67,7 @@ RSpec.describe "jobs.rake" do
         expect {
           task.invoke
         }.to raise_error(SystemExit)
-               .and output("usage: rake jobs:retry_failed_send_job[<job_id>]\n").to_stderr
+               .and output("usage: rake jobs:retry_failed[<job_id>]\n").to_stderr
       end
     end
   end

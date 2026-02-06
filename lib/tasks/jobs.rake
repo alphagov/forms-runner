@@ -1,9 +1,9 @@
 namespace :jobs do
-  desc "Retry failed send submission job"
-  task :retry_failed_send_job, %i[job_id] => :environment do |_, args|
+  desc "Retry failed"
+  task :retry_failed, %i[job_id] => :environment do |_, args|
     job_id = args[:job_id]
 
-    usage_message = "usage: rake jobs:retry_failed_send_job[<job_id>]"
+    usage_message = "usage: rake jobs:retry_failed[<job_id>]"
     abort usage_message if job_id.blank?
 
     job = SolidQueue::Job.where(active_job_id: job_id).last
@@ -16,7 +16,7 @@ namespace :jobs do
 
     failed_execution.retry
 
-    Rails.logger.info "Scheduled retry for submission job with ID: #{job_id}"
+    Rails.logger.info "Scheduled retry for job with ID: #{job_id}, class: #{job.class_name}"
   end
 
   desc "Retry all failed send submission jobs"
