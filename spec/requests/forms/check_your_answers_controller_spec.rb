@@ -5,9 +5,10 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
   let(:timestamp_of_request) { Time.utc(2022, 12, 14, 10, 0o0, 0o0) }
 
+  let(:form_id) { 2 }
   let(:form_data) do
     build(:v2_form_document, :with_support, :with_submission_email,
-          form_id: 2,
+          form_id: form_id,
           start_page: 1,
           privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
           what_happens_next_markdown: "Good things come to those that wait",
@@ -31,7 +32,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
   let(:store) do
     {
       answers: {
-        "2" => {
+        form_id.to_s => {
           "1" => {
             "date_year" => "2000",
             "date_month" => "1",
@@ -94,7 +95,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
     allow(Lograge).to receive(:logger).and_return(logger)
 
     ActiveResource::HttpMock.respond_to do |mock|
-      mock.get "/api/v2/forms/2#{api_url_suffix}", req_headers, form_data.to_json, 200
+      mock.get "/api/v2/forms/#{form_id}#{api_url_suffix}", req_headers, form_data.to_json, 200
     end
 
     allow(Flow::Context).to receive(:new).and_wrap_original do |original_method, *args|
@@ -130,9 +131,9 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         end
 
         it "redirects to first incomplete page of form" do
-          get check_your_answers_path(mode:, form_id: 2, form_slug: form_data.form_slug)
+          get check_your_answers_path(mode:, form_id:, form_slug: form_data.form_slug)
           expect(response).to have_http_status(:found)
-          expect(response.location).to eq(form_page_url(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 1))
+          expect(response.location).to eq(form_page_url(mode:, form_id:, form_slug: form_data.form_slug, page_slug: 1))
         end
       end
     end
@@ -143,7 +144,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       end
 
       it "Displays a back link to the last page of the form" do
-        expect(response.body).to include(form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2))
+        expect(response.body).to include(form_page_path(mode:, form_id:, form_slug: form_data.form_slug, page_slug: 2))
       end
 
       it "Returns the correct X-Robots-Tag header" do
@@ -167,7 +168,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       context "with all questions answered and valid" do
         before do
           allow(EventLogger).to receive(:log).at_least(:once)
-          get check_your_answers_path(mode:, form_id: 2, form_slug: form_data.form_slug)
+          get check_your_answers_path(mode:, form_id:, form_slug: form_data.form_slug)
         end
 
         it_behaves_like "check your answers page"
@@ -189,7 +190,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       context "with all questions answered and valid" do
         before do
           allow(EventLogger).to receive(:log_form_event).at_least(:once)
-          get check_your_answers_path(mode:, form_id: 2, form_slug: form_data.form_slug)
+          get check_your_answers_path(mode:, form_id:, form_slug: form_data.form_slug)
         end
 
         it_behaves_like "check your answers page"
@@ -224,7 +225,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       before do
         travel_to frozen_time do
           perform_enqueued_jobs do
-            post form_submit_answers_path(form_id: 2, form_slug: "form-name", mode:), params: { email_confirmation_input: }
+            post form_submit_answers_path(form_id:, form_slug: "form-name", mode:), params: { email_confirmation_input: }
           end
         end
       end
@@ -256,7 +257,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       before do
         travel_to frozen_time do
           perform_enqueued_jobs do
-            post form_submit_answers_path(form_id: 2, form_slug: "form-name", mode:), params: { email_confirmation_input: }
+            post form_submit_answers_path(form_id:, form_slug: "form-name", mode:), params: { email_confirmation_input: }
           end
         end
       end
@@ -286,11 +287,11 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       let(:repeat_form_submission) { true }
 
       before do
-        post form_submit_answers_path(form_id: 2, form_slug: "form-name", mode:), params: { email_confirmation_input: }
+        post form_submit_answers_path(form_id:, form_slug: "form-name", mode:), params: { email_confirmation_input: }
       end
 
       it "redirects to repeat submission error page" do
-        expect(response).to redirect_to(error_repeat_submission_path(2))
+        expect(response).to redirect_to(error_repeat_submission_path(form_id))
       end
     end
 
@@ -298,7 +299,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       let(:store) do
         {
           answers: {
-            "2" => {
+            form_id.to_s => {
               "1" => {
                 "date_year" => "2000",
                 "date_month" => "1",
@@ -310,7 +311,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       end
 
       before do
-        post form_submit_answers_path(form_id: 2, form_slug: "form-name", mode:), params: { email_confirmation_input: }
+        post form_submit_answers_path(form_id:, form_slug: "form-name", mode:), params: { email_confirmation_input: }
       end
 
       it "renders the incomplete submission error page" do
@@ -327,7 +328,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       end
 
       before do
-        post form_submit_answers_path(form_id: 2, form_slug: "form-name", mode:), params: { email_confirmation_input: }
+        post form_submit_answers_path(form_id:, form_slug: "form-name", mode:), params: { email_confirmation_input: }
       end
 
       it "return 422 error code" do
@@ -353,7 +354,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       end
 
       before do
-        post form_submit_answers_path(form_id: 2, form_slug: "form-name", mode:), params: { email_confirmation_input: }
+        post form_submit_answers_path(form_id:, form_slug: "form-name", mode:), params: { email_confirmation_input: }
       end
 
       it "return 422 error code" do
@@ -381,7 +382,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       end
 
       before do
-        post form_submit_answers_path(form_id: 2, form_slug: "form-name", mode:), params: { email_confirmation_input: }
+        post form_submit_answers_path(form_id:, form_slug: "form-name", mode:), params: { email_confirmation_input: }
       end
 
       it "redirects to confirmation page" do
@@ -407,7 +408,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       before do
         travel_to timestamp_of_request do
           perform_enqueued_jobs do
-            post form_submit_answers_path(form_id: 2, form_slug: "form-name", mode:), params: { email_confirmation_input: }
+            post form_submit_answers_path(form_id:, form_slug: "form-name", mode:), params: { email_confirmation_input: }
           end
         end
       end
@@ -459,7 +460,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         allow(Sentry).to receive(:capture_exception)
 
         travel_to timestamp_of_request do
-          post form_submit_answers_path(form_id: 2, form_slug: "form-name", mode:), params: { email_confirmation_input: }
+          post form_submit_answers_path(form_id:, form_slug: "form-name", mode:), params: { email_confirmation_input: }
         end
       end
 
@@ -484,7 +485,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         allow(FormSubmissionService).to receive(:new).and_return(mock_form_submission_service)
         allow(mock_form_submission_service).to receive(:submit).and_raise(FormSubmissionService::ConfirmationEmailToAddressError)
 
-        post form_submit_answers_path(form_id: 2, form_slug: "form-name", mode:), params: { email_confirmation_input: }
+        post form_submit_answers_path(form_id:, form_slug: "form-name", mode:), params: { email_confirmation_input: }
       end
 
       it "return 422 error code" do
