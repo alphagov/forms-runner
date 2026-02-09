@@ -116,16 +116,16 @@ RSpec.describe FormSubmissionService do
 
         it "creates a S3SubmissionService instance" do
           freeze_time do
-            service.submit
+            expect(S3SubmissionService).to receive(:new).with(submission: have_attributes(
+              reference:,
+              form_id: form.id,
+              answers: answers.deep_stringify_keys,
+              mode: "form",
+              form_document: document_json,
+              submission_locale: "en",
+            ))
 
-            expect(S3SubmissionService).to have_received(:new).with(
-              journey:,
-              form:,
-              timestamp: Time.zone.now,
-              submission_reference: reference,
-              is_preview: mode.preview?,
-              submission_locale: :en,
-            ).once
+            service.submit
           end
         end
 
