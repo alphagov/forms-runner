@@ -110,10 +110,4 @@ private
     formatted_timestamp = @submission.submission_time.utc.strftime("%Y%m%dT%H%M%SZ")
     "#{folder}/#{@form.id}/#{formatted_timestamp}_#{@submission.reference}/#{filename}"
   end
-
-  def language
-    return nil unless @form.multilingual?
-
-    @submission.submission_locale
-  end
 end
