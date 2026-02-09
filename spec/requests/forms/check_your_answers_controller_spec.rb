@@ -79,7 +79,9 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
   let(:api_url_suffix) { "/live" }
   let(:mode) { "form" }
 
-  let(:frozen_time) { Time.zone.local(2023, 3, 13, 9, 47, 57) }
+  let(:frozen_time) do
+    Time.use_zone("London") { Time.zone.local(2023, 4, 13, 9, 47, 57) }
+  end
 
   let(:repeat_form_submission) { false }
 
@@ -281,6 +283,44 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       end
 
       include_examples "for notification references"
+    end
+
+    context "when the submission type is s3" do
+      let(:form_data) do
+        build(:v2_form_document, :s3_submissions_enabled, form_id:, steps: steps_data, start_page: 1)
+      end
+      let(:mock_credentials) { { foo: "bar" } }
+      let(:mock_sts_client) { Aws::STS::Client.new(stub_responses: true) }
+      let(:mock_s3_client) { Aws::S3::Client.new(stub_responses: true) }
+
+      before do
+        allow(Aws::AssumeRoleCredentials).to receive(:new).and_return(mock_credentials)
+        allow(Aws::STS::Client).to receive(:new).and_return(mock_sts_client)
+        allow(Aws::S3::Client).to receive(:new).and_return(mock_s3_client)
+        allow(mock_s3_client).to receive(:put_object)
+
+        travel_to frozen_time do
+          post form_submit_answers_path(form_id:, form_slug: "form-name", mode:), params: { email_confirmation_input: }
+        end
+      end
+
+      it "redirects to confirmation page" do
+        expect(response).to redirect_to(form_submitted_path)
+      end
+
+      it "calls put_object with a CSV file and filename" do
+        expected_timestamp = "20230413T084757Z"
+        expected_key_name = "form_submissions/#{form_id}/#{expected_timestamp}_#{reference}/form_submission.csv"
+        expected_csv_content = "Reference,Submitted at,Question one,Question two\n#{reference},2023-04-13T09:47:57+01:00,01/01/2000,09/06/2023\n"
+        expect(mock_s3_client).to have_received(:put_object).with(
+          {
+            body: expected_csv_content,
+            bucket: form_data.s3_bucket_name,
+            expected_bucket_owner: form_data.s3_bucket_aws_account_id,
+            key: expected_key_name,
+          },
+        )
+      end
     end
 
     context "when answers have already been submitted" do
