@@ -55,12 +55,8 @@ private
 
   def generate_json_submission
     JsonSubmissionGenerator.generate_submission(
-      form: @form,
-      all_steps: @journey.all_steps,
-      submission_reference: @submission.reference,
-      timestamp: @submission.submission_time,
+      submission: @submission,
       is_s3_submission: false,
-      language:,
     )
   end
 
