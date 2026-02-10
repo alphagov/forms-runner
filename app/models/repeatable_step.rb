@@ -77,28 +77,28 @@ class RepeatableStep < Step
     end
   end
 
-  def show_answer_in_email
+  def show_answer_in_email(submission_reference:)
     questions.map.with_index(1) { |question, index|
-      "#{index}. #{question.show_answer_in_email}"
+      "#{index}. #{question.show_answer_in_email(submission_reference:)}"
     }.join("\n\n")
   end
 
-  def show_answer_in_csv(is_s3_submission)
+  def show_answer_in_csv(submission_reference:, is_s3_submission:)
     header_values_hash = {}
     questions.each.with_index(1) do |question, index|
-      question.show_answer_in_csv(is_s3_submission:).each do |header, value|
+      question.show_answer_in_csv(submission_reference:, is_s3_submission:).each do |header, value|
         header_values_hash[I18n.t("submission_csv.repeatable_answer_header", header:, index:)] = value
       end
     end
     header_values_hash
   end
 
-  def show_answer_in_json(is_s3_submission)
+  def show_answer_in_json(submission_reference:, is_s3_submission:)
     answer_hash = questions.first.show_answer_in_json.keys.index_with { [] }
 
     unless questions.one? && questions.first.show_answer.blank?
       questions.each do |question|
-        question.show_answer_in_json(is_s3_submission).each do |key, value|
+        question.show_answer_in_json(submission_reference:, is_s3_submission:).each do |key, value|
           answer_hash[key] << value
         end
       end

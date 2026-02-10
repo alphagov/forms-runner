@@ -198,7 +198,7 @@ namespace :submissions do
   end
 
   namespace :file_answers do
-    desc "Generate email filename for file upload answers that do not have an original filename stored and schedule the submission to be sent"
+    desc "Generate filename for file upload answers that do not have an original filename stored and schedule the submission to be sent"
     task :fix_missing_original_filenames, %i[reference] => :environment do |_, args|
       submission = Submission.find_by(reference: args.reference)
       abort "No submission found with reference #{args.reference}" if submission.blank?
@@ -209,8 +209,7 @@ namespace :submissions do
         question = submission.form.page_by_id(question_id)
         extension = ::File.extname(answer["uploaded_file_key"])
         filename = "#{question.position}-#{question.question_text.parameterize}#{extension}"
-        filename = FileUploadFilenameGenerator.to_email_attachment(filename, submission_reference: submission.reference, suffix: answer["filename_suffix"])
-        answer["email_filename"] = filename
+        answer["original_filename"] = filename
       end
 
       submission.save!

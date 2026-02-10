@@ -643,17 +643,15 @@ RSpec.describe "submissions.rake" do
             "original_filename" => "",
             "uploaded_file_key" => "#{Faker::Internet.uuid}.jpg",
             "filename_suffix" => "",
-            "email_filename" => "",
           },
         }
       end
 
-      it "sets the email filename to the question text" do
+      it "sets the original filename to the question text" do
         task.invoke(submission.reference)
         submission.reload
         expect(submission.answers["100"]).to include(
-          "original_filename" => "",
-          "email_filename" => "1-upload-your-evidence_F008AR.jpg",
+          "original_filename" => "1-upload-your-evidence.jpg",
         )
       end
 
@@ -671,17 +669,15 @@ RSpec.describe "submissions.rake" do
             "original_filename" => "my-test-picture.jpg",
             "uploaded_file_key" => "#{Faker::Internet.uuid}.jpg",
             "filename_suffix" => "",
-            "email_filename" => "",
           },
         }
       end
 
-      it "does not set the email filename" do
+      it "does not modify the original filename" do
         task.invoke(submission.reference)
         submission.reload
         expect(submission.answers["100"]).to include(
           "original_filename" => "my-test-picture.jpg",
-          "email_filename" => "",
         )
       end
 
@@ -716,17 +712,15 @@ RSpec.describe "submissions.rake" do
               "original_filename" => "",
               "uploaded_file_key" => nil,
               "filename_suffix" => "",
-              "email_filename" => "",
             },
           }
         end
 
-        it "does not set the email filename" do
+        it "does not modify the original filename" do
           task.invoke(submission.reference)
           submission.reload
           expect(submission.answers["100"]).to include(
             "original_filename" => "",
-            "email_filename" => "",
           )
         end
       end
@@ -777,28 +771,24 @@ RSpec.describe "submissions.rake" do
             "original_filename" => "",
             "uploaded_file_key" => "#{Faker::Internet.uuid}.jpg",
             "filename_suffix" => "",
-            "email_filename" => "",
           },
           "501" => {
             "file" => nil,
             "original_filename" => "",
             "uploaded_file_key" => "#{Faker::Internet.uuid}.jpg",
             "filename_suffix" => "",
-            "email_filename" => "",
           },
           "502" => {
             "file" => nil,
             "original_filename" => "my-test-picture.jpg",
             "uploaded_file_key" => "#{Faker::Internet.uuid}.jpg",
             "filename_suffix" => "",
-            "email_filename" => "",
           },
           "503" => {
             "file" => nil,
             "original_filename" => "",
             "uploaded_file_key" => nil,
             "filename_suffix" => "",
-            "email_filename" => "",
           },
         }
       end
@@ -807,10 +797,10 @@ RSpec.describe "submissions.rake" do
         task.invoke(submission.reference)
         submission.reload
         expect(submission.answers).to match({
-          "500" => a_hash_including("original_filename" => "", "email_filename" => "1-upload-your-evidence-1_F008AR.jpg"),
-          "501" => a_hash_including("original_filename" => "", "email_filename" => "2-upload-your-evidence-2_F008AR.jpg"),
-          "502" => a_hash_including("original_filename" => "my-test-picture.jpg", "email_filename" => ""),
-          "503" => a_hash_including("original_filename" => "", "email_filename" => ""),
+          "500" => a_hash_including("original_filename" => "1-upload-your-evidence-1.jpg"),
+          "501" => a_hash_including("original_filename" => "2-upload-your-evidence-2.jpg"),
+          "502" => a_hash_including("original_filename" => "my-test-picture.jpg"),
+          "503" => a_hash_including("original_filename" => ""),
         })
       end
     end

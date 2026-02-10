@@ -6,6 +6,7 @@ RSpec.describe RepeatableStep, type: :model do
   let(:form) { build :form, id: 1, form_slug: "form-slug", pages: [page, build(:page, id: 2)] }
   let(:page) { build :page }
   let(:question) { build :name, is_optional: false }
+  let(:submission_reference) { "abc123" }
 
   describe "#repeatable?" do
     it "returns true" do
@@ -152,7 +153,7 @@ RSpec.describe RepeatableStep, type: :model do
     before { repeatable_step.questions = questions }
 
     it "returns an ordered list of answers" do
-      expect(repeatable_step.show_answer_in_email).to eq("1. first answer\n\n2. second answer")
+      expect(repeatable_step.show_answer_in_email(submission_reference:)).to eq("1. first answer\n\n2. second answer")
     end
   end
 
@@ -167,7 +168,7 @@ RSpec.describe RepeatableStep, type: :model do
 
       it "returns a hash of all answers with keys containing the answer numbers" do
         # we convert to an array to test the ordering of the hash
-        expect(repeatable_step.show_answer_in_csv(false).to_a).to eq({
+        expect(repeatable_step.show_answer_in_csv(submission_reference:, is_s3_submission: false).to_a).to eq({
           "What is your name? - First name - Answer 1" => first_question.first_name,
           "What is your name? - Last name - Answer 1" => first_question.last_name,
           "What is your name? - First name - Answer 2" => second_question.first_name,
@@ -186,7 +187,7 @@ RSpec.describe RepeatableStep, type: :model do
 
       it "returns a hash of all answers with keys containing the answer numbers" do
         # we convert to an array to test the ordering of the hash
-        expect(repeatable_step.show_answer_in_csv(false).to_a).to eq({
+        expect(repeatable_step.show_answer_in_csv(submission_reference:, is_s3_submission: false).to_a).to eq({
           "What is the meaning of life? - Answer 1" => first_question.text,
           "What is the meaning of life? - Answer 2" => second_question.text,
         }.to_a)
@@ -197,7 +198,7 @@ RSpec.describe RepeatableStep, type: :model do
       let(:question) { build :text, is_optional: false }
 
       it "returns a hash containing a key for the first answer with a blank value" do
-        expect(repeatable_step.show_answer_in_csv(false)).to eq({
+        expect(repeatable_step.show_answer_in_csv(submission_reference:, is_s3_submission: false)).to eq({
           "#{question.question_text} - Answer 1" => "",
         })
       end
@@ -214,7 +215,7 @@ RSpec.describe RepeatableStep, type: :model do
       before { repeatable_step.questions = questions }
 
       it "returns a hash containing arrays with every answer" do
-        expect(repeatable_step.show_answer_in_json(false)).to eq(
+        expect(repeatable_step.show_answer_in_json(submission_reference:, is_s3_submission: false)).to eq(
           {
             question_id: page.id,
             question_text: page.question_text,
@@ -230,9 +231,9 @@ RSpec.describe RepeatableStep, type: :model do
         context "when is_s3_submission is #{is_s3_submission}" do
           it "passes is_s3_submission argument to the question" do
             allow(first_question).to receive(:show_answer_in_json).and_call_original
-            expect(first_question).to receive(:show_answer_in_json).with(is_s3_submission).and_call_original
-            expect(second_question).to receive(:show_answer_in_json).with(is_s3_submission).and_call_original
-            repeatable_step.show_answer_in_json(is_s3_submission)
+            expect(first_question).to receive(:show_answer_in_json).with(submission_reference:, is_s3_submission:).and_call_original
+            expect(second_question).to receive(:show_answer_in_json).with(submission_reference:, is_s3_submission:).and_call_original
+            repeatable_step.show_answer_in_json(submission_reference:, is_s3_submission:)
           end
         end
       end
@@ -243,7 +244,7 @@ RSpec.describe RepeatableStep, type: :model do
       let(:question) { build :first_and_last_name_question, :unanswered, question_text: page.question_text }
 
       it "returns a hash with an array containing a blank answer" do
-        expect(repeatable_step.show_answer_in_json(false)).to eq(
+        expect(repeatable_step.show_answer_in_json(submission_reference:, is_s3_submission: false)).to eq(
           {
             question_id: page.id,
             question_text: page.question_text,

@@ -64,11 +64,11 @@ class Step
 
   delegate :show_answer, :show_answer_in_email, :show_answer_in_csv, :question_text, :hint_text, :answer_settings, to: :question
 
-  def show_answer_in_json(is_s3_submission)
+  def show_answer_in_json(submission_reference:, is_s3_submission:)
     {
       question_id: page&.id,
       question_text: question_text,
-      **question.show_answer_in_json(is_s3_submission),
+      **question.show_answer_in_json(submission_reference:, is_s3_submission:),
     }
   end
 

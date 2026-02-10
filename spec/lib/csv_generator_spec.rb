@@ -30,10 +30,6 @@ RSpec.describe CsvGenerator do
     context "when the submission is being sent by email" do
       let(:is_s3_submission) { false }
 
-      before do
-        file_question.populate_email_filename(submission_reference:)
-      end
-
       it "returns a string" do
         expect(csv).to be_a(String)
       end

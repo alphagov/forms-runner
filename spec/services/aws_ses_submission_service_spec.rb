@@ -84,7 +84,7 @@ RSpec.describe AwsSesSubmissionService do
 
     context "when answers contain uploaded files" do
       let(:questions) { [question] }
-      let(:question) { build :file, :with_uploaded_file }
+      let(:question) { build :file, :with_uploaded_file, original_filename: "file.pdf" }
       let(:journey) { instance_double(Flow::Journey, completed_steps: all_steps, all_steps:, completed_file_upload_questions: questions) }
       let(:file_content) { Faker::Lorem.sentence }
 
@@ -95,13 +95,15 @@ RSpec.describe AwsSesSubmissionService do
       it "calls AwsSesFormSubmissionMailer passing in the uploaded files" do
         allow(AwsSesFormSubmissionMailer).to receive(:submission_email).and_call_original
 
+        attachment_name = "file_#{submission_reference}.pdf"
+
         service.submit
 
         expect(AwsSesFormSubmissionMailer).to have_received(:submission_email).with(
-          answer_content_html: "<h3>#{question.question_text}</h3><p>#{I18n.t('mailer.submission.file_attached', filename: question.email_filename)}</p>",
-          answer_content_plain_text: "#{question.question_text}\n\n#{I18n.t('mailer.submission.file_attached', filename: question.email_filename)}",
+          answer_content_html: "<h3>#{question.question_text}</h3><p>#{I18n.t('mailer.submission.file_attached', filename: attachment_name)}</p>",
+          answer_content_plain_text: "#{question.question_text}\n\n#{I18n.t('mailer.submission.file_attached', filename: attachment_name)}",
           submission:,
-          files: { question.email_filename => file_content },
+          files: { attachment_name => file_content },
           csv_filename: nil,
           json_filename: nil,
         ).once
@@ -175,7 +177,7 @@ RSpec.describe AwsSesSubmissionService do
       include_examples "it returns the message id"
 
       context "when submission contains a file upload question" do
-        let(:question) { build :file, :with_uploaded_file }
+        let(:question) { build :file, :with_uploaded_file, original_filename: "file.pdf" }
         let(:journey) { instance_double(Flow::Journey, completed_steps: all_steps, all_steps:, completed_file_upload_questions: [question]) }
         let(:file_content) { Faker::Lorem.sentence }
 
@@ -187,17 +189,19 @@ RSpec.describe AwsSesSubmissionService do
           it "calls AwsSesFormSubmissionMailer passing in the CSV and the uploaded files" do
             allow(AwsSesFormSubmissionMailer).to receive(:submission_email).and_call_original
 
+            attachment_name = "file_#{submission_reference}.pdf"
+
             service.submit
 
-            expected_csv_content = "Reference,Submitted at,#{question.question_text}\n#{submission_reference},2022-12-14T08:00:00+00:00,#{question.email_filename}\n"
+            expected_csv_content = "Reference,Submitted at,#{question.question_text}\n#{submission_reference},2022-12-14T08:00:00+00:00,#{attachment_name}\n"
 
             expect(AwsSesFormSubmissionMailer).to have_received(:submission_email).with(
-              answer_content_html: "<h3>#{question.question_text}</h3><p>#{I18n.t('mailer.submission.file_attached', filename: question.email_filename)}</p>",
-              answer_content_plain_text: "#{question.question_text}\n\n#{I18n.t('mailer.submission.file_attached', filename: question.email_filename)}",
+              answer_content_html: "<h3>#{question.question_text}</h3><p>#{I18n.t('mailer.submission.file_attached', filename: attachment_name)}</p>",
+              answer_content_plain_text: "#{question.question_text}\n\n#{I18n.t('mailer.submission.file_attached', filename: attachment_name)}",
               submission:,
               files: {
                 "govuk_forms_a_great_form_#{submission_reference}.csv" => expected_csv_content,
-                question.email_filename => file_content,
+                attachment_name => file_content,
               },
               csv_filename: "govuk_forms_a_great_form_#{submission_reference}.csv",
               json_filename: nil,

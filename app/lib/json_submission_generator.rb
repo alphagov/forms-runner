@@ -7,7 +7,7 @@ class JsonSubmissionGenerator
       form_name: form.name,
       submission_reference: submission.reference,
       submitted_at: submission.submission_time.getutc.iso8601(3),
-      answers: submission.journey.all_steps.flat_map { |step| step.show_answer_in_json(is_s3_submission) },
+      answers: submission.journey.all_steps.flat_map { |step| step.show_answer_in_json(submission_reference: submission.reference, is_s3_submission:) },
     }
 
     if form.multilingual?

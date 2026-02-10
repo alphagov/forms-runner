@@ -6,7 +6,6 @@ module Question
     attribute :original_filename
     attribute :uploaded_file_key
     attribute :filename_suffix, default: ""
-    attribute :email_filename, default: ""
 
     with_options except_on: :submission do
       validates :file, presence: true, unless: :is_optional?
@@ -16,7 +15,7 @@ module Question
     end
 
     with_options on: :submission do
-      validates :original_filename, presence: true, unless: -> { email_filename.present? }
+      validates :original_filename, presence: true
       validates :uploaded_file_key, presence: true
     end
 
@@ -45,18 +44,18 @@ module Question
       original_filename
     end
 
-    def show_answer_in_email
+    def show_answer_in_email(submission_reference:)
       return nil if original_filename.blank?
 
-      I18n.t("mailer.submission.file_attached", filename: email_filename)
+      I18n.t("mailer.submission.file_attached", filename: email_filename(submission_reference:))
     end
 
-    def show_answer_in_csv(is_s3_submission)
-      { question_text => filename_for_submission(is_s3_submission) }
+    def show_answer_in_csv(submission_reference:, is_s3_submission:)
+      { question_text => filename_for_submission(submission_reference:, is_s3_submission:) }
     end
 
-    def show_answer_in_json(is_s3_submission)
-      { answer_text: filename_for_submission(is_s3_submission).to_s }
+    def show_answer_in_json(submission_reference:, is_s3_submission:)
+      { answer_text: filename_for_submission(submission_reference:, is_s3_submission:).to_s }
     end
 
     def filename_for_s3_submission
@@ -67,10 +66,10 @@ module Question
       FileUploadFilenameGenerator.truncate_for_reference(original_filename)
     end
 
-    def populate_email_filename(submission_reference:)
+    def email_filename(submission_reference:)
       return if original_filename.blank?
 
-      self.email_filename = FileUploadFilenameGenerator.to_email_attachment(original_filename, submission_reference:, suffix: filename_suffix)
+      FileUploadFilenameGenerator.to_email_attachment(original_filename, submission_reference:, suffix: filename_suffix)
     end
 
     def before_save
@@ -116,10 +115,10 @@ module Question
 
   private
 
-    def filename_for_submission(is_s3_submission)
+    def filename_for_submission(submission_reference:, is_s3_submission:)
       return nil if original_filename.blank?
 
-      is_s3_submission ? filename_for_s3_submission : email_filename
+      is_s3_submission ? filename_for_s3_submission : email_filename(submission_reference:)
     end
 
     def validate_file_size
