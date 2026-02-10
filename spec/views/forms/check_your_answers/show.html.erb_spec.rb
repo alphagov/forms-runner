@@ -94,7 +94,7 @@ describe "forms/check_your_answers/show.html.erb" do
       end
 
       it "renders an error message" do
-        expect(rendered).to have_text "Select yes if you want to get an email confirming your form has been submitted"
+        expect(rendered).to have_text "Select ‘Yes’ if you want to get an email confirming your form has been submitted"
       end
 
       it "renders an error summary" do
@@ -103,7 +103,7 @@ describe "forms/check_your_answers/show.html.erb" do
 
       it "links from the error summary to the first radio button" do
         page = Capybara.string(rendered.html)
-        error_summary_link = page.find_link "Select yes if you want to get an email confirming your form has been submitted"
+        error_summary_link = page.find_link "Select ‘Yes’ if you want to get an email confirming your form has been submitted"
         first_radio_button = page.first :field, type: :radio
 
         expect(error_summary_link["href"]).to eq "##{first_radio_button['id']}"
