@@ -10,8 +10,10 @@ module Forms
     def show
       return redirect_to form_page_path(current_context.form.id, current_context.form.form_slug, current_context.next_page_slug, nil) unless current_context.can_visit?(CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG)
 
+      store_govuk_one_login_return_path
       setup_check_your_answers
       email_confirmation_input = EmailConfirmationInput.new
+      @signed_in_email = session[:govuk_one_login_email]
 
       @support_details = current_context.support_details
 
@@ -56,6 +58,13 @@ module Forms
     end
 
   private
+
+    def store_govuk_one_login_return_path
+      session[:govuk_one_login_last_form_id] = current_context.form.id
+      session[:govuk_one_login_last_form_slug] = current_context.form.form_slug
+      session[:govuk_one_login_last_mode] = mode.to_s
+      session[:govuk_one_login_last_locale] = locale_param
+    end
 
     def email_confirmation_input_params
       params.require(:email_confirmation_input).permit(:send_confirmation, :confirmation_email_address, :confirmation_email_reference)

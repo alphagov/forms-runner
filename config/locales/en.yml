@@ -348,6 +348,7 @@ en:
     check_your_answers:
       agree_and_submit: Agree and submit
       declaration: Declaration
+      logged_in_as: You are signed in as %{email}
       not_completed: Not completed
       sign_in_with_govuk_one_login: Sign in with GOV.UK One Login
       submit: Submit

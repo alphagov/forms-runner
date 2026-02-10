@@ -348,6 +348,7 @@ cy:
     check_your_answers:
       agree_and_submit: Cytuno a chyflwyno
       declaration: Datganiad
+      logged_in_as: Rydych wedi mewngofnodi fel %{email}
       not_completed: Heb ei gwblhau
       sign_in_with_govuk_one_login: Mewngofnodi gyda GOV.UK One Login
       submit: Cyflwyno

@@ -7,6 +7,7 @@ describe "forms/check_your_answers/show.html.erb" do
   let(:full_width) { false }
   let(:declaration_text) { nil }
   let(:email_confirmation_input) { build :email_confirmation_input }
+  let(:signed_in_email) { nil }
   let(:question) { build :text, question_text: "Do you want to remain anonymous?", text: "Yes" }
   let(:steps) { [build(:step, question:, page: build(:page, :with_text_settings))] }
 
@@ -18,6 +19,7 @@ describe "forms/check_your_answers/show.html.erb" do
     assign(:steps, steps)
     assign(:form, form)
     assign(:support_details, support_details)
+    assign(:signed_in_email, signed_in_email)
     render template: "forms/check_your_answers/show", locals: { email_confirmation_input: }
   end
 
@@ -62,6 +64,22 @@ describe "forms/check_your_answers/show.html.erb" do
 
   it "displays the help link" do
     expect(rendered).to have_text(I18n.t("support_details.get_help_with_this_form"))
+  end
+
+  it "shows the GOV.UK One Login sign in button when not signed in" do
+    expect(rendered).to have_button(I18n.t("form.check_your_answers.sign_in_with_govuk_one_login"))
+  end
+
+  context "when signed in with GOV.UK One Login" do
+    let(:signed_in_email) { "person@example.gov.uk" }
+
+    it "shows the signed in email address" do
+      expect(rendered).to have_text(I18n.t("form.check_your_answers.logged_in_as", email: signed_in_email))
+    end
+
+    it "does not show the GOV.UK One Login sign in button" do
+      expect(rendered).not_to have_button(I18n.t("form.check_your_answers.sign_in_with_govuk_one_login"))
+    end
   end
 
   describe "email confirmation" do
