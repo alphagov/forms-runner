@@ -81,7 +81,7 @@ en:
         add_another_answer_input:
           attributes:
             add_another_answer:
-              blank: Select yes if you need to add another answer
+              blank: Select ‘Yes’ if you need to add another answer
               max_answers_reached: You cannot add another answer
         email_confirmation_input:
           attributes:
@@ -89,7 +89,7 @@ en:
               blank: Enter an email address
               invalid_email: Enter an email address in the correct format, like name@example.com
             send_confirmation:
-              blank: Select yes if you want to get an email confirming your form has been submitted
+              blank: Select ‘Yes’ if you want to get an email confirming your form has been submitted
         question/address:
           attributes:
             address1:
@@ -186,7 +186,7 @@ en:
           attributes:
             text:
               blank: Enter an answer
-              long_text_too_long: The answer must be shorter than 5000 characters
+              long_text_too_long: The answer must be shorter than 5,000 characters
               single_line_too_long: The answer must be shorter than 500 characters
         remove_input:
           attributes:
