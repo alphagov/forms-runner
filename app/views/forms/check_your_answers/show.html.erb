@@ -46,3 +46,14 @@
     </div>
   </div>
 <% end %>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds-from-desktop">
+    <%= govuk_button_to(
+          t("form.check_your_answers.sign_in_with_govuk_one_login"),
+          "/auth/govuk_one_login",
+          method: :post,
+          form: { data: { turbo: false } }
+        ) %>
+  </div>
+</div>

@@ -349,6 +349,7 @@ en:
       agree_and_submit: Agree and submit
       declaration: Declaration
       not_completed: Not completed
+      sign_in_with_govuk_one_login: Sign in with GOV.UK One Login
       submit: Submit
       title: Check your answers before submitting your form
     submitted:

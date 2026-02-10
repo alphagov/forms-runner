@@ -349,6 +349,7 @@ cy:
       agree_and_submit: Cytuno a chyflwyno
       declaration: Datganiad
       not_completed: Heb ei gwblhau
+      sign_in_with_govuk_one_login: Mewngofnodi gyda GOV.UK One Login
       submit: Cyflwyno
       title: Edrychwch dros eich atebion cyn cyflwyno’ch ffurflen
     submitted:
