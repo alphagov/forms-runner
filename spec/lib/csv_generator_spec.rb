@@ -11,7 +11,7 @@ RSpec.describe CsvGenerator do
   let(:second_step) { build :step, question: name_question }
   let(:third_step) { build :step, question: file_question }
   let(:all_steps) { [first_step, second_step, third_step] }
-  let(:journey) { instance_double(Flow::Journey, all_steps:) }
+  let(:journey) { instance_double(Flow::Journey, all_steps:, completed_file_upload_questions: [file_question]) }
   let(:mode) { "form" }
   let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
   let(:submission_locale) { :en }
@@ -114,6 +114,53 @@ RSpec.describe CsvGenerator do
           [
             ["Reference", "Submitted at", "What is the meaning of life?", "What is your name? - First name", "What is your name? - Last name", "Upload a file"],
             [submission_reference, "2022-09-14T08:00:00+01:00", text_question.text, name_question.first_name, name_question.last_name, file_question.original_filename],
+          ],
+        )
+      end
+    end
+  end
+
+  describe "#generate_batched_submissions" do
+    subject(:csv) { described_class.generate_batched_submissions(submissions:, is_s3_submission:) }
+
+    let(:submission_2) { build(:submission, form_document:, created_at: timestamp + 1.hour, reference: submission_reference_2, mode:, submission_locale: :cy) }
+    let(:submission_reference_2) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
+    let(:submissions) { [submission, submission_2] }
+    let(:is_s3_submission) { false }
+
+    it "generates a CSV with multiple rows for the submissions" do
+      expect(CSV.parse(csv)).to eq(
+        [
+          ["Reference", "Submitted at", "What is the meaning of life?", "What is your name? - First name", "What is your name? - Last name", "Upload a file"],
+          [submission_reference, "2022-09-14T08:00:00+01:00", text_question.text, name_question.first_name, name_question.last_name, "test_#{submission_reference}.txt"],
+          [submission_reference_2, "2022-09-14T09:00:00+01:00", text_question.text, name_question.first_name, name_question.last_name, "test_#{submission_reference_2}.txt"],
+        ],
+      )
+    end
+
+    context "when the form has multiple available languages" do
+      let(:available_languages) { %w[en cy] }
+
+      it "generates a CSV with a language column" do
+        expect(CSV.parse(csv)).to eq(
+          [
+            ["Reference", "Submitted at", "What is the meaning of life?", "What is your name? - First name", "What is your name? - Last name", "Upload a file", "Language"],
+            [submission_reference, "2022-09-14T08:00:00+01:00", text_question.text, name_question.first_name, name_question.last_name, "test_#{submission_reference}.txt", "en"],
+            [submission_reference_2, "2022-09-14T09:00:00+01:00", text_question.text, name_question.first_name, name_question.last_name, "test_#{submission_reference_2}.txt", "cy"],
+          ],
+        )
+      end
+    end
+
+    context "when the CSV is being sent to an S3 bucket" do
+      let(:is_s3_submission) { true }
+
+      it "generates a CSV without including the submission reference in the filename for the file upload question" do
+        expect(CSV.parse(csv)).to eq(
+          [
+            ["Reference", "Submitted at", "What is the meaning of life?", "What is your name? - First name", "What is your name? - Last name", "Upload a file"],
+            [submission_reference, "2022-09-14T08:00:00+01:00", text_question.text, name_question.first_name, name_question.last_name, file_question.original_filename],
+            [submission_reference_2, "2022-09-14T09:00:00+01:00", text_question.text, name_question.first_name, name_question.last_name, file_question.original_filename],
           ],
         )
       end
