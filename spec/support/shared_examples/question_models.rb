@@ -4,11 +4,15 @@ RSpec.shared_examples "a question model" do |_parameter|
   end
 
   it "responds with text to .show_answer_in_email" do
-    expect(question.show_answer_in_email).to be_a(String)
+    expect(question.show_answer_in_email(submission_reference: "abc123")).to be_a(String)
   end
 
   it "responds with a hash to .show_answer_in_csv" do
-    expect(question.show_answer_in_csv(true)).to be_a(Hash)
+    expect(question.show_answer_in_csv(submission_reference: "abc123", is_s3_submission: true)).to be_a(Hash)
+  end
+
+  it "responds with a hash to .show_answer_in_json" do
+    expect(question.show_answer_in_json(submission_reference: "abc123", is_s3_submission: true)).to be_a(Hash)
   end
 
   it "responds serializable_hash with a hash" do

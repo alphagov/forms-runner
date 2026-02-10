@@ -38,7 +38,7 @@ module Question
       selection_name
     end
 
-    def show_answer_in_email
+    def show_answer_in_email(*)
       return selection_without_blanks.join("\n\n") if allow_multiple_answers?
 
       selection

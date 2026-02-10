@@ -357,9 +357,10 @@ RSpec.describe Step do
     let(:question) { build :first_and_last_name_question }
     let(:page) { build(:page, :with_name_settings, id: first_page_id) }
     let(:is_s3_submission) { false }
+    let(:submission_reference) { "abc123" }
 
     it "returns a hash containing question and answer details" do
-      expect(step.show_answer_in_json(is_s3_submission)).to eq({
+      expect(step.show_answer_in_json(submission_reference:, is_s3_submission:)).to eq({
         question_id: page.id,
         question_text: question.question_text,
         first_name: question.first_name,
@@ -371,8 +372,8 @@ RSpec.describe Step do
     [true, false].each do |is_s3_submission|
       context "when is_s3_submission is #{is_s3_submission}" do
         it "passes is_s3_submission argument to the question" do
-          expect(question).to receive(:show_answer_in_json).with(is_s3_submission).and_call_original
-          step.show_answer_in_json(is_s3_submission)
+          expect(question).to receive(:show_answer_in_json).with(submission_reference:, is_s3_submission:).and_call_original
+          step.show_answer_in_json(submission_reference:, is_s3_submission:)
         end
       end
     end

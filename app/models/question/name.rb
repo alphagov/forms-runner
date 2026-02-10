@@ -50,7 +50,7 @@ module Question
       attribute_names.map { |attribute| send(attribute) }.reject(&:blank?)&.join(" ")
     end
 
-    def show_answer_in_email
+    def show_answer_in_email(*)
       attributes_with_values.map { |attribute| generate_string_for_processing_email(attribute) }&.join("\n\n")
     end
 

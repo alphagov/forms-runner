@@ -61,11 +61,11 @@ private
   end
 
   def answer_content_html
-    SesEmailFormatter.new.build_question_answers_section_html(@journey.completed_steps)
+    SesEmailFormatter.new(submission_reference: @submission.reference, steps: @journey.completed_steps).build_question_answers_section_html
   end
 
   def answer_content_plain_text
-    SesEmailFormatter.new.build_question_answers_section_plain_text(@journey.completed_steps)
+    SesEmailFormatter.new(submission_reference: @submission.reference, steps: @journey.completed_steps).build_question_answers_section_plain_text
   end
 
   def uploaded_files_in_answers
@@ -77,11 +77,9 @@ private
       raise "One or more file answers are invalid:\n#{errors.inspect.indent(2)}"
     end
 
-    questions.each { it.populate_email_filename(submission_reference: @submission.reference) }
-
     files =
       questions
-        .map { |question| [question.email_filename, question.file_from_s3] }
+        .map { |question| [question.email_filename(submission_reference: @submission.reference), question.file_from_s3] }
         .to_h
 
     raise "Duplicate email attachment filenames for submission" if files.count != questions.count

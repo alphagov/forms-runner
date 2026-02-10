@@ -15,6 +15,7 @@ RSpec.describe Question::File, type: :model do
   let(:file_size_in_bytes) { 2.megabytes }
   let(:file_type) { "image/png" }
   let(:file_content) { "not empty" }
+  let(:submission_reference) { "abc123" }
 
   let(:uploaded_file) { instance_double(ActionDispatch::Http::UploadedFile) }
   let(:mock_file_upload_s3_service) { instance_double(Question::FileUploadS3Service) }
@@ -160,60 +161,70 @@ RSpec.describe Question::File, type: :model do
   end
 
   describe "#show_answer_in_email" do
-    let(:original_filename) { Faker::File.file_name(dir: "", directory_separator: "") }
     let(:attributes) { { original_filename:, filename_suffix: } }
     let(:filename_suffix) { "" }
-    let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
-
-    before do
-      question.populate_email_filename(submission_reference:)
-    end
 
     context "when the original_filename is blank" do
       let(:original_filename) { nil }
 
       it "returns a nil value" do
-        expect(question.show_answer_in_email).to be_nil
+        expect(question.show_answer_in_email(submission_reference:)).to be_nil
       end
     end
 
     context "when the original_filename has a value" do
-      it "returns the email_filename with the email attachment text" do
-        expect(question.show_answer_in_email).to eq I18n.t("mailer.submission.file_attached", filename: question.email_filename)
+      it "returns the filename containing the submission reference with the email attachment text" do
+        expect(question.show_answer_in_email(submission_reference:)).to eq I18n.t("mailer.submission.file_attached", filename: "a-file_#{submission_reference}.png")
+      end
+
+      context "when the filename is long enough to be truncated" do
+        let(:filename_suffix) { "_1" }
+        let(:original_filename) { "an_unusual_and_atypically_long_filename_that_is_just_about_long_enough_to_be_truncated.doc" }
+
+        it "returns a hash with a truncated filename containing the submission reference" do
+          truncated_filename_with_suffix_and_reference = "an_unusual_and_atypically_long_filename_that_is_just_about_long_enough_to_be_truncated_1_#{submission_reference}.doc"
+
+          expect(question.show_answer_in_email(submission_reference:)).to eq(I18n.t("mailer.submission.file_attached", filename: truncated_filename_with_suffix_and_reference))
+        end
       end
     end
   end
 
   describe "#show_answer_in_csv" do
     let(:attributes) { { original_filename:, filename_suffix: } }
-    let(:original_filename) { Faker::File.file_name(dir: "", directory_separator: "") }
     let(:filename_suffix) { "" }
     let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
-
-    before do
-      question.populate_email_filename(submission_reference:)
-    end
 
     context "when the original_filename is blank" do
       let(:original_filename) { nil }
 
       it "returns a hash with the question text and a nil value" do
-        expect(question.show_answer_in_csv(false)).to eq({ question.question_text => nil })
+        expect(question.show_answer_in_csv(submission_reference:, is_s3_submission: false)).to eq({ question.question_text => nil })
       end
     end
 
     context "when the original_filename has a value" do
       context "when is_s3_submission is false" do
-        let(:original_filename) { Faker::File.file_name(dir: "", directory_separator: "") }
+        it "returns a hash with the filename containing the submission reference" do
+          expect(question.show_answer_in_csv(submission_reference:, is_s3_submission: false)).to eq({ question.question_text => "a-file_#{submission_reference}.png" })
+        end
 
-        it "returns a hash with the email_filename" do
-          expect(question.show_answer_in_csv(false)).to eq({ question.question_text => question.email_filename })
+        context "when the filename is long enough to be truncated" do
+          let(:filename_suffix) { "_1" }
+          let(:original_filename) { "an_unusual_and_atypically_long_filename_that_is_just_about_long_enough_to_be_truncated.doc" }
+
+          it "returns a hash with a truncated filename containing the submission reference" do
+            truncated_filename_with_suffix_and_reference = "an_unusual_and_atypically_long_filename_that_is_just_about_long_enough_to_be_truncate_1_#{submission_reference}.doc"
+
+            expect(question.show_answer_in_csv(submission_reference:, is_s3_submission: false)).to eq({ question.question_text => truncated_filename_with_suffix_and_reference })
+            expect(question.show_answer_in_csv(submission_reference:, is_s3_submission: false)[question.question_text].length).to eq 100
+          end
         end
       end
 
       context "when is_s3_submission is true" do
         it "returns a hash with the filename_for_s3_submission" do
-          expect(question.show_answer_in_csv(true)).to eq({ question.question_text => question.filename_for_s3_submission })
+          expect(question.show_answer_in_csv(submission_reference:, is_s3_submission: true)).to eq({ question.question_text => original_filename })
         end
       end
     end
@@ -221,7 +232,6 @@ RSpec.describe Question::File, type: :model do
 
   describe "#show_answer_in_json" do
     let(:attributes) { { original_filename:, filename_suffix: } }
-    let(:original_filename) { Faker::File.file_name(dir: "", directory_separator: "") }
     let(:filename_suffix) { "" }
     let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
 
@@ -229,22 +239,32 @@ RSpec.describe Question::File, type: :model do
       let(:original_filename) { nil }
 
       it "returns a hash with a blank value" do
-        expect(question.show_answer_in_json(false)).to eq({ answer_text: "" })
+        expect(question.show_answer_in_json(submission_reference:, is_s3_submission: false)).to eq({ answer_text: "" })
       end
     end
 
     context "when the original_filename has a value" do
       context "when is_s3_submission is false" do
-        let(:original_filename) { Faker::File.file_name(dir: "", directory_separator: "") }
+        it "returns a hash with the filename containing the submission reference" do
+          expect(question.show_answer_in_json(submission_reference:, is_s3_submission: false)).to eq({ answer_text: "a-file_#{submission_reference}.png" })
+        end
 
-        it "returns a hash with the email_filename" do
-          expect(question.show_answer_in_json(false)).to eq({ answer_text: question.email_filename })
+        context "when the filename is long enough to be truncated" do
+          let(:filename_suffix) { "_1" }
+          let(:original_filename) { "an_unusual_and_atypically_long_filename_that_is_just_about_long_enough_to_be_truncated.doc" }
+
+          it "returns a hash with a truncated filename containing the submission reference" do
+            truncated_filename_with_suffix_and_reference = "an_unusual_and_atypically_long_filename_that_is_just_about_long_enough_to_be_truncate_1_#{submission_reference}.doc"
+
+            expect(question.show_answer_in_json(submission_reference:, is_s3_submission: false)).to eq({ answer_text: truncated_filename_with_suffix_and_reference })
+            expect(question.show_answer_in_json(submission_reference:, is_s3_submission: false)[:answer_text].length).to eq 100
+          end
         end
       end
 
       context "when is_s3_submission is true" do
         it "returns a hash with the filename_for_s3_submission" do
-          expect(question.show_answer_in_json(true)).to eq({ answer_text: question.filename_for_s3_submission })
+          expect(question.show_answer_in_json(submission_reference:, is_s3_submission: true)).to eq({ answer_text: original_filename })
         end
       end
     end
@@ -273,7 +293,7 @@ RSpec.describe Question::File, type: :model do
     end
   end
 
-  describe "populate_email_filename" do
+  describe "email_filename" do
     let(:submission_reference) { Faker::Alphanumeric.alphanumeric(number: 8).upcase }
     let(:attributes) { { original_filename:, filename_suffix: } }
 
@@ -283,8 +303,8 @@ RSpec.describe Question::File, type: :model do
     it "sets the email_filename" do
       truncated_filename_with_suffix_and_reference = "an_unusual_and_atypically_long_filename_that_is_just_about_long_enough_to_be_truncate_1_#{submission_reference}.doc"
 
-      expect { question.populate_email_filename(submission_reference:) }.to change(question, :email_filename).from("").to(truncated_filename_with_suffix_and_reference)
-      expect(question.email_filename.length).to eq 100
+      expect(question.email_filename(submission_reference:)).to eq(truncated_filename_with_suffix_and_reference)
+      expect(question.email_filename(submission_reference:).length).to eq 100
     end
   end
 
@@ -464,9 +484,8 @@ RSpec.describe Question::File, type: :model do
     end
 
     context "when validating for submission" do
-      let(:question) { described_class.new({ file: nil, original_filename:, uploaded_file_key:, filename_suffix: "", email_filename: }, {}) }
+      let(:question) { described_class.new({ file: nil, original_filename:, uploaded_file_key:, filename_suffix: "" }, {}) }
       let(:uploaded_file_key) { "#{Faker::Internet.uuid}#{extension}" }
-      let(:email_filename) { "" }
 
       before do
         question.validate :submission
@@ -485,18 +504,6 @@ RSpec.describe Question::File, type: :model do
 
         it "has a blank original_filename error" do
           expect(question.errors.of_kind?(:original_filename, :blank)).to be true
-        end
-
-        context "but it has an email filename set" do
-          let(:email_filename) { "my-email-attachment#{extension}" }
-
-          it "is valid for submission" do
-            expect(question).to be_valid(:submission)
-          end
-
-          it "does not have a blank original_filename error" do
-            expect(question.errors.of_kind?(:original_filename, :blank)).to be false
-          end
         end
       end
     end
