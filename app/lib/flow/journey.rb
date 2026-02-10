@@ -82,15 +82,8 @@ module Flow
 
   private
 
-    def step_is_completed?(question_page_step)
-      # A step has been completed if it is a question page that has been answered.
-      question_page_step.question.answered?
-    end
-
     def generate_completed_steps
-      each_step_with_routing.take_while do |step|
-        step_is_completed?(step)
-      end
+      each_step_with_routing.take_while(&:completed?)
     end
 
     def each_step_with_routing

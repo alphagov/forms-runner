@@ -17,6 +17,7 @@ module Flow
       page_slug = page_slug_or_start.to_s == START_PAGE ? @form.start_page : page_slug_or_start
       page_slug = page_slug.to_s
 
+      return GetACopyOfYourAnswersStep.new if page_slug == GetACopyOfYourAnswersStep::GET_A_COPY_OF_YOUR_ANSWERS_PAGE_SLUG
       return CheckYourAnswersStep.new if page_slug == CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG
 
       # for now, we use the page id as slug

@@ -19,7 +19,9 @@ class Step
   end
 
   def next_page_slug
-    page.has_next_page? ? page.next_page.to_s : CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG
+    return page.next_page.to_s if page.has_next_page?
+
+    GetACopyOfYourAnswersStep::GET_A_COPY_OF_YOUR_ANSWERS_PAGE_SLUG
   end
 
   def routing_conditions
@@ -128,6 +130,11 @@ class Step
 
   def is_selection_with_none_of_the_above_answer?
     question.try(:show_none_of_the_above_question?)
+  end
+
+  def completed?
+    # A step has been completed if it is a question page that has been answered.
+    question.answered?
   end
 
 private
