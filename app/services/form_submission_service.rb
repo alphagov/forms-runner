@@ -77,14 +77,19 @@ private
   end
 
   def deliver_submission_via_s3
-    s3_submission_service = S3SubmissionService.new(
-      journey: current_context.journey,
-      form: form,
-      timestamp: timestamp,
-      submission_reference: submission_reference,
-      is_preview: mode.preview?,
+    # The submission is not persisted to the database for S3 submissions yet, but will be when we make S3 submissions
+    # asynchronous in the future.
+    # We're creating a submission object so the code for generating CSV/JSON submissions can use the submission model.
+    submission = Submission.new(
+      reference: submission_reference,
+      form_id: form.id,
+      answers: current_context.answers,
+      mode: mode,
+      form_document: form.document_json,
       submission_locale:,
+      created_at: @timestamp,
     )
+    s3_submission_service = S3SubmissionService.new(submission:)
 
     s3_submission_service.submit
   end

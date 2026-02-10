@@ -21,6 +21,9 @@ FactoryBot.define do
     question_section_completed { false }
     what_happens_next_markdown { nil }
     language { "en" }
+    s3_bucket_aws_account_id { nil }
+    s3_bucket_name { nil }
+    s3_bucket_region { nil }
 
     trait :with_steps do
       transient do
@@ -61,6 +64,15 @@ FactoryBot.define do
 
     trait :live? do
       ready_for_live
+    end
+
+    trait :s3_submissions_enabled do
+      ready_for_live
+      submission_type { "s3" }
+      submission_format { %w[csv] }
+      s3_bucket_aws_account_id { "21487124" }
+      s3_bucket_name { "a-bucket-name" }
+      s3_bucket_region { "eu-west-2" }
     end
   end
 end

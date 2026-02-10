@@ -1,17 +1,9 @@
 class S3SubmissionService
-  def initialize(journey:,
-                 form:,
-                 timestamp:,
-                 submission_reference:,
-                 is_preview:,
-                 submission_locale:)
-    @journey = journey
-    @form = form
-    @timestamp = timestamp
-    @submission_reference = submission_reference
-    @is_preview = is_preview
+  def initialize(submission:)
+    @submission = submission
+    @journey = submission.journey
+    @form = submission.form
     @file_upload_bucket_name = Settings.aws.file_upload_s3_bucket_name
-    @submission_locale = submission_locale
   end
 
   def submit
@@ -42,22 +34,15 @@ private
 
   def generate_csv_submission
     CsvGenerator.generate_submission(
-      all_steps: @journey.all_steps,
-      submission_reference: @submission_reference,
-      timestamp: @timestamp,
+      submission: @submission,
       is_s3_submission: true,
-      language:,
     )
   end
 
   def generate_json_submission
     JsonSubmissionGenerator.generate_submission(
-      form: @form,
-      all_steps: @journey.all_steps,
-      submission_reference: @submission_reference,
-      timestamp: @timestamp,
+      submission: @submission,
       is_s3_submission: true,
-      language:,
     )
   end
 
@@ -94,7 +79,7 @@ private
     })
     Rails.logger.info("Uploaded submission to S3", { key: })
 
-    submission_duration_ms = (Time.current - @timestamp).in_milliseconds.round
+    submission_duration_ms = (Time.current - @submission.submission_time).in_milliseconds.round
     CloudWatchService.record_submission_delivery_latency_metric(submission_duration_ms, "S3")
   end
 
@@ -106,7 +91,7 @@ private
   end
 
   def assume_role
-    role_session_name = "forms-runner-#{@submission_reference}"
+    role_session_name = "forms-runner-#{@submission.reference}"
     credentials = Aws::AssumeRoleCredentials.new(
       client: Aws::STS::Client.new,
       role_arn: Settings.aws.s3_submission_iam_role_arn,
@@ -121,14 +106,8 @@ private
   end
 
   def generate_key(filename)
-    folder = @is_preview ? "test_form_submissions" : "form_submissions"
-    formatted_timestamp = @timestamp.utc.strftime("%Y%m%dT%H%M%SZ")
-    "#{folder}/#{@form.id}/#{formatted_timestamp}_#{@submission_reference}/#{filename}"
-  end
-
-  def language
-    return nil unless @form.multilingual?
-
-    @submission_locale
+    folder = @submission.preview? ? "test_form_submissions" : "form_submissions"
+    formatted_timestamp = @submission.submission_time.utc.strftime("%Y%m%dT%H%M%SZ")
+    "#{folder}/#{@form.id}/#{formatted_timestamp}_#{@submission.reference}/#{filename}"
   end
 end

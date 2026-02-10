@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe JsonSubmissionGenerator do
-  let(:form) { build :form, id: 1 }
+  let(:form_document) { build :v2_form_document, available_languages: }
   let(:text_question) { build :text, :with_answer, question_text: "What is the meaning of life?" }
   let(:name_question) { build :first_and_last_name_question, question_text: "What is your name?" }
   let(:file_question) { build :file, :with_uploaded_file, question_text: "Upload a file", original_filename: "test.txt" }
@@ -18,9 +18,17 @@ RSpec.describe JsonSubmissionGenerator do
   let(:timestamp) do
     Time.use_zone("London") { Time.zone.local(2022, 9, 14, 8, 0, 0) }
   end
+  let(:submission_locale) { "en" }
+  let(:submission) { build(:submission, form_document:, created_at: timestamp, reference: submission_reference, mode: "form", submission_locale:) }
+  let(:journey) { instance_double(Flow::Journey, all_steps:) }
+  let(:available_languages) { %w[en] }
+
+  before do
+    allow(Flow::Journey).to receive(:new).and_return(journey)
+  end
 
   describe ".generate_submission" do
-    subject(:json_submission) { described_class.generate_submission(form:, all_steps:, submission_reference:, timestamp:, is_s3_submission:, language:) }
+    subject(:json_submission) { described_class.generate_submission(submission:, is_s3_submission:) }
 
     let(:parsed_json) { JSON.parse(json_submission) }
 
@@ -54,7 +62,7 @@ RSpec.describe JsonSubmissionGenerator do
       it "generates the submission JSON" do
         expect(parsed_json).to eq({
           "$schema" => "http://localhost:3002/json-submissions/v1/schema",
-          "form_name" => form.name,
+          "form_name" => form_document.name,
           "submission_reference" => submission_reference,
           "submitted_at" => "2022-09-14T07:00:00.000Z",
           "answers" => [
@@ -106,7 +114,7 @@ RSpec.describe JsonSubmissionGenerator do
         it "includes an entry for each question in the JSON" do
           expect(parsed_json).to eq({
             "$schema" => "http://localhost:3002/json-submissions/v1/schema",
-            "form_name" => form.name,
+            "form_name" => form_document.name,
             "submission_reference" => submission_reference,
             "submitted_at" => "2022-09-14T07:00:00.000Z",
             "answers" => [
@@ -128,12 +136,12 @@ RSpec.describe JsonSubmissionGenerator do
         end
       end
 
-      context "when the language is not nil'" do
-        let(:language) { :cy }
+      context "when the form has multiple available languages" do
+        let(:available_languages) { %w[en cy] }
 
         it "generates the submission JSON with the language field" do
           expect(parsed_json).to include(
-            "language" => "cy",
+            "language" => "en",
           )
         end
       end

@@ -2,12 +2,14 @@ require "rails_helper"
 
 RSpec.describe S3SubmissionService do
   subject(:service) do
-    described_class.new(journey:, form:, timestamp:, submission_reference:, is_preview:, submission_locale:)
+    described_class.new(submission:)
   end
 
-  let(:form) do
-    build(:form,
-          id: 42,
+  let(:submission) { build(:submission, form_document:, created_at: timestamp, reference: submission_reference, mode:, submission_locale:) }
+
+  let(:form_document) do
+    build(:v2_form_document,
+          form_id: 42,
           submission_type:,
           submission_format:,
           s3_bucket_name:,
@@ -32,8 +34,12 @@ RSpec.describe S3SubmissionService do
   let(:journey) { instance_double(Flow::Journey, completed_steps: all_steps, all_steps:, completed_file_upload_questions:) }
   let(:question) { build :text, question_text: "What is the meaning of life?", text: "42" }
   let(:step) { build :step, question: }
-  let(:is_preview) { false }
+  let(:mode) { "form" }
   let(:available_languages) { %i[en] }
+
+  before do
+    allow(Flow::Journey).to receive(:new).and_return(journey)
+  end
 
   describe "#submit" do
     let(:mock_credentials) { { foo: "bar" } }
@@ -67,7 +73,7 @@ RSpec.describe S3SubmissionService do
 
       context "when the submission format is CSV" do
         it "calls put_object with a CSV file and filename" do
-          expected_key_name = "form_submissions/#{form.id}/#{expected_timestamp}_#{submission_reference}/form_submission.csv"
+          expected_key_name = "form_submissions/#{form_document.form_id}/#{expected_timestamp}_#{submission_reference}/form_submission.csv"
           expected_csv_content = "Reference,Submitted at,What is the meaning of life?\n#{submission_reference},2022-09-14T08:24:34+01:00,42\n"
           expect(mock_s3_client).to receive(:put_object).with(
             {
@@ -99,10 +105,10 @@ RSpec.describe S3SubmissionService do
         let(:submission_format) { %w[json] }
 
         it "calls put_object with a JSON file and filename" do
-          expected_key_name = "form_submissions/#{form.id}/#{expected_timestamp}_#{submission_reference}/form_submission.json"
+          expected_key_name = "form_submissions/#{form_document.form_id}/#{expected_timestamp}_#{submission_reference}/form_submission.json"
           expect(mock_s3_client).to receive(:put_object).with(
             {
-              body: satisfy { |value| JSON.parse(value)["form_name"] == form.name },
+              body: satisfy { |value| JSON.parse(value)["form_name"] == form_document.name },
               bucket: s3_bucket_name,
               expected_bucket_owner: s3_bucket_aws_account_id,
               key: expected_key_name,
@@ -137,7 +143,7 @@ RSpec.describe S3SubmissionService do
 
         context "when the submission format is CSV" do
           it "creates the CSV file with the expected filenames" do
-            expected_key_name = "form_submissions/#{form.id}/#{expected_timestamp}_#{submission_reference}/form_submission.csv"
+            expected_key_name = "form_submissions/#{form_document.form_id}/#{expected_timestamp}_#{submission_reference}/form_submission.csv"
             expected_csv_content = "Reference,Submitted at,#{first_file_upload_question.question_text},#{second_file_upload_question.question_text}\n" \
               "#{submission_reference},2022-09-14T08:24:34+01:00,file.txt,file_1.txt\n"
             expect(mock_s3_client).to receive(:put_object).with(
@@ -158,7 +164,7 @@ RSpec.describe S3SubmissionService do
           let(:submission_format) { %w[json] }
 
           it "creates the JSON file with the expected filenames" do
-            expected_key_name = "form_submissions/#{form.id}/#{expected_timestamp}_#{submission_reference}/form_submission.json"
+            expected_key_name = "form_submissions/#{form_document.form_id}/#{expected_timestamp}_#{submission_reference}/form_submission.json"
             expect(mock_s3_client).to receive(:put_object).with(
               {
                 body: satisfy do |value|
@@ -180,7 +186,7 @@ RSpec.describe S3SubmissionService do
             bucket: s3_bucket_name,
             expected_bucket_owner: s3_bucket_aws_account_id,
             copy_source: "/#{file_upload_bucket}/#{first_file_upload_question.uploaded_file_key}",
-            key: "form_submissions/#{form.id}/#{expected_timestamp}_#{submission_reference}/file.txt",
+            key: "form_submissions/#{form_document.form_id}/#{expected_timestamp}_#{submission_reference}/file.txt",
             tagging_directive: "REPLACE",
           })
 
@@ -188,7 +194,7 @@ RSpec.describe S3SubmissionService do
             bucket: s3_bucket_name,
             expected_bucket_owner: s3_bucket_aws_account_id,
             copy_source: "/#{file_upload_bucket}/#{second_file_upload_question.uploaded_file_key}",
-            key: "form_submissions/#{form.id}/#{expected_timestamp}_#{submission_reference}/file_1.txt",
+            key: "form_submissions/#{form_document.form_id}/#{expected_timestamp}_#{submission_reference}/file_1.txt",
             tagging_directive: "REPLACE",
           })
 
@@ -211,12 +217,12 @@ RSpec.describe S3SubmissionService do
       end
 
       context "when a preview is being submitted" do
-        let(:is_preview) { true }
+        let(:mode) { "preview-live" }
         let(:question) { build(:file, :with_uploaded_file, original_filename: "file.txt") }
         let(:completed_file_upload_questions) { [question] }
 
         it "calls put_object with the 'test_form_submissions/' key prefix" do
-          expected_key_name = "test_form_submissions/#{form.id}/#{expected_timestamp}_#{submission_reference}/form_submission.csv"
+          expected_key_name = "test_form_submissions/#{form_document.form_id}/#{expected_timestamp}_#{submission_reference}/form_submission.csv"
           expected_csv_content = "Reference,Submitted at,#{question.question_text}\n#{submission_reference},2022-09-14T08:24:34+01:00,file.txt\n"
           expect(mock_s3_client).to receive(:put_object).with({
             body: expected_csv_content,
@@ -233,7 +239,7 @@ RSpec.describe S3SubmissionService do
             bucket: s3_bucket_name,
             expected_bucket_owner: s3_bucket_aws_account_id,
             copy_source: "/#{file_upload_bucket}/#{question.uploaded_file_key}",
-            key: "test_form_submissions/#{form.id}/#{expected_timestamp}_#{submission_reference}/file.txt",
+            key: "test_form_submissions/#{form_document.form_id}/#{expected_timestamp}_#{submission_reference}/file.txt",
             tagging_directive: "REPLACE",
           })
 
