@@ -186,7 +186,7 @@ cy:
           attributes:
             text:
               blank: Rhowch ateb
-              long_text_too_long: Rhaid i’r ateb fod yn llai na 5000 o gymeriadau
+              long_text_too_long: Rhaid i’r ateb fod yn llai na 5,000 o gymeriadau
               single_line_too_long: Rhaid i’r ateb fod yn llai na 500 o gymeriadau
         remove_input:
           attributes:
