@@ -27,6 +27,8 @@ Rails.application.routes.draw do
     get "/:form_id" => "forms/base#redirect_to_friendly_url_start", as: :form_id, constraints: form_id_constraints
     scope "/:form_id/:form_slug(.:locale)", constraints: form_constraints do
       get "/" => "forms/base#redirect_to_friendly_url_start", as: :form
+      get "/email-confirmation" => "forms/email_confirmation#show", as: :email_confirmation
+      post "/email-confirmation" => "forms/email_confirmation#save", as: :form_save_email_confirmation
       get "/#{CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG}" => "forms/check_your_answers#show", as: :check_your_answers
       post "/#{CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG}" => "forms/check_your_answers#submit_answers", as: :form_submit_answers
       get "/submitted" => "forms/submitted#submitted", as: :form_submitted

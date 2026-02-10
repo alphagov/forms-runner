@@ -90,6 +90,10 @@ feature "Fill in and submit a form with a single repeatable question", type: :fe
   end
 
   def then_i_should_see_the_check_your_answers_page
+    expect(page.find("h1")).to have_text I18n.t("form.email_confirmation.title")
+    choose "No"
+    click_button "Continue"
+
     expect(page.find("h1")).to have_text "Check your answers before submitting your form"
     expect(page).to have_text question_text
     expect(page).to have_text first_answer_text
@@ -98,7 +102,10 @@ feature "Fill in and submit a form with a single repeatable question", type: :fe
   end
 
   def when_i_opt_out_of_email_confirmation
+    return unless page.has_field?("No", type: "radio", wait: 0)
+
     choose "No"
+    click_button "Continue"
   end
 
   def and_i_submit_my_form

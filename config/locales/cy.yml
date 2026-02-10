@@ -90,6 +90,7 @@ cy:
               invalid_email: Rhowch gyfeiriad e-bost yn y ffurf gywir, fel name@example.com
             send_confirmation:
               blank: Dewiswch ydw os hoffech dderbyn e-bost yn cadarnhau bod eich ffurflen wedi’i chyflwyno
+              one_login_required: Mewngofnodwch gyda GOV.UK One Login os hoffech e-bost gyda chopi o’ch atebion
         question/address:
           attributes:
             address1:
@@ -341,6 +342,10 @@ cy:
     licence_link_url: https://www.nationalarchives.gov.uk/doc/open-government-licence-cymraeg/version/3/
     privacy_policy: Preifatrwydd
   form:
+    email_confirmation:
+      email_address_hint: Bydd yr opsiwn hwn yn anfon cyfeirnod eich cyflwyniad yn unig. Ni fydd yn cynnwys copi o’ch atebion.
+      sign_in_to_get_answers_copy: I gael copi o’ch atebion drwy e-bost, mewngofnodwch gyda GOV.UK One Login. Os nad oes gennych un, gallwch greu un nawr.
+      title: Ydych chi eisiau e-bost cadarnhau ar ôl i chi gyflwyno’r ffurflen hon?
     archived:
       heading: Sorry, this service is no longer available
       service_unavailable: "“%{form_name}” has been archived and is no longer available."
@@ -348,6 +353,9 @@ cy:
     check_your_answers:
       agree_and_submit: Cytuno a chyflwyno
       declaration: Datganiad
+      email_confirmation_none_summary: Ni fyddwch yn cael e-bost cadarnhau.
+      email_confirmation_reference_only_summary: Byddwn yn anfon e-bost cadarnhau gyda chyfeirnod eich cyflwyniad at %{email}.
+      email_confirmation_with_answers_summary: "Byddwn yn anfon e-bost cadarnhau gyda chopi o’ch atebion i’ch cyfeiriad e-bost GOV.UK One Login: %{email}"
       logged_in_as: Rydych wedi mewngofnodi fel %{email}
       not_completed: Heb ei gwblhau
       sign_in_with_govuk_one_login: Mewngofnodi gyda GOV.UK One Login
@@ -405,17 +413,18 @@ cy:
       message_prefix: Gwall
     hint:
       email_confirmation_input:
-        send_confirmation: Byddwn ond yn defnyddio’r cyfeiriad e-bost rydych yn ei ddarparu yma i anfon cadarnhad bod eich ffurflen wedi’i chyflwyno’n llwyddiannus. Ni fydd yn cynnwys copi o’ch atebion.
+        send_confirmation: Dewiswch un opsiwn. I gael copi o’ch atebion, rhaid i chi fewngofnodi gyda GOV.UK One Login.
     label:
       add_another_answer_input:
         options:
           'no': Na
           'yes': Ydw
       email_confirmation_input:
-        confirmation_email_address: Pa gyfeiriad e-bost ydych chi eisiau i ni anfon eich cadarnhad ato?
+        confirmation_email_address: I ba gyfeiriad e-bost ddylen ni anfon eich cadarnhad?
         send_confirmation_options:
-          send_email: Ydw
-          skip_confirmation: Na
+          send_email: Ydw, anfonwch gyfeirnod fy nghyflwyniad yn unig (dim copi o’m hatebion)
+          send_email_with_answers: Ydw, anfonwch gyfeirnod fy nghyflwyniad a chopi o’m hatebion
+          skip_confirmation: Na, peidiwch ag anfon e-bost cadarnhau
       remove_input:
         options:
           'no': Na

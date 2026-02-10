@@ -90,6 +90,7 @@ en:
               invalid_email: Enter an email address in the correct format, like name@example.com
             send_confirmation:
               blank: Select yes if you want to get an email confirming your form has been submitted
+              one_login_required: Sign in with GOV.UK One Login if you want an email with a copy of your answers
         question/address:
           attributes:
             address1:
@@ -341,6 +342,11 @@ en:
     licence_link_url: https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
     privacy_policy: Privacy
   form:
+    email_confirmation:
+      answers_copy_guidance: To include a copy of your answers, you need to sign in with GOV.UK One Login.
+      intro: We can send you a confirmation email after you submit this form.
+      sign_in_to_get_answers_copy: To get an email with a copy of your answers you will need to sign in with GOV.UK One Login. If you do not have an account, you can create one now.
+      title: Do you want to get an email confirming your form has been submitted?
     archived:
       heading: Sorry, this service is no longer available
       service_unavailable: "“%{form_name}” has been archived and is no longer available."
@@ -348,6 +354,9 @@ en:
     check_your_answers:
       agree_and_submit: Agree and submit
       declaration: Declaration
+      email_confirmation_none_summary: You will not get a confirmation email.
+      email_confirmation_reference_only_summary: We will send a confirmation email with the submission reference to %{email}. It will not contain a copy of your answers.
+      email_confirmation_with_answers_summary: We will send a confirmation email with the submission reference and a copy of your answers to %{email}. This is the email address associated with your GOV.UK One Login.
       logged_in_as: You are signed in as %{email}
       not_completed: Not completed
       sign_in_with_govuk_one_login: Sign in with GOV.UK One Login
@@ -405,7 +414,7 @@ en:
       message_prefix: Error
     hint:
       email_confirmation_input:
-        send_confirmation: We’ll only use the email address you provide here to send a confirmation that your form’s been successfully submitted. It will not contain a copy of your answers.
+        send_confirmation: Choose what to include in your confirmation email.
     label:
       add_another_answer_input:
         options:
@@ -414,8 +423,9 @@ en:
       email_confirmation_input:
         confirmation_email_address: What email address do you want us to send your confirmation to?
         send_confirmation_options:
-          send_email: 'Yes'
-          skip_confirmation: 'No'
+          send_email: Yes, only with the submission reference
+          send_email_with_answers: Yes, with the submission reference and a copy of my answers
+          skip_confirmation: "No"
       remove_input:
         options:
           'no': 'No'

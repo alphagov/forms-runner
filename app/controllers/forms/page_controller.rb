@@ -28,6 +28,7 @@ module Forms
       @step.assign_question_attributes(page_params)
 
       current_context.clear_submission_details if is_first_page?
+      clear_email_confirmation_input if is_first_page?
 
       validation_context = @step.autocomplete_selection_question? ? :skip_none_of_the_above_question_validation : nil
       if current_context.save_step(@step, context: validation_context, locale:)
@@ -148,6 +149,10 @@ module Forms
     end
 
     def next_step_in_form_path
+      if @step.next_page_slug_after_routing == CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG
+        return email_confirmation_path(form_id: @form.id, form_slug: @form.form_slug)
+      end
+
       form_page_path(@form.id, @form.form_slug, @step.next_page_slug_after_routing)
     end
 

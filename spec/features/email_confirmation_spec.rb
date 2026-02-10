@@ -18,6 +18,7 @@ feature "Email confirmation", type: :feature do
   scenario "opting out of email submission returns the confirmation page without confirmation email text" do
     fill_in_form
     choose "No", visible: false
+    click_button "Continue"
     click_button "Submit"
     expect(page.find("h1")).to have_text I18n.t("form.submitted.title")
     expect(page).not_to have_text I18n.t("form.submitted.email_sent")
@@ -25,8 +26,9 @@ feature "Email confirmation", type: :feature do
 
   scenario "opting in to email submission returns the confirmation page with confirmation email text" do
     fill_in_form
-    choose "Yes", visible: false
+    choose "Yes, only with my submission reference", visible: false
     fill_in "What email address do you want us to send your confirmation to?", with: "example@example.gov.uk"
+    click_button "Continue"
     click_button "Submit"
     expect(page.find("h1")).to have_text I18n.t("form.submitted.title")
     expect(page).to have_text I18n.t("form.submitted.email_sent")
@@ -39,8 +41,6 @@ feature "Email confirmation", type: :feature do
 
     fill_in question_text, with: text_answer
     click_button "Continue"
-    expect(page.find("h1")).to have_text I18n.t("form.check_your_answers.title")
-    expect(page).to have_text question_text
-    expect(page).to have_text text_answer
+    expect(page.find("h1")).to have_text I18n.t("form.email_confirmation.title")
   end
 end

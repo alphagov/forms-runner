@@ -2,33 +2,29 @@ module Forms
   class CheckYourAnswersController < BaseController
     def set_request_logging_attributes
       super
-      if params[:email_confirmation_input].present? && (email_confirmation_input_params[:send_confirmation] == "send_email")
-        CurrentRequestLoggingAttributes.confirmation_email_reference = email_confirmation_input_params[:confirmation_email_reference]
+      if email_confirmation_input.send_confirmation == "send_email"
+        CurrentRequestLoggingAttributes.confirmation_email_reference = email_confirmation_input.confirmation_email_reference
       end
     end
 
     def show
       return redirect_to form_page_path(current_context.form.id, current_context.form.form_slug, current_context.next_page_slug, nil) unless current_context.can_visit?(CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG)
 
-      store_govuk_one_login_return_path
       setup_check_your_answers
-      email_confirmation_input = EmailConfirmationInput.new
       @signed_in_email = session[:govuk_one_login_email]
-
       @support_details = current_context.support_details
-
-      render template: "forms/check_your_answers/show", locals: { email_confirmation_input: }
+      @email_confirmation_summary = email_confirmation_summary
     end
 
     def submit_answers
       @support_details = current_context.support_details
-      email_confirmation_input = EmailConfirmationInput.new(email_confirmation_input_params)
-      requested_email_confirmation = email_confirmation_input.send_confirmation == "send_email"
+      @signed_in_email = session[:govuk_one_login_email]
+      confirmation_input = email_confirmation_input
+      requested_email_confirmation = confirmation_input.send_confirmation == "send_email"
 
-      unless email_confirmation_input.valid?
-        setup_check_your_answers
-
-        return render template: "forms/check_your_answers/show", locals: { email_confirmation_input: }, status: :unprocessable_content
+      unless confirmation_input.valid?
+        setup_email_confirmation_page(confirmation_input)
+        return render template: "forms/email_confirmation/show", status: :unprocessable_content
       end
 
       return redirect_to error_repeat_submission_path(@form.id) if current_context.form_submitted?
@@ -40,16 +36,16 @@ module Forms
 
       begin
         submission_reference = FormSubmissionService.call(current_context:,
-                                                          email_confirmation_input:,
+                                                          email_confirmation_input: confirmation_input,
                                                           mode:).submit
 
         current_context.save_submission_details(submission_reference, requested_email_confirmation)
 
         redirect_to :form_submitted
       rescue FormSubmissionService::ConfirmationEmailToAddressError
-        setup_check_your_answers
-        email_confirmation_input.errors.add(:confirmation_email_address, :invalid_email)
-        render template: "forms/check_your_answers/show", locals: { email_confirmation_input: }, status: :unprocessable_content
+        confirmation_input.errors.add(:confirmation_email_address, :invalid_email)
+        setup_email_confirmation_page(confirmation_input)
+        render template: "forms/email_confirmation/show", status: :unprocessable_content
       end
     rescue StandardError => e
       log_rescued_exception(e)
@@ -59,19 +55,24 @@ module Forms
 
   private
 
-    def store_govuk_one_login_return_path
-      session[:govuk_one_login_last_form_id] = current_context.form.id
-      session[:govuk_one_login_last_form_slug] = current_context.form.form_slug
-      session[:govuk_one_login_last_mode] = mode.to_s
-      session[:govuk_one_login_last_locale] = locale_param
+    def email_confirmation_input_params
+      params.fetch(:email_confirmation_input, ActionController::Parameters.new)
+            .permit(:send_confirmation, :confirmation_email_address, :confirmation_email_reference)
     end
 
-    def email_confirmation_input_params
-      params.require(:email_confirmation_input).permit(:send_confirmation, :confirmation_email_address, :confirmation_email_reference)
+    def email_confirmation_input
+      @email_confirmation_input ||= begin
+        attributes = stored_email_confirmation_input || email_confirmation_input_params.to_h
+        if attributes.blank?
+          attributes = { "send_confirmation" => "skip_confirmation" }
+        end
+
+        EmailConfirmationInput.new(attributes)
+      end
     end
 
     def setup_check_your_answers
-      @back_link = back_link
+      @back_link = email_confirmation_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug)
       @steps = current_context.completed_steps
       @form_submit_path = form_submit_answers_path
 
@@ -80,12 +81,27 @@ module Forms
       end
     end
 
-    def back_link
-      previous_step = current_context.previous_step(CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG)
-
-      if previous_step.present?
-        previous_step.repeatable? ? add_another_answer_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug, page_slug: previous_step.id) : form_page_path(current_context.form.id, current_context.form.form_slug, previous_step.id)
+    def email_confirmation_summary
+      case email_confirmation_input.send_confirmation
+      when "send_email_with_answers"
+        t("form.check_your_answers.email_confirmation_with_answers_summary", email: email_confirmation_input.confirmation_email_address)
+      when "send_email"
+        t("form.check_your_answers.email_confirmation_reference_only_summary", email: email_confirmation_input.confirmation_email_address)
+      else
+        t("form.check_your_answers.email_confirmation_none_summary")
       end
+    end
+
+    def setup_email_confirmation_page(confirmation_input)
+      @email_confirmation_input = confirmation_input
+      @save_path = form_save_email_confirmation_path
+      @support_details = current_context.support_details
+      previous_step = current_context.previous_step(CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG)
+      @back_link = if previous_step&.repeatable?
+                     add_another_answer_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug, page_slug: previous_step.id)
+                   elsif previous_step.present?
+                     form_page_path(current_context.form.id, current_context.form.form_slug, previous_step.id)
+                   end
     end
   end
 end

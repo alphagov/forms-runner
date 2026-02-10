@@ -31,6 +31,19 @@ module Forms
       @current_context ||= Flow::Context.new(form: @form, store: session)
     end
 
+    def stored_email_confirmation_input
+      session.dig(:email_confirmation_inputs, @form.id.to_s)
+    end
+
+    def save_email_confirmation_input(attributes)
+      session[:email_confirmation_inputs] ||= {}
+      session[:email_confirmation_inputs][@form.id.to_s] = attributes
+    end
+
+    def clear_email_confirmation_input
+      session[:email_confirmation_inputs]&.delete(@form.id.to_s)
+    end
+
     def mode
       @mode ||= Mode.new(params[:mode])
     end

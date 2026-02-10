@@ -84,6 +84,15 @@ RSpec.describe EmailConfirmationInput, type: :model do
     end
   end
 
+  context "when user asks for a confirmation email with answers" do
+    let(:email_confirmation_input) { build :email_confirmation_input, send_confirmation: "send_email_with_answers" }
+
+    it "returns valid with blank email" do
+      expect(email_confirmation_input).to be_valid
+      expect(email_confirmation_input.errors[:confirmation_email_address]).to be_empty
+    end
+  end
+
   describe "submission references" do
     uuid = /[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}/
 

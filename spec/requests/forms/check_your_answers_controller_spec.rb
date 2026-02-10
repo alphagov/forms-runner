@@ -107,20 +107,6 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
   end
 
   describe "#show" do
-    shared_examples "for notification references" do
-      prepend_before do
-        allow(EmailConfirmationInput).to receive(:new).and_wrap_original do |original_method, *args|
-          double = original_method.call(*args)
-          allow(double).to receive_messages(confirmation_email_reference:)
-          double
-        end
-      end
-
-      it "includes a notification reference for the confirmation email" do
-        expect(response.body).to include confirmation_email_reference
-      end
-    end
-
     shared_examples "for redirecting if the form is incomplete" do
       context "without any questions answered" do
         let(:store) do
@@ -176,7 +162,6 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
           expect(EventLogger).not_to have_received(:log)
         end
 
-        include_examples "for notification references"
       end
     end
 
@@ -198,7 +183,6 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
           expect(EventLogger).to have_received(:log_form_event).with("check_answers")
         end
 
-        include_examples "for notification references"
       end
     end
   end
@@ -334,8 +318,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         expect(response).to have_http_status(:unprocessable_content)
       end
 
-      it "renders the check your answers page" do
-        expect(response).to render_template("forms/check_your_answers/show")
+      it "renders the email confirmation page" do
+        expect(response).to render_template("forms/email_confirmation/show")
       end
 
       it "does not generate a new submission reference" do
@@ -360,8 +344,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         expect(response).to have_http_status(:unprocessable_content)
       end
 
-      it "renders the check your answers page" do
-        expect(response).to render_template("forms/check_your_answers/show")
+      it "renders the email confirmation page" do
+        expect(response).to render_template("forms/email_confirmation/show")
       end
 
       it "does not generate a new submission reference" do
@@ -491,8 +475,8 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         expect(response).to have_http_status(:unprocessable_content)
       end
 
-      it "renders the check your answers page" do
-        expect(response).to render_template("forms/check_your_answers/show")
+      it "renders the email confirmation page" do
+        expect(response).to render_template("forms/email_confirmation/show")
       end
 
       it "has a validation error for the confirmation email address" do

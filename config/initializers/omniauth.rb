@@ -7,7 +7,6 @@ private_key_pem = ENV.fetch("GOVUK_ONE_LOGIN_PRIVATE_KEY", "")
 # decode the private key from base64
 private_key_pem = Base64.decode64(private_key_pem)
 private_key_pem = private_key_pem.gsub('\n', "\n")
-p private_key_pem
 
 private_key = OpenSSL::PKey::RSA.new(private_key_pem)
 

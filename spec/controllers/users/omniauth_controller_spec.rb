@@ -27,6 +27,22 @@ RSpec.describe Users::OmniauthController, type: :controller do
       end
     end
 
+    context "when previous form context exists and return path is email confirmation" do
+      before do
+        session[:govuk_one_login_last_mode] = "form"
+        session[:govuk_one_login_last_form_id] = "2"
+        session[:govuk_one_login_last_form_slug] = "test-form"
+        session[:govuk_one_login_last_locale] = "en"
+        session[:govuk_one_login_return_to] = "email_confirmation"
+
+        get :callback
+      end
+
+      it "redirects back to the previous form email confirmation page" do
+        expect(response).to redirect_to(email_confirmation_path(mode: "form", form_id: "2", form_slug: "test-form", locale: "en"))
+      end
+    end
+
     context "when previous form context is missing" do
       before do
         get :callback

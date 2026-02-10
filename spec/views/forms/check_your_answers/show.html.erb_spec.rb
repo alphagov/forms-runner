@@ -6,8 +6,7 @@ describe "forms/check_your_answers/show.html.erb" do
   let(:context) { OpenStruct.new(form:) }
   let(:full_width) { false }
   let(:declaration_text) { nil }
-  let(:email_confirmation_input) { build :email_confirmation_input }
-  let(:signed_in_email) { nil }
+  let(:email_confirmation_summary) { I18n.t("form.check_your_answers.email_confirmation_none_summary") }
   let(:question) { build :text, question_text: "Do you want to remain anonymous?", text: "Yes" }
   let(:steps) { [build(:step, question:, page: build(:page, :with_text_settings))] }
 
@@ -19,8 +18,8 @@ describe "forms/check_your_answers/show.html.erb" do
     assign(:steps, steps)
     assign(:form, form)
     assign(:support_details, support_details)
-    assign(:signed_in_email, signed_in_email)
-    render template: "forms/check_your_answers/show", locals: { email_confirmation_input: }
+    assign(:email_confirmation_summary, email_confirmation_summary)
+    render template: "forms/check_your_answers/show"
   end
 
   context "when the form does not have a declaration" do
@@ -53,79 +52,11 @@ describe "forms/check_your_answers/show.html.erb" do
     expect(rendered).to have_css(".govuk-grid-column-two-thirds-from-desktop h1")
   end
 
-  it "displays the email confirmation form at two-thirds width" do
-    expect(rendered).not_to have_css(".govuk-grid-column-full input[type='radio']")
-    expect(rendered).to have_css(".govuk-grid-column-two-thirds-from-desktop input[type='radio']")
-  end
-
-  it "contains a hidden notify reference for the confirmation email" do
-    expect(rendered).to have_field("confirmation-email-reference", type: "hidden", with: email_confirmation_input.confirmation_email_reference)
+  it "displays the selected email confirmation summary" do
+    expect(rendered).to have_text(email_confirmation_summary)
   end
 
   it "displays the help link" do
     expect(rendered).to have_text(I18n.t("support_details.get_help_with_this_form"))
-  end
-
-  it "shows the GOV.UK One Login sign in button when not signed in" do
-    expect(rendered).to have_button(I18n.t("form.check_your_answers.sign_in_with_govuk_one_login"))
-  end
-
-  context "when signed in with GOV.UK One Login" do
-    let(:signed_in_email) { "person@example.gov.uk" }
-
-    it "shows the signed in email address" do
-      expect(rendered).to have_text(I18n.t("form.check_your_answers.logged_in_as", email: signed_in_email))
-    end
-
-    it "does not show the GOV.UK One Login sign in button" do
-      expect(rendered).not_to have_button(I18n.t("form.check_your_answers.sign_in_with_govuk_one_login"))
-    end
-  end
-
-  describe "email confirmation" do
-    it "renders an email confirmation form" do
-      expect(rendered).to have_css "form .govuk-fieldset", text: "Do you want to get an email confirming your form has been submitted?"
-    end
-
-    it "displays the email radio buttons" do
-      expect(rendered).to have_text(I18n.t("helpers.legend.email_confirmation_input.send_confirmation"))
-      expect(rendered).to have_field(I18n.t("helpers.label.email_confirmation_input.send_confirmation_options.send_email"))
-      expect(rendered).to have_field(I18n.t("helpers.label.email_confirmation_input.send_confirmation_options.skip_confirmation"))
-    end
-
-    it "displays the email field" do
-      expect(rendered).to have_field(
-        I18n.t("helpers.label.email_confirmation_input.confirmation_email_address"),
-        type: "email",
-      )
-    end
-
-    it "email field has correct atttributes set" do
-      expect(rendered).to have_selector("input[name='email_confirmation_input[confirmation_email_address]'][autocomplete='email'][spellcheck='false']")
-    end
-
-    context "when there is an error" do
-      let(:email_confirmation_input) do
-        email_confirmation_input = build(:email_confirmation_input)
-        email_confirmation_input.validate
-        email_confirmation_input
-      end
-
-      it "renders an error message" do
-        expect(rendered).to have_text "Select yes if you want to get an email confirming your form has been submitted"
-      end
-
-      it "renders an error summary" do
-        expect(rendered).to have_css ".govuk-error-summary"
-      end
-
-      it "links from the error summary to the first radio button" do
-        page = Capybara.string(rendered.html)
-        error_summary_link = page.find_link "Select yes if you want to get an email confirming your form has been submitted"
-        first_radio_button = page.first :field, type: :radio
-
-        expect(error_summary_link["href"]).to eq "##{first_radio_button['id']}"
-      end
-    end
   end
 end

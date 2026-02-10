@@ -1,0 +1,58 @@
+<% set_page_title(form_title(form_name: @current_context.form.name, page_name: t("form.email_confirmation.title"), mode: @mode)) %>
+
+<% content_for :back_link do %>
+  <% if @back_link %>
+    <%= link_to t("forms.back"), @back_link, class: "govuk-back-link" %>
+  <% end %>
+<% end %>
+
+<%= form_with model: @email_confirmation_input, url: @save_path do |form| %>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds-from-desktop">
+      <% if @email_confirmation_input.errors.any? %>
+        <%= form.govuk_error_summary(t("error_summary_title")) %>
+      <% end %>
+
+      <%= form.govuk_radio_buttons_fieldset(:send_confirmation, legend: { text: t("form.email_confirmation.title"), size: "l", tag: "h1" }) do %>
+        <%= form.govuk_radio_button :send_confirmation, "send_email_with_answers", link_errors: true do %>
+          <% if @signed_in_email.present? %>
+            <p class="govuk-body">
+              <%= t("form.check_your_answers.logged_in_as", email: @signed_in_email) %>
+            </p>
+          <% else %>
+            <p class="govuk-body"><%= t("form.email_confirmation.sign_in_to_get_answers_copy") %></p>
+          <% end %>
+        <% end %>
+
+        <%= form.govuk_radio_button :send_confirmation, "send_email" do %>
+          <%= form.govuk_email_field :confirmation_email_address, autocomplete: "email", spellcheck: false %>
+        <% end %>
+
+        <%= form.govuk_radio_button :send_confirmation, "skip_confirmation" %>
+      <% end %>
+
+      <%= form.hidden_field :confirmation_email_reference, id: "confirmation-email-reference" %>
+
+      <%= form.govuk_submit(t("continue")) %>
+    </div>
+  </div>
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds-from-desktop">
+      <%= render SupportDetailsComponent::View.new(@support_details) %>
+    </div>
+  </div>
+<% end %>
+
+<% unless @signed_in_email.present? %>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds-from-desktop">
+      <%= govuk_button_to(
+            t("form.check_your_answers.sign_in_with_govuk_one_login"),
+            "/auth/govuk_one_login",
+            method: :post,
+            form: { data: { turbo: false } }
+          ) %>
+    </div>
+  </div>
+<% end %>

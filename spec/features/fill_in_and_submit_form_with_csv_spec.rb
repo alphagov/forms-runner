@@ -59,12 +59,19 @@ feature "Fill in and submit a form with a CSV submission", type: :feature do
   end
 
   def then_i_should_see_the_check_your_answers_page
+    expect(page.find("h1")).to have_text I18n.t("form.email_confirmation.title")
+    choose "No"
+    click_button "Continue"
+
     expect(page.find("h1")).to have_text "Check your answers before submitting your form"
     expect_page_to_have_no_axe_errors(page)
   end
 
   def when_i_opt_out_of_email_confirmation
+    return unless page.has_field?("No", type: "radio", wait: 0)
+
     choose "No"
+    click_button "Continue"
   end
 
   def and_i_submit_my_form
