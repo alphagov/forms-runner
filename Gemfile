@@ -123,3 +123,8 @@ group :test do
   # For validating against the JSON schema for form submissions
   gem "json_schemer"
 end
+
+gem "omniauth_govuk_one_login", github: "OfficeForProductSafetyAndStandards/omniauth-govuk-one-login"
+
+gem "omniauth-rails_csrf_protection"
+
