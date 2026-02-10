@@ -1,0 +1,29 @@
+<% set_page_title(form_title(form_name: @current_context.form.name, page_name: "Do you want to get an email with a copy of your answers?", mode: @mode)) %>
+
+<% content_for :back_link do %>
+  <% if @back_link %>
+    <%= link_to t("forms.back"), @back_link, class: "govuk-back-link" %>
+  <% end %>
+<% end %>
+
+<%= form_with model: get_a_copy_of_your_answers_input, url: get_a_copy_of_your_answers_save_path do |form| %>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds-from-desktop">
+      <% if get_a_copy_of_your_answers_input&.errors&.any? %>
+        <%= form.govuk_error_summary(t("error_summary_title")) %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds-from-desktop">
+      <%= form.govuk_radio_buttons_fieldset(:get_a_copy_of_your_answers, legend: { size: 'l', tag: 'h1', text: "Do you want to get an email with a copy of your answers?" }, hint: { text: "You’ll need a GOV.UK One Login for this - you’ll be able to create one now if you do not already have one." }) do %>
+        <%= form.govuk_radio_button :get_a_copy_of_your_answers, 'yes', label: {text: "Yes" }, link_errors: :true %>
+        <%= form.govuk_radio_button :get_a_copy_of_your_answers, 'no', label: {text: "No" } %>
+      <% end %>
+
+      <%= form.govuk_submit(t('continue')) %>
+    </div>
+
+  </div>
+<% end %>

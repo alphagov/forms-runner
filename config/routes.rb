@@ -27,12 +27,14 @@ Rails.application.routes.draw do
     get "/:form_id" => "forms/base#redirect_to_friendly_url_start", as: :form_id, constraints: form_id_constraints
     scope "/:form_id/:form_slug(.:locale)", constraints: form_constraints do
       get "/" => "forms/base#redirect_to_friendly_url_start", as: :form
+      get "/get-a-copy-of-your-answers" => "forms/get_a_copy_of_your_answers#show", as: :get_a_copy_of_your_answers
+      post "/get-a-copy-of-your-answers" => "forms/get_a_copy_of_your_answers#save", as: :get_a_copy_of_your_answers_save
       get "/#{CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG}" => "forms/check_your_answers#show", as: :check_your_answers
       post "/#{CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG}" => "forms/check_your_answers#submit_answers", as: :form_submit_answers
       get "/submitted" => "forms/submitted#submitted", as: :form_submitted
       get "/privacy" => "forms/privacy_page#show", as: :form_privacy
 
-      page_constraints = { page_slug: Regexp.union([Page::PAGE_ID_REGEX_FOR_ROUTES, Regexp.new(CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG)]) }
+      page_constraints = { page_slug: Regexp.union([Page::PAGE_ID_REGEX_FOR_ROUTES, Regexp.new(CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG),Regexp.new(GetACopyOfYourAnswersStep::GET_A_COPY_OF_YOUR_ANSWERS_PAGE_SLUG)]) }
       answer_constraints = { answer_index: /\d+/ }
       page_answer_defaults = { answer_index: 1 }
 
