@@ -94,7 +94,7 @@ private
     s3_submission_service.submit
   end
 
-  def deliver_submission_via_email
+  def create_submission_record
     submission = Submission.create!(
       reference: submission_reference,
       form_id: form.id,
@@ -102,7 +102,16 @@ private
       mode: mode,
       form_document: form.document_json,
       submission_locale:,
+      created_at: timestamp,
     )
+
+    submission.deliveries.create!
+
+    submission
+  end
+
+  def deliver_submission_via_email
+    submission = create_submission_record
 
     SendSubmissionJob.perform_later(submission) do |job|
       unless job.successfully_enqueued?

@@ -168,6 +168,16 @@ RSpec.describe FormSubmissionService do
                                                      submission_locale: "en")
         end
 
+        it "creates an initial delivery record for the submission" do
+          expect {
+            service.submit
+          }.to change(Delivery, :count).by(1)
+
+          delivery = Submission.last.deliveries.sole
+          expect(delivery.delivery_reference).to be_nil
+          expect(delivery.last_attempt_at).to be_nil
+        end
+
         context "when the job fails to enqueue" do
           let(:enqueue_error) { nil }
 
@@ -179,7 +189,7 @@ RSpec.describe FormSubmissionService do
 
           context "and there is no enqueue error" do
             it "raises an error" do
-              expect { service.submit }.to not_change(Submission, :count).and raise_error(StandardError, "Failed to enqueue submission for reference #{reference}")
+              expect { service.submit }.to not_change(Submission, :count).and(not_change(Delivery, :count)).and raise_error(StandardError, "Failed to enqueue submission for reference #{reference}")
             end
           end
 
@@ -187,7 +197,7 @@ RSpec.describe FormSubmissionService do
             let(:enqueue_error) { ActiveJob::EnqueueError.new("An error occurred enqueueing job") }
 
             it "raises an error" do
-              expect { service.submit }.to not_change(Submission, :count).and raise_error(StandardError, "Failed to enqueue submission for reference #{reference}: An error occurred enqueueing job")
+              expect { service.submit }.to not_change(Submission, :count).and(not_change(Delivery, :count)).and raise_error(StandardError, "Failed to enqueue submission for reference #{reference}: An error occurred enqueueing job")
             end
           end
         end
