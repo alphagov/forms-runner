@@ -60,9 +60,9 @@ private
   def deliver_submission
     case form.submission_type
     when "s3"
-      deliver_submission_via_s3
+      enqueue_deliver_submission_job(SendS3SubmissionJob)
     when "email"
-      deliver_submission_via_email
+      enqueue_deliver_submission_job(SendSubmissionJob)
     else
       raise "unrecognized submission delivery method #{form.submission_type.inspect}"
     end
@@ -74,24 +74,6 @@ private
       submission_type: form.submission_type,
       submission_format: form.submission_format,
     )
-  end
-
-  def deliver_submission_via_s3
-    # The submission is not persisted to the database for S3 submissions yet, but will be when we make S3 submissions
-    # asynchronous in the future.
-    # We're creating a submission object so the code for generating CSV/JSON submissions can use the submission model.
-    submission = Submission.new(
-      reference: submission_reference,
-      form_id: form.id,
-      answers: current_context.answers,
-      mode: mode,
-      form_document: form.document_json,
-      submission_locale:,
-      created_at: @timestamp,
-    )
-    s3_submission_service = S3SubmissionService.new(submission:)
-
-    s3_submission_service.submit
   end
 
   def create_submission_record
@@ -110,15 +92,15 @@ private
     submission
   end
 
-  def deliver_submission_via_email
+  def enqueue_deliver_submission_job(job_class)
     submission = create_submission_record
 
-    SendSubmissionJob.perform_later(submission) do |job|
-      unless job.successfully_enqueued?
-        submission.destroy!
-        message_suffix = ": #{job.enqueue_error&.message}" if job.enqueue_error
-        raise StandardError, "Failed to enqueue submission for reference #{submission_reference}#{message_suffix}"
-      end
+    job_class.perform_later(submission) do |job|
+      next if job.successfully_enqueued?
+
+      submission.destroy!
+      message_suffix = ": #{job.enqueue_error&.message}" if job.enqueue_error
+      raise StandardError, "Failed to enqueue submission for reference #{submission_reference}#{message_suffix}"
     end
   end
 
