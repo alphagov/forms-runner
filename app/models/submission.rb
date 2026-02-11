@@ -1,4 +1,6 @@
 class Submission < ApplicationRecord
+  include TimeZoneUtils
+
   has_many :submission_deliveries, dependent: :destroy
   has_many :deliveries, through: :submission_deliveries
 
@@ -15,7 +17,7 @@ class Submission < ApplicationRecord
   end
 
   def submission_time
-    created_at.in_time_zone(submission_timezone)
+    created_at.in_time_zone(submission_time_zone)
   end
 
   def payment_url
@@ -43,9 +45,5 @@ private
 
   def form_from_document
     Form.new(form_document, true)
-  end
-
-  def submission_timezone
-    Rails.configuration.x.submission.time_zone || "UTC"
   end
 end
