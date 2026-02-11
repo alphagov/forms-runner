@@ -308,17 +308,31 @@ RSpec.describe FormSubmissionService do
     end
 
     describe "sending the confirmation email to the user" do
-      it "calls FormSubmissionConfirmationMailer" do
-        freeze_time do
-          allow(FormSubmissionConfirmationMailer).to receive(:send_confirmation_email).and_call_original
+      it "enqueues a job to send the confirmation email" do
+        assert_enqueued_with(job: SendConfirmationEmailJob) do
           service.submit
-          expect(FormSubmissionConfirmationMailer).to have_received(:send_confirmation_email).with(
-            { what_happens_next_markdown: form.what_happens_next_markdown,
-              support_contact_details: form.support_details,
-              notify_response_id: email_confirmation_input.confirmation_email_reference,
-              confirmation_email_address: email_confirmation_input.confirmation_email_address,
-              mailer_options: instance_of(FormSubmissionService::MailerOptions) },
-          ).once
+        end
+      end
+
+      context "when the confirmation email job fails to enqueue" do
+        let(:enqueue_error) { nil }
+
+        before do
+          allow(SendConfirmationEmailJob).to receive(:perform_later).and_yield(instance_double(SendConfirmationEmailJob, successfully_enqueued?: false, enqueue_error:))
+        end
+
+        context "and there is no enqueue error" do
+          it "raises an error" do
+            expect { service.submit }.to change(Submission, :count).by(1).and raise_error(StandardError, "Failed to enqueue confirmation email for reference #{reference}")
+          end
+        end
+
+        context "and there is an enqueue error" do
+          let(:enqueue_error) { ActiveJob::EnqueueError.new("An error occurred enqueueing job") }
+
+          it "raises an error" do
+            expect { service.submit }.to change(Submission, :count).by(1).and raise_error(StandardError, "Failed to enqueue confirmation email for reference #{reference}: An error occurred enqueueing job")
+          end
         end
       end
 
