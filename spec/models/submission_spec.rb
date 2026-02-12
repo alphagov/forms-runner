@@ -1,6 +1,52 @@
 require "rails_helper"
 
 RSpec.describe Submission, type: :model do
+  describe "scopes" do
+    describe ".for_daily_batch" do
+      context "when the date is during BST" do
+        let(:form_id) { 101 }
+        let!(:start_of_day_submission) { create(:submission, form_id:, created_at: Time.utc(2022, 5, 31, 23, 0, 0), mode:) }
+        let!(:end_of_day_submission) { create(:submission, form_id:, created_at: Time.utc(2022, 6, 1, 22, 59, 59), mode:) }
+        let(:mode) { "form" }
+        let(:date) { Date.new(2022, 6, 1) }
+
+        before do
+          create(:submission, form_id: 5, created_at: Time.utc(2022, 6, 1, 12, 0, 0), mode:)
+          create(:submission, form_id:, created_at: Time.utc(2022, 5, 31, 22, 59, 59), mode:)
+          create(:submission, form_id:, created_at: Time.utc(2022, 6, 1, 23, 0, 0), mode:)
+          create(:submission, form_id:, created_at: Time.utc(2022, 6, 2, 12, 0, 0), mode: "preview-live")
+        end
+
+        it "returns only submissions for the given form, date and mode" do
+          submissions = described_class.for_daily_batch(form_id, date, mode)
+          expect(submissions.size).to eq(2)
+          expect(submissions).to contain_exactly(start_of_day_submission, end_of_day_submission)
+        end
+      end
+
+      context "when the date is not during BST" do
+        let(:form_id) { 101 }
+        let!(:start_of_day_submission) { create(:submission, form_id:, created_at: Time.utc(2022, 12, 1, 0, 0, 0), mode:) }
+        let!(:end_of_day_submission) { create(:submission, form_id:, created_at: Time.utc(2022, 12, 1, 23, 59, 59), mode:) }
+        let(:mode) { "form" }
+        let(:date) { Date.new(2022, 12, 1) }
+
+        before do
+          create(:submission, form_id: 5, created_at: Time.utc(2022, 12, 1, 12, 0, 0), mode:)
+          create(:submission, form_id:, created_at: Time.utc(2022, 11, 30, 23, 59, 59), mode:)
+          create(:submission, form_id:, created_at: Time.utc(2022, 12, 2, 0, 0, 0), mode:)
+          create(:submission, form_id:, created_at: Time.utc(2022, 12, 1, 12, 0, 0), mode: "preview-live")
+        end
+
+        it "returns only submissions for the given form, date and mode" do
+          submissions = described_class.for_daily_batch(form_id, date, mode)
+          expect(submissions.size).to eq(2)
+          expect(submissions).to contain_exactly(start_of_day_submission, end_of_day_submission)
+        end
+      end
+    end
+  end
+
   describe "#sent?" do
     context "when the submission is sent" do
       let(:submission) { create :submission, :sent }
