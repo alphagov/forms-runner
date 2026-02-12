@@ -32,7 +32,7 @@ FactoryBot.define do
       end
 
       steps do
-        Array.new(steps_count) { attributes_for(:v2_step) }
+        Array.new(steps_count) { attributes_for(:v2_question_page_step) }
       end
 
       question_section_completed { true }
