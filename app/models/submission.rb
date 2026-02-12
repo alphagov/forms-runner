@@ -1,8 +1,13 @@
 class Submission < ApplicationRecord
-  include TimeZoneUtils
-
   has_many :submission_deliveries, dependent: :destroy
   has_many :deliveries, through: :submission_deliveries
+
+  scope :for_daily_batch, lambda { |form_id, date, mode|
+    start_time = date.in_time_zone(TimeZoneUtils.submission_time_zone).beginning_of_day
+    end_time = start_time.end_of_day
+
+    where(form_id:, created_at: start_time..end_time, mode: mode).order(created_at: :desc)
+  }
 
   delegate :preview?, to: :mode_object
 
@@ -17,7 +22,7 @@ class Submission < ApplicationRecord
   end
 
   def submission_time
-    created_at.in_time_zone(submission_time_zone)
+    created_at.in_time_zone(TimeZoneUtils.submission_time_zone)
   end
 
   def payment_url
