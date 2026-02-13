@@ -72,14 +72,14 @@ RSpec.describe "jobs.rake" do
     end
   end
 
-  describe "jobs:retry_all_failed_send_jobs" do
+  describe "jobs:retry_all_failed" do
     subject(:task) do
-      Rake::Task["jobs:retry_all_failed_send_jobs"]
+      Rake::Task["jobs:retry_all_failed"]
         .tap(&:reenable)
     end
 
-    let(:failed_job) { create :solid_queue_job }
-    let(:other_failed_job) { create :solid_queue_job }
+    let(:failed_job) { create :solid_queue_job, class_name: SendSubmissionJob.name }
+    let(:other_failed_job) { create :solid_queue_job, class_name: SendSubmissionJob.name }
     let(:failed_not_submission_job) { create :solid_queue_job, class_name: "SomethingElse" }
     let(:not_failed_job) { create :solid_queue_job }
 
@@ -89,15 +89,28 @@ RSpec.describe "jobs.rake" do
       create :solid_queue_failed_execution, job: failed_not_submission_job
     end
 
-    it "retries the failed submission jobs" do
-      expect(SolidQueue::FailedExecution).to receive(:retry_all).with([failed_job, other_failed_job])
-      task.invoke
+    context "with valid arguments" do
+      let(:valid_args) { [SendSubmissionJob.name] }
+
+      it "retries the failed jobs with the given class name" do
+        expect(SolidQueue::FailedExecution).to receive(:retry_all).with([failed_job, other_failed_job])
+        task.invoke(*valid_args)
+      end
+
+      it "logs that 2 jobs were retried" do
+        expect(Rails.logger).to receive(:info).with("Found 2 failed SendSubmissionJob jobs to retry")
+        expect(Rails.logger).to receive(:info).with("Retried 2 failed SendSubmissionJob jobs")
+        task.invoke(*valid_args)
+      end
     end
 
-    it "logs that 2 jobs were retried" do
-      expect(Rails.logger).to receive(:info).with("Found 2 failed submission jobs to retry")
-      expect(Rails.logger).to receive(:info).with("Retried 2 failed submission jobs")
-      task.invoke
+    context "with invalid arguments" do
+      it "aborts with a usage message" do
+        expect {
+          task.invoke
+        }.to raise_error(SystemExit)
+               .and output("usage: rake jobs:retry_all_failed[<job_class_name>]\n").to_stderr
+      end
     end
   end
 

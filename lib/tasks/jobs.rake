@@ -19,15 +19,20 @@ namespace :jobs do
     Rails.logger.info "Scheduled retry for job with ID: #{job_id}, class: #{job.class_name}"
   end
 
-  desc "Retry all failed send submission jobs"
-  task retry_all_failed_send_jobs: :environment do |_, _args|
-    failed_jobs = SolidQueue::Job.joins(:failed_execution).where(class_name: SendSubmissionJob.name)
+  desc "Retry all failed jobs for a given job class"
+  task :retry_all_failed, [:job_class_name] => :environment do |_, args|
+    job_class_name = args[:job_class_name]
 
-    Rails.logger.info "Found #{failed_jobs.length} failed submission jobs to retry"
+    usage_message = "usage: rake jobs:retry_all_failed[<job_class_name>]"
+    abort usage_message if job_class_name.blank?
+
+    failed_jobs = SolidQueue::Job.joins(:failed_execution).where(class_name: job_class_name)
+
+    Rails.logger.info "Found #{failed_jobs.length} failed #{job_class_name} jobs to retry"
 
     SolidQueue::FailedExecution.retry_all(failed_jobs)
 
-    Rails.logger.info "Retried #{failed_jobs.length} failed submission jobs"
+    Rails.logger.info "Retried #{failed_jobs.length} failed #{job_class_name} jobs"
   end
 
   desc "List failed jobs for the given queue"
