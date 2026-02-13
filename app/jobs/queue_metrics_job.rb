@@ -10,7 +10,7 @@ class QueueMetricsJob < ApplicationJob
     SolidQueue::FailedExecution.joins(:job)
                                .group_by { |failed_execution| failed_execution.job.queue_name }
                                .each do |queue_name, failed_executions|
-      CloudWatchService.record_failed_job_executions(queue_name, failed_executions.count)
+                                 CloudWatchService.record_failed_job_executions(queue_name, failed_executions.count)
     end
   end
 end
