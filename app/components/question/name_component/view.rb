@@ -42,7 +42,7 @@ module Question
         form_builder.govuk_fieldset legend: { text: question_text_with_extra_suffix, **question_text_size_and_tag }, described_by: hint_id do
           form_fields = if is_full_name?
                           [
-                            form_builder.govuk_text_field :full_name, label: { text: t("question/name.label.full_name") }, autocomplete: "name",
+                            form_builder.govuk_text_field(:full_name, label: { text: t("question/name.label.full_name") }, autocomplete: "name"),
                           ]
                         else
                           [
