@@ -18,7 +18,7 @@ module Question
   private
 
     def strip_carriage_returns!
-      text.gsub!(/\r\n?/, "\n") if text.present?
+      text.presence&.gsub!(/\r\n?/, "\n")
     end
   end
 end
