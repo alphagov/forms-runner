@@ -72,6 +72,65 @@ RSpec.describe "jobs.rake" do
     end
   end
 
+  describe "jobs:delete_failed" do
+    subject(:task) do
+      Rake::Task["jobs:delete_failed"]
+        .tap(&:reenable)
+    end
+
+    # If a job is retried, there are multiple jobs with the same active_job_id but the failed execution is only
+    # attached to the final one. Create another job with the same active_job_id first to simulate this.
+    let(:first_job) { create :solid_queue_job }
+    let(:job) { create :solid_queue_job, active_job_id: first_job.active_job_id }
+
+    context "with valid arguments" do
+      context "when the job is failed" do
+        before do
+          create :solid_queue_failed_execution, job: job
+        end
+
+        it "deletes the failed execution" do
+          expect {
+            task.invoke(job.active_job_id)
+          }.to change(SolidQueue::FailedExecution, :count).by(-1)
+        end
+
+        it "logs that the failed execution was deleted" do
+          expect(Rails.logger).to receive(:info).with("Deleted failed execution for job with ID: #{job.active_job_id}, class: #{job.class_name}.")
+
+          task.invoke(job.active_job_id)
+        end
+      end
+
+      context "when the job is not failed" do
+        it "aborts with message" do
+          expect {
+            task.invoke(job.active_job_id)
+          }.to raise_error(SystemExit)
+                 .and output("Job with job_id #{job.active_job_id} is not failed\n").to_stderr
+        end
+      end
+
+      context "when the job does not exist" do
+        it "aborts with message that the job was not found" do
+          expect {
+            task.invoke("foo")
+          }.to raise_error(SystemExit)
+                 .and output("Job with job_id foo not found\n").to_stderr
+        end
+      end
+    end
+
+    context "with invalid arguments" do
+      it "aborts with a usage message" do
+        expect {
+          task.invoke
+        }.to raise_error(SystemExit)
+               .and output("usage: rake jobs:delete_failed[<job_id>]\n").to_stderr
+      end
+    end
+  end
+
   describe "jobs:retry_all_failed" do
     subject(:task) do
       Rake::Task["jobs:retry_all_failed"]
