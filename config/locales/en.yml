@@ -449,6 +449,9 @@ en:
       time: 'Submitted at: %{time} on %{date}'
       title: 'Form name: “%{form_name}”'
       welsh_submission: At least one of the questions was answered in Welsh
+    submission_batch:
+      subject: 'Form submissions for %{form_name} - date: %{date}'
+      subject_preview: 'TEST Form submissions for %{form_name} - date: %{date}'
     submission_confirmation:
       default_support_contact_details: The form’s contact details for support will appear here once they’ve been added.
       default_what_happens_next: The form’s information about what happens next will appear here once it has been added.

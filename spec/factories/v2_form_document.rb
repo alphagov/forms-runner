@@ -24,6 +24,7 @@ FactoryBot.define do
     s3_bucket_aws_account_id { nil }
     s3_bucket_name { nil }
     s3_bucket_region { nil }
+    updated_at { Time.current.iso8601(3) }
 
     trait :with_steps do
       transient do
@@ -35,6 +36,7 @@ FactoryBot.define do
       end
 
       question_section_completed { true }
+      start_page { steps.first[:id] }
     end
 
     trait :with_privacy_policy_url do
