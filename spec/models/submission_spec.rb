@@ -13,6 +13,10 @@ RSpec.describe Submission, type: :model do
     context "when there is a submission is unsent" do
       let(:submission) { create :submission }
 
+      before do
+        submission.deliveries.create!
+      end
+
       it "returns false" do
         expect(described_class).not_to be_sent(submission.reference)
       end
