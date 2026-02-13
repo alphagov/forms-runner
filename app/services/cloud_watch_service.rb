@@ -166,6 +166,26 @@ class CloudWatchService
     )
   end
 
+  def self.record_failed_job_executions(queue_name, count)
+    return unless Settings.cloudwatch_metrics_enabled
+
+    cloudwatch_client.put_metric_data(
+      namespace: JOBS_METRICS_NAMESPACE,
+      metric_data: [
+        {
+          metric_name: "FailedJobExecutions",
+          dimensions: [
+            environment_dimension,
+            service_name_dimension,
+            queue_name_dimension(queue_name),
+          ],
+          value: count,
+          unit: "Count",
+        },
+      ],
+    )
+  end
+
   def self.environment_dimension
     {
       name: "Environment",
