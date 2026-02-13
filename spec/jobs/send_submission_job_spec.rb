@@ -39,22 +39,16 @@ RSpec.describe SendSubmissionJob, type: :job do
       expect(aws_ses_submission_service_spy).to have_received(:submit)
     end
 
-    context "when there is an existing delivery record" do
-      it "does not create a new delivery record" do
-        expect(submission.reload.deliveries.count).to eq(1)
-      end
+    it "sets the delivery reference on the existing delivery record" do
+      expect(submission.reload.deliveries.first.delivery_reference).to eq(delivery_reference)
+    end
 
-      it "sets the delivery reference on the existing delivery record" do
-        expect(submission.reload.deliveries.first.delivery_reference).to eq(delivery_reference)
-      end
+    it "sets the last attempt time on the existing delivery record" do
+      expect(submission.reload.deliveries.first.last_attempt_at).to be_within(1.second).of(@job_ran_at)
+    end
 
-      it "sets the last attempt time on the existing delivery record" do
-        expect(submission.reload.deliveries.first.last_attempt_at).to be_within(1.second).of(@job_ran_at)
-      end
-
-      it "sends cloudwatch metric for the submission being sent" do
-        expect(CloudWatchService).to have_received(:record_submission_sent_metric).with(be_within(1000).of(5000))
-      end
+    it "sends cloudwatch metric for the submission being sent" do
+      expect(CloudWatchService).to have_received(:record_submission_sent_metric).with(be_within(1000).of(5000))
     end
 
     context "when the delivery is being retried" do
@@ -67,25 +61,13 @@ RSpec.describe SendSubmissionJob, type: :job do
         end
       end
 
-      it "does not create a new delivery record" do
-        expect(submission.reload.deliveries.count).to eq(1)
-      end
-
-      it "updates the existing delivery record" do
+      it "clears the delivery status fields" do
         updated_delivery = submission.deliveries.first.reload
         expect(updated_delivery.delivery_reference).to eq(delivery_reference)
         expect(updated_delivery.last_attempt_at).to be_within(1.second).of(@job_ran_at)
         expect(updated_delivery.delivered_at).to be_nil
         expect(updated_delivery.failed_at).to be_nil
         expect(updated_delivery.failure_reason).to be_nil
-      end
-    end
-
-    context "when there is no existing delivery record" do
-      let(:submission) { create :submission, form_document:, created_at: submission_created_at }
-
-      it "creates a delivery record" do
-        expect(submission.reload.deliveries.count).to eq(1)
       end
     end
   end

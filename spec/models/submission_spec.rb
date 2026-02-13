@@ -13,6 +13,10 @@ RSpec.describe Submission, type: :model do
     context "when there is a submission is unsent" do
       let(:submission) { create :submission }
 
+      before do
+        submission.deliveries.create!
+      end
+
       it "returns false" do
         expect(described_class).not_to be_sent(submission.reference)
       end
@@ -49,6 +53,50 @@ RSpec.describe Submission, type: :model do
 
       it "returns the local time when stringified" do
         expect(submission.submission_time.strftime("%-d %B %Y - %l:%M%P")).to eq("14 December 2022 -  1:00pm")
+      end
+    end
+  end
+
+  describe "#single_submission_delivery" do
+    context "when there is a single delivery without batch frequency" do
+      let(:submission) { create :submission }
+      let!(:delivery) { submission.deliveries.create! }
+
+      before do
+        submission.deliveries.create!(batch_frequency: "daily")
+      end
+
+      it "returns the delivery without a batch frequency" do
+        expect(submission.single_submission_delivery).to eq(delivery)
+      end
+    end
+
+    context "when there are multiple deliveries without batch frequency" do
+      let(:submission) { create :submission }
+
+      before do
+        submission.deliveries.create!
+        submission.deliveries.create!
+      end
+
+      it "raises an error" do
+        expect {
+          submission.single_submission_delivery
+        }.to raise_error(ActiveRecord::SoleRecordExceeded)
+      end
+    end
+
+    context "when there is a single delivery with batch frequency" do
+      let(:submission) { create :submission }
+
+      before do
+        submission.deliveries.create!(batch_frequency: "daily")
+      end
+
+      it "raises an error" do
+        expect {
+          submission.single_submission_delivery
+        }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end

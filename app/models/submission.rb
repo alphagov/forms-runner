@@ -23,13 +23,12 @@ class Submission < ApplicationRecord
   end
 
   def single_submission_delivery
-    # The logic to get this will change when we add batching
-    deliveries.sole if deliveries.any?
+    deliveries.where(batch_frequency: nil).sole
   end
 
   def self.sent?(reference)
     submission = Submission.find_by(reference: reference)
-    submission&.single_submission_delivery&.present?
+    submission&.single_submission_delivery&.delivery_reference&.present?
   end
 
 private
