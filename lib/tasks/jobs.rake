@@ -6,17 +6,27 @@ namespace :jobs do
     usage_message = "usage: rake jobs:retry_failed[<job_id>]"
     abort usage_message if job_id.blank?
 
-    job = SolidQueue::Job.where(active_job_id: job_id).last
-
-    abort "Job with job_id #{job_id} not found" unless job
-
-    failed_execution = SolidQueue::FailedExecution.find_by(job_id: job.id)
-
-    abort "Job with job_id #{job_id} is not failed" unless failed_execution
+    job = find_job!(job_id)
+    failed_execution = find_failed_execution!(job)
 
     failed_execution.retry
 
     Rails.logger.info "Scheduled retry for job with ID: #{job_id}, class: #{job.class_name}"
+  end
+
+  desc "Delete failed execution for the given job ID. Only use this if you're sure the job doesn't need to be retried."
+  task :delete_failed, [:job_id] => :environment do |_, args|
+    job_id = args[:job_id]
+
+    usage_message = "usage: rake jobs:delete_failed[<job_id>]"
+    abort usage_message if job_id.blank?
+
+    job = find_job!(job_id)
+    failed_execution = find_failed_execution!(job)
+
+    failed_execution.destroy!
+
+    Rails.logger.info "Deleted failed execution for job with ID: #{job_id}, class: #{job.class_name}."
   end
 
   desc "Retry all failed jobs for a given job class"
@@ -51,4 +61,16 @@ namespace :jobs do
       Rails.logger.info "Failed execution - Job ID: #{job.active_job_id}, Job Class: #{job.class_name}, Failed At: #{failed_execution.created_at}, Error Message: #{failed_execution.error.to_s.truncate(500)}"
     end
   end
+end
+
+def find_job!(job_id)
+  job = SolidQueue::Job.where(active_job_id: job_id).last
+  abort "Job with job_id #{job_id} not found" unless job
+  job
+end
+
+def find_failed_execution!(job)
+  failed_execution = SolidQueue::FailedExecution.find_by(job_id: job.id)
+  abort "Job with job_id #{job.active_job_id} is not failed" unless failed_execution
+  failed_execution
 end
