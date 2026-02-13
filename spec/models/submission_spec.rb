@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe Submission, type: :model do
   describe "#sent?" do
-    context "when the submission is sent?" do
+    context "when the submission is sent" do
       let(:submission) { create :submission, :sent }
 
       it "returns true" do
@@ -10,8 +10,8 @@ RSpec.describe Submission, type: :model do
       end
     end
 
-    context "when there is a submission is unsent" do
-      let(:submission) { create :submission }
+    context "when the submission is not sent" do
+      let(:submission) { create :submission, deliveries: [create(:delivery, :not_sent)] }
 
       it "returns false" do
         expect(described_class).not_to be_sent(submission.reference)

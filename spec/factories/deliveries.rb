@@ -3,6 +3,10 @@ FactoryBot.define do
     delivery_reference { Faker::Alphanumeric.alphanumeric }
     created_at { Time.current }
 
+    trait :not_sent do
+      delivery_reference { nil }
+    end
+
     trait :pending do
       delivered_at { nil }
       failed_at { nil }
