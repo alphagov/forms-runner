@@ -300,7 +300,9 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         allow(mock_s3_client).to receive(:put_object)
 
         travel_to frozen_time do
-          post form_submit_answers_path(form_id:, form_slug: "form-name", mode:), params: { email_confirmation_input: }
+          perform_enqueued_jobs do
+            post form_submit_answers_path(form_id:, form_slug: "form-name", mode:), params: { email_confirmation_input: }
+          end
         end
       end
 

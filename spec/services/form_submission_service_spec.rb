@@ -107,31 +107,52 @@ RSpec.describe FormSubmissionService do
 
     describe "submitting the form to the processing team" do
       shared_examples "submits via AWS S3" do
-        let(:s3_submission_service_spy) { instance_double(S3SubmissionService) }
-
-        before do
-          allow(S3SubmissionService).to receive(:new).and_return(s3_submission_service_spy)
-          allow(s3_submission_service_spy).to receive("submit")
-        end
-
-        it "creates a S3SubmissionService instance" do
-          freeze_time do
-            expect(S3SubmissionService).to receive(:new).with(submission: have_attributes(
-              reference:,
-              form_id: form.id,
-              answers: answers.deep_stringify_keys,
-              mode: "form",
-              form_document: document_json,
-              submission_locale: "en",
-            ))
-
+        it "enqueues a job to send the submission to S3" do
+          assert_enqueued_with(job: SendS3SubmissionJob) do
             service.submit
           end
         end
 
-        it "calls upload_submission_csv_to_s3" do
-          service.submit
-          expect(s3_submission_service_spy).to have_received(:submit)
+        it "saves the submission data" do
+          freeze_time do
+            expect {
+              service.submit
+            }.to change(Submission, :count).by(1)
+             .and change(Delivery, :count).by(1)
+
+            expect(Submission.last).to have_attributes(reference:, form_id: form.id, answers: answers.deep_stringify_keys,
+                                                       mode: "form", form_document: document_json,
+                                                       submission_locale: "en", created_at: Time.zone.now)
+
+            expect(Submission.last.deliveries.sole).to have_attributes(
+              delivery_reference: nil,
+              last_attempt_at: nil,
+            )
+          end
+        end
+
+        context "when the job fails to enqueue" do
+          let(:enqueue_error) { nil }
+
+          define_negated_matcher :not_change, :change
+
+          before do
+            allow(SendS3SubmissionJob).to receive(:perform_later).and_yield(instance_double(SendS3SubmissionJob, successfully_enqueued?: false, enqueue_error:))
+          end
+
+          context "and there is no enqueue error" do
+            it "raises an error" do
+              expect { service.submit }.to not_change(Submission, :count).and raise_error(StandardError, "Failed to enqueue submission for reference #{reference}")
+            end
+          end
+
+          context "and there is an enqueue error" do
+            let(:enqueue_error) { ActiveJob::EnqueueError.new("An error occurred enqueueing job") }
+
+            it "raises an error" do
+              expect { service.submit }.to not_change(Submission, :count).and raise_error(StandardError, "Failed to enqueue submission for reference #{reference}: An error occurred enqueueing job")
+            end
+          end
         end
       end
 
@@ -162,6 +183,7 @@ RSpec.describe FormSubmissionService do
           expect {
             service.submit
           }.to change(Submission, :count).by(1)
+           .and change(Delivery, :count).by(1)
 
           expect(Submission.last).to have_attributes(reference:, form_id: form.id, answers: answers.deep_stringify_keys,
                                                      mode: "form", form_document: document_json,
