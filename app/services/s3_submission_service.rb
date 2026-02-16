@@ -28,6 +28,8 @@ class S3SubmissionService
     upload_submission_to_s3(submission_content, key)
 
     delete_uploaded_files_from_our_bucket
+
+    key
   end
 
 private
