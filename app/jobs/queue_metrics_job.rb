@@ -7,10 +7,11 @@ class QueueMetricsJob < ApplicationJob
     submissions_queue_length = SolidQueue::Queue.find_by_name(SUBMISSIONS_QUEUE_NAME).size
     CloudWatchService.record_queue_length_metric(SUBMISSIONS_QUEUE_NAME, submissions_queue_length)
 
-    SolidQueue::FailedExecution.joins(:job)
-                               .group_by { |failed_execution| failed_execution.job.queue_name }
-                               .each do |queue_name, failed_executions|
-                                 CloudWatchService.record_failed_job_executions(queue_name, failed_executions.count)
+    # rubocop:disable Rails/FindEach
+    SolidQueue::Queue.all.each do |queue|
+      failed_executions_count = SolidQueue::FailedExecution.joins(:job).where(solid_queue_jobs: { queue_name: queue.name }).count
+      CloudWatchService.record_failed_job_executions(queue.name, failed_executions_count)
     end
+    # rubocop:enable Rails/FindEach
   end
 end
