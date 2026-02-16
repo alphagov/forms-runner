@@ -87,7 +87,7 @@ private
       created_at: timestamp,
     )
 
-    submission.deliveries.create!
+    submission.deliveries.create!(delivery_schedule: :immediate)
 
     submission
   end

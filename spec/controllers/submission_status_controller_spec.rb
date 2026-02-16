@@ -20,7 +20,7 @@ RSpec.describe SubmissionStatusController do
       end
 
       context "when a submission has not been emailed" do
-        let(:submission) { create :submission }
+        let(:submission) { create :submission, deliveries: [create(:delivery, :not_sent)] }
 
         it "returns a 404 status" do
           get :status, params: { reference: submission.reference }

@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe Submission, type: :model do
   describe "#sent?" do
-    context "when the submission is sent?" do
+    context "when the submission is sent" do
       let(:submission) { create :submission, :sent }
 
       it "returns true" do
@@ -10,8 +10,8 @@ RSpec.describe Submission, type: :model do
       end
     end
 
-    context "when there is a submission is unsent" do
-      let(:submission) { create :submission }
+    context "when the submission is not sent" do
+      let(:submission) { create :submission, deliveries: [create(:delivery, :not_sent)] }
 
       it "returns false" do
         expect(described_class).not_to be_sent(submission.reference)
@@ -49,6 +49,50 @@ RSpec.describe Submission, type: :model do
 
       it "returns the local time when stringified" do
         expect(submission.submission_time.strftime("%-d %B %Y - %l:%M%P")).to eq("14 December 2022 -  1:00pm")
+      end
+    end
+  end
+
+  describe "#single_submission_delivery" do
+    context "when there is a single delivery with 'immediate' delivery_schedule" do
+      let(:submission) { create :submission }
+      let!(:delivery) { submission.deliveries.create!(delivery_schedule: :immediate) }
+
+      before do
+        submission.deliveries.create!(delivery_schedule: :daily)
+      end
+
+      it "returns the delivery without a batch frequency" do
+        expect(submission.single_submission_delivery).to eq(delivery)
+      end
+    end
+
+    context "when there are multiple deliveries with 'immediate' delivery_schedule" do
+      let(:submission) { create :submission }
+
+      before do
+        submission.deliveries.create!(delivery_schedule: :immediate)
+        submission.deliveries.create!(delivery_schedule: :immediate)
+      end
+
+      it "raises an error" do
+        expect {
+          submission.single_submission_delivery
+        }.to raise_error(ActiveRecord::SoleRecordExceeded)
+      end
+    end
+
+    context "when there is a single delivery with 'daily' delivery_schedule" do
+      let(:submission) { create :submission }
+
+      before do
+        submission.deliveries.create!(delivery_schedule: :daily)
+      end
+
+      it "raises an error" do
+        expect {
+          submission.single_submission_delivery
+        }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end
