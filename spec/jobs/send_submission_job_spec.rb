@@ -6,9 +6,7 @@ RSpec.describe SendSubmissionJob, type: :job do
 
   let(:submission_created_at) { Time.utc(2022, 12, 14, 13, 0o0, 0o0) }
   let(:submission) do
-    create(:submission, form_document:, created_at: submission_created_at).tap do |submission|
-      submission.deliveries.create!
-    end
+    create(:submission, :sent, form_document:, created_at: submission_created_at)
   end
   let(:form_document) { build(:v2_form_document, name: "Form 1") }
   let(:question) { build :text, question_text: "What is the meaning of life?", text: "42" }
@@ -40,18 +38,12 @@ RSpec.describe SendSubmissionJob, type: :job do
       expect(aws_ses_submission_service_spy).to have_received(:submit)
     end
 
-    context "when there is an existing delivery record" do
-      it "does not create a new delivery record" do
-        expect(submission.reload.deliveries.count).to eq(1)
-      end
+    it "sets the delivery reference on the existing delivery record" do
+      expect(submission.reload.deliveries.first.delivery_reference).to eq(delivery_reference)
+    end
 
-      it "sets the delivery reference on the existing delivery record" do
-        expect(submission.reload.deliveries.first.delivery_reference).to eq(delivery_reference)
-      end
-
-      it "sets the last attempt time on the existing delivery record" do
-        expect(submission.reload.deliveries.first.last_attempt_at).to be_within(1.second).of(@job_ran_at)
-      end
+    it "sets the last attempt time on the existing delivery record" do
+      expect(submission.reload.deliveries.first.last_attempt_at).to be_within(1.second).of(@job_ran_at)
     end
 
     it "sends cloudwatch metric for the submission being sent" do
@@ -60,33 +52,17 @@ RSpec.describe SendSubmissionJob, type: :job do
       )
     end
 
-    it "does not create a new delivery record" do
-      expect(submission.reload.deliveries.count).to eq(1)
-    end
-
-    it "sets the delivery reference on the delivery record" do
-      expect(submission.reload.deliveries.first.delivery_reference).to eq(delivery_reference)
-    end
-
-    it "sets the last attempt time on the delivery record" do
-      expect(submission.reload.deliveries.first.last_attempt_at).to be_within(1.second).of(@job_ran_at)
-    end
-
     context "when the delivery is being retried" do
       let(:submission) do
-        create(:submission, form_document:).tap do |submission|
-          submission.deliveries.create!(delivery_reference: "old-ref",
-                                        delivered_at: Time.zone.now,
-                                        failed_at: Time.zone.now,
-                                        failure_reason: "bounced")
-        end
+        delivery = create(:delivery,
+                          delivery_reference: "old-ref",
+                          delivered_at: Time.zone.now,
+                          failed_at: Time.zone.now,
+                          failure_reason: "bounced")
+        create(:submission, form_document:, deliveries: [delivery])
       end
 
-      it "does not create a new delivery record" do
-        expect(submission.reload.deliveries.count).to eq(1)
-      end
-
-      it "updates the existing delivery record" do
+      it "clears the delivery status fields" do
         updated_delivery = submission.deliveries.first.reload
         expect(updated_delivery.delivery_reference).to eq(delivery_reference)
         expect(updated_delivery.last_attempt_at).to be_within(1.second).of(@job_ran_at)

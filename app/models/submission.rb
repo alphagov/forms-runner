@@ -23,8 +23,7 @@ class Submission < ApplicationRecord
   end
 
   def single_submission_delivery
-    # The logic to get this will change when we add batching
-    deliveries.sole if deliveries.any?
+    deliveries.immediate.sole
   end
 
   def self.sent?(reference)
