@@ -2,6 +2,7 @@ FactoryBot.define do
   factory :delivery do
     delivery_reference { Faker::Alphanumeric.alphanumeric }
     created_at { Time.current }
+    delivery_schedule { :immediate }
 
     trait :not_sent do
       delivery_reference { nil }
