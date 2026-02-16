@@ -2,7 +2,7 @@
   <%= I18n.t("mailer.submission.preview") %>
 
 <% end %>
-<%= I18n.t("mailer.submission.title", form_name: @submission.form.name) %>
+<%= I18n.t("mailer.form_name", form_name: @submission.form.name) %>
 
 <%= I18n.t("mailer.submission.time", time: @submission.submission_time.strftime("%l:%M%P").strip, date: @submission.submission_time.strftime("%-d %B %Y") ) %>
 
@@ -16,7 +16,7 @@
   <%= I18n.t("mailer.submission.payment") %>
 
 <% end %>
-<%= I18n.t("mailer.submission.check_before_using") %>
+<%= I18n.t("mailer.check_before_using") %>
 
 ---
 <%= I18n.t("mailer.submission.answers_submitted") %>
@@ -33,7 +33,7 @@
 
 ---
 
-<%= I18n.t("mailer.submission.cannot_reply.heading") %>
+<%= I18n.t("mailer.cannot_reply.heading") %>
 
-<%= I18n.t("mailer.submission.cannot_reply.contact_form_filler_plain") %>
-<%= I18n.t("mailer.submission.cannot_reply.contact_forms_team_plain") %>
+<%= I18n.t("mailer.cannot_reply.contact_form_filler_plain") %>
+<%= I18n.t("mailer.cannot_reply.contact_forms_team_plain") %>
