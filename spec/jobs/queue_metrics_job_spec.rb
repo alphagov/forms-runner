@@ -30,14 +30,18 @@ RSpec.describe QueueMetricsJob, type: :job do
 
       create :solid_queue_failed_execution, job: create(:solid_queue_job, queue_name:)
       create :solid_queue_failed_execution, job: create(:solid_queue_job, queue_name:)
-      create :solid_queue_failed_execution, job: create(:solid_queue_job, queue_name: other_queue_name)
       create(:solid_queue_job, queue_name:)
+      create(:solid_queue_job, queue_name: other_queue_name)
     end
 
     it "sends the count of failed executions for each queue to CloudWatch" do
       perform_enqueued_jobs
       expect(CloudWatchService).to have_received(:record_failed_job_executions).with(queue_name, 2)
-      expect(CloudWatchService).to have_received(:record_failed_job_executions).with(other_queue_name, 1)
+    end
+
+    it "sends a count of zero for queues with no failed executions" do
+      perform_enqueued_jobs
+      expect(CloudWatchService).to have_received(:record_failed_job_executions).with(other_queue_name, 0)
     end
   end
 end
