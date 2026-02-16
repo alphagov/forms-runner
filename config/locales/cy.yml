@@ -449,6 +449,14 @@ cy:
       subject_preview: 'TEST FORM SUBMISSION: %{form_name} - reference: %{reference}'
       time: 'Submitted at: %{time} on %{date}'
       welsh_submission: At least one of the questions was answered in Welsh
+    submission_batch:
+      file_upload_questions: For forms with file upload questions, the uploaded files will only be attached to the individual completed form emails.
+      multiple_files_explainer: 'All submissions to this form from %{date} are attached to this email in CSV files named:'
+      preview: These are test submissions to a preview of a %{tag} form.
+      single_file_explainer: 'All submissions to this form from %{date} are attached to this email in a CSV file named:'
+      subject: 'Daily form submissions: ‘%{form_name}’ - %{date}'
+      subject_preview: 'TEST DAILY FORM SUBMISSIONS: ‘%{form_name}’ - %{date}'
+      submissions_are_split: Submissions are split into separate CSV files if a change has been made to the form that has changed the structure of the CSV.
     submission_confirmation:
       default_support_contact_details: The form’s contact details for support will appear here once they’ve been added.
       default_what_happens_next: The form’s information about what happens next will appear here once it has been added.
