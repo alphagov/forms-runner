@@ -14,19 +14,21 @@ namespace :jobs do
     Rails.logger.info "Scheduled retry for job with ID: #{job_id}, class: #{job.class_name}"
   end
 
-  desc "Delete failed execution for the given job ID. Only use this if you're sure the job doesn't need to be retried."
-  task :delete_failed, [:job_id] => :environment do |_, args|
-    job_id = args[:job_id]
+  desc "Delete failed execution for the given job IDs. Only use this if you're sure the jobs don't need to be retried."
+  task :delete_failed, [] => :environment do |_, args|
+    job_ids = args.to_a
 
-    usage_message = "usage: rake jobs:delete_failed[<job_id>]"
-    abort usage_message if job_id.blank?
+    usage_message = "usage: rake jobs:delete_failed[<job_id>, ...]"
+    abort usage_message if job_ids.blank?
 
-    job = find_job!(job_id)
-    failed_execution = find_failed_execution!(job)
+    job_ids.each do |job_id|
+      job = find_job!(job_id)
+      failed_execution = find_failed_execution!(job)
 
-    failed_execution.destroy!
+      failed_execution.destroy!
 
-    Rails.logger.info "Deleted failed execution for job with ID: #{job_id}, class: #{job.class_name}."
+      Rails.logger.info "Deleted failed execution for job with ID: #{job_id}, class: #{job.class_name}."
+    end
   end
 
   desc "Retry all failed jobs for a given job class"
