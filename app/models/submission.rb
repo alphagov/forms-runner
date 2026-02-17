@@ -1,4 +1,6 @@
 class Submission < ApplicationRecord
+  include TimeZoneUtils
+
   has_many :submission_deliveries, dependent: :destroy
   has_many :deliveries, through: :submission_deliveries
 
@@ -15,7 +17,7 @@ class Submission < ApplicationRecord
   end
 
   def submission_time
-    created_at.in_time_zone(submission_timezone)
+    created_at.in_time_zone(submission_time_zone)
   end
 
   def payment_url
@@ -31,6 +33,25 @@ class Submission < ApplicationRecord
     submission&.single_submission_delivery&.delivery_reference&.present?
   end
 
+  def self.group_by_form_version(submissions)
+    submission_by_version = {}
+    last_version = nil
+
+    # For forms that have the same updated_at timestamp, we know they will be identical. If two forms have different
+    # updated_at timestamps, we check to see if their steps are the same. If they are, we group those forms' submissions
+    # together.
+    submissions.group_by { |submission| submission.form.updated_at }.sort.to_h.each do |updated_at, submissions|
+      if last_version && last_version.steps == submissions.first.form.steps
+        submission_by_version[last_version.updated_at].push(*submissions)
+      else
+        submission_by_version[updated_at] = submissions
+        last_version = submissions.first.form
+      end
+    end
+
+    submission_by_version
+  end
+
 private
 
   def mode_object
@@ -43,9 +64,5 @@ private
 
   def form_from_document
     Form.new(form_document, true)
-  end
-
-  def submission_timezone
-    Rails.configuration.x.submission.time_zone || "UTC"
   end
 end

@@ -47,7 +47,7 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
         end
 
         it "includes the form title text" do
-          expect(part.body).to have_css("p", text: I18n.t("mailer.submission.title", form_name: form_name))
+          expect(part.body).to have_css("p", text: I18n.t("mailer.form_name", form_name: form_name))
         end
 
         it "does not include the form preview text" do
@@ -63,7 +63,7 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
         end
 
         it "includes text about checking the answers" do
-          expect(part.body).to have_css("p", text: I18n.t("mailer.submission.check_before_using"))
+          expect(part.body).to have_css("p", text: I18n.t("mailer.check_before_using"))
         end
 
         it "includes the answers submitted heading" do
@@ -71,9 +71,9 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
         end
 
         it "includes the warning about not replying" do
-          expect(part.body).to have_css("h2", text: I18n.t("mailer.submission.cannot_reply.heading"))
-          expect(part.body).to include(I18n.t("mailer.submission.cannot_reply.contact_form_filler_html"))
-          expect(part.body).to include(I18n.t("mailer.submission.cannot_reply.contact_forms_team_html"))
+          expect(part.body).to have_css("h2", text: I18n.t("mailer.cannot_reply.heading"))
+          expect(part.body).to include(I18n.t("mailer.cannot_reply.contact_form_filler_html"))
+          expect(part.body).to include(I18n.t("mailer.cannot_reply.contact_forms_team_html"))
         end
 
         describe "submission date/time" do
@@ -119,7 +119,7 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
         end
 
         it "includes the form title text" do
-          expect(part.body).to have_text(I18n.t("mailer.submission.title", form_name: form_name))
+          expect(part.body).to have_text(I18n.t("mailer.form_name", form_name: form_name))
         end
 
         it "does not include the form preview text" do
@@ -135,7 +135,7 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
         end
 
         it "includes text about checking the answers" do
-          expect(part.body).to have_text(I18n.t("mailer.submission.check_before_using"))
+          expect(part.body).to have_text(I18n.t("mailer.check_before_using"))
         end
 
         it "includes the answers submitted heading" do
@@ -143,9 +143,9 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
         end
 
         it "includes the warning about not replying" do
-          expect(part.body).to have_text(I18n.t("mailer.submission.cannot_reply.heading"))
-          expect(part.body).to include(I18n.t("mailer.submission.cannot_reply.contact_form_filler_plain"))
-          expect(part.body).to include(I18n.t("mailer.submission.cannot_reply.contact_forms_team_plain"))
+          expect(part.body).to have_text(I18n.t("mailer.cannot_reply.heading"))
+          expect(part.body).to include(I18n.t("mailer.cannot_reply.contact_form_filler_plain"))
+          expect(part.body).to include(I18n.t("mailer.cannot_reply.contact_forms_team_plain"))
         end
 
         describe "submission date/time" do
@@ -195,7 +195,7 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
         let(:part) { mail.html_part }
 
         it "includes the form title text" do
-          expect(part.body).to have_css("p", text: I18n.t("mailer.submission.title", form_name: form_name))
+          expect(part.body).to have_css("p", text: I18n.t("mailer.form_name", form_name: form_name))
         end
 
         it "includes the form preview text" do
@@ -207,7 +207,7 @@ describe AwsSesFormSubmissionMailer, type: :mailer do
         let(:part) { mail.text_part }
 
         it "includes the form title text" do
-          expect(part.body).to have_text(I18n.t("mailer.submission.title", form_name: form_name))
+          expect(part.body).to have_text(I18n.t("mailer.form_name", form_name: form_name))
         end
 
         it "includes the form preview text" do

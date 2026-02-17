@@ -144,4 +144,41 @@ RSpec.describe Submission, type: :model do
       end
     end
   end
+
+  describe ".group_by_form_version" do
+    subject(:grouped_submissions) { described_class.group_by_form_version(submissions) }
+
+    let(:first_version_updated_at) { Time.utc(2022, 9, 14, 7, 0, 0).iso8601(3) }
+    let(:second_version_updated_at) { Time.utc(2022, 9, 15, 7, 0, 0).iso8601(3) }
+    let(:third_version_updated_at) { Time.utc(2022, 9, 16, 7, 0, 0).iso8601(3) }
+
+    let(:form_document) { create :v2_form_document, :with_steps, updated_at: first_version_updated_at }
+    let(:form_document_same_steps) { create :v2_form_document, updated_at: second_version_updated_at, steps: form_document.steps }
+    let(:form_document_different_steps) { create :v2_form_document, :with_steps, updated_at: third_version_updated_at }
+
+    let(:first_version_submissions) { create_list :submission, 2, form_document: }
+    let(:second_version_submissions) { create_list :submission, 3, form_document: form_document_same_steps }
+    let(:third_version_submissions) { create_list :submission, 4, form_document: form_document_different_steps }
+
+    # the submissions are ordered non-sequentially to check the method sorts the resulting versions
+    let(:submissions) { third_version_submissions + first_version_submissions + second_version_submissions }
+
+    it "has the expected keys in date order" do
+      expect(grouped_submissions.keys).to eq([first_version_updated_at, third_version_updated_at])
+    end
+
+    it "groups all submission with the same updated_at together" do
+      expect(grouped_submissions).to have_key(first_version_updated_at)
+      expect(grouped_submissions[first_version_updated_at].pluck(:id)).to include(*first_version_submissions.pluck(:id))
+    end
+
+    it "groups submission with different updated_at but same steps together" do
+      expect(grouped_submissions[first_version_updated_at]).to match_array(first_version_submissions + second_version_submissions)
+      expect(grouped_submissions).not_to have_key(second_version_updated_at)
+    end
+
+    it "groups submissions with different updated_at and different steps separately" do
+      expect(grouped_submissions[third_version_updated_at]).to match_array(third_version_submissions)
+    end
+  end
 end
