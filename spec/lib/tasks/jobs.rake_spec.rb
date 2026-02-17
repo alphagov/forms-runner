@@ -102,6 +102,21 @@ RSpec.describe "jobs.rake" do
         end
       end
 
+      context "when given multiple job ids" do
+        let(:other_job) { create :solid_queue_job }
+
+        before do
+          create :solid_queue_failed_execution, job: job
+          create :solid_queue_failed_execution, job: other_job
+        end
+
+        it "deletes the failed executions" do
+          expect {
+            task.invoke(job.active_job_id, other_job.active_job_id)
+          }.to change(SolidQueue::FailedExecution, :count).by(-2)
+        end
+      end
+
       context "when the job is not failed" do
         it "aborts with message" do
           expect {
@@ -126,7 +141,7 @@ RSpec.describe "jobs.rake" do
         expect {
           task.invoke
         }.to raise_error(SystemExit)
-               .and output("usage: rake jobs:delete_failed[<job_id>]\n").to_stderr
+               .and output("usage: rake jobs:delete_failed[<job_id>, ...]\n").to_stderr
       end
     end
   end
