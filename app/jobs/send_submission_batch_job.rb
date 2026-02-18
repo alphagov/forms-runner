@@ -18,7 +18,7 @@ class SendSubmissionBatchJob < ApplicationJob
     mode = Mode.new(mode_string)
     set_submission_batch_logging_attributes(form:, mode:)
 
-    message_id = AwsSesSubmissionBatchService.new(submissions:, form:, date:, mode:).send_batch
+    message_id = AwsSesSubmissionBatchService.new(submissions_query: submissions, form:, date:, mode:).send_batch
 
     delivery.update!(
       delivery_reference: message_id,

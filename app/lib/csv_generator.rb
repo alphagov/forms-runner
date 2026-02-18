@@ -9,12 +9,22 @@ class CsvGenerator
       end
     end
 
-    def generate_batched_submissions(submissions:, is_s3_submission:)
-      CSV.generate do |csv|
-        csv << headers(submissions.first, is_s3_submission)
-        submissions.each do |submission|
-          csv << values_for_submission(submission, is_s3_submission)
+    def generate_batched_submissions(submissions_query:, is_s3_submission:)
+      sorted_submissions = submissions_query.ordered_by_form_version_and_date
+
+      rows_by_version = []
+
+      sorted_submissions.each do |submission|
+        current_headers = rows_by_version.last&.first
+        unless current_headers == headers(submission, is_s3_submission)
+          # Start a new CSV if the headers are different to the previous submission
+          rows_by_version << [headers(submission, is_s3_submission)]
         end
+        rows_by_version.last << values_for_submission(submission, is_s3_submission)
+      end
+
+      rows_by_version.map do |rows|
+        CSV.generate { |csv| rows.each { |line| csv << line } }
       end
     end
 
