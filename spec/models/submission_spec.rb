@@ -45,6 +45,22 @@ RSpec.describe Submission, type: :model do
         end
       end
     end
+
+    describe ".ordered_by_form_version_and_date" do
+      let(:first_form_version) { create :v2_form_document, updated_at: Time.utc(2022, 6, 1, 12, 0, 0) }
+      let(:second_form_version) { create :v2_form_document, updated_at: Time.utc(2022, 12, 1, 12, 0, 0) }
+
+      before do
+        create :submission, form_document: second_form_version, created_at: Time.utc(2022, 12, 1, 21, 0, 0), reference: "fourth_submission"
+        create :submission, form_document: first_form_version, created_at: Time.utc(2022, 12, 1, 15, 0, 0), reference: "third_submission"
+        create :submission, form_document: second_form_version, created_at: Time.utc(2022, 12, 1, 13, 0, 0), reference: "second_submission"
+        create :submission, form_document: first_form_version, created_at: Time.utc(2022, 12, 1, 9, 0, 0), reference: "first_submission"
+      end
+
+      it "returns the submissions in order" do
+        expect(described_class.all.ordered_by_form_version_and_date.pluck(:reference)).to eq(%w[first_submission third_submission second_submission fourth_submission])
+      end
+    end
   end
 
   describe "#sent?" do

@@ -6,7 +6,11 @@ class Submission < ApplicationRecord
     start_time = date.in_time_zone(TimeZoneUtils.submission_time_zone).beginning_of_day
     end_time = start_time.end_of_day
 
-    where(form_id:, created_at: start_time..end_time, mode: mode).order(created_at: :desc)
+    where(form_id:, created_at: start_time..end_time, mode: mode)
+  }
+
+  scope :ordered_by_form_version_and_date, lambda {
+    order(Arel.sql("(form_document->>'updated_at')::timestamptz ASC, created_at ASC"))
   }
 
   delegate :preview?, to: :mode_object
