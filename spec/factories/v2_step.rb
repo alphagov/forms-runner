@@ -86,6 +86,25 @@ FactoryBot.define do
         end
       end
 
+      trait :with_name_settings do
+        transient do
+          input_type { "first_and_last_name" }
+          title_needed { "false" }
+        end
+
+        answer_type { "name" }
+        answer_settings do
+          DataStruct.new(
+            input_type:,
+            title_needed:,
+          )
+        end
+      end
+
+      trait :with_file_upload_settings do
+        answer_type { "file" }
+      end
+
       trait :with_repeatable do
         is_repeatable { true }
       end
