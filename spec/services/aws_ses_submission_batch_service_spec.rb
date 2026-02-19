@@ -16,24 +16,6 @@ RSpec.describe AwsSesSubmissionBatchService do
       create_list(:submission, 3, form_document:)
     end
 
-    context "when the form does not have a submission email address" do
-      let(:submission_email) { nil }
-
-      it "raises an error" do
-        expect(AwsSesSubmissionBatchMailer).not_to receive(:batch_submission_email)
-        expect { service.send_batch }.to raise_error(StandardError, "Form id: #{form.id} is missing a submission email address")
-      end
-
-      context "when the mode is preview" do
-        let(:mode) { instance_double(Mode, preview?: true) }
-
-        it "does not send an email" do
-          expect(AwsSesSubmissionBatchMailer).not_to receive(:batch_submission_email)
-          service.send_batch
-        end
-      end
-    end
-
     it "calls the SubmissionFilenameGenerator with a nil form version" do
       expect(SubmissionFilenameGenerator).to receive(:batch_csv_filename).with(form_name: form.name, date:, mode:, form_version: nil)
       service.send_batch

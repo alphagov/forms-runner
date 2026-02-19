@@ -18,6 +18,15 @@ class SendSubmissionBatchJob < ApplicationJob
     mode = Mode.new(mode_string)
     set_submission_batch_logging_attributes(form:, mode:)
 
+    if form.submission_email.blank?
+      if mode.preview?
+        Rails.logger.info "Skipping sending batch for preview submissions, as the submission email address has not been set"
+        return
+      else
+        raise StandardError, "Form id: #{form.id} is missing a submission email address"
+      end
+    end
+
     message_id = AwsSesSubmissionBatchService.new(submissions_query: submissions, form:, date:, mode:).send_batch
 
     delivery.update!(

@@ -7,21 +7,6 @@ class AwsSesSubmissionBatchService
   end
 
   def send_batch
-    if @form.submission_email.blank?
-      if @mode.preview?
-        Rails.logger.info "Skipping sending batch for preview submissions, as the submission email address has not been set"
-        return
-      else
-        raise StandardError, "Form id: #{@form.id} is missing a submission email address"
-      end
-    end
-
-    deliver_batch_email
-  end
-
-private
-
-  def deliver_batch_email
     files = {}
 
     csvs = CsvGenerator.generate_batched_submissions(submissions_query: @submissions_query, is_s3_submission: false)
