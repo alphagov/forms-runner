@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :v2_step, class: DataStruct do
-    id { Faker::Number.number(digits: 2) }
+    id { Faker::Alphanumeric.alphanumeric(number: 8) }
 
     sequence(:position) { |n| n }
     next_step_id { nil }
