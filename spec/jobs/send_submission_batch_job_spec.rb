@@ -50,7 +50,10 @@ RSpec.describe SendSubmissionBatchJob, type: :job do
     let(:preview_submission) do
       create(:submission, :preview, form_document:, form_id:, created_at: date.beginning_of_day + 1.hour)
     end
-    let(:submissions) { [submissions_to_include, submission_not_on_date, preview_submission] }
+    let(:different_form_submission) do
+      create(:submission, form_id: 5, form_document:, mode: mode_string, created_at: date.beginning_of_day + 1.hour)
+    end
+    let(:submissions) { [submissions_to_include, submission_not_on_date, preview_submission, different_form_submission] }
 
     context "when the form does not have a submission email address" do
       let(:submission_email) { nil }

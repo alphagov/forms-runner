@@ -7,7 +7,7 @@ class SendSubmissionBatchJob < ApplicationJob
   retry_on Aws::SESV2::Errors::ServiceError, wait: :polynomially_longer, attempts: TOTAL_ATTEMPTS
 
   def perform(form_id:, mode_string:, date:, delivery:)
-    submissions = Submission.for_daily_batch(form_id, date, mode_string)
+    submissions = Submission.for_form_and_mode(form_id, mode_string).on_day(date)
 
     if submissions.empty?
       Rails.logger.info("No submissions to batch for form_id: #{form_id}, mode: #{mode_string}, date: #{date}")
