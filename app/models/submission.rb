@@ -2,11 +2,13 @@ class Submission < ApplicationRecord
   has_many :submission_deliveries, dependent: :destroy
   has_many :deliveries, through: :submission_deliveries
 
-  scope :for_daily_batch, lambda { |form_id, date, mode|
-    start_time = date.in_time_zone(TimeZoneUtils.submission_time_zone).beginning_of_day
-    end_time = start_time.end_of_day
+  scope :for_form_and_mode, lambda { |form_id, mode|
+    where(form_id: form_id, mode: mode)
+  }
 
-    where(form_id:, created_at: start_time..end_time, mode: mode)
+  scope :on_day, lambda { |date|
+    range = date.in_time_zone(TimeZoneUtils.submission_time_zone).all_day
+    where(created_at: range)
   }
 
   scope :ordered_by_form_version_and_date, lambda {
