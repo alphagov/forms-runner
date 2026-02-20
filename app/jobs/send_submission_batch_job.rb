@@ -6,16 +6,16 @@ class SendSubmissionBatchJob < ApplicationJob
 
   retry_on Aws::SESV2::Errors::ServiceError, wait: :polynomially_longer, attempts: TOTAL_ATTEMPTS
 
-  def perform(form_id:, mode_string:, date:, delivery:)
-    submissions = Submission.for_form_and_mode(form_id, mode_string).on_day(date)
+  def perform(delivery:)
+    submissions = delivery.submissions
 
     if submissions.empty?
-      Rails.logger.info("No submissions to batch for form_id: #{form_id}, mode: #{mode_string}, date: #{date}")
-      return
+      raise StandardError, "No submissions found for delivery id: #{delivery.id} when running job: #{job_id}"
     end
 
     form = submissions.first.form
-    mode = Mode.new(mode_string)
+    mode = submissions.first.mode_object
+    date = submissions.first.submission_time.to_date
     set_submission_batch_logging_attributes(form:, mode:)
 
     if form.submission_email.blank?
@@ -32,7 +32,6 @@ class SendSubmissionBatchJob < ApplicationJob
     delivery.update!(
       delivery_reference: message_id,
       last_attempt_at: Time.zone.now,
-      submissions: submissions,
     )
 
     EventLogger.log_form_event("daily_batch_email_sent", {
