@@ -8,11 +8,13 @@ class ApplicationJob < ActiveJob::Base
     CurrentJobLoggingAttributes.preview = submission.preview?
   end
 
-  def set_submission_batch_logging_attributes(form:, mode:)
+  def set_submission_batch_logging_attributes(form:, mode:, delivery:)
     CurrentJobLoggingAttributes.job_class = self.class.name
     CurrentJobLoggingAttributes.job_id = job_id
     CurrentJobLoggingAttributes.form_id = form.id
     CurrentJobLoggingAttributes.form_name = form.name
     CurrentJobLoggingAttributes.preview = mode.preview?
+    CurrentJobLoggingAttributes.delivery_id = delivery.id
+    CurrentJobLoggingAttributes.delivery_reference = delivery.delivery_reference
   end
 end

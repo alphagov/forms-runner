@@ -18,7 +18,8 @@ class SendSubmissionBatchJob < ApplicationJob
     form = latest_submission.form
     mode = latest_submission.mode_object
     date = latest_submission.submission_time.to_date
-    set_submission_batch_logging_attributes(form:, mode:)
+
+    set_submission_batch_logging_attributes(form:, mode:, delivery:)
 
     if form.submission_email.blank?
       if mode.preview?
@@ -36,8 +37,9 @@ class SendSubmissionBatchJob < ApplicationJob
       last_attempt_at: Time.zone.now,
     )
 
+    CurrentJobLoggingAttributes.delivery_reference = delivery.delivery_reference
     EventLogger.log_form_event("daily_batch_email_sent", {
-      mode:,
+      mode: mode.to_s,
       batch_date: date,
       number_of_submissions: submissions.count,
     })
