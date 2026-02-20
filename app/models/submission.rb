@@ -44,11 +44,11 @@ class Submission < ApplicationRecord
     submission&.single_submission_delivery&.delivery_reference&.present?
   end
 
-private
-
   def mode_object
     Mode.new(mode)
   end
+
+private
 
   def answer_store
     Store::DatabaseAnswerStore.new(answers)
