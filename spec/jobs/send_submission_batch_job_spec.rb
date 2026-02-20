@@ -6,7 +6,7 @@ RSpec.describe SendSubmissionBatchJob, type: :job do
 
   let(:mode_string) { "form" }
   let(:date) { Date.new(2022, 12, 14) }
-  let(:delivery) { create(:delivery, delivery_schedule: "daily") }
+  let(:delivery) { create(:delivery, delivery_schedule: "daily", submissions:) }
 
   let(:form_document) { create(:v2_form_document, :with_steps, name: "My Form", submission_email:) }
   let(:submission_email) { "to@example.com" }
@@ -16,25 +16,21 @@ RSpec.describe SendSubmissionBatchJob, type: :job do
   before do
     submissions
     ActionMailer::Base.deliveries.clear
-    described_class.perform_later(form_id:, mode_string:, date:, delivery:)
+    job = described_class.perform_later(delivery:)
+    @job_id = job.job_id
   end
 
   context "when there are no submissions" do
-    before do
-      perform_enqueued_jobs
-    end
-
-    it "does not send an email" do
+    it "raises an error and does not send an email" do
+      expect {
+        perform_enqueued_jobs
+      }.to raise_error(StandardError, "No submissions found for delivery id: #{delivery.id} when running job: #{@job_id}")
       expect(ActionMailer::Base.deliveries).to be_empty
-    end
-
-    it "does not update the delivery" do
-      expect(delivery.reload.last_attempt_at).to be_nil
     end
   end
 
   context "when there are submissions" do
-    let(:submissions_to_include) do
+    let(:submissions) do
       create_list(
         :submission,
         3,
@@ -44,13 +40,6 @@ RSpec.describe SendSubmissionBatchJob, type: :job do
         created_at: date.beginning_of_day + 1.hour,
       )
     end
-    let(:submission_not_on_date) do
-      create(:submission, form_document:, form_id:, mode: mode_string, created_at: date.beginning_of_day - 1.day)
-    end
-    let(:preview_submission) do
-      create(:submission, :preview, form_document:, form_id:, created_at: date.beginning_of_day + 1.hour)
-    end
-    let(:submissions) { [submissions_to_include, submission_not_on_date, preview_submission] }
 
     context "when the form does not have a submission email address" do
       let(:submission_email) { nil }
@@ -102,7 +91,7 @@ RSpec.describe SendSubmissionBatchJob, type: :job do
         mail = ActionMailer::Base.deliveries.last
 
         csv_content = mail.attachments.first.decoded
-        expect(csv_content.lines.count).to eq(submissions_to_include.count + 1)
+        expect(csv_content.lines.count).to eq(submissions.count + 1)
       end
     end
   end
