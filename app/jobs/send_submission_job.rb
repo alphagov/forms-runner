@@ -5,7 +5,7 @@ class SendSubmissionJob < SubmissionDeliveryJob
   retry_on Aws::SESV2::Errors::ServiceError, wait: :polynomially_longer, attempts: TOTAL_ATTEMPTS
 
   def perform(submission)
-    set_submission_logging_attributes(submission)
+    set_submission_logging_attributes(submission:, delivery: submission.single_submission_delivery)
 
     new_delivery_attempt!(submission)
 
