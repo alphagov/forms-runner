@@ -20,20 +20,26 @@ class ReceiveSubmissionBouncesAndComplaintsJob < ApplicationJob
 
       raise "Unexpected event type:#{ses_event_type}" unless %w[Bounce Complaint].include?(ses_event_type)
 
+      set_logging_attributes(submission:, delivery:)
+
       process_bounce(delivery, submission, ses_message) if ses_event_type == "Bounce"
-      process_complaint(delivery, submission) if ses_event_type == "Complaint"
+      process_complaint(delivery) if ses_event_type == "Complaint"
     end
   end
 
 private
 
-  def process_bounce(delivery, submission, ses_message)
-    set_submission_logging_attributes(submission:, delivery:)
+  def set_logging_attributes(submission:, delivery:)
+    if delivery.immediate?
+      set_submission_logging_attributes(submission:, delivery:)
+    elsif delivery.daily?
+      set_submission_batch_logging_attributes(form: submission.form, mode: submission.mode_object, delivery:)
+    end
+  end
 
+  def process_bounce(delivery, submission, ses_message)
     bounce_object = ses_message["bounce"] || {}
 
-    # Don't mark preview submissions as bounced, just log that they bounced. We don't need to attempt to resend preview
-    # submissions so these can be deleted as normal by the deletion job.
     unless submission.preview?
       bounced_timestamp = Time.zone.parse(bounce_object["timestamp"])
 
@@ -60,6 +66,11 @@ private
       }
     end
 
+    process_immediate_delivery_bounce(delivery, submission, ses_bounce, bounced_recipients) if delivery.immediate?
+    process_daily_delivery_bounce(delivery, submission, ses_bounce, bounced_recipients) if delivery.daily?
+  end
+
+  def process_immediate_delivery_bounce(delivery, submission, ses_bounce, bounced_recipients)
     EventLogger.log_form_event("submission_bounced", ses_bounce: ses_bounce.merge(bounced_recipients:))
 
     unless submission.preview?
@@ -68,15 +79,37 @@ private
                              extra: {
                                form_id: submission.form_id,
                                submission_reference: submission.reference,
+                               delivery_reference: delivery.delivery_reference,
+                               delivery_id: delivery.id,
                                job_id:,
                                ses_bounce:,
                              })
     end
   end
 
-  def process_complaint(delivery, submission)
-    set_submission_logging_attributes(submission:, delivery:)
+  def process_daily_delivery_bounce(delivery, submission, ses_bounce, bounced_recipients)
+    EventLogger.log_form_event("daily_batch_email_bounced", ses_bounce: ses_bounce.merge(bounced_recipients:))
 
-    EventLogger.log_form_event("submission_complaint")
+    unless submission.preview?
+      Sentry.capture_message("Daily submission batch email bounced for form #{submission.form_id} - #{self.class.name}:",
+                             fingerprint: ["{{ default }}", submission.form_id],
+                             extra: {
+                               form_id: submission.form_id,
+                               delivery_reference: delivery.delivery_reference,
+                               delivery_schedule: delivery.delivery_schedule,
+                               delivery_id: delivery.id,
+                               batch_date: submission.submission_time.to_date,
+                               job_id:,
+                               ses_bounce:,
+                             })
+    end
+  end
+
+  def process_complaint(delivery)
+    if delivery.immediate?
+      EventLogger.log_form_event("submission_complaint")
+    elsif delivery.daily?
+      EventLogger.log_form_event("daily_batch_email_complaint")
+    end
   end
 end
