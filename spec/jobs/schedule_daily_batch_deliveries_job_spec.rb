@@ -24,30 +24,68 @@ RSpec.describe ScheduleDailyBatchDeliveriesJob do
 
   before do
     allow(DailySubmissionBatchSelector).to receive(:batches).and_return(batches.to_enum)
-    described_class.perform_now
   end
 
-  it "calls the selector with yesterday's date" do
-    expect(DailySubmissionBatchSelector).to have_received(:batches).with(Time.zone.yesterday)
+  context "when Deliveries do not already exist for batches" do
+    before do
+      described_class.perform_now
+    end
+
+    it "calls the selector with yesterday's date" do
+      expect(DailySubmissionBatchSelector).to have_received(:batches).with(Time.zone.yesterday)
+    end
+
+    it "creates a delivery record per batch job" do
+      expect(Delivery.daily.count).to eq(2)
+      expect(Delivery.first.submissions.map(&:id)).to match_array(form_submissions.map(&:id))
+      expect(Delivery.second.submissions.map(&:id)).to match_array(other_form_submissions.map(&:id))
+    end
+
+    it "enqueues a SendSubmissionBatchJob per batch" do
+      expect(ActiveJob::Base.queue_adapter.enqueued_jobs.size).to eq(2)
+    end
+
+    it "enqueues the jobs with the correct args" do
+      enqueued_args = ActiveJob::Base.queue_adapter.enqueued_jobs.map { |j| j[:args].first }
+      expect(enqueued_args.first).to include("delivery" => hash_including("_aj_globalid"))
+      expect(locate_delivery(enqueued_args.first)).to eq(Delivery.first)
+
+      expect(enqueued_args.second).to include("delivery" => hash_including("_aj_globalid"))
+      expect(locate_delivery(enqueued_args.second)).to eq(Delivery.second)
+    end
   end
 
-  it "creates a delivery record per batch job" do
-    expect(Delivery.daily.count).to eq(2)
-    expect(Delivery.first.submissions.map(&:id)).to match_array(form_submissions.map(&:id))
-    expect(Delivery.second.submissions.map(&:id)).to match_array(other_form_submissions.map(&:id))
-  end
+  context "when a Delivery already exists for a batch" do
+    let!(:existing_delivery) { create(:delivery, delivery_schedule: :daily, submissions: form_submissions) }
 
-  it "enqueues a SendSubmissionBatchJob per batch" do
-    expect(ActiveJob::Base.queue_adapter.enqueued_jobs.size).to eq(2)
-  end
+    it "logs that the delivery will be skipped" do
+      expect(Rails.logger).to receive(:warn).with(
+        "Daily batch delivery already exists for batch - skipping",
+        hash_including(
+          form_id: form_id, mode: "form", date: Time.zone.yesterday, delivery_id: existing_delivery.id,
+        ),
+      )
 
-  it "enqueues the jobs with the correct args" do
-    enqueued_args = ActiveJob::Base.queue_adapter.enqueued_jobs.map { |j| j[:args].first }
-    expect(enqueued_args.first).to include("delivery" => hash_including("_aj_globalid"))
-    expect(locate_delivery(enqueued_args.first)).to eq(Delivery.first)
+      described_class.perform_now
+    end
 
-    expect(enqueued_args.second).to include("delivery" => hash_including("_aj_globalid"))
-    expect(locate_delivery(enqueued_args.second)).to eq(Delivery.second)
+    it "only creates a delivery for the batch without an existing delivery" do
+      expect {
+        described_class.perform_now
+      }.to change(Delivery, :count).by(1)
+
+      expect(Delivery.last.submissions.map(&:id)).to match_array(other_form_submissions.map(&:id))
+    end
+
+    it "only schedules a job for the batch without an existing delivery" do
+      expect {
+        described_class.perform_now
+      }.to change { ActiveJob::Base.queue_adapter.enqueued_jobs.size }.by(1)
+
+      enqueued_args = ActiveJob::Base.queue_adapter.enqueued_jobs.map { |j| j[:args].first }
+      expect(enqueued_args.first).to include("delivery" => hash_including("_aj_globalid"))
+      expect(locate_delivery(enqueued_args.first)).to eq(Delivery.last)
+    end
   end
 
   def locate_delivery(enqueued_args)

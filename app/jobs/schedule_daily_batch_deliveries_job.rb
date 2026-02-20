@@ -10,13 +10,20 @@ class ScheduleDailyBatchDeliveriesJob < ApplicationJob
     date = Time.zone.yesterday
 
     DailySubmissionBatchSelector.batches(date).each do |batch|
-      # TODO: check whether delivery already exists - log if it does
+      existing_deliveries = batch.submissions.first.deliveries.daily
+      if existing_deliveries.any?
+        Rails.logger.warn("Daily batch delivery already exists for batch - skipping", {
+          form_id: batch.form_id, mode: batch.mode, date:, delivery_id: existing_deliveries.first.id
+        })
+        next
+      end
+
       delivery = Delivery.create!(delivery_schedule: :daily, submissions: batch.submissions)
 
       send_batch_job = SendSubmissionBatchJob.perform_later(delivery:)
 
       Rails.logger.info("Scheduled SendSubmissionBatchJob to send daily submission batch", {
-        form_id: batch.form_id, mode: batch.mode, date: date, job_id: send_batch_job.job_id
+        form_id: batch.form_id, mode: batch.mode, date: date, job_id: send_batch_job.job_id, delivery_id: delivery.id
       })
     end
   end
