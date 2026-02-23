@@ -130,7 +130,6 @@ private
   def enqueue_send_confirmation_email_job(submission:)
     SendConfirmationEmailJob.perform_later(
       submission:,
-      notify_response_id: email_confirmation_input.confirmation_email_reference,
       confirmation_email_address: email_confirmation_input.confirmation_email_address,
     ) do |job|
       next if job.successfully_enqueued?

@@ -56,10 +56,6 @@ describe "forms/check_your_answers/show.html.erb" do
     expect(rendered).to have_css(".govuk-grid-column-two-thirds-from-desktop input[type='radio']")
   end
 
-  it "contains a hidden notify reference for the confirmation email" do
-    expect(rendered).to have_field("confirmation-email-reference", type: "hidden", with: email_confirmation_input.confirmation_email_reference)
-  end
-
   it "displays the help link" do
     expect(rendered).to have_text(I18n.t("support_details.get_help_with_this_form"))
   end

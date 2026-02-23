@@ -83,31 +83,4 @@ RSpec.describe EmailConfirmationInput, type: :model do
       expect(email_confirmation_input).to be_valid
     end
   end
-
-  describe "submission references" do
-    uuid = /[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}/
-
-    let(:email_confirmation_input) do
-      described_class.new
-    end
-
-    let(:confirmation_email_reference) { email_confirmation_input.confirmation_email_reference }
-
-    it "generates a random email confirmation notification reference" do
-      expect(confirmation_email_reference)
-        .to match(uuid).and end_with("-confirmation-email")
-    end
-
-    context "when intialised with references" do
-      let(:email_confirmation_input) do
-        described_class.new(
-          confirmation_email_reference: "foo",
-        )
-      end
-
-      it "does not generate new references" do
-        expect(confirmation_email_reference).to eq "foo"
-      end
-    end
-  end
 end
