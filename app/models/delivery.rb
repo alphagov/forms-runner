@@ -24,4 +24,13 @@ class Delivery < ApplicationRecord
       self.status == status
     end
   end
+
+  def new_attempt!
+    update!(
+      last_attempt_at: Time.zone.now,
+      delivered_at: nil,
+      failed_at: nil,
+      failure_reason: nil,
+    )
+  end
 end
