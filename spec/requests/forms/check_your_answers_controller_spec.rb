@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Forms::CheckYourAnswersController, type: :request do
+RSpec.describe Forms::CheckYourAnswersController, :capture_logging, type: :request do
   include Capybara::RSpecMatchers
 
   let(:timestamp_of_request) { Time.utc(2022, 12, 14, 10, 0o0, 0o0) }
@@ -89,13 +89,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
   let(:confirmation_email_id) { "2222" }
   let(:confirmation_email_reference) { "confirmation-email-ref" }
 
-  let(:output) { StringIO.new }
-  let(:logger) { ActiveSupport::Logger.new(output) }
-
   before do
-    # Intercept the request logs so we can do assertions on them
-    allow(Lograge).to receive(:logger).and_return(logger)
-
     ActiveResource::HttpMock.respond_to do |mock|
       mock.get "/api/v2/forms/#{form_id}#{api_url_suffix}", req_headers, form_data.to_json, 200
     end
@@ -217,7 +211,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
 
     shared_examples "for notification references" do
       it "includes the confirmation_email_reference in the logging_context" do
-        expect(log_lines[0]["confirmation_email_reference"]).to eq(confirmation_email_reference)
+        expect(log_line["confirmation_email_reference"]).to eq(confirmation_email_reference)
       end
     end
 
@@ -247,7 +241,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       end
 
       it "includes the confirmation_email_id in the logging context" do
-        expect(log_lines[0]["confirmation_email_id"]).to eq(confirmation_email_id)
+        expect(log_lines.last["confirmation_email_id"]).to eq(confirmation_email_id)
       end
 
       include_examples "for notification references"
@@ -279,7 +273,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       end
 
       it "includes the confirmation_email_id in the logging context" do
-        expect(log_lines[0]["confirmation_email_id"]).to eq(confirmation_email_id)
+        expect(log_lines.last["confirmation_email_id"]).to eq(confirmation_email_id)
       end
 
       include_examples "for notification references"
@@ -432,11 +426,11 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       end
 
       it "does not include the confirmation_email_id in the logging context" do
-        expect(log_lines[0].keys).not_to include("confirmation_email_id")
+        expect(log_line.keys).not_to include("confirmation_email_id")
       end
 
       it "does not include confirmation_email_reference in logging context" do
-        expect(log_lines[0].keys).not_to include("confirmation_email_reference")
+        expect(log_line.keys).not_to include("confirmation_email_reference")
       end
     end
 
@@ -484,7 +478,7 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
       end
 
       it "includes the confirmation_email_id in the logging context" do
-        expect(log_lines[0]["confirmation_email_id"]).to eq(confirmation_email_id)
+        expect(log_lines.last["confirmation_email_id"]).to eq(confirmation_email_id)
       end
 
       include_examples "for notification references"
@@ -551,9 +545,5 @@ private
     email = "[#{form_data.support_email}](mailto:#{form_data.support_email})"
     online = "[#{form_data.support_url_text}](#{form_data.support_url})"
     [phone_number, email, online].compact_blank.join("\n\n")
-  end
-
-  def log_lines
-    output.string.split("\n").map { |line| JSON.parse(line) }
   end
 end

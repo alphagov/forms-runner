@@ -45,13 +45,6 @@ RSpec.describe Forms::BaseController, type: :request do
 
   let(:api_url_suffix) { "/live" }
 
-  let(:output) { StringIO.new }
-  let(:logger) do
-    ApplicationLogger.new(output).tap do |logger|
-      logger.formatter = JsonLogFormatter.new
-    end
-  end
-
   before do
     ActiveResource::HttpMock.respond_to do |mock|
       mock.get "/api/v2/forms/2#{api_url_suffix}", req_headers, form_response_data.to_json, 200
@@ -61,22 +54,16 @@ RSpec.describe Forms::BaseController, type: :request do
     end
   end
 
-  describe "logging" do
+  describe "logging", :capture_logging do
     let(:form_id) { 2 }
     let(:trace_id) { "Root=1-63441c4a-abcdef012345678912345678" }
     let(:request_id) { "a-request-id" }
 
     before do
-      Rails.logger.broadcast_to logger
-
       get form_id_path(mode: "form", form_id:), headers: {
         "HTTP_X_AMZN_TRACE_ID": trace_id,
         "X-REQUEST-ID": request_id,
       }
-    end
-
-    after do
-      Rails.logger.stop_broadcasting_to logger
     end
 
     it "logs when the form is visited" do
@@ -432,9 +419,5 @@ RSpec.describe Forms::BaseController, type: :request do
         end
       end
     end
-  end
-
-  def log_lines
-    output.string.split("\n").map { |line| JSON.parse(line) }
   end
 end

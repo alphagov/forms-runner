@@ -47,26 +47,13 @@ RSpec.describe AwsSesMessagePoller do
 
   let!(:submission) { create :submission, :sent, delivery_reference: }
 
-  let(:output) { StringIO.new }
-  let(:logger) do
-    ApplicationLogger.new(output).tap do |logger|
-      logger.formatter = JsonLogFormatter.new
-    end
-  end
-
   before do
     allow(Aws::STS::Client).to receive(:new).and_return(sts_client)
     allow(sts_client).to receive(:get_caller_identity).and_return(OpenStruct.new(account: account_id))
     allow(Aws::SQS::Client).to receive(:new).and_return(sqs_client)
-
-    Rails.logger.broadcast_to logger
   end
 
-  after do
-    Rails.logger.stop_broadcasting_to logger
-  end
-
-  describe "#poll" do
+  describe "#poll", :capture_logging do
     context "when no block is provided" do
       it "raises an ArgumentError" do
         expect { poller.poll }.to raise_error(ArgumentError, "Block required for message processing")
@@ -101,7 +88,6 @@ RSpec.describe AwsSesMessagePoller do
       it "sets logging attributes for the message" do
         poller.poll { |_submission, _ses_message| }
 
-        log_lines = output.string.split("\n").map { |line| JSON.parse(line) }
         info_log = log_lines.find { |line| line["level"] == "INFO" }
 
         expect(info_log).to include(
@@ -169,7 +155,6 @@ RSpec.describe AwsSesMessagePoller do
           raise StandardError, "Test error" if call_count == 1
         end
 
-        log_lines = output.string.split("\n").map { |line| JSON.parse(line) }
         warn_log = log_lines.find { |line| line["level"] == "WARN" }
 
         expect(warn_log).to include(

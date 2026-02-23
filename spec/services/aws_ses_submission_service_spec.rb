@@ -22,21 +22,6 @@ RSpec.describe AwsSesSubmissionService do
   let(:from_email_address) { "govukforms@example.gov.uk" }
   let(:available_languages) { %i[en] }
 
-  let(:output) { StringIO.new }
-  let(:logger) do
-    ApplicationLogger.new(output).tap do |logger|
-      logger.formatter = JsonLogFormatter.new
-    end
-  end
-
-  before do
-    Rails.logger.broadcast_to logger
-  end
-
-  after do
-    Rails.logger.stop_broadcasting_to logger
-  end
-
   describe "#submit" do
     before do
       allow(CsvGenerator).to receive(:generate_submission).and_call_original
