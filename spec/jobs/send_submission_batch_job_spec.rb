@@ -94,6 +94,34 @@ RSpec.describe SendSubmissionBatchJob, type: :job do
         expect(csv_content.lines.count).to eq(submissions.count + 1)
       end
     end
+
+    context "when the form settings have changed between submissions" do
+      let(:new_form_document) { create(:v2_form_document, :with_steps, name: "New form name", submission_email: "new-email@example.gov.uk") }
+      let(:submissions) do
+        [
+          create(:submission, form_document: form_document, form_id:, mode: mode_string, created_at: date.end_of_day - 3.hours),
+          # we should use the form details from this submission as it is the most recent
+          create(:submission, form_document: new_form_document, form_id:, mode: mode_string, created_at: date.end_of_day - 1.hour),
+          create(:submission, form_document: form_document, form_id:, mode: mode_string, created_at: date.end_of_day - 2.hours),
+        ]
+      end
+
+      before do
+        perform_enqueued_jobs
+      end
+
+      it "sends an email to the new submission email address" do
+        expect(ActionMailer::Base.deliveries.count).to eq(1)
+
+        mail = ActionMailer::Base.deliveries.last
+        expect(mail.to).to include(new_form_document.submission_email)
+      end
+
+      it "uses the form name from the most recent submission" do
+        mail = ActionMailer::Base.deliveries.last
+        expect(mail.subject).to include(new_form_document.name)
+      end
+    end
   end
 end
 # rubocop:enable RSpec/InstanceVariable

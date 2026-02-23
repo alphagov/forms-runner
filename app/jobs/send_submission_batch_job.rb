@@ -13,9 +13,11 @@ class SendSubmissionBatchJob < ApplicationJob
       raise StandardError, "No submissions found for delivery id: #{delivery.id} when running job: #{job_id}"
     end
 
-    form = submissions.first.form
-    mode = submissions.first.mode_object
-    date = submissions.first.submission_time.to_date
+    # Get the form details from the latest submission to get the most recent submission email and form name.
+    latest_submission = submissions.order(created_at: :desc).first
+    form = latest_submission.form
+    mode = latest_submission.mode_object
+    date = latest_submission.submission_time.to_date
     set_submission_batch_logging_attributes(form:, mode:)
 
     if form.submission_email.blank?
