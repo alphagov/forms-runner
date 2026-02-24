@@ -11,6 +11,9 @@ production:
   receive_submission_deliveries_job:
     class: ReceiveSubmissionDeliveriesJob
     schedule: every 10 minutes
+  schedule_daily_batch_deliveries_job:
+    class: ScheduleDailyBatchDeliveriesJob
+    schedule: every day at 2am Europe/London
 development:
   delete_submissions_job:
     class: DeleteSubmissionsJob
@@ -24,3 +27,6 @@ development:
   receive_submission_deliveries_job:
     class: ReceiveSubmissionDeliveriesJob
     schedule: every minute
+  schedule_daily_batch_deliveries_job:
+    class: ScheduleDailyBatchDeliveriesJob
+    schedule: every day at 2am Europe/London
