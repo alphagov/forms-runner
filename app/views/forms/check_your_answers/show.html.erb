@@ -30,14 +30,16 @@
 
       <%= form.hidden_field :confirmation_email_reference, id: 'confirmation-email-reference' %>
 
-      <%if @current_context.form.declaration_text.present? %>
+      <%if @current_context.form.try(:declaration_markdown).present? %>
+        <h2 class="govuk-heading-m govuk-!-margin-top-7"><%= t('form.check_your_answers.declaration') %></h2>
+        <%= HtmlMarkdownSanitizer.new.render_scrubbed_markdown(@current_context.form.declaration_markdown) %>
+      <%elsif @current_context.form.declaration_text.present? %>
         <h2 class="govuk-heading-m govuk-!-margin-top-7"><%= t('form.check_your_answers.declaration') %></h2>
         <%= HtmlMarkdownSanitizer.new.render_scrubbed_html(@current_context.form.declaration_text) %>
       <% end %>
 
-      <%= form.govuk_submit(@current_context.form.declaration_text.present? ? t('form.check_your_answers.agree_and_submit') : t('form.check_your_answers.submit')) %>
-    </div>
-
+      <% declaration_present = @current_context.form.try(:declaration_markdown).present? || @current_context.form.declaration_text.present? %>
+      <%= form.govuk_submit(declaration_present ? t('form.check_your_answers.agree_and_submit') : t('form.check_your_answers.submit')) %> </div>
 
   </div>
   <div class="govuk-grid-row">
