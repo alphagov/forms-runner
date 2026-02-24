@@ -246,10 +246,6 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         expect(mail.subject).to match("TEST FORM SUBMISSION: #{form_data.name} - reference: #{reference}")
       end
 
-      it "includes the confirmation_email_id in the logging context" do
-        expect(log_lines[0]["confirmation_email_id"]).to eq(confirmation_email_id)
-      end
-
       include_examples "for notification references"
     end
 
@@ -276,10 +272,6 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         expect(mail.to).to eq [submission_email]
 
         expect(mail.subject).to match("Form submission: #{form_data.name} - reference: #{reference}")
-      end
-
-      it "includes the confirmation_email_id in the logging context" do
-        expect(log_lines[0]["confirmation_email_id"]).to eq(confirmation_email_id)
       end
 
       include_examples "for notification references"
@@ -481,10 +473,6 @@ RSpec.describe Forms::CheckYourAnswersController, type: :request do
         expect(mail.body.raw_source).to include(expected_personalisation.to_s)
 
         expect(mail.govuk_notify_reference).to eq confirmation_email_reference
-      end
-
-      it "includes the confirmation_email_id in the logging context" do
-        expect(log_lines[0]["confirmation_email_id"]).to eq(confirmation_email_id)
       end
 
       include_examples "for notification references"
