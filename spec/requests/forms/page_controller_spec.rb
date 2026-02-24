@@ -1,7 +1,7 @@
 require "rails_helper"
 
 # rubocop:disable RSpec/AnyInstance
-RSpec.describe Forms::PageController, type: :request do
+RSpec.describe Forms::PageController, :capture_logging, type: :request do
   let(:timestamp_of_request) { Time.utc(2022, 12, 14, 10, 0o0, 0o0) }
 
   let(:form_data) do
@@ -48,13 +48,7 @@ RSpec.describe Forms::PageController, type: :request do
   let(:api_url_suffix) { "/live" }
   let(:mode) { "form" }
 
-  let(:output) { StringIO.new }
-  let(:logger) { ActiveSupport::Logger.new(output) }
-
   before do
-    # Intercept the request logs so we can do assertions on them
-    allow(Lograge).to receive(:logger).and_return(logger)
-
     ActiveResource::HttpMock.respond_to do |mock|
       mock.get "/api/v2/forms/2#{api_url_suffix}", req_headers, form_data.to_json, 200
     end
@@ -84,15 +78,15 @@ RSpec.describe Forms::PageController, type: :request do
     end
 
     it "adds the page ID to the instrumentation payload" do
-      expect(log_lines[0]["page_id"]).to eq(page_id.to_s)
+      expect(log_lines.last["page_id"]).to eq(page_id.to_s)
     end
 
     it "adds the question_number to the instrumentation payload" do
-      expect(log_lines[0]["question_number"]).to eq(1)
+      expect(log_lines.last["question_number"]).to eq(1)
     end
 
     it "adds the answer_type to the instrumentation payload" do
-      expect(log_lines[0]["answer_type"]).to eq("text")
+      expect(log_lines.last["answer_type"]).to eq("text")
     end
   end
 
@@ -700,7 +694,7 @@ RSpec.describe Forms::PageController, type: :request do
         end
 
         it "adds validation_errors logging attribute" do
-          expect(log_lines[0]["validation_errors"]).to eq(["text: blank"])
+          expect(log_lines.last["validation_errors"]).to eq(["text: blank"])
         end
 
         it "assigns a back link to the previous page" do
@@ -717,7 +711,7 @@ RSpec.describe Forms::PageController, type: :request do
 
       it "does not add validation_errors logging attribute" do
         post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id), params: { question: { text: "answer text" }, changing_existing_answer: false }
-        expect(log_lines[0].keys).not_to include("validation_errors")
+        expect(log_lines.last.keys).not_to include("validation_errors")
       end
 
       context "when changing an existing answer" do
@@ -939,7 +933,7 @@ RSpec.describe Forms::PageController, type: :request do
 
         it "adds answer_metadata logging attribute" do
           post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: first_page_id), params: { question: }
-          expect(log_lines[0]["answer_metadata"]).to eq({
+          expect(log_lines.last["answer_metadata"]).to eq({
             "file_size_in_bytes" => tempfile.size,
             "file_type" => content_type,
           })
@@ -976,11 +970,11 @@ RSpec.describe Forms::PageController, type: :request do
         end
 
         it "adds validation_errors logging attribute" do
-          expect(log_lines[0]["validation_errors"]).to eq(["file: disallowed_type", "file: empty"])
+          expect(log_lines.last["validation_errors"]).to eq(["file: disallowed_type", "file: empty"])
         end
 
         it "adds answer_metadata logging attribute" do
-          expect(log_lines[0]["answer_metadata"]).to eq({
+          expect(log_lines.last["answer_metadata"]).to eq({
             "file_size_in_bytes" => tempfile.size,
             "file_type" => "image/gif",
           })
@@ -1068,10 +1062,6 @@ RSpec.describe Forms::PageController, type: :request do
         expect(response).to redirect_to form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2)
       end
     end
-  end
-
-  def log_lines
-    output.string.split("\n").map { |line| JSON.parse(line) }
   end
 end
 # rubocop:enable RSpec/AnyInstance

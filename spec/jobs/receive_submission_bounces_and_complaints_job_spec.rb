@@ -18,12 +18,6 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
   let(:mode) { "form" }
   let(:submission) { create :submission, reference:, mode: }
   let!(:delivery) { create :delivery, delivery_reference:, submissions: [submission] }
-  let(:output) { StringIO.new }
-  let(:logger) do
-    ApplicationLogger.new(output).tap do |logger|
-      logger.formatter = JsonLogFormatter.new
-    end
-  end
 
   before do
     sts_client = instance_double(Aws::STS::Client)
@@ -35,12 +29,6 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
     allow(sqs_client).to receive(:delete_message)
 
     allow(CloudWatchService).to receive(:record_job_started_metric)
-
-    Rails.logger.broadcast_to logger
-  end
-
-  after do
-    Rails.logger.stop_broadcasting_to logger
   end
 
   describe "CloudWatch metrics" do
@@ -52,7 +40,7 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
     end
   end
 
-  describe "processing bounce notifications" do
+  describe "processing bounce notifications", :capture_logging do
     let(:messages) { [sqs_message] }
 
     before do
@@ -182,7 +170,7 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
     end
   end
 
-  describe "processing complaint notifications" do
+  describe "processing complaint notifications", :capture_logging do
     let(:event_type) { "Complaint" }
     let(:messages) { [sqs_message] }
 
@@ -220,10 +208,6 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
         expect(error.message).to eq("Unexpected event type:#{event_type}")
       end
     end
-  end
-
-  def log_lines
-    output.string.split("\n").map { |line| JSON.parse(line) }
   end
 end
 # rubocop:enable RSpec/InstanceVariable

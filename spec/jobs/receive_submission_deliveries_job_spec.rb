@@ -18,13 +18,6 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
   let(:reference) { "submission-reference" }
   let!(:submission) { create :submission, :sent, delivery_reference:, reference:, created_at: Time.zone.parse("2025-05-09T10:25:35.001Z") }
 
-  let(:output) { StringIO.new }
-  let(:logger) do
-    ApplicationLogger.new(output).tap do |logger|
-      logger.formatter = JsonLogFormatter.new
-    end
-  end
-
   before do
     sts_client = instance_double(Aws::STS::Client)
     allow(Aws::STS::Client).to receive(:new).and_return(sts_client)
@@ -35,12 +28,6 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
     allow(sqs_client).to receive(:delete_message)
 
     allow(CloudWatchService).to receive(:record_job_started_metric)
-
-    Rails.logger.broadcast_to logger
-  end
-
-  after do
-    Rails.logger.stop_broadcasting_to logger
   end
 
   describe "CloudWatch metrics" do
@@ -76,7 +63,7 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
       expect(submission.deliveries.first.reload.delivered_at).to eq ses_delivery_timestamp
     end
 
-    it "logs form event with correct details" do
+    it "logs form event with correct details", :capture_logging do
       perform_enqueued_jobs
 
       expect(log_lines).to include(hash_including(
@@ -106,10 +93,6 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
         expect(error.message).to eq("Unexpected event type:#{event_type}")
       end
     end
-  end
-
-  def log_lines
-    output.string.split("\n").map { |line| JSON.parse(line) }
   end
 end
 # rubocop:enable RSpec/InstanceVariable

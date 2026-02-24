@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe FormSubmissionService do
+RSpec.describe FormSubmissionService, :capture_logging do
   include ActiveJob::TestHelper
 
   subject(:service) { described_class.call(current_context:, email_confirmation_input:, mode:) }
@@ -62,21 +62,8 @@ RSpec.describe FormSubmissionService do
   let(:locales_used) { [:en] }
   let(:current_context) { instance_double(Flow::Context, form:, journey:, completed_steps: all_steps, answers:, locales_used:) }
 
-  let(:output) { StringIO.new }
-  let(:logger) do
-    ApplicationLogger.new(output).tap do |logger|
-      logger.formatter = JsonLogFormatter.new
-    end
-  end
-
   before do
-    Rails.logger.broadcast_to logger
-
     allow(ReferenceNumberService).to receive(:generate).and_return(reference)
-  end
-
-  after do
-    Rails.logger.stop_broadcasting_to logger
   end
 
   describe "#submit" do
@@ -86,7 +73,7 @@ RSpec.describe FormSubmissionService do
 
     it "includes the submission reference in the logging context" do
       service.submit
-      expect(log_lines[0]["submission_reference"]).to eq(reference)
+      expect(log_line["submission_reference"]).to eq(reference)
     end
 
     shared_examples "logging" do
@@ -387,9 +374,5 @@ RSpec.describe FormSubmissionService do
         expect(service.submission_locale).to eq(:en)
       end
     end
-  end
-
-  def log_lines
-    output.string.split("\n").map { |line| JSON.parse(line) }
   end
 end
