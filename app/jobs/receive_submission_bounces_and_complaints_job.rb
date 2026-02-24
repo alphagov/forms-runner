@@ -21,14 +21,14 @@ class ReceiveSubmissionBouncesAndComplaintsJob < ApplicationJob
       raise "Unexpected event type:#{ses_event_type}" unless %w[Bounce Complaint].include?(ses_event_type)
 
       process_bounce(delivery, submission, ses_message) if ses_event_type == "Bounce"
-      process_complaint(submission) if ses_event_type == "Complaint"
+      process_complaint(delivery, submission) if ses_event_type == "Complaint"
     end
   end
 
 private
 
   def process_bounce(delivery, submission, ses_message)
-    set_submission_logging_attributes(submission)
+    set_submission_logging_attributes(submission:, delivery:)
 
     bounce_object = ses_message["bounce"] || {}
 
@@ -74,8 +74,8 @@ private
     end
   end
 
-  def process_complaint(submission)
-    set_submission_logging_attributes(submission)
+  def process_complaint(delivery, submission)
+    set_submission_logging_attributes(submission:, delivery:)
 
     EventLogger.log_form_event("submission_complaint")
   end

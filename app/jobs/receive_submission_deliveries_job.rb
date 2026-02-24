@@ -33,7 +33,7 @@ class ReceiveSubmissionDeliveriesJob < ApplicationJob
 private
 
   def process_delivery(delivery, submission, **attributes)
-    set_submission_logging_attributes(submission)
+    set_submission_logging_attributes(submission:, delivery:)
 
     delivery.update! attributes
 

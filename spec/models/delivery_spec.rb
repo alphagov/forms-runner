@@ -84,4 +84,27 @@ RSpec.describe Delivery, type: :model do
       end
     end
   end
+
+  describe "#new_attempt!" do
+    let(:previous_attempt_at) { 2.hours.ago }
+    let(:delivery) do
+      create(
+        :delivery,
+        last_attempt_at: previous_attempt_at,
+        delivered_at: 3.hours.ago,
+        failed_at: 2.hours.ago,
+        failure_reason: "error",
+      )
+    end
+
+    it "updates last_attempt_at and clears delivered_at, failed_at and failure_reason" do
+      delivery.new_attempt!
+      delivery.reload
+
+      expect(delivery.last_attempt_at).to be > previous_attempt_at
+      expect(delivery.delivered_at).to be_nil
+      expect(delivery.failed_at).to be_nil
+      expect(delivery.failure_reason).to be_nil
+    end
+  end
 end

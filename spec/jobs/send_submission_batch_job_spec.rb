@@ -60,7 +60,9 @@ RSpec.describe SendSubmissionBatchJob, type: :job do
       end
     end
 
-    context "when the form has a submission email address" do
+    context "when the form has a submission email address", :capture_logging do
+      let(:mail) { ActionMailer::Base.deliveries.last }
+
       before do
         @job_ran_at = Time.zone.now
         perform_enqueued_jobs
@@ -68,19 +70,15 @@ RSpec.describe SendSubmissionBatchJob, type: :job do
 
       it "sends an email" do
         expect(ActionMailer::Base.deliveries.count).to eq(1)
-
-        mail = ActionMailer::Base.deliveries.last
         expect(mail.to).to include(form_document.submission_email)
       end
 
       it "updates the delivery" do
-        mail = ActionMailer::Base.deliveries.last
         expect(delivery.reload.delivery_reference).to eq(mail.message_id)
         expect(delivery.reload.last_attempt_at).to be_within(1.second).of(@job_ran_at)
       end
 
       it "attaches a csv with the expected filename" do
-        mail = ActionMailer::Base.deliveries.last
         expect(mail.attachments).not_to be_empty
 
         filenames = mail.attachments.map(&:filename)
@@ -88,10 +86,24 @@ RSpec.describe SendSubmissionBatchJob, type: :job do
       end
 
       it "attaches a csv containing header plus one line per submission" do
-        mail = ActionMailer::Base.deliveries.last
-
         csv_content = mail.attachments.first.decoded
         expect(csv_content.lines.count).to eq(submissions.count + 1)
+      end
+
+      it "logs that the email was sent" do
+        expect(log_lines).to include(
+          hash_including(
+            "event" => "form_daily_batch_email_sent",
+            "form_id" => form_id,
+            "mode" => mode_string,
+            "preview" => "false",
+            "batch_date" => date.to_s,
+            "number_of_submissions" => submissions.count,
+            "delivery_reference" => mail.message_id,
+            "delivery_id" => delivery.id,
+            "job_id" => @job_id,
+          ),
+        )
       end
     end
 
