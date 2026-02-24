@@ -24,11 +24,12 @@ class FormSubmissionService
 
   def submit
     ensure_form_english
-    validate_submission
 
-    confirmation_mail = setup_confirmation_email if requested_confirmation?
-    deliver_submission
-    send_confirmation_email(confirmation_mail) if confirmation_mail.present?
+    validate_submission
+    validate_confirmation_email_address if requested_confirmation?
+
+    submission = deliver_submission
+    enqueue_send_confirmation_email_job(submission:) if requested_confirmation?
 
     submission_reference
   end
@@ -58,14 +59,15 @@ private
   end
 
   def deliver_submission
-    case form.submission_type
-    when "s3"
-      enqueue_deliver_submission_job(SendS3SubmissionJob)
-    when "email"
-      enqueue_deliver_submission_job(SendSubmissionJob)
-    else
-      raise "unrecognized submission delivery method #{form.submission_type.inspect}"
-    end
+    submission =
+      case form.submission_type
+      when "s3"
+        enqueue_deliver_submission_job(SendS3SubmissionJob)
+      when "email"
+        enqueue_deliver_submission_job(SendSubmissionJob)
+      else
+        raise "unrecognized submission delivery method #{form.submission_type.inspect}"
+      end
 
     LogEventService.log_submit(
       current_context,
@@ -74,6 +76,8 @@ private
       submission_type: form.submission_type,
       submission_format: form.submission_format,
     )
+
+    submission
   end
 
   def create_submission_record
@@ -102,6 +106,8 @@ private
       message_suffix = ": #{job.enqueue_error&.message}" if job.enqueue_error
       raise StandardError, "Failed to enqueue submission for reference #{submission_reference}#{message_suffix}"
     end
+
+    submission
   end
 
   def submission_timestamp
@@ -109,40 +115,29 @@ private
     Time.use_zone(time_zone) { Time.zone.now }
   end
 
-  def setup_confirmation_email
-    mail = FormSubmissionConfirmationMailer.send_confirmation_email(
-      what_happens_next_markdown: form.what_happens_next_markdown,
-      support_contact_details: form.support_details,
+  def validate_confirmation_email_address
+    mail = Mail.new(to: email_confirmation_input.confirmation_email_address)
+    to_address_error = mail.errors.select { |error| error[0] == "To" }.first
+    return unless to_address_error
+
+    redacted_error = redact_emails_from_sentry_message(to_address_error[2].to_s)
+    Sentry.capture_message("ActionMailer error for To email address in confirmation email", extra: {
+      action_mailer_error: redacted_error,
+    })
+    raise ConfirmationEmailToAddressError
+  end
+
+  def enqueue_send_confirmation_email_job(submission:)
+    SendConfirmationEmailJob.perform_later(
+      submission:,
       notify_response_id: email_confirmation_input.confirmation_email_reference,
       confirmation_email_address: email_confirmation_input.confirmation_email_address,
-      mailer_options:,
-    )
+    ) do |job|
+      next if job.successfully_enqueued?
 
-    if mail.message.errors.any?
-      to_address_error = mail.message.errors.select { |error| error[0] == "To" }.first
-      if to_address_error
-        redacted_error = redact_emails_from_sentry_message(to_address_error[2].to_s)
-        Sentry.capture_message("ActionMailer error for To email address in confirmation email", extra: {
-          action_mailer_error: redacted_error,
-        })
-        raise ConfirmationEmailToAddressError
-      end
+      message_suffix = ": #{job.enqueue_error&.message}" if job.enqueue_error
+      raise StandardError, "Failed to enqueue confirmation email for reference #{submission_reference}#{message_suffix}"
     end
-
-    mail
-  end
-
-  def send_confirmation_email(mail)
-    mail.deliver_now
-    CurrentRequestLoggingAttributes.confirmation_email_id = mail.govuk_notify_response.id
-  end
-
-  def mailer_options
-    MailerOptions.new(title: form.name,
-                      is_preview: mode.preview?,
-                      timestamp: timestamp,
-                      submission_reference: submission_reference,
-                      payment_url: form.payment_url_with_reference(submission_reference))
   end
 
   def requested_confirmation?
