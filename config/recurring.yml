@@ -13,7 +13,7 @@ production:
     schedule: every 10 minutes
   schedule_daily_batch_deliveries_job:
     class: ScheduleDailyBatchDeliveriesJob
-    schedule: every day at 2am Europe/London
+    schedule: every day at 11:40am Europe/London
 development:
   delete_submissions_job:
     class: DeleteSubmissionsJob
