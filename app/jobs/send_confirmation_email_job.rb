@@ -3,7 +3,7 @@ class SendConfirmationEmailJob < ApplicationJob
   MailerOptions = Data.define(:title, :is_preview, :timestamp, :submission_reference, :payment_url)
 
   def perform(submission:, notify_response_id:, confirmation_email_address:)
-    set_submission_logging_attributes(submission)
+    set_submission_logging_attributes(submission:)
 
     I18n.with_locale(submission.submission_locale || I18n.default_locale) do
       form = submission.form
@@ -16,6 +16,7 @@ class SendConfirmationEmailJob < ApplicationJob
       )
 
       mail.deliver_now
+      CurrentJobLoggingAttributes.confirmation_email_id = mail.govuk_notify_response.id
     end
   rescue StandardError
     CloudWatchService.record_job_failure_metric(self.class.name)
