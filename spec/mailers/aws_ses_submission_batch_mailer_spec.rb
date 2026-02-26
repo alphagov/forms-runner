@@ -72,7 +72,7 @@ describe AwsSesSubmissionBatchMailer, type: :mailer do
           let(:mode) { Mode.new(mode_string) }
 
           it "includes the preview text for #{tag}" do
-            expect(part.body).to have_css("p", text: I18n.t("mailer.submission_batch.preview", tag: tag))
+            expect(part.body).to have_css("p", text: I18n.t("mailer.submission_batch.preview.#{tag}"))
           end
         end
       end
@@ -123,7 +123,7 @@ describe AwsSesSubmissionBatchMailer, type: :mailer do
           let(:mode) { Mode.new(mode_string) }
 
           it "includes the preview text for #{tag}" do
-            expect(part.body).to have_text(I18n.t("mailer.submission_batch.preview", tag: tag))
+            expect(part.body).to have_text(I18n.t("mailer.submission_batch.preview.#{tag}"))
           end
         end
       end

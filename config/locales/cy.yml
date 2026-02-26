@@ -452,7 +452,10 @@ cy:
     submission_batch:
       file_upload_questions: For forms with file upload questions, the uploaded files will only be attached to the individual completed form emails.
       multiple_files_explainer: 'All submissions to this form from %{date} are attached to this email in CSV files named:'
-      preview: These are test submissions to a preview of a %{tag} form.
+      preview:
+        archived: These are test submissions to a preview of an archived form.
+        draft: These are test submissions to a preview of a draft form.
+        live: These are test submissions to a preview of a live form.
       single_file_explainer: 'All submissions to this form from %{date} are attached to this email in a CSV file named:'
       subject: 'Daily form submissions: ‘%{form_name}’ - %{date}'
       subject_preview: 'TEST DAILY FORM SUBMISSIONS: ‘%{form_name}’ - %{date}'

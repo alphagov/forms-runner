@@ -1,5 +1,5 @@
 <% if @mode.preview? %>
-<%= I18n.t("mailer.submission_batch.preview", tag: @mode.tag) %>
+<%= I18n.t("mailer.submission_batch.preview.#{@mode.tag}") %>
 <% end %>
 
 <%= I18n.t("mailer.form_name", form_name: @form_name) %>
