@@ -76,6 +76,9 @@ RSpec.describe SendSubmissionBatchJob, type: :job do
       it "updates the delivery" do
         expect(delivery.reload.delivery_reference).to eq(mail.message_id)
         expect(delivery.reload.last_attempt_at).to be_within(1.second).of(@job_ran_at)
+        expect(delivery.reload.delivered_at).to be_nil
+        expect(delivery.reload.failed_at).to be_nil
+        expect(delivery.reload.failure_reason).to be_nil
       end
 
       it "attaches a csv with the expected filename" do

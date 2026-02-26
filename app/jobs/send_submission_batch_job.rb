@@ -32,9 +32,9 @@ class SendSubmissionBatchJob < ApplicationJob
 
     message_id = AwsSesSubmissionBatchService.new(submissions_query: submissions, form:, date:, mode:).send_batch
 
+    delivery.new_attempt!
     delivery.update!(
       delivery_reference: message_id,
-      last_attempt_at: Time.zone.now,
     )
 
     CurrentJobLoggingAttributes.delivery_reference = delivery.delivery_reference
