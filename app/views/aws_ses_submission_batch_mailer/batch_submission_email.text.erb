@@ -1,5 +1,5 @@
 <% if @mode.preview? %>
-<%= I18n.t("mailer.submission_batch.preview", tag: @mode.tag) %>
+<%= I18n.t("mailer.submission_batch.preview.#{@mode.tag}") %>
 <% end %>
 
 <%= I18n.t("mailer.form_name", form_name: @form_name) %>
@@ -23,5 +23,4 @@
 ---
 
 <%= I18n.t("mailer.cannot_reply.heading") %>
-<%= I18n.t("mailer.cannot_reply.contact_form_filler_plain") %>
 <%= I18n.t("mailer.cannot_reply.contact_forms_team_plain") %>
