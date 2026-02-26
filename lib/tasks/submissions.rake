@@ -14,10 +14,12 @@ namespace :submissions do
 
     deliveries = Delivery.failed.joins(:submissions).where(submissions: { form_id: form_id }).distinct
     Rails.logger.info "Found #{deliveries.length} bounced submission deliveries for form with ID #{form_id}"
-    deliveries.find_each do |delivery|
-      # This will need to be updated when we support batches
+    deliveries.immediate.each do |delivery|
       submission = delivery.submissions.first
-      Rails.logger.info "Submission reference: #{submission.reference}, created_at: #{submission.created_at}, last_attempt_at: #{delivery.last_attempt_at}"
+      Rails.logger.info "Immediate delivery - submission reference: #{submission.reference}, created_at: #{submission.created_at}, last_attempt_at: #{delivery.last_attempt_at}"
+    end
+    deliveries.daily.each do |delivery|
+      Rails.logger.info "Daily batch delivery - delivery_reference: #{delivery.delivery_reference}, created_at: #{delivery.created_at}, last_attempt_at: #{delivery.last_attempt_at}"
     end
   end
 
@@ -42,13 +44,17 @@ namespace :submissions do
 
     bounced_deliveries = Delivery.failed.joins(:submissions).where(submissions: { form_id: form_id }).distinct
 
-    Rails.logger.info "#{bounced_deliveries.length} submission deliveries to retry for form with ID: #{form_id}"
+    Rails.logger.info "#{bounced_deliveries.length} deliveries to retry for form with ID: #{form_id}"
 
     bounced_deliveries.each do |delivery|
-      # This will need to be updated when we support batches
       submission = delivery.submissions.first
-      Rails.logger.info "Retrying submission with reference #{submission.reference} for form with ID: #{form_id}"
-      SendSubmissionJob.perform_later(submission)
+      if delivery.immediate?
+        Rails.logger.info "Retrying submission with reference #{submission.reference} for form with ID: #{form_id}"
+        SendSubmissionJob.perform_later(submission)
+      elsif delivery.daily?
+        Rails.logger.info "Retrying daily batch delivery with delivery_id: #{delivery.id} for date: #{submission.submission_time.to_date} for form with ID: #{form_id}"
+        SendSubmissionBatchJob.perform_later(delivery:)
+      end
     end
   end
 

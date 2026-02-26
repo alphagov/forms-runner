@@ -64,6 +64,7 @@ RSpec.describe "submissions.rake" do
 
     let!(:bounced_submission) { create :submission, :bounced, form_id: }
     let!(:another_bounced_submission) { create :submission, :bounced, form_id: }
+    let!(:bounced_daily_delivery) { create :delivery, :failed, :daily_scheduled_delivery, submissions: [bounced_submission, another_bounced_submission] }
 
     before do
       # create some submissions that won't be matched
@@ -72,9 +73,10 @@ RSpec.describe "submissions.rake" do
     end
 
     it "logs the bounced submissions" do
-      expect(Rails.logger).to receive(:info).with("Found 2 bounced submission deliveries for form with ID #{form_id}")
-      expect(Rails.logger).to receive(:info).with "Submission reference: #{bounced_submission.reference}, created_at: #{bounced_submission.created_at}, last_attempt_at: #{bounced_submission.single_submission_delivery.last_attempt_at}"
-      expect(Rails.logger).to receive(:info).with "Submission reference: #{another_bounced_submission.reference}, created_at: #{another_bounced_submission.created_at}, last_attempt_at: #{another_bounced_submission.single_submission_delivery.last_attempt_at}"
+      expect(Rails.logger).to receive(:info).with("Found 3 bounced submission deliveries for form with ID #{form_id}")
+      expect(Rails.logger).to receive(:info).with "Immediate delivery - submission reference: #{bounced_submission.reference}, created_at: #{bounced_submission.created_at}, last_attempt_at: #{bounced_submission.single_submission_delivery.last_attempt_at}"
+      expect(Rails.logger).to receive(:info).with "Immediate delivery - submission reference: #{another_bounced_submission.reference}, created_at: #{another_bounced_submission.created_at}, last_attempt_at: #{another_bounced_submission.single_submission_delivery.last_attempt_at}"
+      expect(Rails.logger).to receive(:info).with "Daily batch delivery - delivery_reference: #{bounced_daily_delivery.delivery_reference}, created_at: #{bounced_daily_delivery.created_at}, last_attempt_at: #{bounced_daily_delivery.last_attempt_at}"
       task.invoke(form_id)
     end
   end
@@ -89,6 +91,7 @@ RSpec.describe "submissions.rake" do
     let(:other_form_id) { 2 }
     let!(:bounced_submission) { create :submission, :bounced, form_id: }
     let!(:pending_submission) { create :submission, :sent, form_id: }
+    let!(:bounced_delivery) { create :delivery, :daily_scheduled_delivery, :failed, submissions: [bounced_submission] }
 
     before do
       create :submission, :sent, form_id: other_form_id
@@ -99,7 +102,7 @@ RSpec.describe "submissions.rake" do
 
       it "logs how many deliveries to retry" do
         allow(Rails.logger).to receive(:info)
-        expect(Rails.logger).to receive(:info).with("1 submission deliveries to retry for form with ID: #{form_id}")
+        expect(Rails.logger).to receive(:info).with("2 deliveries to retry for form with ID: #{form_id}")
 
         task.invoke(*valid_args)
       end
@@ -108,6 +111,7 @@ RSpec.describe "submissions.rake" do
         it "logs submissions that are being retried" do
           allow(Rails.logger).to receive(:info)
           expect(Rails.logger).to receive(:info).with("Retrying submission with reference #{bounced_submission.reference} for form with ID: #{form_id}")
+          expect(Rails.logger).to receive(:info).with("Retrying daily batch delivery with delivery_id: #{bounced_delivery.id} for date: #{bounced_submission.submission_time.to_date} for form with ID: #{form_id}")
 
           task.invoke(*valid_args)
         end
@@ -116,6 +120,12 @@ RSpec.describe "submissions.rake" do
           expect {
             task.invoke(*valid_args)
           }.to have_enqueued_job.with(bounced_submission)
+        end
+
+        it "enqueues bounced daily deliveries for retrying" do
+          expect {
+            task.invoke(*valid_args)
+          }.to have_enqueued_job.with(delivery: bounced_delivery)
         end
 
         it "does not enqueue pending submissions for retrying" do
@@ -254,6 +264,11 @@ RSpec.describe "submissions.rake" do
       create :delivery, :failed, submissions: [submission], created_at: Time.parse("2024-01-01T18:00:00Z")
     end
 
+    let!(:matching_batch_delivery) do
+      submission = create(:submission, form_id:)
+      create :delivery, :failed, :daily_scheduled_delivery, submissions: [submission], created_at: Time.parse("2024-01-01T12:00:00Z")
+    end
+
     let!(:not_bounced_delivery) do
       submission = create(:submission, form_id:)
       create :delivery, submissions: [submission], created_at: Time.parse("2024-01-01T12:00:00Z")
@@ -291,9 +306,10 @@ RSpec.describe "submissions.rake" do
 
       it "logs the deliveries to disregard" do
         allow(Rails.logger).to receive(:info)
-        expect(Rails.logger).to receive(:info).with("Found 2 bounced submission deliveries to disregard for form ID #{form_id} in time range: #{Time.zone.parse(start_time)} to #{Time.zone.parse(end_time)}").once
+        expect(Rails.logger).to receive(:info).with("Found 3 bounced submission deliveries to disregard for form ID #{form_id} in time range: #{Time.zone.parse(start_time)} to #{Time.zone.parse(end_time)}").once
         expect(Rails.logger).to receive(:info).with("Disregarded bounce of delivery with delivery_reference #{early_matching_delivery.delivery_reference}")
         expect(Rails.logger).to receive(:info).with("Disregarded bounce of delivery with delivery_reference #{late_matching_delivery.delivery_reference}")
+        expect(Rails.logger).to receive(:info).with("Disregarded bounce of delivery with delivery_reference #{matching_batch_delivery.delivery_reference}")
         task.invoke(*valid_args)
       end
 
@@ -310,6 +326,7 @@ RSpec.describe "submissions.rake" do
           allow(Rails.logger).to receive(:info)
           expect(Rails.logger).to receive(:info).with("Would disregard bounce of delivery with delivery_reference #{early_matching_delivery.delivery_reference} which was created at #{early_matching_delivery.created_at}")
           expect(Rails.logger).to receive(:info).with("Would disregard bounce of delivery with delivery_reference #{late_matching_delivery.delivery_reference} which was created at #{late_matching_delivery.created_at}")
+          expect(Rails.logger).to receive(:info).with("Would disregard bounce of delivery with delivery_reference #{matching_batch_delivery.delivery_reference} which was created at #{matching_batch_delivery.created_at}")
           task.invoke(*valid_args)
         end
       end
