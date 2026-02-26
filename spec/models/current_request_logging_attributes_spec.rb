@@ -23,7 +23,6 @@ RSpec.describe CurrentRequestLoggingAttributes, type: :model do
       current.question_number = 3
       current.submission_reference = "a-submission-ref"
       current.confirmation_email_reference = "a-confirmation-email-ref"
-      current.confirmation_email_id = "a-confirmation-email-id"
       current.rescued_exception = "StandardError"
       current.rescued_exception_trace = "a trace"
       current.validation_errors = ["text: blank"]
@@ -43,7 +42,6 @@ RSpec.describe CurrentRequestLoggingAttributes, type: :model do
         question_number: 3,
         submission_reference: "a-submission-ref",
         confirmation_email_reference: "a-confirmation-email-ref",
-        confirmation_email_id: "a-confirmation-email-id",
         rescued_exception: "StandardError",
         rescued_exception_trace: "a trace",
         validation_errors: ["text: blank"],
@@ -53,10 +51,6 @@ RSpec.describe CurrentRequestLoggingAttributes, type: :model do
 
     it "does not include nil confirmation_email_reference" do
       expect(current.as_hash.key?(:confirmation_email_reference)).to be false
-    end
-
-    it "does not include nil confirmation_email_id" do
-      expect(current.as_hash.key?(:confirmation_email_id)).to be false
     end
 
     it "does not include the validation errors array if empty" do
