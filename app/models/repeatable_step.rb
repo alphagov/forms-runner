@@ -85,11 +85,20 @@ class RepeatableStep < Step
 
   def show_answer_in_csv(submission_reference:, is_s3_submission:)
     header_values_hash = {}
-    questions.each.with_index(1) do |question, index|
-      question.show_answer_in_csv(submission_reference:, is_s3_submission:).each do |header, value|
-        header_values_hash[I18n.t("submission_csv.repeatable_answer_header", header:, index:)] = value
+
+    if questions.one? && questions.first.show_answer.blank?
+      header_values_hash = question.show_answer_in_csv(submission_reference:, is_s3_submission:)
+    else
+      questions.each do |question|
+        question.show_answer_in_csv(submission_reference:, is_s3_submission:).each do |header, value|
+          header_values_hash[header] ||= []
+          header_values_hash[header] << "Answer: #{value}"
+        end
       end
+
+      header_values_hash.transform_values! { |answers| answers.join("\n") }
     end
+
     header_values_hash
   end
 
