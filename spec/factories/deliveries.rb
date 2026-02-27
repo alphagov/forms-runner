@@ -35,5 +35,9 @@ FactoryBot.define do
       failed_at { created_at + 10.minutes }
       failure_reason { "example" }
     end
+
+    trait :daily_scheduled_delivery do
+      delivery_schedule { "daily" }
+    end
   end
 end
