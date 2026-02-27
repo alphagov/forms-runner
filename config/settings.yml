@@ -1,6 +1,7 @@
 features:
   dummy: false
   filler_answer_email_enabled: false
+  csv_add_another_answer_single_column: false
 
 forms_admin:
   # URL to form-admin

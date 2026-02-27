@@ -73,27 +73,58 @@ RSpec.describe CsvGenerator do
           }
         end
 
-        it "generates a CSV with columns containing answers for the repeated steps separated by newlines" do
-          expect(CSV.parse(csv)).to eq(
-            [
+        context "when csv_add_another_answer_single_column is enabled (new-style)", :feature_csv_add_another_answer_single_column do
+          it "generates a CSV with columns containing answers for the repeated steps separated by newlines" do
+            expect(CSV.parse(csv)).to eq(
               [
-                "Reference",
-                "Submitted at",
-                "What is the meaning of life?",
-                "What is your name? - First name",
-                "What is your name? - Last name",
-                "Upload a file",
+                [
+                  "Reference",
+                  "Submitted at",
+                  "What is the meaning of life?",
+                  "What is your name? - First name",
+                  "What is your name? - Last name",
+                  "Upload a file",
+                ],
+                [
+                  submission_reference,
+                  "2022-09-14T08:00:00+01:00",
+                  text_answer,
+                  "Answer: #{first_name_answer}\nAnswer: #{another_first_name_answer}",
+                  "Answer: #{last_name_answer}\nAnswer: #{another_last_name_answer}",
+                  "file_#{submission_reference}.txt",
+                ],
               ],
+            )
+          end
+        end
+
+        context "when csv_add_another_answer_single_column is not enabled (old-style)", feature_csv_add_another_answer_single_column: false do
+          it "generates a CSV with headers containing suffixes for the repeated steps" do
+            expect(CSV.parse(csv)).to eq(
               [
-                submission_reference,
-                "2022-09-14T08:00:00+01:00",
-                text_answer,
-                "Answer: #{first_name_answer}\nAnswer: #{another_first_name_answer}",
-                "Answer: #{last_name_answer}\nAnswer: #{another_last_name_answer}",
-                "file_#{submission_reference}.txt",
+                [
+                  "Reference",
+                  "Submitted at",
+                  "What is the meaning of life?",
+                  "What is your name? - First name - Answer 1",
+                  "What is your name? - Last name - Answer 1",
+                  "What is your name? - First name - Answer 2",
+                  "What is your name? - Last name - Answer 2",
+                  "Upload a file",
+                ],
+                [
+                  submission_reference,
+                  "2022-09-14T08:00:00+01:00",
+                  text_answer,
+                  first_name_answer,
+                  last_name_answer,
+                  another_first_name_answer,
+                  another_last_name_answer,
+                  "file_#{submission_reference}.txt",
+                ],
               ],
-            ],
-          )
+            )
+          end
         end
       end
 
