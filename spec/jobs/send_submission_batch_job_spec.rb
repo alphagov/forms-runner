@@ -78,6 +78,16 @@ RSpec.describe SendSubmissionBatchJob, type: :job do
         expect(delivery.reload.last_attempt_at).to be_within(1.second).of(@job_ran_at)
       end
 
+      context "when the delivery has already been attempted" do
+        let(:delivery) { create(:delivery, delivery_schedule: "daily", submissions:, delivered_at: Time.zone.now - 2.hours, failed_at: Time.zone.now - 1.hour, failure_reason: "bounced") }
+
+        it "updates the resets the delivery details" do
+          expect(delivery.reload.delivered_at).to be_nil
+          expect(delivery.reload.failed_at).to be_nil
+          expect(delivery.reload.failure_reason).to be_nil
+        end
+      end
+
       it "attaches a csv with the expected filename" do
         expect(mail.attachments).not_to be_empty
 

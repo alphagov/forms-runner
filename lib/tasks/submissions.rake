@@ -14,10 +14,12 @@ namespace :submissions do
 
     deliveries = Delivery.failed.joins(:submissions).where(submissions: { form_id: form_id }).distinct
     Rails.logger.info "Found #{deliveries.length} bounced submission deliveries for form with ID #{form_id}"
-    deliveries.find_each do |delivery|
-      # This will need to be updated when we support batches
+    deliveries.immediate.each do |delivery|
       submission = delivery.submissions.first
-      Rails.logger.info "Submission reference: #{submission.reference}, created_at: #{submission.created_at}, last_attempt_at: #{delivery.last_attempt_at}"
+      Rails.logger.info "Immediate delivery - submission reference: #{submission.reference}, created_at: #{submission.created_at}, last_attempt_at: #{delivery.last_attempt_at}"
+    end
+    deliveries.daily.each do |delivery|
+      Rails.logger.info "Daily batch delivery - delivery_reference: #{delivery.delivery_reference}, created_at: #{delivery.created_at}, last_attempt_at: #{delivery.last_attempt_at}"
     end
   end
 
@@ -42,13 +44,17 @@ namespace :submissions do
 
     bounced_deliveries = Delivery.failed.joins(:submissions).where(submissions: { form_id: form_id }).distinct
 
-    Rails.logger.info "#{bounced_deliveries.length} submission deliveries to retry for form with ID: #{form_id}"
+    Rails.logger.info "#{bounced_deliveries.length} deliveries to retry for form with ID: #{form_id}"
 
     bounced_deliveries.each do |delivery|
-      # This will need to be updated when we support batches
       submission = delivery.submissions.first
-      Rails.logger.info "Retrying submission with reference #{submission.reference} for form with ID: #{form_id}"
-      SendSubmissionJob.perform_later(submission)
+      if delivery.immediate?
+        Rails.logger.info "Retrying submission with reference #{submission.reference} for form with ID: #{form_id}"
+        SendSubmissionJob.perform_later(submission)
+      elsif delivery.daily?
+        Rails.logger.info "Retrying daily batch delivery with delivery_id: #{delivery.id} for date: #{submission.submission_time.to_date} for form with ID: #{form_id}"
+        SendSubmissionBatchJob.perform_later(delivery:)
+      end
     end
   end
 
@@ -163,6 +169,55 @@ namespace :submissions do
       end
     else
       Rails.logger.info "No submissions found matching the criteria"
+    end
+  end
+
+  desc "Re-deliver daily submission batches corresponding to submissions between two timestamps for a specific form"
+  task :redeliver_daily_batches_by_date, %i[form_id start_timestamp end_timestamp dry_run] => :environment do |_, args|
+    form_id = args[:form_id]
+    start_timestamp = args[:start_timestamp]
+    end_timestamp = args[:end_timestamp]
+    dry_run_arg = args[:dry_run]
+    dry_run = dry_run_arg == "true"
+
+    usage_message = "usage: rake submissions:redeliver_daily_batches_by_date[<form_id>,<start_timestamp>,<end_timestamp>,<dry_run>]".freeze
+
+    if form_id.blank? || start_timestamp.blank? || end_timestamp.blank? || !dry_run_arg.in?(%w[true false])
+      abort usage_message
+    end
+
+    start_time = Time.zone.parse(start_timestamp)
+    end_time = Time.zone.parse(end_timestamp)
+
+    if start_time.nil? || end_time.nil?
+      abort "Error: Invalid timestamp format. Use ISO 8601 format (e.g. '2024-01-01T00:00:00Z')"
+    end
+
+    if start_time >= end_time
+      abort "Error: Start timestamp must be before end timestamp"
+    end
+
+    deliveries_to_redeliver = Delivery.daily
+                                      .joins(:submissions)
+                                      .where(submissions: { form_id: form_id, created_at: start_time..end_time })
+                                      .distinct
+
+    Rails.logger.info "Time range: #{start_time} to #{end_time}"
+    Rails.logger.info "Dry run mode: #{dry_run ? 'enabled' : 'disabled'}"
+
+    if deliveries_to_redeliver.any?
+      Rails.logger.info "Found #{deliveries_to_redeliver.count} submission batches to re-deliver for form ID: #{form_id}"
+
+      deliveries_to_redeliver.each do |delivery|
+        if dry_run
+          Rails.logger.info "Would re-deliver batch with ID #{delivery.id} and delivery reference #{delivery.delivery_reference}"
+        else
+          Rails.logger.info "Re-delivering batch ID #{delivery.id} and delivery reference #{delivery.delivery_reference}"
+          SendSubmissionBatchJob.perform_later(delivery:)
+        end
+      end
+    else
+      Rails.logger.info "No batches found matching the criteria"
     end
   end
 
