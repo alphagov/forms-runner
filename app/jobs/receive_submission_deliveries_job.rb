@@ -33,10 +33,13 @@ class ReceiveSubmissionDeliveriesJob < ApplicationJob
 private
 
   def process_delivery(delivery, submission, **attributes)
-    set_submission_logging_attributes(submission:, delivery:)
+    set_submission_logging_attributes(submission:, delivery:) if delivery.immediate?
+    set_submission_batch_logging_attributes(form: submission.form, mode: submission.mode_object, delivery:) if delivery.daily?
 
     delivery.update! attributes
 
-    EventLogger.log_form_event("submission_delivered")
+    form_event_name = delivery.immediate? ? "submission_delivered" : "submission_batch_delivered"
+
+    EventLogger.log_form_event(form_event_name)
   end
 end
