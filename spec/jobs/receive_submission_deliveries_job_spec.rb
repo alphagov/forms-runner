@@ -78,6 +78,29 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
                                      "job_class" => "ReceiveSubmissionDeliveriesJob",
                                    ))
     end
+
+    context "when the delivery is a daily batch delivery" do
+      let!(:submission) { create :submission, :sent, delivery_reference: "something-else" }
+      let!(:delivery) { create(:delivery, :daily, delivery_reference:, submissions: [submission], created_at: Time.zone.parse("2025-05-09T10:25:35.001Z")) }
+
+      it "logs form event with batch delivery details", :capture_logging do
+        perform_enqueued_jobs
+
+        expect(log_lines).to include(hash_including(
+                                       "level" => "INFO",
+                                       "message" => "Form event",
+                                       "event" => "form_submission_batch_delivered",
+                                       "form_id" => submission.form_id,
+                                       "form_name" => submission.form.name,
+                                       "delivery_reference" => delivery_reference,
+                                       "delivery_id" => delivery.id,
+                                       "preview" => "false",
+                                       "sns_message_timestamp" => sns_message_timestamp,
+                                       "job_id" => @job_id,
+                                       "job_class" => "ReceiveSubmissionDeliveriesJob",
+                                     ))
+      end
+    end
   end
 
   describe "handling unexpected event types" do
