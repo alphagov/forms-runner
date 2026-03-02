@@ -535,6 +535,164 @@ RSpec.describe "submissions.rake" do
     end
   end
 
+  describe "submissions:redeliver_daily_batches_by_date" do
+    subject(:task) do
+      Rake::Task["submissions:redeliver_daily_batches_by_date"]
+        .tap(&:reenable)
+    end
+
+    let(:form_id) { 1 }
+    let(:other_form_id) { 2 }
+    let(:start_time) { "2024-01-01T00:00:00Z" }
+    let(:end_time) { "2024-01-02T00:00:00Z" }
+    let(:dry_run) { "false" }
+
+    let!(:batched_submission) do
+      create :submission,
+             :sent,
+             form_id:,
+             created_at: Time.parse("2024-01-01T12:00:00Z"),
+             reference: "ref1"
+    end
+
+    let!(:batch_delivery) do
+      create :delivery,
+             :daily_scheduled_delivery,
+             :failed,
+             submissions: [batched_submission],
+             created_at: Time.parse("2024-01-02T02:00:00Z"),
+             delivery_reference: "batch1"
+    end
+
+    let!(:next_day_batch_delivery) do
+      submission = create :submission,
+                          :sent,
+                          form_id:,
+                          created_at: Time.parse("2024-01-02T12:00:00Z"),
+                          reference: "ref1"
+      create :delivery,
+             :daily_scheduled_delivery,
+             :failed,
+             submissions: [submission],
+             created_at: Time.parse("2024-01-03T02:00:00Z"),
+             delivery_reference: "batch-next-day"
+    end
+
+    let!(:other_form_batch_delivery) do
+      submission = create :submission,
+                          :sent,
+                          form_id: other_form_id,
+                          created_at: Time.parse("2024-01-01T12:00:00Z"),
+                          reference: "ref2"
+      create :delivery,
+             :daily_scheduled_delivery,
+             :failed,
+             submissions: [submission],
+             created_at: Time.parse("2024-01-02T02:00:00Z"),
+             delivery_reference: "batch2"
+    end
+
+    context "with valid arguments" do
+      let(:valid_args) { [form_id, start_time, end_time, dry_run] }
+
+      it "enqueues matching batch delivery for re-delivery" do
+        expect {
+          task.invoke(*valid_args)
+        }.to have_enqueued_job(SendSubmissionBatchJob).with(delivery: batch_delivery)
+      end
+
+      it "does not enqueue a batch delivery outside the time range" do
+        expect {
+          task.invoke(*valid_args)
+        }.not_to have_enqueued_job(SendSubmissionBatchJob).with(delivery: next_day_batch_delivery)
+      end
+
+      it "does not enqueue another form's batch deliveries" do
+        expect {
+          task.invoke(*valid_args)
+        }.not_to have_enqueued_job(SendSubmissionBatchJob).with(delivery: other_form_batch_delivery)
+      end
+
+      context "when dry_run is true" do
+        let(:dry_run) { "true" }
+
+        it "does not enqueue any jobs" do
+          expect {
+            task.invoke(*valid_args)
+          }.not_to have_enqueued_job(SendSubmissionJob)
+        end
+      end
+
+      context "when no submissions took place between the given times" do
+        let(:valid_args) { [form_id, "2025-01-01T00:00:00Z", "2025-01-02T00:00:00Z", dry_run] }
+
+        it "does not enqueue any jobs" do
+          expect {
+            task.invoke(*valid_args)
+          }.not_to have_enqueued_job(SendSubmissionBatchJob)
+        end
+      end
+    end
+
+    context "with invalid arguments" do
+      it "aborts when form_id is missing" do
+        expect {
+          task.invoke("", start_time, end_time, dry_run)
+        }.to raise_error(SystemExit)
+               .and output("usage: rake submissions:redeliver_daily_batches_by_date[<form_id>,<start_timestamp>,<end_timestamp>,<dry_run>]\n").to_stderr
+      end
+
+      it "aborts when start_timestamp is missing" do
+        expect {
+          task.invoke(form_id, "", end_time, dry_run)
+        }.to raise_error(SystemExit)
+               .and output("usage: rake submissions:redeliver_daily_batches_by_date[<form_id>,<start_timestamp>,<end_timestamp>,<dry_run>]\n").to_stderr
+      end
+
+      it "aborts when end_timestamp is missing" do
+        expect {
+          task.invoke(form_id, start_time, "", dry_run)
+        }.to raise_error(SystemExit)
+               .and output("usage: rake submissions:redeliver_daily_batches_by_date[<form_id>,<start_timestamp>,<end_timestamp>,<dry_run>]\n").to_stderr
+      end
+
+      it "aborts when start_timestamp is invalid" do
+        expect {
+          task.invoke(form_id, "invalid-date", end_time, dry_run)
+        }.to raise_error(SystemExit)
+               .and output("Error: Invalid timestamp format. Use ISO 8601 format (e.g. '2024-01-01T00:00:00Z')\n").to_stderr
+      end
+
+      it "aborts when end_timestamp is invalid" do
+        expect {
+          task.invoke(form_id, start_time, "invalid-date", dry_run)
+        }.to raise_error(SystemExit)
+               .and output("Error: Invalid timestamp format. Use ISO 8601 format (e.g. '2024-01-01T00:00:00Z')\n").to_stderr
+      end
+
+      it "aborts when start_timestamp is after end_timestamp" do
+        expect {
+          task.invoke(form_id, "2024-01-02T00:00:00Z", "2024-01-01T00:00:00Z", dry_run)
+        }.to raise_error(SystemExit)
+               .and output("Error: Start timestamp must be before end timestamp\n").to_stderr
+      end
+
+      it "aborts when start_timestamp equals end_timestamp" do
+        expect {
+          task.invoke(form_id, start_time, start_time, dry_run)
+        }.to raise_error(SystemExit)
+               .and output("Error: Start timestamp must be before end timestamp\n").to_stderr
+      end
+
+      it "aborts when dry_run is an invalid value" do
+        expect {
+          task.invoke(form_id, start_time, start_time, "foo")
+        }.to raise_error(SystemExit)
+               .and output("usage: rake submissions:redeliver_daily_batches_by_date[<form_id>,<start_timestamp>,<end_timestamp>,<dry_run>]\n").to_stderr
+      end
+    end
+  end
+
   describe "submissions:file_answers:fix_missing_original_filenames" do
     subject(:task) do
       Rake::Task["submissions:file_answers:fix_missing_original_filenames"]
