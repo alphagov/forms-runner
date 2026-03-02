@@ -15,8 +15,6 @@ class ReceiveSubmissionDeliveriesJob < ApplicationJob
     )
 
     poller.poll do |delivery, ses_message|
-      # The delivery-submission relationship is not one-to-one, so once we need to handled batched deliveries this will
-      # not be appropriate
       submission = delivery.submissions.first
       ses_event_type = ses_message["eventType"]
 
@@ -25,8 +23,10 @@ class ReceiveSubmissionDeliveriesJob < ApplicationJob
       delivery_time = Time.zone.parse(ses_message["delivery"]["timestamp"])
       process_delivery(delivery, submission, delivered_at: delivery_time)
 
-      submission_duration_ms = ((delivery_time - submission.created_at) * 1000).round
-      CloudWatchService.record_submission_delivery_latency_metric(submission_duration_ms, "Email")
+      if delivery.immediate?
+        submission_duration_ms = ((delivery_time - submission.created_at) * 1000).round
+        CloudWatchService.record_submission_delivery_latency_metric(submission_duration_ms, "Email")
+      end
     end
   end
 

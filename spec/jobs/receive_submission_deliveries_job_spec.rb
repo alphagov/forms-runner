@@ -47,6 +47,19 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
       # latency is ses_delivery_timestamp - submission.created_at
       expect(CloudWatchService).to have_received(:record_submission_delivery_latency_metric).with(6122, "Email")
     end
+
+    context "when the delivery is a daily batch delivery" do
+      let(:submission) { create :submission, :sent, delivery_reference: "something-else", created_at: Time.zone.parse("2025-05-09T10:25:35.001Z") }
+
+      before do
+        create :delivery, :daily, delivery_reference:, submissions: [submission], created_at: Time.zone.parse("2025-05-09T10:25:35.001Z")
+      end
+
+      it "does not send submission delivery latency metric" do
+        described_class.perform_now
+        expect(CloudWatchService).not_to have_received(:record_submission_delivery_latency_metric)
+      end
+    end
   end
 
   describe "processing delivery notifications" do
