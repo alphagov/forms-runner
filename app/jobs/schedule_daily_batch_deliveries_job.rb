@@ -23,7 +23,11 @@ class ScheduleDailyBatchDeliveriesJob < ApplicationJob
       send_batch_job = SendSubmissionBatchJob.perform_later(delivery:)
 
       Rails.logger.info("Scheduled SendSubmissionBatchJob to send daily submission batch", {
-        form_id: batch.form_id, mode: batch.mode, date: date, job_id: send_batch_job.job_id, delivery_id: delivery.id
+        form_id: batch.form_id,
+        mode: batch.mode,
+        date: date,
+        send_submission_batch_job_id: send_batch_job.job_id,
+        delivery_id: delivery.id,
       })
     end
   end
