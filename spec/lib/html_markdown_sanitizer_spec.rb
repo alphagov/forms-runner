@@ -4,6 +4,7 @@ RSpec.describe HtmlMarkdownSanitizer do
   let(:answer_store) { described_class.new }
   let(:simple_multiline_string) { "This is a paragraph.\n\nThis is another paragraph.\nThis is a new line within the same paragraph" }
   let(:simple_string_with_disallowed_html) { "<script>alert(\"script\")</script>" }
+  let(:simple_string_with_a_link) { "[Contact our support services](https://gov.uk/support)" }
   let(:multiline_html_string_with_disallowed_content) do
     "Check out the following list:\n\n"\
             "<script>alert(\"script\")</script>\n\n"\
@@ -47,6 +48,38 @@ RSpec.describe HtmlMarkdownSanitizer do
 
     it "escapes any HTML supplied to it" do
       expect(answer_store.render_scrubbed_markdown(simple_string_with_disallowed_html)).to eq("<p class=\"govuk-body\">&lt;script&gt;alert(\"script\")&lt;/script&gt;</p>")
+    end
+
+    context "when used without an explicit locale set" do
+      it "returns markdown configured to include English" do
+        expect(answer_store.render_scrubbed_markdown(simple_string_with_a_link)).to eq(
+          "<p class=\"govuk-body\"><a href=\"https://gov.uk/support\" class=\"govuk-link\" rel=\"noreferrer noopener\" target=\"_blank\">Contact our support services (opens in new tab)</a></p>",
+        )
+      end
+    end
+
+    context "when used with the English locale" do
+      around do |example|
+        I18n.with_locale(:en, &example)
+      end
+
+      it "returns markdown configured to include English" do
+        expect(answer_store.render_scrubbed_markdown(simple_string_with_a_link)).to eq(
+          "<p class=\"govuk-body\"><a href=\"https://gov.uk/support\" class=\"govuk-link\" rel=\"noreferrer noopener\" target=\"_blank\">Contact our support services (opens in new tab)</a></p>",
+        )
+      end
+    end
+
+    context "when used with the Welsh locale" do
+      around do |example|
+        I18n.with_locale(:cy, &example)
+      end
+
+      it "returns markdown configured to include Welsh" do
+        expect(answer_store.render_scrubbed_markdown(simple_string_with_a_link)).to eq(
+          "<p class=\"govuk-body\"><a href=\"https://gov.uk/support\" class=\"govuk-link\" rel=\"noreferrer noopener\" target=\"_blank\">Contact our support services (agor mewn tab newydd)</a></p>",
+        )
+      end
     end
   end
 
