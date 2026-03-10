@@ -83,6 +83,10 @@ cy:
             add_another_answer:
               blank: Dewiswch ydw os ydych angen ychwanegu ateb arall
               max_answers_reached: Dewiswch ydw os ydych angen ychwanegu ateb arall
+        copy_of_answers_input:
+          attributes:
+            copy_of_answers:
+              blank: Dewiswch ydw os hoffech dderbyn copi o'ch atebion
         email_confirmation_input:
           attributes:
             confirmation_email_address:
@@ -373,6 +377,11 @@ cy:
         radios_legend: Ydych chi angen ychwanegu ateb arall?
         title: Ychwanegu neu ddileu ateb i %{page_title}
     back: Yn ôl
+    copy_of_answers:
+      show:
+        heading: Ydych chi eisiau copi o'ch atebion?
+        hint: Byddwn ond yn defnyddio'r cyfeiriad e-bost rydych yn ei ddarparu yma i anfon cadarnhad bod eich ffurflen wedi'i chyflwyno'n llwyddiannus. Ni fydd yn cynnwys copi o'ch atebion.
+        title: Ydych chi eisiau copi o'ch atebion?
     remove_answer:
       show:
         address_heading: Dileu cyfeiriad
@@ -406,6 +415,10 @@ cy:
         send_confirmation: Byddwn ond yn defnyddio’r cyfeiriad e-bost rydych yn ei ddarparu yma i anfon cadarnhad bod eich ffurflen wedi’i chyflwyno’n llwyddiannus. Ni fydd yn cynnwys copi o’ch atebion.
     label:
       add_another_answer_input:
+        options:
+          'no': Na
+          'yes': Ydw
+      copy_of_answers_input:
         options:
           'no': Na
           'yes': Ydw
