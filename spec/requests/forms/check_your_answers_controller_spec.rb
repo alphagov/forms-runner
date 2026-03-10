@@ -139,8 +139,8 @@ RSpec.describe Forms::CheckYourAnswersController, :capture_logging, type: :reque
         expect(response).to have_http_status(:ok)
       end
 
-      it "Displays a back link to the last page of the form" do
-        expect(response.body).to include(form_page_path(mode:, form_id:, form_slug: form_data.form_slug, page_slug: 2))
+      it "Displays a back link to the copy of answers page" do
+        expect(response.body).to include(copy_of_answers_path(mode:, form_id:, form_slug: form_data.form_slug))
       end
 
       it "Returns the correct X-Robots-Tag header" do
