@@ -10,8 +10,8 @@ gem "rails", "8.1.2"
 gem "puma", "~> 7.2.0"
 
 # Use Sentry (https://sentry.io/for/ruby/?platform=sentry.ruby.rails#)
-gem "sentry-rails"
-gem "sentry-ruby"
+gem "sentry-rails", "~> 6"
+gem "sentry-ruby", "~> 6"
 
 gem "config"
 
