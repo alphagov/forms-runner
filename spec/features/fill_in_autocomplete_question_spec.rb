@@ -27,6 +27,10 @@ feature "Fill in and submit a form with an autocomplete question", type: :featur
     then_i_should_see_the_options
     when_i_choose_an_option
     and_i_click_on_continue
+    then_i_should_see_the_copy_of_answers_page
+
+    when_i_choose_not_to_receive_a_copy
+    and_i_click_on_continue
     then_i_should_see_the_check_your_answers_page
 
     when_i_opt_out_of_email_confirmation
@@ -64,6 +68,15 @@ feature "Fill in and submit a form with an autocomplete question", type: :featur
 
   def and_i_click_on_continue
     click_button "Continue"
+  end
+
+  def then_i_should_see_the_copy_of_answers_page
+    expect(page.find("h1")).to have_text "Do you want to get an email with a copy of your answers?"
+    expect_page_to_have_no_axe_errors(page)
+  end
+
+  def when_i_choose_not_to_receive_a_copy
+    choose "No"
   end
 
   def then_i_should_see_the_check_your_answers_page
