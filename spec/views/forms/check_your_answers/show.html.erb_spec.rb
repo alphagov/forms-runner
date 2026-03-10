@@ -1,11 +1,12 @@
 require "rails_helper"
 
 describe "forms/check_your_answers/show.html.erb" do
-  let(:form) { build :form, :with_support, id: 1, declaration_text: }
+  let(:form) { build :form, :with_support, id: 1, declaration_text:, declaration_markdown: }
   let(:support_details) { OpenStruct.new(email: form.support_email) }
   let(:context) { OpenStruct.new(form:) }
   let(:full_width) { false }
   let(:declaration_text) { nil }
+  let(:declaration_markdown) { nil }
   let(:email_confirmation_input) { build :email_confirmation_input }
   let(:question) { build :text, question_text: "Do you want to remain anonymous?", text: "Yes" }
   let(:steps) { [build(:step, question:, page: build(:page, :with_text_settings))] }
@@ -38,6 +39,35 @@ describe "forms/check_your_answers/show.html.erb" do
 
     it "displays declaration text" do
       expect(rendered).to have_css("p", text: form.declaration_text)
+    end
+  end
+
+  context "when the form has a markdown declaration and declaration text" do
+    let(:declaration_text) { "You should agree to all terms before submitting" }
+    let(:declaration_markdown) { "This is the markdown decalaration\n\nsecond paragraph" }
+
+    it "displays the declaration heading" do
+      expect(rendered).to have_css("h2", text: "Declaration")
+    end
+
+    it "displays declaration markdown" do
+      expect(rendered).to have_css("p", text: "second paragraph")
+    end
+
+    it "does not display declaration text" do
+      expect(rendered).not_to have_css("p", text: form.declaration_text)
+    end
+  end
+
+  context "when the form has a markdown declaration only" do
+    let(:declaration_markdown) { "This is the markdown decalaration\n\nsecond paragraph" }
+
+    it "displays the declaration heading" do
+      expect(rendered).to have_css("h2", text: "Declaration")
+    end
+
+    it "displays declaration markdown" do
+      expect(rendered).to have_css("p", text: "second paragraph")
     end
   end
 
