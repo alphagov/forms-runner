@@ -372,6 +372,11 @@ cy:
         max_answers: Ni allwch ychwanegu ateb arall i’r cwestiwn hwn gan eich bod wedi rhoi’r uchafswm o %{max_answers}
         radios_legend: Ydych chi angen ychwanegu ateb arall?
         title: Ychwanegu neu ddileu ateb i %{page_title}
+    archived_welsh:
+      show:
+        heading: Mae’n ddrwg gennym, nid yw’r gwasanaeth hwn ar gael yn Gymraeg mwyach
+        view_english_form: 'Gallwch lenwi’r ffurflen yn Saesneg o hyd:'
+        welsh_version_archived: Mae’r fersiwn Gymraeg o’r ffurflen hon wedi’i harchifo ac nid yw ar gael mwyach.
     back: Yn ôl
     remove_answer:
       show:

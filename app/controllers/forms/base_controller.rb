@@ -48,11 +48,37 @@ module Forms
         form_id = params.require(:form_id)
         @form = Api::V2::FormDocumentRepository.find_with_mode(form_id:, mode:, language: locale)
       rescue ActiveResource::ResourceNotFound
-        archived_form = Api::V2::FormDocumentRepository.find(form_id:, tag: :archived)
-        return render template: "forms/archived/show", locals: { form_name: archived_form.name }, status: :not_found if archived_form.present?
+        I18n.with_locale(locale) do
+          return render template: "forms/archived_welsh/show", locals: { form: live_english_version(form_id) }, status: :not_found if archived_welsh_version_with_live_english_form?(form_id)
+
+          archived_form = Api::V2::FormDocumentRepository.find(form_id:, tag: :archived)
+          return render template: "forms/archived/show", locals: { form_name: archived_form.name }, status: :not_found if archived_form.present?
+        end
       end
 
       raise ActiveResource::ResourceNotFound, "Not Found" unless @form.start_page
+    end
+
+    def archived_welsh_version_with_live_english_form?(form_id)
+      return false unless locale == "cy"
+
+      begin
+        Api::V2::FormDocumentRepository.find(form_id:, tag: :archived, language: :cy)
+        Api::V2::FormDocumentRepository.find(form_id:, tag: :live, language: :en)
+        true
+      rescue ActiveResource::ResourceNotFound
+        false
+      end
+    end
+
+    def live_english_version(form_id)
+      return nil unless locale == "cy"
+
+      begin
+        Api::V2::FormDocumentRepository.find(form_id:, tag: :live, language: :en)
+      rescue ActiveResource::ResourceNotFound
+        nil
+      end
     end
   end
 end

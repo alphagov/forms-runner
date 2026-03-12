@@ -372,6 +372,11 @@ en:
         max_answers: You cannot add another answer to this question as you’ve entered the maximum of %{max_answers}
         radios_legend: Do you need to add another answer?
         title: Add or remove answer to %{page_title}
+    archived_welsh:
+      show:
+        heading: Sorry, this service is no longer available in Welsh
+        view_english_form: 'You can still complete the form in English:'
+        welsh_version_archived: The Welsh version of this form has been archived and is no longer available.
     back: Back
     remove_answer:
       show:

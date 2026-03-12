@@ -343,6 +343,22 @@ RSpec.describe Forms::BaseController, type: :request do
           expect(response.body).to include(I18n.t("form.archived.title"))
         end
       end
+
+      context "when the form is an archived Welsh form with a live English version" do
+        before do
+          ActiveResource::HttpMock.respond_to do |mock|
+            mock.get "/api/v2/forms/2/live", req_headers, form_response_data.to_json, 200
+            mock.get "/api/v2/forms/2/live?language=cy", req_headers, nil, 404
+            mock.get "/api/v2/forms/2/archived?language=cy", req_headers, form_response_data.to_json, 200
+          end
+
+          get form_path(mode: "form", form_id: 2, form_slug: form_response_data.form_slug, locale: :cy)
+        end
+
+        it "Renders the form archived page" do
+          expect(Capybara.string(response.body)).to have_text(I18n.t("forms.archived_welsh.show.heading", locale: :cy))
+        end
+      end
     end
   end
 
