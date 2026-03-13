@@ -17,6 +17,7 @@ feature "Fill in and submit a form with an autocomplete question", type: :featur
     end
 
     allow(ReferenceNumberService).to receive(:generate).and_return(reference)
+    allow(FeatureService).to receive(:enabled?).with("filler_answer_email_enabled").and_return(true)
   end
 
   scenario "As a form filler" do

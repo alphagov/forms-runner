@@ -36,6 +36,8 @@ feature "Fill in and submit a form with a file upload question", type: :feature 
     allow(mock_s3_client).to receive(:put_object)
     allow(mock_s3_client).to receive(:get_object_tagging).and_return({ tag_set: [{ key: "GuardDutyMalwareScanStatus", value: scan_status }] })
 
+    allow(FeatureService).to receive(:enabled?).with("filler_answer_email_enabled").and_return(true)
+
     File.write(test_file, test_file_content)
   end
 

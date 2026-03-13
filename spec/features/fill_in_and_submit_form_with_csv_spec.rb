@@ -17,6 +17,7 @@ feature "Fill in and submit a form with a CSV submission", type: :feature do
     end
 
     allow(ReferenceNumberService).to receive(:generate).and_return(reference)
+    allow(FeatureService).to receive(:enabled?).with("filler_answer_email_enabled").and_return(true)
 
     travel_to Time.parse("2029-01-24T05:05:50+00:00")
   end

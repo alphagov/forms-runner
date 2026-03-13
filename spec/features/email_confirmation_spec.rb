@@ -13,6 +13,8 @@ feature "Email confirmation", type: :feature do
     ActiveResource::HttpMock.respond_to do |mock|
       mock.get "/api/v2/forms/1/live", req_headers, form.to_json, 200
     end
+
+    allow(FeatureService).to receive(:enabled?).with("filler_answer_email_enabled").and_return(true)
   end
 
   scenario "opting out of email submission returns the confirmation page without confirmation email text" do

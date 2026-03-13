@@ -38,13 +38,11 @@ RSpec.describe Forms::CopyOfAnswersController, type: :request do
     allow(Flow::Context).to receive(:new).and_wrap_original do |original_method, *args|
       original_method.call(form: args[0][:form], store:)
     end
+
+    allow(FeatureService).to receive(:enabled?).with("filler_answer_email_enabled").and_return(true)
   end
 
   describe "GET #show" do
-    before do
-      get copy_of_answers_path(mode:, form_id: form.form_id, form_slug: form.form_slug)
-    end
-
     context "when the feature flag is disabled" do
       before do
         allow(FeatureService).to receive(:enabled?).with("filler_answer_email_enabled").and_return(false)
@@ -56,49 +54,56 @@ RSpec.describe Forms::CopyOfAnswersController, type: :request do
       end
     end
 
-    it "returns http success" do
-      expect(response).to have_http_status(:ok)
-    end
-
-    it "renders the show template" do
-      expect(response).to render_template(:show)
-    end
-
-    it "initializes @copy_of_answers_input" do
-      expect(assigns(:copy_of_answers_input)).to be_a(CopyOfAnswersInput)
-    end
-
-    it "assigns @back_link" do
-      expect(assigns(:back_link)).to be_present
-    end
-
-    context "when the form is not multilingual" do
-      it "does not include the language switcher" do
-        expect(response.body).not_to include(I18n.t("language_switcher.nav_label"))
+    context "when the feature flag is enabled" do
+      before do
+        allow(FeatureService).to receive(:enabled?).with("filler_answer_email_enabled").and_return(true)
+        get copy_of_answers_path(mode:, form_id: form.form_id, form_slug: form.form_slug)
       end
-    end
 
-    context "when the form is multilingual" do
-      let(:available_languages) { %w[en cy] }
-
-      it "includes the language switcher" do
-        expect(response.body).to include(I18n.t("language_switcher.nav_label"))
+      it "returns http success" do
+        expect(response).to have_http_status(:ok)
       end
-    end
 
-    context "when all questions have not been completed" do
-      let(:store) do
-        {
-          answers: {
-            form.form_id.to_s => {
-              "1" => { "text" => "answer 1" },
+      it "renders the show template" do
+        expect(response).to render_template(:show)
+      end
+
+      it "initializes @copy_of_answers_input" do
+        expect(assigns(:copy_of_answers_input)).to be_a(CopyOfAnswersInput)
+      end
+
+      it "assigns @back_link" do
+        expect(assigns(:back_link)).to be_present
+      end
+
+      context "when the form is not multilingual" do
+        it "does not include the language switcher" do
+          expect(response.body).not_to include(I18n.t("language_switcher.nav_label"))
+        end
+      end
+
+      context "when the form is multilingual" do
+        let(:available_languages) { %w[en cy] }
+
+        it "includes the language switcher" do
+          expect(response.body).to include(I18n.t("language_switcher.nav_label"))
+        end
+      end
+
+      context "when all questions have not been completed" do
+        let(:store) do
+          {
+            answers: {
+              form.form_id.to_s => {
+                "1" => { "text" => "answer 1" },
+              },
             },
-          },
-        }
-      end
+          }
+        end
 
-      it "redirects to the next page" do
-        expect(response).to redirect_to(form_page_path(form.form_id, form.form_slug, 2, mode:))
+        it "redirects to the next page" do
+          expect(response).to redirect_to(form_page_path(form.form_id, form.form_slug, 2, mode:))
+        end
       end
     end
   end
@@ -151,7 +156,9 @@ RSpec.describe Forms::CopyOfAnswersController, type: :request do
       end
 
       it "displays an error message" do
-        expect(response.body).to include(I18n.t("activemodel.errors.models.copy_of_answers_input.attributes.copy_of_answers.blank"))
+        expect(response.body).to include("Select")
+        expect(response.body).to include("Yes")
+        expect(response.body).to include("copy of your answers")
       end
     end
   end

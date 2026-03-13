@@ -101,6 +101,7 @@ RSpec.describe Forms::CheckYourAnswersController, :capture_logging, type: :reque
     end
 
     allow(ReferenceNumberService).to receive(:generate).and_return(reference)
+    allow(FeatureService).to receive(:enabled?).with("filler_answer_email_enabled").and_return(true)
   end
 
   describe "#show" do

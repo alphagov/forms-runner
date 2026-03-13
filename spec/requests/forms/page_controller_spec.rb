@@ -52,6 +52,8 @@ RSpec.describe Forms::PageController, :capture_logging, type: :request do
     ActiveResource::HttpMock.respond_to do |mock|
       mock.get "/api/v2/forms/2#{api_url_suffix}", req_headers, form_data.to_json, 200
     end
+
+    allow(FeatureService).to receive(:enabled?).with("filler_answer_email_enabled").and_return(true)
   end
 
   context "when setting logging context" do

@@ -18,6 +18,7 @@ feature "Fill in and submit a form with a single repeatable question", type: :fe
     end
 
     allow(ReferenceNumberService).to receive(:generate).and_return(reference)
+    allow(FeatureService).to receive(:enabled?).with("filler_answer_email_enabled").and_return(true)
   end
 
   scenario "As a form filler" do
