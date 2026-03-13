@@ -64,7 +64,9 @@ describe "forms/copy_of_answers/show.html.erb" do
     end
 
     it "displays the error message" do
-      expect(rendered).to have_content(I18n.t("activemodel.errors.models.copy_of_answers_input.attributes.copy_of_answers.blank"))
+      expect(rendered).to have_content("Select")
+      expect(rendered).to have_content("Yes")
+      expect(rendered).to have_content("copy of your answers")
     end
   end
 end
