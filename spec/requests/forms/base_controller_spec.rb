@@ -51,6 +51,8 @@ RSpec.describe Forms::BaseController, type: :request do
       mock.get "/api/v2/forms/2#{api_url_suffix}?language=cy", req_headers, form_response_data.to_json, 200
       mock.get "/api/v2/forms/9999#{api_url_suffix}", req_headers, no_data_found_response, 404
       mock.get "/api/v2/forms/9999#{api_url_suffix}?language=cy", req_headers, no_data_found_response, 404
+      mock.get "/api/v2/forms/9999/archived", req_headers, no_data_found_response, 404
+      mock.get "/api/v2/forms/9999/archived?language=cy", req_headers, no_data_found_response, 404
     end
   end
 
