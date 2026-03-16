@@ -111,7 +111,7 @@ RSpec.describe FormHeaderComponent::View, type: :component do
   end
 
   [
-    { name: "Local", colour: "pink" },
+    { name: "Local", colour: "magenta" },
     { name: "Development", colour: "green" },
     { name: "User research", colour: "blue" },
     { name: "Staging", colour: "yellow" },
