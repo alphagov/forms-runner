@@ -86,7 +86,7 @@ cy:
         copy_of_answers_input:
           attributes:
             copy_of_answers:
-              blank: Dewiswch ydw os hoffech dderbyn copi o'ch atebion
+              blank: PLACEHOLDER! Dewiswch ydw os hoffech dderbyn copi o'ch atebion
         email_confirmation_input:
           attributes:
             confirmation_email_address:
@@ -379,9 +379,9 @@ cy:
     back: Yn ôl
     copy_of_answers:
       show:
-        heading: Ydych chi eisiau copi o'ch atebion?
-        hint: Byddwn ond yn defnyddio'r cyfeiriad e-bost rydych yn ei ddarparu yma i anfon cadarnhad bod eich ffurflen wedi'i chyflwyno'n llwyddiannus. Ni fydd yn cynnwys copi o'ch atebion.
-        title: Ydych chi eisiau copi o'ch atebion?
+        heading: PLACEHOLDER! Ydych chi eisiau copi o'ch atebion?
+        hint: PLACEHOLDER! Byddwn ond yn defnyddio'r cyfeiriad e-bost rydych yn ei ddarparu yma i anfon cadarnhad bod eich ffurflen wedi'i chyflwyno'n llwyddiannus. Ni fydd yn cynnwys copi o'ch atebion.
+        title: PLACEHOLDER! Ydych chi eisiau copi o'ch atebion?
     remove_answer:
       show:
         address_heading: Dileu cyfeiriad
