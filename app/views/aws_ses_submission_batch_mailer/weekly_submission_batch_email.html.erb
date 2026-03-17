@@ -7,9 +7,9 @@
 <p><%= I18n.t("mailer.form_name", form_name: @form_name) %></p>
 
 <% if @filenames.size > 1 %>
-  <p><%= I18n.t("mailer.submission_batch.daily.multiple_files_explainer", date: @date) %></p>
+  <p><%= I18n.t("mailer.submission_batch.weekly.multiple_files_explainer", begin_date: @begin_date, end_date: @end_date) %></p>
 <% else %>
-  <p><%= I18n.t("mailer.submission_batch.daily.single_file_explainer", date: @date) %></p>
+  <p><%= I18n.t("mailer.submission_batch.weekly.single_file_explainer", begin_date: @begin_date, end_date: @end_date) %></p>
 <% end %>
 
 <ul>
