@@ -53,6 +53,40 @@ RSpec.describe ScheduleDailyBatchDeliveriesJob do
       expect(enqueued_args.second).to include("delivery" => hash_including("_aj_globalid"))
       expect(locate_delivery(enqueued_args.second)).to eq(Delivery.second)
     end
+
+    describe "setting batch_begin_at" do
+      context "when the date for the batch is the day the clocks go forwards" do
+        let(:travel_time) { Time.zone.local(2025, 3, 31) }
+
+        it "sets the batch_begin_at to the beginning of the day in BST" do
+          expect(Delivery.first.batch_begin_at).to eq(Time.utc(2025, 3, 30, 0, 0, 0))
+        end
+      end
+
+      context "when the date for the batch is after the clocks have gone forwards" do
+        let(:travel_time) { Time.zone.local(2025, 4, 1) }
+
+        it "sets the batch_begin_at to the beginning of the day in BST" do
+          expect(Delivery.first.batch_begin_at).to eq(Time.utc(2025, 3, 30, 23, 0, 0))
+        end
+      end
+
+      context "when the date for the batch is the day the clocks go back" do
+        let(:travel_time) { Time.zone.local(2025, 10, 27) }
+
+        it "sets the batch_begin_at to the beginning of the day in GMT" do
+          expect(Delivery.first.batch_begin_at).to eq(Time.utc(2025, 10, 25, 23, 0, 0))
+        end
+      end
+
+      context "when the date for the batch is the day after the clocks have gone back" do
+        let(:travel_time) { Time.zone.local(2025, 10, 28) }
+
+        it "sets the batch_begin_at to the beginning of the day in GMT" do
+          expect(Delivery.first.batch_begin_at).to eq(Time.utc(2025, 10, 27, 0, 0, 0))
+        end
+      end
+    end
   end
 
   context "when a Delivery already exists for a batch" do

@@ -8,6 +8,7 @@ class ScheduleDailyBatchDeliveriesJob < ApplicationJob
     CurrentJobLoggingAttributes.job_id = job_id
 
     date = Time.zone.yesterday
+    batch_begin_at = date.in_time_zone(TimeZoneUtils.submission_time_zone).beginning_of_day
 
     DailySubmissionBatchSelector.batches(date).each do |batch|
       existing_deliveries = batch.submissions.first.deliveries.daily
@@ -18,7 +19,11 @@ class ScheduleDailyBatchDeliveriesJob < ApplicationJob
         next
       end
 
-      delivery = Delivery.create!(delivery_schedule: :daily, submissions: batch.submissions)
+      delivery = Delivery.create!(
+        delivery_schedule: :daily,
+        submissions: batch.submissions,
+        batch_begin_at:,
+      )
 
       send_batch_job = SendSubmissionBatchJob.perform_later(delivery:)
 
