@@ -49,7 +49,16 @@ module Forms
 
       if @form.blank?
         I18n.with_locale(locale) do
-          return render template: "forms/archived_welsh/show", locals: { form: live_english_version(form_id) }, status: :not_found if archived_welsh_version_with_live_english_form?(form_id)
+          if locale == "cy"
+            archived_welsh_version = Api::V2::FormDocumentRepository.find(form_id:, tag: :archived, language: :cy)
+            live_english_version = Api::V2::FormDocumentRepository.find(form_id:, tag: :live, language: :en)
+
+            if archived_welsh_version.present? && live_english_version.present?
+              return render template: "forms/archived_welsh/show",
+                            locals: { form: live_english_version },
+                            status: :not_found
+            end
+          end
 
           archived_form = Api::V2::FormDocumentRepository.find(form_id:, tag: :archived)
           return render template: "forms/archived/show", locals: { form_name: archived_form.name }, status: :not_found if archived_form.present?
@@ -57,21 +66,6 @@ module Forms
       end
 
       raise ActiveResource::ResourceNotFound, "Not Found" unless @form.present? && @form.start_page
-    end
-
-    def archived_welsh_version_with_live_english_form?(form_id)
-      return false unless locale == "cy"
-
-      archived_welsh_form = Api::V2::FormDocumentRepository.find(form_id:, tag: :archived, language: :cy)
-      live_english_form = Api::V2::FormDocumentRepository.find(form_id:, tag: :live, language: :en)
-
-      archived_welsh_form.present? && live_english_form.present?
-    end
-
-    def live_english_version(form_id)
-      return nil unless locale == "cy"
-
-      Api::V2::FormDocumentRepository.find(form_id:, tag: :live, language: :en)
     end
   end
 end
