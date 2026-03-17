@@ -344,7 +344,7 @@ cy:
     archived:
       heading: Sorry, this service is no longer available
       service_unavailable: "“%{form_name}” has been archived and is no longer available."
-      title: Form archived
+      title: Sorry, this service is no longer available
     check_your_answers:
       agree_and_submit: Cytuno a chyflwyno
       declaration: Datganiad
