@@ -10,11 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_18_110428) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_17_125725) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   create_table "deliveries", force: :cascade do |t|
+    t.datetime "batch_begin_at"
     t.datetime "created_at", null: false
     t.datetime "delivered_at"
     t.string "delivery_reference"
