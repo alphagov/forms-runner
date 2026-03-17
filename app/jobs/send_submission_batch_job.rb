@@ -31,7 +31,8 @@ class SendSubmissionBatchJob < ApplicationJob
       end
     end
 
-    message_id = AwsSesSubmissionBatchService.new(submissions_query: submissions, form:, date: batch_begin_date, mode:).send_batch
+    batch_service = AwsSesSubmissionBatchService.new(submissions_query: submissions, form:, mode:)
+    message_id = batch_service.send_daily_batch(date: batch_begin_date)
 
     delivery.new_attempt!
     delivery.update!(

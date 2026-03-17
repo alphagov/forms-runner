@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe AwsSesSubmissionBatchService do
-  let(:service) { described_class.new(submissions_query:, form:, date:, mode:) }
+  let(:service) { described_class.new(submissions_query:, form:, mode:) }
   let(:form) { build(:form, submission_email:) }
   let(:form_document) { build(:v2_form_document, :with_steps, form_id: form.id) }
   let(:submission_email) { "submit@email.gov.uk" }
@@ -9,7 +9,7 @@ RSpec.describe AwsSesSubmissionBatchService do
   let(:mode) { instance_double(Mode, preview?: false) }
   let(:submissions_query) { Submission.all }
 
-  describe "#send_batch" do
+  describe "#send_daily_batch" do
     before do
       allow(SubmissionFilenameGenerator).to receive(:batch_csv_filename).and_return("filename.csv")
       allow(CsvGenerator).to receive(:generate_batched_submissions).and_return(%w[csv-content])
@@ -18,11 +18,11 @@ RSpec.describe AwsSesSubmissionBatchService do
 
     it "calls the SubmissionFilenameGenerator with a nil form version" do
       expect(SubmissionFilenameGenerator).to receive(:batch_csv_filename).with(form_name: form.name, date:, mode:, form_version: nil)
-      service.send_batch
+      service.send_daily_batch(date:)
     end
 
     it "returns the message id" do
-      message_id = service.send_batch
+      message_id = service.send_daily_batch(date:)
 
       last_email = ActionMailer::Base.deliveries.last
       expect(message_id).to eq last_email.message_id
@@ -37,7 +37,7 @@ RSpec.describe AwsSesSubmissionBatchService do
       it "calls the SubmissionFilenameGenerator to generate a filename for each form version" do
         expect(SubmissionFilenameGenerator).to receive(:batch_csv_filename).with(form_name: form.name, date:, mode:, form_version: 1)
         expect(SubmissionFilenameGenerator).to receive(:batch_csv_filename).with(form_name: form.name, date:, mode:, form_version: 2)
-        service.send_batch
+        service.send_daily_batch(date:)
       end
 
       it "calls the AwsSesSubmissionBatchMailer to send the email with the generated files" do
@@ -49,7 +49,7 @@ RSpec.describe AwsSesSubmissionBatchService do
             files: { "filename.csv" => "csv-content", "filename-2.csv" => "csv-content-2" },
           ).and_call_original
 
-        service.send_batch
+        service.send_daily_batch(date:)
       end
     end
   end
