@@ -342,9 +342,9 @@ cy:
     privacy_policy: Preifatrwydd
   form:
     archived:
-      heading: Sorry, this service is no longer available
-      service_unavailable: "“%{form_name}” has been archived and is no longer available."
-      title: Sorry, this service is no longer available
+      heading: Mae’n ddrwg gennym, nid yw’r gwasanaeth hwn ar gael mwyach
+      service_unavailable: Mae “%{form_name}” wedi’i archifo ac nid yw bellach ar gael.
+      title: Mae’n ddrwg gennym, nid yw’r gwasanaeth hwn ar gael mwyach
     check_your_answers:
       agree_and_submit: Cytuno a chyflwyno
       declaration: Datganiad
