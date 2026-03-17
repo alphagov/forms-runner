@@ -17,7 +17,8 @@ class SendSubmissionBatchJob < ApplicationJob
     latest_submission = submissions.order(created_at: :desc).first
     form = latest_submission.form
     mode = latest_submission.mode_object
-    date = latest_submission.submission_time.to_date
+
+    batch_begin_date = delivery.batch_begin_at.in_time_zone(TimeZoneUtils.submission_time_zone).to_date
 
     set_submission_batch_logging_attributes(form:, mode:, delivery:)
 
@@ -30,7 +31,7 @@ class SendSubmissionBatchJob < ApplicationJob
       end
     end
 
-    message_id = AwsSesSubmissionBatchService.new(submissions_query: submissions, form:, date:, mode:).send_batch
+    message_id = AwsSesSubmissionBatchService.new(submissions_query: submissions, form:, date: batch_begin_date, mode:).send_batch
 
     delivery.new_attempt!
     delivery.update!(
@@ -40,14 +41,14 @@ class SendSubmissionBatchJob < ApplicationJob
     CurrentJobLoggingAttributes.delivery_reference = delivery.delivery_reference
     EventLogger.log_form_event("daily_batch_email_sent", {
       mode: mode.to_s,
-      batch_date: date,
+      batch_date: batch_begin_date,
       number_of_submissions: submissions.count,
     })
 
     submissions.each do |submission|
       EventLogger.log_form_event("included_in_daily_batch_email", {
         submission_reference: submission.reference,
-        batch_date: date,
+        batch_date: batch_begin_date,
       })
     end
   end

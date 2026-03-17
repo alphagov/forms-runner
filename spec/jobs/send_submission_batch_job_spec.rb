@@ -5,8 +5,9 @@ RSpec.describe SendSubmissionBatchJob, type: :job do
   include ActiveJob::TestHelper
 
   let(:mode_string) { "form" }
-  let(:date) { Date.new(2022, 12, 14) }
-  let(:delivery) { create(:delivery, delivery_schedule: "daily", submissions:) }
+  let(:date) { Date.new(2025, 4, 10) }
+  let(:batch_begin_at) { Time.utc(2025, 4, 9, 23, 0, 0) }
+  let(:delivery) { create(:delivery, delivery_schedule: "daily", submissions:, batch_begin_at:) }
 
   let(:form_document) { create(:v2_form_document, :with_steps, name: "My Form", submission_email:) }
   let(:submission_email) { "to@example.com" }
@@ -73,13 +74,25 @@ RSpec.describe SendSubmissionBatchJob, type: :job do
         expect(mail.to).to include(form_document.submission_email)
       end
 
+      it "includes the date in London time in the subject" do
+        expect(mail.subject).to include("10 April 2025")
+      end
+
       it "updates the delivery" do
         expect(delivery.reload.delivery_reference).to eq(mail.message_id)
         expect(delivery.reload.last_attempt_at).to be_within(1.second).of(@job_ran_at)
       end
 
       context "when the delivery has already been attempted" do
-        let(:delivery) { create(:delivery, delivery_schedule: "daily", submissions:, delivered_at: Time.zone.now - 2.hours, failed_at: Time.zone.now - 1.hour, failure_reason: "bounced") }
+        let(:delivery) do
+          create(:delivery,
+                 delivery_schedule: "daily",
+                 submissions:,
+                 batch_begin_at:,
+                 delivered_at: Time.zone.now - 2.hours,
+                 failed_at: Time.zone.now - 1.hour,
+                 failure_reason: "bounced")
+        end
 
         it "updates the resets the delivery details" do
           expect(delivery.reload.delivered_at).to be_nil
@@ -92,7 +105,7 @@ RSpec.describe SendSubmissionBatchJob, type: :job do
         expect(mail.attachments).not_to be_empty
 
         filenames = mail.attachments.map(&:filename)
-        expect(filenames).to contain_exactly("govuk_forms_my_form_2022-12-14.csv")
+        expect(filenames).to contain_exactly("govuk_forms_my_form_2025-04-10.csv")
       end
 
       it "attaches a csv containing header plus one line per submission" do
