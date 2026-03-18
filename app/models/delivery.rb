@@ -9,6 +9,7 @@ class Delivery < ApplicationRecord
   enum :delivery_schedule, {
     immediate: "immediate",
     daily: "daily",
+    weekly: "weekly",
   }
 
   def status
