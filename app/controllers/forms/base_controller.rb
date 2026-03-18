@@ -44,15 +44,28 @@ module Forms
     end
 
     def set_form
-      begin
-        form_id = params.require(:form_id)
-        @form = Api::V2::FormDocumentRepository.find_with_mode(form_id:, mode:, language: locale)
-      rescue ActiveResource::ResourceNotFound
-        archived_form = Api::V2::FormDocumentRepository.find(form_id:, tag: :archived)
-        return render template: "forms/archived/show", locals: { form_name: archived_form.name }, status: :not_found if archived_form.present?
+      form_id = params.require(:form_id)
+      @form = Api::V2::FormDocumentRepository.find_with_mode(form_id:, mode:, language: locale)
+
+      if @form.blank?
+        I18n.with_locale(locale) do
+          if locale == "cy"
+            archived_welsh_version = Api::V2::FormDocumentRepository.find(form_id:, tag: :archived, language: :cy)
+            live_english_version = Api::V2::FormDocumentRepository.find(form_id:, tag: :live, language: :en)
+
+            if archived_welsh_version.present? && live_english_version.present?
+              return render template: "forms/archived_welsh/show",
+                            locals: { form: live_english_version },
+                            status: :not_found
+            end
+          end
+
+          archived_form = Api::V2::FormDocumentRepository.find(form_id:, tag: :archived)
+          return render template: "forms/archived/show", locals: { form_name: archived_form.name }, status: :not_found if archived_form.present?
+        end
       end
 
-      raise ActiveResource::ResourceNotFound, "Not Found" unless @form.start_page
+      raise ActiveResource::ResourceNotFound, "Not Found" unless @form.present? && @form.start_page
     end
   end
 end

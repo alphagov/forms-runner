@@ -49,8 +49,8 @@ RSpec.describe Api::V2::FormDocumentRepository do
         let(:response_data) { nil }
         let(:status) { 404 }
 
-        it "raises ActiveResource::ResourceNotFound" do
-          expect { described_class.find(tag: :archived, form_id: form_id) }.to raise_error(ActiveResource::ResourceNotFound)
+        it "returns nil" do
+          expect(described_class.find(tag: :archived, form_id: form_id)).to be_nil
         end
       end
     end
@@ -58,20 +58,16 @@ RSpec.describe Api::V2::FormDocumentRepository do
     context "when the form id contains non-alpha-numeric chars" do
       let(:form_id) { "<id>" }
 
-      it "returns ResourceNotFound when the id contains non-alpha-numeric chars" do
-        expect {
-          described_class.find(tag:, form_id:)
-        }.to raise_error(ActiveResource::ResourceNotFound)
+      it "returns nil when the id contains non-alpha-numeric chars" do
+        expect(described_class.find(tag:, form_id:)).to be_nil
       end
     end
 
     context "when the form id is blank" do
       let(:form_id) { "" }
 
-      it "returns ResourceNotFound when the id is blank" do
-        expect {
-          described_class.find(tag:, form_id:)
-        }.to raise_error(ActiveResource::ResourceNotFound)
+      it "returns nil when the id is blank" do
+        expect(described_class.find(tag:, form_id:)).to be_nil
       end
     end
 
@@ -80,10 +76,8 @@ RSpec.describe Api::V2::FormDocumentRepository do
       let(:response_data) { nil }
       let(:status) { 404 }
 
-      it "raises an exception" do
-        expect {
-          described_class.find(tag:, form_id:)
-        }.to raise_error(ActiveResource::ResourceNotFound)
+      it "returns nil" do
+        expect(described_class.find(tag:, form_id:)).to be_nil
       end
     end
 
@@ -132,10 +126,8 @@ RSpec.describe Api::V2::FormDocumentRepository do
       expect(form_snapshot.pages).to all be_a Page
     end
 
-    it "raises an exception if the form does not exist" do
-      expect {
-        described_class.find_with_mode(form_id: "99", mode: Mode.new("preview-draft"))
-      }.to raise_error(ActiveResource::ResourceNotFound)
+    it "returns nil if the form does not exist" do
+      expect(described_class.find_with_mode(form_id: "99", mode: Mode.new("preview-draft"))).to be_nil
     end
 
     context "when mode is live" do
@@ -171,16 +163,12 @@ RSpec.describe Api::V2::FormDocumentRepository do
     end
 
     context "when validating the provided form id" do
-      it "returns ResourceNotFound when the id contains non-alpha-numeric chars" do
-        expect {
-          described_class.find_with_mode(form_id: "<id>", mode: Mode.new("preview-draft"))
-        }.to raise_error(ActiveResource::ResourceNotFound)
+      it "returns nil when the id contains non-alpha-numeric chars" do
+        expect(described_class.find_with_mode(form_id: "<id>", mode: Mode.new("preview-draft"))).to be_nil
       end
 
-      it "returns ResourceNotFound when the id is blank" do
-        expect {
-          described_class.find_with_mode(form_id: "", mode: Mode.new("preview-draft"))
-        }.to raise_error(ActiveResource::ResourceNotFound)
+      it "returns nil when the id is blank" do
+        expect(described_class.find_with_mode(form_id: "", mode: Mode.new("preview-draft"))).to be_nil
       end
 
       it "returns the form when the id is alphanumeric" do
