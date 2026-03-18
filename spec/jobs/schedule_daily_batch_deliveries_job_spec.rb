@@ -23,7 +23,7 @@ RSpec.describe ScheduleDailyBatchDeliveriesJob do
   end
 
   before do
-    allow(BatchSubmissionsSelector).to receive(:batches).and_return(batches.to_enum)
+    allow(BatchSubmissionsSelector).to receive(:daily_batches).and_return(batches.to_enum)
   end
 
   context "when Deliveries do not already exist for batches" do
@@ -32,7 +32,7 @@ RSpec.describe ScheduleDailyBatchDeliveriesJob do
     end
 
     it "calls the selector with yesterday's date" do
-      expect(BatchSubmissionsSelector).to have_received(:batches).with(Time.zone.yesterday)
+      expect(BatchSubmissionsSelector).to have_received(:daily_batches).with(Time.zone.yesterday)
     end
 
     it "creates a delivery record per batch job" do

@@ -2,7 +2,7 @@ class BatchSubmissionsSelector
   Batch = Data.define(:form_id, :mode, :submissions)
 
   class << self
-    def batches(date)
+    def daily_batches(date)
       Enumerator.new do |yielder|
         form_ids_and_modes_with_send_daily_submission_batch(date).each do |form_id, mode|
           submissions = Submission.for_form_and_mode(form_id, mode).on_day(date).order(created_at: :desc)

@@ -7,11 +7,11 @@ RSpec.describe BatchSubmissionsSelector do
   let(:date) { Time.zone.local(2022, 12, 1) }
   let(:form_id) { 101 }
 
-  describe ".batches" do
-    subject(:batches) { described_class.batches(date) }
+  describe ".daily_batches" do
+    subject(:daily_batches) { described_class.daily_batches(date) }
 
     it "returns an enumerator" do
-      expect(batches).to be_an(Enumerator)
+      expect(daily_batches).to be_an(Enumerator)
     end
 
     context "when send_daily_submissions_batch is enabled for the form document" do
@@ -36,15 +36,15 @@ RSpec.describe BatchSubmissionsSelector do
         end
 
         it "includes only forms/modes with submissions on the date and their submissions" do
-          expect(batches.map(&:to_h)).to contain_exactly(
+          expect(daily_batches.map(&:to_h)).to contain_exactly(
             a_hash_including(form_id: form_id, mode: "form"),
             a_hash_including(form_id: form_id, mode: "preview-draft"),
           )
         end
 
         it "includes only submissions on the day in the batches" do
-          expect(batches.to_a[0].submissions.pluck(:reference)).to contain_exactly(form_submission.reference)
-          expect(batches.to_a[1].submissions.pluck(:reference)).to contain_exactly(preview_draft_submission.reference)
+          expect(daily_batches.to_a[0].submissions.pluck(:reference)).to contain_exactly(form_submission.reference)
+          expect(daily_batches.to_a[1].submissions.pluck(:reference)).to contain_exactly(preview_draft_submission.reference)
         end
       end
 
@@ -69,15 +69,15 @@ RSpec.describe BatchSubmissionsSelector do
         end
 
         it "includes only forms/modes with submissions on the date" do
-          expect(batches.map(&:to_h)).to contain_exactly(
+          expect(daily_batches.map(&:to_h)).to contain_exactly(
             a_hash_including(form_id: form_id, mode: "form"),
             a_hash_including(form_id: form_id, mode: "preview-draft"),
           )
         end
 
         it "includes only submissions on the day in the batches" do
-          expect(batches.to_a[0].submissions.pluck(:reference)).to contain_exactly(form_submission.reference)
-          expect(batches.to_a[1].submissions.pluck(:reference)).to contain_exactly(preview_draft_submission.reference)
+          expect(daily_batches.to_a[0].submissions.pluck(:reference)).to contain_exactly(form_submission.reference)
+          expect(daily_batches.to_a[1].submissions.pluck(:reference)).to contain_exactly(preview_draft_submission.reference)
         end
       end
     end
@@ -93,13 +93,13 @@ RSpec.describe BatchSubmissionsSelector do
       end
 
       it "includes a batch for the form and mode" do
-        expect(batches.map(&:to_h)).to contain_exactly(
+        expect(daily_batches.map(&:to_h)).to contain_exactly(
           a_hash_including(form_id: form_id, mode: "form"),
         )
       end
 
       it "includes all the submissions in the batch" do
-        submissions = batches.first.submissions
+        submissions = daily_batches.first.submissions
         expect(submissions.pluck(:reference)).to contain_exactly(latest_submission.reference, earlier_submission.reference)
       end
     end
@@ -110,7 +110,7 @@ RSpec.describe BatchSubmissionsSelector do
       end
 
       it "does not include a batch for the form and mode" do
-        expect(batches.to_a).to be_empty
+        expect(daily_batches.to_a).to be_empty
       end
     end
 
@@ -121,7 +121,7 @@ RSpec.describe BatchSubmissionsSelector do
       end
 
       it "does not include a batch for the form and mode" do
-        expect(batches.to_a).to be_empty
+        expect(daily_batches.to_a).to be_empty
       end
     end
   end
