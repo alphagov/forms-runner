@@ -11,8 +11,8 @@ RSpec.describe ScheduleDailyBatchDeliveriesJob do
   let(:other_form_submissions) { create_list(:submission, 1, form_id: other_form_id, mode: "preview-draft") }
   let!(:batches) do
     [
-      DailySubmissionBatchSelector::Batch.new(101, "form", form_submissions),
-      DailySubmissionBatchSelector::Batch.new(201, "preview-draft", other_form_submissions),
+      BatchSubmissionsSelector::Batch.new(101, "form", form_submissions),
+      BatchSubmissionsSelector::Batch.new(201, "preview-draft", other_form_submissions),
     ]
   end
 
@@ -23,7 +23,7 @@ RSpec.describe ScheduleDailyBatchDeliveriesJob do
   end
 
   before do
-    allow(DailySubmissionBatchSelector).to receive(:batches).and_return(batches.to_enum)
+    allow(BatchSubmissionsSelector).to receive(:batches).and_return(batches.to_enum)
   end
 
   context "when Deliveries do not already exist for batches" do
@@ -32,7 +32,7 @@ RSpec.describe ScheduleDailyBatchDeliveriesJob do
     end
 
     it "calls the selector with yesterday's date" do
-      expect(DailySubmissionBatchSelector).to have_received(:batches).with(Time.zone.yesterday)
+      expect(BatchSubmissionsSelector).to have_received(:batches).with(Time.zone.yesterday)
     end
 
     it "creates a delivery record per batch job" do

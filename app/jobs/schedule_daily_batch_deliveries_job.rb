@@ -10,7 +10,7 @@ class ScheduleDailyBatchDeliveriesJob < ApplicationJob
     date = Time.zone.yesterday
     batch_begin_at = date.in_time_zone(TimeZoneUtils.submission_time_zone).beginning_of_day
 
-    DailySubmissionBatchSelector.batches(date).each do |batch|
+    BatchSubmissionsSelector.batches(date).each do |batch|
       existing_deliveries = batch.submissions.first.deliveries.daily
       if existing_deliveries.any?
         Rails.logger.warn("Daily batch delivery already exists for batch - skipping", {

@@ -1,4 +1,4 @@
-class DailySubmissionBatchSelector
+class BatchSubmissionsSelector
   Batch = Data.define(:form_id, :mode, :submissions)
 
   class << self

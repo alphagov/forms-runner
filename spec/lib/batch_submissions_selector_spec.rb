@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe DailySubmissionBatchSelector do
+RSpec.describe BatchSubmissionsSelector do
   let(:form_document_with_batch_enabled) { create(:v2_form_document, send_daily_submission_batch: true) }
   let(:form_document_with_batch_disabled) { create(:v2_form_document, send_daily_submission_batch: false) }
 
