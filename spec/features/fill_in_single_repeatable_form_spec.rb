@@ -18,6 +18,7 @@ feature "Fill in and submit a form with a single repeatable question", type: :fe
     end
 
     allow(ReferenceNumberService).to receive(:generate).and_return(reference)
+    allow(FeatureService).to receive(:enabled?).with("filler_answer_email_enabled").and_return(true)
   end
 
   scenario "As a form filler" do
@@ -39,6 +40,10 @@ feature "Fill in and submit a form with a single repeatable question", type: :fe
     then_i_should_see_the_add_another_page_with_my_second_answer
 
     when_i_choose_not_to_add_another
+    and_i_click_on_continue
+
+    then_i_should_see_the_copy_of_answers_page
+    when_i_choose_not_to_receive_a_copy
     and_i_click_on_continue
 
     then_i_should_see_the_check_your_answers_page
@@ -86,6 +91,15 @@ feature "Fill in and submit a form with a single repeatable question", type: :fe
   end
 
   def when_i_choose_not_to_add_another
+    choose "No"
+  end
+
+  def then_i_should_see_the_copy_of_answers_page
+    expect(page.find("h1")).to have_text "Do you want to get an email with a copy of your answers?"
+    expect_page_to_have_no_axe_errors(page)
+  end
+
+  def when_i_choose_not_to_receive_a_copy
     choose "No"
   end
 

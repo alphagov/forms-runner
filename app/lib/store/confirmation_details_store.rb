@@ -3,6 +3,7 @@ module Store
     CONFIRMATION_KEY = :confirmation_details
     SUBMISSION_REFERENCE_KEY = :submission_reference
     REQUESTED_EMAIL_KEY = :requested_email_confirmation
+    COPY_OF_ANSWERS_KEY = :wants_copy_of_answers
 
     def initialize(store, form_id)
       @store = store
@@ -22,6 +23,15 @@ module Store
 
     def requested_email_confirmation?
       @store.dig(CONFIRMATION_KEY, @form_key, REQUESTED_EMAIL_KEY.to_s)
+    end
+
+    def save_copy_of_answers_preference(wants_copy)
+      @store[CONFIRMATION_KEY][@form_key] ||= {}
+      @store[CONFIRMATION_KEY][@form_key][COPY_OF_ANSWERS_KEY.to_s] = wants_copy
+    end
+
+    def wants_copy_of_answers?
+      @store.dig(CONFIRMATION_KEY, @form_key, COPY_OF_ANSWERS_KEY.to_s)
     end
 
     def clear_submission_details

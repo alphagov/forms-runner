@@ -83,6 +83,10 @@ cy:
             add_another_answer:
               blank: Dewiswch ydw os ydych angen ychwanegu ateb arall
               max_answers_reached: Dewiswch ydw os ydych angen ychwanegu ateb arall
+        copy_of_answers_input:
+          attributes:
+            copy_of_answers:
+              blank: PLACEHOLDER! Dewiswch ydw os hoffech dderbyn copi o'ch atebion
         email_confirmation_input:
           attributes:
             confirmation_email_address:
@@ -378,6 +382,11 @@ cy:
         view_english_form: 'Gallwch lenwi’r ffurflen yn Saesneg o hyd:'
         welsh_version_archived: Mae’r fersiwn Gymraeg o’r ffurflen hon wedi’i harchifo ac nid yw ar gael mwyach.
     back: Yn ôl
+    copy_of_answers:
+      show:
+        heading: PLACEHOLDER! Ydych chi eisiau copi o'ch atebion?
+        hint: PLACEHOLDER! Byddwn ond yn defnyddio'r cyfeiriad e-bost rydych yn ei ddarparu yma i anfon cadarnhad bod eich ffurflen wedi'i chyflwyno'n llwyddiannus. Ni fydd yn cynnwys copi o'ch atebion.
+        title: PLACEHOLDER! Ydych chi eisiau copi o'ch atebion?
     remove_answer:
       show:
         address_heading: Dileu cyfeiriad
@@ -411,6 +420,10 @@ cy:
         send_confirmation: Byddwn ond yn defnyddio’r cyfeiriad e-bost rydych yn ei ddarparu yma i anfon cadarnhad bod eich ffurflen wedi’i chyflwyno’n llwyddiannus. Ni fydd yn cynnwys copi o’ch atebion.
     label:
       add_another_answer_input:
+        options:
+          'no': Na
+          'yes': Ydw
+      copy_of_answers_input:
         options:
           'no': Na
           'yes': Ydw

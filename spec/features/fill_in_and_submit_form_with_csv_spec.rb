@@ -17,6 +17,7 @@ feature "Fill in and submit a form with a CSV submission", type: :feature do
     end
 
     allow(ReferenceNumberService).to receive(:generate).and_return(reference)
+    allow(FeatureService).to receive(:enabled?).with("filler_answer_email_enabled").and_return(true)
 
     travel_to Time.parse("2029-01-24T05:05:50+00:00")
   end
@@ -30,6 +31,10 @@ feature "Fill in and submit a form with a CSV submission", type: :feature do
     then_i_should_see_the_first_question
 
     when_i_fill_in_the_question
+    and_i_click_on_continue
+
+    then_i_should_see_the_copy_of_answers_page
+    when_i_choose_not_to_receive_a_copy
     and_i_click_on_continue
 
     then_i_should_see_the_check_your_answers_page
@@ -56,6 +61,15 @@ feature "Fill in and submit a form with a CSV submission", type: :feature do
 
   def and_i_click_on_continue
     click_button "Continue"
+  end
+
+  def then_i_should_see_the_copy_of_answers_page
+    expect(page.find("h1")).to have_text "Do you want to get an email with a copy of your answers?"
+    expect_page_to_have_no_axe_errors(page)
+  end
+
+  def when_i_choose_not_to_receive_a_copy
+    choose "No"
   end
 
   def then_i_should_see_the_check_your_answers_page
