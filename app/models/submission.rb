@@ -11,6 +11,11 @@ class Submission < ApplicationRecord
     where(created_at: range)
   }
 
+  scope :in_week, lambda { |time_in_week|
+    range = time_in_week.in_time_zone(TimeZoneUtils.submission_time_zone).all_week(:monday)
+    where(created_at: range)
+  }
+
   scope :ordered_by_form_version_and_date, lambda {
     order(Arel.sql("(form_document->>'updated_at')::timestamptz ASC, created_at ASC"))
   }

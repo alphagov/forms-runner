@@ -85,6 +85,66 @@ RSpec.describe Submission, type: :model do
       end
     end
 
+    describe ".in_week" do
+      context "when the date is around the start of BST" do
+        let!(:gmt_monday_submission) { create(:submission, created_at: Time.utc(2025, 3, 17, 0, 0, 0)) }
+        let!(:gmt_sunday_submission) { create(:submission, created_at: Time.utc(2025, 3, 23, 23, 59, 59)) }
+
+        let!(:clock_change_week_monday_submission) { create(:submission, created_at: Time.utc(2025, 3, 24, 0, 0, 0)) }
+        let!(:clock_change_week_sunday_submission) { create(:submission, created_at: Time.utc(2025, 3, 30, 22, 59, 59)) }
+
+        let!(:bst_monday_submission) { create(:submission, created_at: Time.utc(2025, 3, 30, 23, 0, 0)) }
+        let!(:bst_sunday_submission) { create(:submission, created_at: Time.utc(2025, 4, 6, 22, 59, 59)) }
+
+        it "returns the submissions for the week before the clocks change" do
+          submissions = described_class.in_week(Time.utc(2025, 3, 17, 0, 0, 0))
+          expect(submissions.size).to eq(2)
+          expect(submissions).to contain_exactly(gmt_monday_submission, gmt_sunday_submission)
+        end
+
+        it "returns the submissions for the week of the clocks change" do
+          submissions = described_class.in_week(Time.utc(2025, 3, 24, 0, 0, 0))
+          expect(submissions.size).to eq(2)
+          expect(submissions).to contain_exactly(clock_change_week_monday_submission, clock_change_week_sunday_submission)
+        end
+
+        it "returns the submissions for the week after the clocks change" do
+          submissions = described_class.in_week(Time.utc(2025, 3, 30, 23, 0, 0))
+          expect(submissions.size).to eq(2)
+          expect(submissions).to contain_exactly(bst_monday_submission, bst_sunday_submission)
+        end
+      end
+
+      context "when the date is around the end of BST" do
+        let!(:bst_monday_submission) { create(:submission, created_at: Time.utc(2025, 10, 12, 23, 0, 0)) }
+        let!(:bst_sunday_submission) { create(:submission, created_at: Time.utc(2025, 10, 19, 22, 59, 59)) }
+
+        let!(:clock_change_week_monday_submission) { create(:submission, created_at: Time.utc(2025, 10, 19, 23, 0, 0)) }
+        let!(:clock_change_week_sunday_submission) { create(:submission, created_at: Time.utc(2025, 10, 26, 23, 59, 59)) }
+
+        let!(:gmt_monday_submission) { create(:submission, created_at: Time.utc(2025, 10, 27, 0, 0, 0)) }
+        let!(:gmt_sunday_submission) { create(:submission, created_at: Time.utc(2025, 11, 2, 23, 59, 59)) }
+
+        it "returns the submissions for the week before the clocks change" do
+          submissions = described_class.in_week(Time.utc(2025, 10, 13, 23, 0, 0))
+          expect(submissions.size).to eq(2)
+          expect(submissions).to contain_exactly(bst_monday_submission, bst_sunday_submission)
+        end
+
+        it "returns the submissions for the week of the clocks change" do
+          submissions = described_class.in_week(Time.utc(2025, 10, 20, 23, 0, 0))
+          expect(submissions.size).to eq(2)
+          expect(submissions).to contain_exactly(clock_change_week_monday_submission, clock_change_week_sunday_submission)
+        end
+
+        it "returns the submissions for the week after the clocks change" do
+          submissions = described_class.in_week(Time.utc(2025, 10, 27, 0, 0, 0))
+          expect(submissions.size).to eq(2)
+          expect(submissions).to contain_exactly(gmt_monday_submission, gmt_sunday_submission)
+        end
+      end
+    end
+
     describe ".ordered_by_form_version_and_date" do
       let(:first_form_version) { create :v2_form_document, updated_at: Time.utc(2022, 6, 1, 12, 0, 0) }
       let(:second_form_version) { create :v2_form_document, updated_at: Time.utc(2022, 12, 1, 12, 0, 0) }
