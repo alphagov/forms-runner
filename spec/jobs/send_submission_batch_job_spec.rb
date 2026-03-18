@@ -69,15 +69,6 @@ RSpec.describe SendSubmissionBatchJob, type: :job do
         perform_enqueued_jobs
       end
 
-      it "sends an email" do
-        expect(ActionMailer::Base.deliveries.count).to eq(1)
-        expect(mail.to).to include(form_document.submission_email)
-      end
-
-      it "includes the date in London time in the subject" do
-        expect(mail.subject).to include("10 April 2025")
-      end
-
       it "updates the delivery" do
         expect(delivery.reload.delivery_reference).to eq(mail.message_id)
         expect(delivery.reload.last_attempt_at).to be_within(1.second).of(@job_ran_at)
@@ -94,39 +85,118 @@ RSpec.describe SendSubmissionBatchJob, type: :job do
                  failure_reason: "bounced")
         end
 
-        it "updates the resets the delivery details" do
+        it "resets the delivery details" do
           expect(delivery.reload.delivered_at).to be_nil
           expect(delivery.reload.failed_at).to be_nil
           expect(delivery.reload.failure_reason).to be_nil
         end
       end
 
-      it "attaches a csv with the expected filename" do
-        expect(mail.attachments).not_to be_empty
+      context "when the delivery is for a daily batch" do
+        it "sends an email" do
+          expect(ActionMailer::Base.deliveries.count).to eq(1)
+          expect(mail.to).to include(form_document.submission_email)
+        end
 
-        filenames = mail.attachments.map(&:filename)
-        expect(filenames).to contain_exactly("govuk_forms_my_form_2025-04-10.csv")
+        it "includes the date in London time in the subject" do
+          expect(mail.subject).to include("10 April 2025")
+        end
+
+        it "attaches a csv with the expected filename" do
+          expect(mail.attachments).not_to be_empty
+
+          filenames = mail.attachments.map(&:filename)
+          expect(filenames).to contain_exactly("govuk_forms_my_form_2025-04-10.csv")
+        end
+
+        it "attaches a csv containing header plus one line per submission" do
+          csv_content = mail.attachments.first.decoded
+          expect(csv_content.lines.count).to eq(submissions.count + 1)
+        end
+
+        it "logs that the email was sent" do
+          expect(log_lines).to include(
+            hash_including(
+              "event" => "form_daily_batch_email_sent",
+              "form_id" => form_id,
+              "mode" => mode_string,
+              "preview" => "false",
+              "batch_begin_date" => date.to_s,
+              "number_of_submissions" => submissions.count,
+              "delivery_reference" => mail.message_id,
+              "delivery_id" => delivery.id,
+              "job_id" => @job_id,
+            ),
+          )
+        end
+
+        it "logs each submission included in the batch" do
+          expect(log_lines).to include(
+            hash_including(
+              "event" => "form_included_in_daily_batch_email",
+              "batch_begin_date" => date.to_s,
+              "submission_reference" => submissions.first.reference,
+              "delivery_reference" => mail.message_id,
+            ),
+            hash_including(
+              "event" => "form_included_in_daily_batch_email",
+              "batch_begin_date" => date.to_s,
+              "submission_reference" => submissions.second.reference,
+              "delivery_reference" => mail.message_id,
+            ),
+          )
+        end
       end
 
-      it "attaches a csv containing header plus one line per submission" do
-        csv_content = mail.attachments.first.decoded
-        expect(csv_content.lines.count).to eq(submissions.count + 1)
-      end
+      context "when the delivery is for a weekly batch" do
+        let(:delivery) { create(:delivery, delivery_schedule: "weekly", submissions:, batch_begin_at:) }
 
-      it "logs that the email was sent" do
-        expect(log_lines).to include(
-          hash_including(
-            "event" => "form_daily_batch_email_sent",
-            "form_id" => form_id,
-            "mode" => mode_string,
-            "preview" => "false",
-            "batch_date" => date.to_s,
-            "number_of_submissions" => submissions.count,
-            "delivery_reference" => mail.message_id,
-            "delivery_id" => delivery.id,
-            "job_id" => @job_id,
-          ),
-        )
+        it "sends an email" do
+          expect(ActionMailer::Base.deliveries.count).to eq(1)
+          expect(mail.to).to include(form_document.submission_email)
+        end
+
+        it "includes the date range in London time in the subject" do
+          expect(mail.subject).to include("10 April 2025 to 16 April 2025")
+        end
+
+        it "attaches a csv containing header plus one line per submission" do
+          csv_content = mail.attachments.first.decoded
+          expect(csv_content.lines.count).to eq(submissions.count + 1)
+        end
+
+        it "logs that the email was sent" do
+          expect(log_lines).to include(
+            hash_including(
+              "event" => "form_weekly_batch_email_sent",
+              "form_id" => form_id,
+              "mode" => mode_string,
+              "preview" => "false",
+              "batch_begin_date" => date.to_s,
+              "number_of_submissions" => submissions.count,
+              "delivery_reference" => mail.message_id,
+              "delivery_id" => delivery.id,
+              "job_id" => @job_id,
+            ),
+          )
+        end
+
+        it "logs each submission included in the batch" do
+          expect(log_lines).to include(
+            hash_including(
+              "event" => "form_included_in_weekly_batch_email",
+              "batch_begin_date" => date.to_s,
+              "submission_reference" => submissions.first.reference,
+              "delivery_reference" => mail.message_id,
+            ),
+            hash_including(
+              "event" => "form_included_in_weekly_batch_email",
+              "batch_begin_date" => date.to_s,
+              "submission_reference" => submissions.second.reference,
+              "delivery_reference" => mail.message_id,
+            ),
+          )
+        end
       end
     end
 
