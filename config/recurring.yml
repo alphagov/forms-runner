@@ -14,6 +14,9 @@ production:
   schedule_daily_batch_deliveries_job:
     class: ScheduleDailyBatchDeliveriesJob
     schedule: every day at 2am Europe/London
+  schedule_weekly_batch_deliveries_job:
+    class: ScheduleWeeklyBatchDeliveriesJob
+    schedule: every Monday at 2:15am Europe/London
 development:
   delete_submissions_job:
     class: DeleteSubmissionsJob
@@ -30,3 +33,6 @@ development:
   schedule_daily_batch_deliveries_job:
     class: ScheduleDailyBatchDeliveriesJob
     schedule: every day at 2am Europe/London
+  schedule_weekly_batch_deliveries_job:
+    class: ScheduleWeeklyBatchDeliveriesJob
+    schedule: every Monday at 2:15am Europe/London
