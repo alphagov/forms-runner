@@ -18,5 +18,7 @@ class ApplicationJob < ActiveJob::Base
     CurrentJobLoggingAttributes.preview = mode.preview?
     CurrentJobLoggingAttributes.delivery_id = delivery.id
     CurrentJobLoggingAttributes.delivery_reference = delivery.delivery_reference
+    CurrentJobLoggingAttributes.delivery_schedule = delivery.delivery_schedule
+    CurrentJobLoggingAttributes.batch_begin_at = delivery.batch_begin_at
   end
 end

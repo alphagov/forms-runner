@@ -32,7 +32,7 @@ private
   def set_logging_attributes(submission:, delivery:)
     if delivery.immediate?
       set_submission_logging_attributes(submission:, delivery:)
-    elsif delivery.daily?
+    elsif delivery.daily? || delivery.weekly?
       set_submission_batch_logging_attributes(form: submission.form, mode: submission.mode_object, delivery:)
     end
   end
@@ -66,8 +66,14 @@ private
       }
     end
 
-    process_immediate_delivery_bounce(delivery, submission, ses_bounce, bounced_recipients) if delivery.immediate?
-    process_daily_delivery_bounce(delivery, submission, ses_bounce, bounced_recipients) if delivery.daily?
+    case delivery.delivery_schedule
+    when "immediate"
+      process_immediate_delivery_bounce(delivery, submission, ses_bounce, bounced_recipients)
+    when "daily"
+      process_daily_delivery_bounce(delivery, submission, ses_bounce, bounced_recipients)
+    when "weekly"
+      process_weekly_delivery_bounce(delivery, submission, ses_bounce, bounced_recipients)
+    end
   end
 
   def process_immediate_delivery_bounce(delivery, submission, ses_bounce, bounced_recipients)
@@ -96,9 +102,27 @@ private
                              extra: {
                                form_id: submission.form_id,
                                delivery_reference: delivery.delivery_reference,
-                               delivery_schedule: delivery.delivery_schedule,
                                delivery_id: delivery.id,
-                               batch_date: submission.submission_time.to_date,
+                               delivery_schedule: delivery.delivery_schedule,
+                               batch_begin_at: delivery.batch_begin_at,
+                               job_id:,
+                               ses_bounce:,
+                             })
+    end
+  end
+
+  def process_weekly_delivery_bounce(delivery, submission, ses_bounce, bounced_recipients)
+    EventLogger.log_form_event("weekly_batch_email_bounced", ses_bounce: ses_bounce.merge(bounced_recipients:))
+
+    unless submission.preview?
+      Sentry.capture_message("Weekly submission batch email bounced for form #{submission.form_id} - #{self.class.name}:",
+                             fingerprint: ["{{ default }}", submission.form_id],
+                             extra: {
+                               form_id: submission.form_id,
+                               delivery_reference: delivery.delivery_reference,
+                               delivery_id: delivery.id,
+                               delivery_schedule: delivery.delivery_schedule,
+                               batch_begin_at: delivery.batch_begin_at,
                                job_id:,
                                ses_bounce:,
                              })
@@ -110,6 +134,8 @@ private
       EventLogger.log_form_event("submission_complaint")
     elsif delivery.daily?
       EventLogger.log_form_event("daily_batch_email_complaint")
+    elsif delivery.weekly?
+      EventLogger.log_form_event("weekly_batch_email_complaint")
     end
   end
 end
