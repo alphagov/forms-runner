@@ -7,6 +7,8 @@ class CurrentJobLoggingAttributes < ActiveSupport::CurrentAttributes
             :preview,
             :delivery_id,
             :delivery_reference,
+            :delivery_schedule,
+            :batch_begin_at,
             :confirmation_email_id,
             :sqs_message_id,
             :sns_message_timestamp
@@ -21,6 +23,8 @@ class CurrentJobLoggingAttributes < ActiveSupport::CurrentAttributes
       preview: preview.to_s,
       delivery_id:,
       delivery_reference:,
+      delivery_schedule:,
+      batch_begin_at:,
       confirmation_email_id:,
       sqs_message_id:,
       sns_message_timestamp:,
