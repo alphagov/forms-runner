@@ -72,14 +72,10 @@ module Forms
     end
 
     def back_link
-      if FeatureService.enabled?("filler_answer_email_enabled")
-        copy_of_answers_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug)
-      else
-        previous_step = current_context.previous_step(CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG)
+      previous_step = current_context.previous_step(CheckYourAnswersStep::CHECK_YOUR_ANSWERS_PAGE_SLUG)
 
-        if previous_step.present?
-          previous_step.repeatable? ? add_another_answer_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug, page_slug: previous_step.id) : form_page_path(current_context.form.id, current_context.form.form_slug, previous_step.id)
-        end
+      if previous_step.present?
+        previous_step.repeatable? ? add_another_answer_path(form_id: current_context.form.id, form_slug: current_context.form.form_slug, page_slug: previous_step.id) : form_page_path(current_context.form.id, current_context.form.form_slug, previous_step.id)
       end
     end
   end

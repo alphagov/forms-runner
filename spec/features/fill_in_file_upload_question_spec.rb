@@ -36,8 +36,6 @@ feature "Fill in and submit a form with a file upload question", type: :feature 
     allow(mock_s3_client).to receive(:put_object)
     allow(mock_s3_client).to receive(:get_object_tagging).and_return({ tag_set: [{ key: "GuardDutyMalwareScanStatus", value: scan_status }] })
 
-    allow(FeatureService).to receive(:enabled?).with("filler_answer_email_enabled").and_return(true)
-
     File.write(test_file, test_file_content)
   end
 
@@ -51,10 +49,6 @@ feature "Fill in and submit a form with a file upload question", type: :feature 
       when_i_upload_a_file
       and_i_click_on_continue
       then_i_see_the_review_file_page
-      and_i_click_on_continue
-      then_i_should_see_the_copy_of_answers_page
-
-      when_i_choose_not_to_receive_a_copy
       and_i_click_on_continue
       then_i_should_see_the_check_your_answers_page
 
@@ -92,10 +86,6 @@ feature "Fill in and submit a form with a file upload question", type: :feature 
       and_i_click_on_continue
       then_i_see_the_review_file_page
       and_i_click_on_continue
-      then_i_should_see_the_copy_of_answers_page
-
-      when_i_choose_not_to_receive_a_copy
-      and_i_click_on_continue
       then_i_should_see_the_check_your_answers_page
 
       when_i_opt_out_of_email_confirmation
@@ -131,15 +121,6 @@ feature "Fill in and submit a form with a file upload question", type: :feature 
     expect(page.find("h1")).to have_text question_text
     expect(page).to have_text "Check your uploaded file"
     expect(page).to have_text File.basename(File.path(test_file))
-  end
-
-  def then_i_should_see_the_copy_of_answers_page
-    expect(page.find("h1")).to have_text "Do you want to get an email with a copy of your answers?"
-    expect_page_to_have_no_axe_errors(page)
-  end
-
-  def when_i_choose_not_to_receive_a_copy
-    choose "No"
   end
 
   def then_i_should_see_the_check_your_answers_page

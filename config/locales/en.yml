@@ -83,10 +83,6 @@ en:
             add_another_answer:
               blank: Select ‘Yes’ if you need to add another answer
               max_answers_reached: You cannot add another answer
-        copy_of_answers_input:
-          attributes:
-            copy_of_answers:
-              blank: Select 'Yes' if you want to get a copy of your answers
         email_confirmation_input:
           attributes:
             confirmation_email_address:
@@ -382,11 +378,6 @@ en:
         view_english_form: 'You can still complete the form in English:'
         welsh_version_archived: The Welsh version of this form has been archived and is no longer available.
     back: Back
-    copy_of_answers:
-      show:
-        heading: Do you want to get an email with a copy of your answers?
-        hint: You’ll need a GOV.UK One Login for this - you’ll be able to create one now if you do not already have one.
-        title: Do you want a copy of your answers?
     remove_answer:
       show:
         address_heading: Remove an address
@@ -420,10 +411,6 @@ en:
         send_confirmation: We’ll only use the email address you provide here to send a confirmation that your form’s been successfully submitted. It will not contain a copy of your answers.
     label:
       add_another_answer_input:
-        options:
-          'no': 'No'
-          'yes': 'Yes'
-      copy_of_answers_input:
         options:
           'no': 'No'
           'yes': 'Yes'

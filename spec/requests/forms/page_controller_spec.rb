@@ -52,8 +52,6 @@ RSpec.describe Forms::PageController, :capture_logging, type: :request do
     ActiveResource::HttpMock.respond_to do |mock|
       mock.get "/api/v2/forms/2#{api_url_suffix}", req_headers, form_data.to_json, 200
     end
-
-    allow(FeatureService).to receive(:enabled?).with("filler_answer_email_enabled").and_return(true)
   end
 
   context "when setting logging context" do
@@ -724,9 +722,9 @@ RSpec.describe Forms::PageController, :capture_logging, type: :request do
       end
 
       context "with the final page" do
-        it "Redirects to the copy of answers page" do
+        it "Redirects to the check your answers page" do
           post save_form_page_path(mode:, form_id: 2, form_slug: form_data.form_slug, page_slug: 2), params: { question: { text: "answer text" } }
-          expect(response).to redirect_to(copy_of_answers_path(2, form_data.form_slug, mode:))
+          expect(response).to redirect_to(check_your_answers_path(2, form_data.form_slug, mode:))
         end
       end
     end
