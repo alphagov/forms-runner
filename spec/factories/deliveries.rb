@@ -38,6 +38,12 @@ FactoryBot.define do
 
     trait :daily_scheduled_delivery do
       delivery_schedule { "daily" }
+      batch_begin_at { Time.current.beginning_of_day }
+    end
+
+    trait :weekly_scheduled_delivery do
+      delivery_schedule { "weekly" }
+      batch_begin_at { (Time.current - 7.days).beginning_of_day }
     end
   end
 end

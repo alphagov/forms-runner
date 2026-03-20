@@ -21,6 +21,9 @@ namespace :submissions do
     deliveries.daily.each do |delivery|
       Rails.logger.info "Daily batch delivery - delivery_reference: #{delivery.delivery_reference}, created_at: #{delivery.created_at}, last_attempt_at: #{delivery.last_attempt_at}"
     end
+    deliveries.weekly.each do |delivery|
+      Rails.logger.info "Weekly batch delivery - delivery_reference: #{delivery.delivery_reference}, created_at: #{delivery.created_at}, last_attempt_at: #{delivery.last_attempt_at}"
+    end
   end
 
   desc "Fetch and display all data for a specific submission given a reference"
@@ -52,7 +55,10 @@ namespace :submissions do
         Rails.logger.info "Retrying submission with reference #{submission.reference} for form with ID: #{form_id}"
         SendSubmissionJob.perform_later(submission)
       elsif delivery.daily?
-        Rails.logger.info "Retrying daily batch delivery with delivery_id: #{delivery.id} for date: #{submission.submission_time.to_date} for form with ID: #{form_id}"
+        Rails.logger.info "Retrying daily batch delivery with delivery_id: #{delivery.id} for date: #{delivery.batch_begin_at.to_date} for form with ID: #{form_id}"
+        SendSubmissionBatchJob.perform_later(delivery:)
+      elsif delivery.weekly?
+        Rails.logger.info "Retrying weekly batch delivery with delivery_id: #{delivery.id} for week starting: #{delivery.batch_begin_at.to_date} for form with ID: #{form_id}"
         SendSubmissionBatchJob.perform_later(delivery:)
       end
     end

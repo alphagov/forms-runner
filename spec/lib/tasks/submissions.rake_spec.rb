@@ -65,6 +65,7 @@ RSpec.describe "submissions.rake" do
     let!(:bounced_submission) { create :submission, :bounced, form_id: }
     let!(:another_bounced_submission) { create :submission, :bounced, form_id: }
     let!(:bounced_daily_delivery) { create :delivery, :failed, :daily_scheduled_delivery, submissions: [bounced_submission, another_bounced_submission] }
+    let!(:bounced_weekly_delivery) { create :delivery, :failed, :weekly_scheduled_delivery, submissions: [bounced_submission, another_bounced_submission] }
 
     before do
       # create some submissions that won't be matched
@@ -73,10 +74,11 @@ RSpec.describe "submissions.rake" do
     end
 
     it "logs the bounced submissions" do
-      expect(Rails.logger).to receive(:info).with("Found 3 bounced submission deliveries for form with ID #{form_id}")
+      expect(Rails.logger).to receive(:info).with("Found 4 bounced submission deliveries for form with ID #{form_id}")
       expect(Rails.logger).to receive(:info).with "Immediate delivery - submission reference: #{bounced_submission.reference}, created_at: #{bounced_submission.created_at}, last_attempt_at: #{bounced_submission.single_submission_delivery.last_attempt_at}"
       expect(Rails.logger).to receive(:info).with "Immediate delivery - submission reference: #{another_bounced_submission.reference}, created_at: #{another_bounced_submission.created_at}, last_attempt_at: #{another_bounced_submission.single_submission_delivery.last_attempt_at}"
       expect(Rails.logger).to receive(:info).with "Daily batch delivery - delivery_reference: #{bounced_daily_delivery.delivery_reference}, created_at: #{bounced_daily_delivery.created_at}, last_attempt_at: #{bounced_daily_delivery.last_attempt_at}"
+      expect(Rails.logger).to receive(:info).with "Weekly batch delivery - delivery_reference: #{bounced_weekly_delivery.delivery_reference}, created_at: #{bounced_weekly_delivery.created_at}, last_attempt_at: #{bounced_weekly_delivery.last_attempt_at}"
       task.invoke(form_id)
     end
   end
@@ -91,7 +93,8 @@ RSpec.describe "submissions.rake" do
     let(:other_form_id) { 2 }
     let!(:bounced_submission) { create :submission, :bounced, form_id: }
     let!(:pending_submission) { create :submission, :sent, form_id: }
-    let!(:bounced_delivery) { create :delivery, :daily_scheduled_delivery, :failed, submissions: [bounced_submission] }
+    let!(:bounced_daily_delivery) { create :delivery, :daily_scheduled_delivery, :failed, submissions: [bounced_submission] }
+    let!(:bounced_weekly_delivery) { create :delivery, :weekly_scheduled_delivery, :failed, submissions: [bounced_submission] }
 
     before do
       create :submission, :sent, form_id: other_form_id
@@ -102,7 +105,7 @@ RSpec.describe "submissions.rake" do
 
       it "logs how many deliveries to retry" do
         allow(Rails.logger).to receive(:info)
-        expect(Rails.logger).to receive(:info).with("2 deliveries to retry for form with ID: #{form_id}")
+        expect(Rails.logger).to receive(:info).with("3 deliveries to retry for form with ID: #{form_id}")
 
         task.invoke(*valid_args)
       end
@@ -111,7 +114,8 @@ RSpec.describe "submissions.rake" do
         it "logs submissions that are being retried" do
           allow(Rails.logger).to receive(:info)
           expect(Rails.logger).to receive(:info).with("Retrying submission with reference #{bounced_submission.reference} for form with ID: #{form_id}")
-          expect(Rails.logger).to receive(:info).with("Retrying daily batch delivery with delivery_id: #{bounced_delivery.id} for date: #{bounced_submission.submission_time.to_date} for form with ID: #{form_id}")
+          expect(Rails.logger).to receive(:info).with("Retrying daily batch delivery with delivery_id: #{bounced_daily_delivery.id} for date: #{bounced_daily_delivery.batch_begin_at.to_date} for form with ID: #{form_id}")
+          expect(Rails.logger).to receive(:info).with("Retrying weekly batch delivery with delivery_id: #{bounced_weekly_delivery.id} for week starting: #{bounced_weekly_delivery.batch_begin_at.to_date} for form with ID: #{form_id}")
 
           task.invoke(*valid_args)
         end
