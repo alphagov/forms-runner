@@ -246,20 +246,20 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
             perform_enqueued_jobs
 
             expect(log_lines).to include(hash_including(
-                                          "level" => "INFO",
-                                          "message" => "Form event",
-                                          "event" => "form_daily_batch_email_bounced",
-                                          "form_id" => submission.form_id,
-                                          "preview" => "false",
-                                          "delivery_reference" => delivery_reference,
-                                          "delivery_id" => delivery.id,
-                                          "delivery_schedule" => "daily",
-                                          "batch_begin_at" => delivery.batch_begin_at,
-                                          "sqs_message_id" => sqs_message_id,
-                                          "sns_message_timestamp" => sns_message_timestamp,
-                                          "job_id" => @job_id,
-                                          "job_class" => "ReceiveSubmissionBouncesAndComplaintsJob",
-                                        ))
+                                           "level" => "INFO",
+                                           "message" => "Form event",
+                                           "event" => "form_daily_batch_email_bounced",
+                                           "form_id" => submission.form_id,
+                                           "preview" => "false",
+                                           "delivery_reference" => delivery_reference,
+                                           "delivery_id" => delivery.id,
+                                           "delivery_schedule" => "daily",
+                                           "batch_begin_at" => delivery.batch_begin_at,
+                                           "sqs_message_id" => sqs_message_id,
+                                           "sns_message_timestamp" => sns_message_timestamp,
+                                           "job_id" => @job_id,
+                                           "job_class" => "ReceiveSubmissionBouncesAndComplaintsJob",
+                                         ))
           end
 
           it "alerts to Sentry that there was a bounced delivery" do
@@ -281,11 +281,11 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
             perform_enqueued_jobs
 
             expect(log_lines).to include(hash_including(
-                                          "level" => "INFO",
-                                          "message" => "Form event",
-                                          "event" => "form_daily_batch_email_bounced",
-                                          "preview" => "true",
-                                        ))
+                                           "level" => "INFO",
+                                           "message" => "Form event",
+                                           "event" => "form_daily_batch_email_bounced",
+                                           "preview" => "true",
+                                         ))
           end
 
           it "does not alert to Sentry" do
@@ -362,14 +362,14 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
           perform_enqueued_jobs
 
           expect(log_lines).to include(hash_including(
-                                        "level" => "INFO",
-                                        "form_id" => submission.form_id,
-                                        "preview" => "false",
-                                        "message" => "Form event",
-                                        "event" => "form_daily_batch_email_complaint",
-                                        "job_id" => @job_id,
-                                        "job_class" => "ReceiveSubmissionBouncesAndComplaintsJob",
-                                      ))
+                                         "level" => "INFO",
+                                         "form_id" => submission.form_id,
+                                         "preview" => "false",
+                                         "message" => "Form event",
+                                         "event" => "form_daily_batch_email_complaint",
+                                         "job_id" => @job_id,
+                                         "job_class" => "ReceiveSubmissionBouncesAndComplaintsJob",
+                                       ))
         end
       end
     end
@@ -406,20 +406,20 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
             perform_enqueued_jobs
 
             expect(log_lines).to include(hash_including(
-                                          "level" => "INFO",
-                                          "message" => "Form event",
-                                          "event" => "form_weekly_batch_email_bounced",
-                                          "form_id" => submission.form_id,
-                                          "preview" => "false",
-                                          "delivery_reference" => delivery_reference,
-                                          "delivery_id" => delivery.id,
-                                          "delivery_schedule" => "weekly",
-                                          "batch_begin_at" => delivery.batch_begin_at,
-                                          "sqs_message_id" => sqs_message_id,
-                                          "sns_message_timestamp" => sns_message_timestamp,
-                                          "job_id" => @job_id,
-                                          "job_class" => "ReceiveSubmissionBouncesAndComplaintsJob",
-                                        ))
+                                           "level" => "INFO",
+                                           "message" => "Form event",
+                                           "event" => "form_weekly_batch_email_bounced",
+                                           "form_id" => submission.form_id,
+                                           "preview" => "false",
+                                           "delivery_reference" => delivery_reference,
+                                           "delivery_id" => delivery.id,
+                                           "delivery_schedule" => "weekly",
+                                           "batch_begin_at" => delivery.batch_begin_at,
+                                           "sqs_message_id" => sqs_message_id,
+                                           "sns_message_timestamp" => sns_message_timestamp,
+                                           "job_id" => @job_id,
+                                           "job_class" => "ReceiveSubmissionBouncesAndComplaintsJob",
+                                         ))
           end
 
           it "alerts to Sentry that there was a bounced delivery" do
@@ -441,11 +441,11 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
             perform_enqueued_jobs
 
             expect(log_lines).to include(hash_including(
-                                          "level" => "INFO",
-                                          "message" => "Form event",
-                                          "event" => "form_weekly_batch_email_bounced",
-                                          "preview" => "true",
-                                        ))
+                                           "level" => "INFO",
+                                           "message" => "Form event",
+                                           "event" => "form_weekly_batch_email_bounced",
+                                           "preview" => "true",
+                                         ))
           end
 
           it "does not alert to Sentry" do
@@ -522,14 +522,14 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
           perform_enqueued_jobs
 
           expect(log_lines).to include(hash_including(
-                                        "level" => "INFO",
-                                        "form_id" => submission.form_id,
-                                        "preview" => "false",
-                                        "message" => "Form event",
-                                        "event" => "form_weekly_batch_email_complaint",
-                                        "job_id" => @job_id,
-                                        "job_class" => "ReceiveSubmissionBouncesAndComplaintsJob",
-                                      ))
+                                         "level" => "INFO",
+                                         "form_id" => submission.form_id,
+                                         "preview" => "false",
+                                         "message" => "Form event",
+                                         "event" => "form_weekly_batch_email_complaint",
+                                         "job_id" => @job_id,
+                                         "job_class" => "ReceiveSubmissionBouncesAndComplaintsJob",
+                                       ))
         end
       end
     end

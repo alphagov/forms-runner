@@ -21,6 +21,9 @@ namespace :submissions do
     deliveries.daily.each do |delivery|
       Rails.logger.info "Daily batch delivery - delivery_reference: #{delivery.delivery_reference}, created_at: #{delivery.created_at}, last_attempt_at: #{delivery.last_attempt_at}"
     end
+    deliveries.weekly.each do |delivery|
+      Rails.logger.info "Weekly batch delivery - delivery_reference: #{delivery.delivery_reference}, created_at: #{delivery.created_at}, last_attempt_at: #{delivery.last_attempt_at}"
+    end
   end
 
   desc "Fetch and display all data for a specific submission given a reference"
@@ -52,7 +55,10 @@ namespace :submissions do
         Rails.logger.info "Retrying submission with reference #{submission.reference} for form with ID: #{form_id}"
         SendSubmissionJob.perform_later(submission)
       elsif delivery.daily?
-        Rails.logger.info "Retrying daily batch delivery with delivery_id: #{delivery.id} for date: #{submission.submission_time.to_date} for form with ID: #{form_id}"
+        Rails.logger.info "Retrying daily batch delivery with delivery_id: #{delivery.id} for date: #{delivery.batch_begin_at.to_date} for form with ID: #{form_id}"
+        SendSubmissionBatchJob.perform_later(delivery:)
+      elsif delivery.weekly?
+        Rails.logger.info "Retrying weekly batch delivery with delivery_id: #{delivery.id} for week starting: #{delivery.batch_begin_at.to_date} for form with ID: #{form_id}"
         SendSubmissionBatchJob.perform_later(delivery:)
       end
     end
@@ -172,15 +178,15 @@ namespace :submissions do
     end
   end
 
-  desc "Re-deliver daily submission batches corresponding to submissions between two timestamps for a specific form"
-  task :redeliver_daily_batches_by_date, %i[form_id start_timestamp end_timestamp dry_run] => :environment do |_, args|
+  desc "Re-deliver submission batch deliveries created between two timestamps for a specific form"
+  task :redeliver_batches_by_date, %i[form_id start_timestamp end_timestamp dry_run] => :environment do |_, args|
     form_id = args[:form_id]
     start_timestamp = args[:start_timestamp]
     end_timestamp = args[:end_timestamp]
     dry_run_arg = args[:dry_run]
     dry_run = dry_run_arg == "true"
 
-    usage_message = "usage: rake submissions:redeliver_daily_batches_by_date[<form_id>,<start_timestamp>,<end_timestamp>,<dry_run>]".freeze
+    usage_message = "usage: rake submissions:redeliver_batches_by_date[<form_id>,<start_timestamp>,<end_timestamp>,<dry_run>]".freeze
 
     if form_id.blank? || start_timestamp.blank? || end_timestamp.blank? || !dry_run_arg.in?(%w[true false])
       abort usage_message
@@ -197,9 +203,10 @@ namespace :submissions do
       abort "Error: Start timestamp must be before end timestamp"
     end
 
-    deliveries_to_redeliver = Delivery.daily
-                                      .joins(:submissions)
-                                      .where(submissions: { form_id: form_id, created_at: start_time..end_time })
+    deliveries_to_redeliver = Delivery.joins(:submissions)
+                                      .where(submissions: { form_id: form_id })
+                                      .where.not(delivery_schedule: "immediate")
+                                      .where(created_at: start_time..end_time)
                                       .distinct
 
     Rails.logger.info "Time range: #{start_time} to #{end_time}"
