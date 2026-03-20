@@ -1,5 +1,5 @@
 features:
-  filler_answer_email_enabled: true
+  filler_answer_email_enabled: false
 
 active_record_encryption:
   primary_key: CC2SOludR0L15FLQkLNv8sbiQ5yNyHiF
