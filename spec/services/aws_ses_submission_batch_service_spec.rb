@@ -12,13 +12,13 @@ RSpec.describe AwsSesSubmissionBatchService do
     let(:date) { Date.new(2024, 6, 1) }
 
     before do
-      allow(SubmissionFilenameGenerator).to receive(:batch_csv_filename).and_return("filename.csv")
+      allow(SubmissionFilenameGenerator).to receive(:daily_batch_csv_filename).and_return("filename.csv")
       allow(CsvGenerator).to receive(:generate_batched_submissions).and_return(%w[csv-content])
       create_list(:submission, 3, form_document:)
     end
 
     it "calls the SubmissionFilenameGenerator with a nil form version" do
-      expect(SubmissionFilenameGenerator).to receive(:batch_csv_filename).with(form_name: form.name, date:, mode:, form_version: nil)
+      expect(SubmissionFilenameGenerator).to receive(:daily_batch_csv_filename).with(form_name: form.name, date:, mode:, csv_version: nil)
       service.send_daily_batch(date:)
     end
 
@@ -46,12 +46,12 @@ RSpec.describe AwsSesSubmissionBatchService do
     context "when the csv generator returns multiple csv versions" do
       before do
         allow(CsvGenerator).to receive(:generate_batched_submissions).and_return(%w[csv-content csv-content-2])
-        allow(SubmissionFilenameGenerator).to receive(:batch_csv_filename).and_return("filename.csv", "filename-2.csv")
+        allow(SubmissionFilenameGenerator).to receive(:daily_batch_csv_filename).and_return("filename.csv", "filename-2.csv")
       end
 
       it "calls the SubmissionFilenameGenerator to generate a filename for each form version" do
-        expect(SubmissionFilenameGenerator).to receive(:batch_csv_filename).with(form_name: form.name, date:, mode:, form_version: 1)
-        expect(SubmissionFilenameGenerator).to receive(:batch_csv_filename).with(form_name: form.name, date:, mode:, form_version: 2)
+        expect(SubmissionFilenameGenerator).to receive(:daily_batch_csv_filename).with(form_name: form.name, date:, mode:, csv_version: 1)
+        expect(SubmissionFilenameGenerator).to receive(:daily_batch_csv_filename).with(form_name: form.name, date:, mode:, csv_version: 2)
         service.send_daily_batch(date:)
       end
 
@@ -74,13 +74,13 @@ RSpec.describe AwsSesSubmissionBatchService do
     let(:end_date) { Date.new(2024, 6, 7) }
 
     before do
-      allow(SubmissionFilenameGenerator).to receive(:batch_csv_filename).and_return("filename.csv")
+      allow(SubmissionFilenameGenerator).to receive(:weekly_batch_csv_filename).and_return("filename.csv")
       allow(CsvGenerator).to receive(:generate_batched_submissions).and_return(%w[csv-content])
       create_list(:submission, 3, form_document:)
     end
 
     it "calls the SubmissionFilenameGenerator with a nil form version" do
-      expect(SubmissionFilenameGenerator).to receive(:batch_csv_filename).with(form_name: form.name, date: end_date, mode:, form_version: nil)
+      expect(SubmissionFilenameGenerator).to receive(:weekly_batch_csv_filename).with(form_name: form.name, mode:, csv_version: nil, begin_date:, end_date:)
       service.send_weekly_batch(begin_date:, end_date:)
     end
 
@@ -109,12 +109,12 @@ RSpec.describe AwsSesSubmissionBatchService do
     context "when the csv generator returns multiple csv versions" do
       before do
         allow(CsvGenerator).to receive(:generate_batched_submissions).and_return(%w[csv-content csv-content-2])
-        allow(SubmissionFilenameGenerator).to receive(:batch_csv_filename).and_return("filename.csv", "filename-2.csv")
+        allow(SubmissionFilenameGenerator).to receive(:weekly_batch_csv_filename).and_return("filename.csv", "filename-2.csv")
       end
 
       it "calls the SubmissionFilenameGenerator to generate a filename for each form version" do
-        expect(SubmissionFilenameGenerator).to receive(:batch_csv_filename).with(form_name: form.name, date: end_date, mode:, form_version: 1)
-        expect(SubmissionFilenameGenerator).to receive(:batch_csv_filename).with(form_name: form.name, date: end_date, mode:, form_version: 2)
+        expect(SubmissionFilenameGenerator).to receive(:weekly_batch_csv_filename).with(form_name: form.name, mode:, csv_version: 1, begin_date:, end_date:)
+        expect(SubmissionFilenameGenerator).to receive(:weekly_batch_csv_filename).with(form_name: form.name, mode:, csv_version: 2, begin_date:, end_date:)
         service.send_weekly_batch(begin_date:, end_date:)
       end
 
