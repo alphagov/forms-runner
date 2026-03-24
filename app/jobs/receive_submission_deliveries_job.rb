@@ -34,7 +34,7 @@ private
 
   def process_delivery(delivery, submission, **attributes)
     set_submission_logging_attributes(submission:, delivery:) if delivery.immediate?
-    set_submission_batch_logging_attributes(form: submission.form, mode: submission.mode_object, delivery:) if delivery.daily?
+    set_submission_batch_logging_attributes(form: submission.form, mode: submission.mode_object, delivery:) if delivery.daily? || delivery.weekly?
 
     delivery.update! attributes
 
