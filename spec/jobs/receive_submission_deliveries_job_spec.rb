@@ -60,6 +60,19 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
         expect(CloudWatchService).not_to have_received(:record_submission_delivery_latency_metric)
       end
     end
+
+    context "when the delivery is a weekly batch delivery" do
+      let(:submission) { create :submission, :sent, delivery_reference: "something-else", created_at: Time.zone.parse("2025-05-09T10:25:35.001Z") }
+
+      before do
+        create :delivery, :weekly, delivery_reference:, submissions: [submission], created_at: Time.zone.parse("2025-05-09T10:25:35.001Z")
+      end
+
+      it "does not send submission delivery latency metric" do
+        described_class.perform_now
+        expect(CloudWatchService).not_to have_received(:record_submission_delivery_latency_metric)
+      end
+    end
   end
 
   describe "processing delivery notifications" do
@@ -94,7 +107,7 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
 
     context "when the delivery is a daily batch delivery" do
       let!(:submission) { create :submission, :sent, delivery_reference: "something-else" }
-      let!(:delivery) { create(:delivery, :daily, delivery_reference:, submissions: [submission], created_at: Time.zone.parse("2025-05-09T10:25:35.001Z")) }
+      let!(:delivery) { create(:delivery, :daily_scheduled_delivery, delivery_reference:, submissions: [submission], created_at: Time.zone.parse("2025-05-09T10:25:35.001Z")) }
 
       it "logs form event with batch delivery details", :capture_logging do
         perform_enqueued_jobs
@@ -107,6 +120,33 @@ RSpec.describe ReceiveSubmissionDeliveriesJob, type: :job do
                                        "form_name" => submission.form.name,
                                        "delivery_reference" => delivery_reference,
                                        "delivery_id" => delivery.id,
+                                       "delivery_schedule" => "daily",
+                                       "batch_begin_at" => delivery.batch_begin_at,
+                                       "preview" => "false",
+                                       "sns_message_timestamp" => sns_message_timestamp,
+                                       "job_id" => @job_id,
+                                       "job_class" => "ReceiveSubmissionDeliveriesJob",
+                                     ))
+      end
+    end
+
+    context "when the delivery is a weekly batch delivery" do
+      let!(:submission) { create :submission, :sent, delivery_reference: "something-else" }
+      let!(:delivery) { create(:delivery, :weekly_scheduled_delivery, delivery_reference:, submissions: [submission], created_at: Time.zone.parse("2025-05-09T10:25:35.001Z")) }
+
+      it "logs form event with batch delivery details", :capture_logging do
+        perform_enqueued_jobs
+
+        expect(log_lines).to include(hash_including(
+                                       "level" => "INFO",
+                                       "message" => "Form event",
+                                       "event" => "form_submission_batch_delivered",
+                                       "form_id" => submission.form_id,
+                                       "form_name" => submission.form.name,
+                                       "delivery_reference" => delivery_reference,
+                                       "delivery_id" => delivery.id,
+                                       "delivery_schedule" => "weekly",
+                                       "batch_begin_at" => delivery.batch_begin_at,
                                        "preview" => "false",
                                        "sns_message_timestamp" => sns_message_timestamp,
                                        "job_id" => @job_id,

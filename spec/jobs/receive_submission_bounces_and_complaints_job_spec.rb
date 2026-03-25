@@ -214,159 +214,323 @@ RSpec.describe ReceiveSubmissionBouncesAndComplaintsJob, type: :job do
   end
 
   context "when handling submission batch delivery bounces", :capture_logging do
-    let!(:delivery) { create :delivery, :daily_scheduled_delivery, delivery_reference:, submissions: [submission] }
+    context "when the bounce is for a daily batch delivery" do
+      let!(:delivery) { create :delivery, :daily_scheduled_delivery, delivery_reference:, submissions: [submission] }
 
-    describe "processing bounce notifications" do
-      let(:messages) { [sqs_message] }
+      describe "processing bounce notifications" do
+        let(:messages) { [sqs_message] }
 
-      before do
-        job = described_class.perform_later
-        @job_id = job.job_id
+        before do
+          job = described_class.perform_later
+          @job_id = job.job_id
+        end
+
+        context "when it is for a live submission" do
+          let(:bounce_timestamp) { "2023-01-01T12:00:00Z" }
+          let(:ses_message_body) do
+            {
+              "mail" => { "messageId" => delivery_reference },
+              "eventType" => event_type,
+              "bounce" => { "timestamp" => bounce_timestamp },
+            }
+          end
+
+          it "updates the delivery record's failed_at and failure_reason" do
+            perform_enqueued_jobs
+
+            expect(delivery.reload.failed_at).to eq(Time.zone.parse(bounce_timestamp))
+            expect(delivery.reload.failure_reason).to eq("bounced")
+          end
+
+          it "logs form event with correct details" do
+            perform_enqueued_jobs
+
+            expect(log_lines).to include(hash_including(
+                                           "level" => "INFO",
+                                           "message" => "Form event",
+                                           "event" => "form_daily_batch_email_bounced",
+                                           "form_id" => submission.form_id,
+                                           "preview" => "false",
+                                           "delivery_reference" => delivery_reference,
+                                           "delivery_id" => delivery.id,
+                                           "delivery_schedule" => "daily",
+                                           "batch_begin_at" => delivery.batch_begin_at,
+                                           "sqs_message_id" => sqs_message_id,
+                                           "sns_message_timestamp" => sns_message_timestamp,
+                                           "job_id" => @job_id,
+                                           "job_class" => "ReceiveSubmissionBouncesAndComplaintsJob",
+                                         ))
+          end
+
+          it "alerts to Sentry that there was a bounced delivery" do
+            allow(Sentry).to receive(:capture_message)
+            perform_enqueued_jobs
+            expect(Sentry).to have_received(:capture_message)
+          end
+        end
+
+        context "when it is for a preview submission" do
+          let(:mode) { "preview-live" }
+
+          it "does not set failed_at on the delivery" do
+            perform_enqueued_jobs
+            expect(delivery.reload.failed_at).to be_nil
+          end
+
+          it "logs form event with preview flag" do
+            perform_enqueued_jobs
+
+            expect(log_lines).to include(hash_including(
+                                           "level" => "INFO",
+                                           "message" => "Form event",
+                                           "event" => "form_daily_batch_email_bounced",
+                                           "preview" => "true",
+                                         ))
+          end
+
+          it "does not alert to Sentry" do
+            allow(Sentry).to receive(:capture_message)
+            perform_enqueued_jobs
+            expect(Sentry).not_to have_received(:capture_message)
+          end
+        end
+
+        context "when there is a bounce object with detailed information" do
+          let(:ses_message_body) { { "mail" => { "messageId" => delivery_reference }, "eventType" => event_type, "bounce" => bounce } }
+          let(:bounce) { { "bounceType" => "Permanent", "bounceSubType" => "General", "bouncedRecipients" => bounced_recipients, "timestamp" => bounce_timestamp } }
+          let(:bounce_timestamp) { "2023-01-01T12:00:00Z" }
+          let(:bounced_recipients) { [{ "emailAddress" => "bounce@example.com" }] }
+
+          it "logs the bounce details" do
+            perform_enqueued_jobs
+
+            expect(log_lines).to include(
+              hash_including(
+                "ses_bounce" => hash_including(
+                  "bounce_type" => "Permanent",
+                  "bounce_sub_type" => "General",
+                  "bounced_recipients" => [
+                    hash_including(
+                      "email_address" => "bounce@example.com",
+                    ),
+                  ],
+                ),
+              ),
+            )
+          end
+
+          it "includes bounce details in the Sentry event" do
+            allow(Sentry).to receive(:capture_message)
+            perform_enqueued_jobs
+            expect(Sentry).to have_received(:capture_message).with(
+              a_string_including("Daily submission batch email bounced for form #{submission.form_id} - ReceiveSubmissionBouncesAndComplaintsJob"),
+              fingerprint: ["{{ default }}", submission.form_id],
+              extra: hash_including(
+                ses_bounce: hash_including(
+                  bounce_type: "Permanent",
+                  bounce_sub_type: "General",
+                ),
+              ),
+            )
+          end
+
+          it "does not include bounced recipients in the Sentry event" do
+            allow(Sentry).to receive(:capture_message)
+            perform_enqueued_jobs
+            expect(Sentry).not_to have_received(:capture_message).with(
+              anything,
+              extra: hash_including(
+                ses_bounce: hash_including(
+                  :bounced_recipients,
+                ),
+              ),
+            )
+          end
+        end
       end
 
-      context "when it is for a live submission" do
-        let(:bounce_timestamp) { "2023-01-01T12:00:00Z" }
-        let(:ses_message_body) do
-          {
-            "mail" => { "messageId" => delivery_reference },
-            "eventType" => event_type,
-            "bounce" => { "timestamp" => bounce_timestamp },
-          }
+      describe "processing complaint notifications" do
+        let(:event_type) { "Complaint" }
+        let(:messages) { [sqs_message] }
+
+        before do
+          job = described_class.perform_later
+          @job_id = job.job_id
         end
 
-        it "updates the delivery record's failed_at and failure_reason" do
-          perform_enqueued_jobs
-
-          expect(delivery.reload.failed_at).to eq(Time.zone.parse(bounce_timestamp))
-          expect(delivery.reload.failure_reason).to eq("bounced")
-        end
-
-        it "logs form event with correct details" do
+        it "logs complaint event with correct details" do
           perform_enqueued_jobs
 
           expect(log_lines).to include(hash_including(
                                          "level" => "INFO",
-                                         "message" => "Form event",
-                                         "event" => "form_daily_batch_email_bounced",
                                          "form_id" => submission.form_id,
                                          "preview" => "false",
-                                         "delivery_reference" => delivery_reference,
-                                         "delivery_id" => delivery.id,
-                                         "sqs_message_id" => sqs_message_id,
-                                         "sns_message_timestamp" => sns_message_timestamp,
+                                         "message" => "Form event",
+                                         "event" => "form_daily_batch_email_complaint",
                                          "job_id" => @job_id,
                                          "job_class" => "ReceiveSubmissionBouncesAndComplaintsJob",
                                        ))
         end
+      end
+    end
 
-        it "alerts to Sentry that there was a bounced delivery" do
-          allow(Sentry).to receive(:capture_message)
-          perform_enqueued_jobs
-          expect(Sentry).to have_received(:capture_message)
+    context "when the bounce is for a weekly batch delivery" do
+      let!(:delivery) { create :delivery, :weekly_scheduled_delivery, delivery_reference:, submissions: [submission] }
+
+      describe "processing bounce notifications" do
+        let(:messages) { [sqs_message] }
+
+        before do
+          job = described_class.perform_later
+          @job_id = job.job_id
+        end
+
+        context "when it is for a live submission" do
+          let(:bounce_timestamp) { "2023-01-01T12:00:00Z" }
+          let(:ses_message_body) do
+            {
+              "mail" => { "messageId" => delivery_reference },
+              "eventType" => event_type,
+              "bounce" => { "timestamp" => bounce_timestamp },
+            }
+          end
+
+          it "updates the delivery record's failed_at and failure_reason" do
+            perform_enqueued_jobs
+
+            expect(delivery.reload.failed_at).to eq(Time.zone.parse(bounce_timestamp))
+            expect(delivery.reload.failure_reason).to eq("bounced")
+          end
+
+          it "logs form event with correct details" do
+            perform_enqueued_jobs
+
+            expect(log_lines).to include(hash_including(
+                                           "level" => "INFO",
+                                           "message" => "Form event",
+                                           "event" => "form_weekly_batch_email_bounced",
+                                           "form_id" => submission.form_id,
+                                           "preview" => "false",
+                                           "delivery_reference" => delivery_reference,
+                                           "delivery_id" => delivery.id,
+                                           "delivery_schedule" => "weekly",
+                                           "batch_begin_at" => delivery.batch_begin_at,
+                                           "sqs_message_id" => sqs_message_id,
+                                           "sns_message_timestamp" => sns_message_timestamp,
+                                           "job_id" => @job_id,
+                                           "job_class" => "ReceiveSubmissionBouncesAndComplaintsJob",
+                                         ))
+          end
+
+          it "alerts to Sentry that there was a bounced delivery" do
+            allow(Sentry).to receive(:capture_message)
+            perform_enqueued_jobs
+            expect(Sentry).to have_received(:capture_message)
+          end
+        end
+
+        context "when it is for a preview submission" do
+          let(:mode) { "preview-live" }
+
+          it "does not set failed_at on the delivery" do
+            perform_enqueued_jobs
+            expect(delivery.reload.failed_at).to be_nil
+          end
+
+          it "logs form event with preview flag" do
+            perform_enqueued_jobs
+
+            expect(log_lines).to include(hash_including(
+                                           "level" => "INFO",
+                                           "message" => "Form event",
+                                           "event" => "form_weekly_batch_email_bounced",
+                                           "preview" => "true",
+                                         ))
+          end
+
+          it "does not alert to Sentry" do
+            allow(Sentry).to receive(:capture_message)
+            perform_enqueued_jobs
+            expect(Sentry).not_to have_received(:capture_message)
+          end
+        end
+
+        context "when there is a bounce object with detailed information" do
+          let(:ses_message_body) { { "mail" => { "messageId" => delivery_reference }, "eventType" => event_type, "bounce" => bounce } }
+          let(:bounce) { { "bounceType" => "Permanent", "bounceSubType" => "General", "bouncedRecipients" => bounced_recipients, "timestamp" => bounce_timestamp } }
+          let(:bounce_timestamp) { "2023-01-01T12:00:00Z" }
+          let(:bounced_recipients) { [{ "emailAddress" => "bounce@example.com" }] }
+
+          it "logs the bounce details" do
+            perform_enqueued_jobs
+
+            expect(log_lines).to include(
+              hash_including(
+                "ses_bounce" => hash_including(
+                  "bounce_type" => "Permanent",
+                  "bounce_sub_type" => "General",
+                  "bounced_recipients" => [
+                    hash_including(
+                      "email_address" => "bounce@example.com",
+                    ),
+                  ],
+                ),
+              ),
+            )
+          end
+
+          it "includes bounce details in the Sentry event" do
+            allow(Sentry).to receive(:capture_message)
+            perform_enqueued_jobs
+            expect(Sentry).to have_received(:capture_message).with(
+              a_string_including("Weekly submission batch email bounced for form #{submission.form_id} - ReceiveSubmissionBouncesAndComplaintsJob"),
+              fingerprint: ["{{ default }}", submission.form_id],
+              extra: hash_including(
+                ses_bounce: hash_including(
+                  bounce_type: "Permanent",
+                  bounce_sub_type: "General",
+                ),
+              ),
+            )
+          end
+
+          it "does not include bounced recipients in the Sentry event" do
+            allow(Sentry).to receive(:capture_message)
+            perform_enqueued_jobs
+            expect(Sentry).not_to have_received(:capture_message).with(
+              anything,
+              extra: hash_including(
+                ses_bounce: hash_including(
+                  :bounced_recipients,
+                ),
+              ),
+            )
+          end
         end
       end
 
-      context "when it is for a preview submission" do
-        let(:mode) { "preview-live" }
+      describe "processing complaint notifications" do
+        let(:event_type) { "Complaint" }
+        let(:messages) { [sqs_message] }
 
-        it "does not set failed_at on the delivery" do
-          perform_enqueued_jobs
-          expect(delivery.reload.failed_at).to be_nil
+        before do
+          job = described_class.perform_later
+          @job_id = job.job_id
         end
 
-        it "logs form event with preview flag" do
+        it "logs complaint event with correct details" do
           perform_enqueued_jobs
 
           expect(log_lines).to include(hash_including(
                                          "level" => "INFO",
+                                         "form_id" => submission.form_id,
+                                         "preview" => "false",
                                          "message" => "Form event",
-                                         "event" => "form_daily_batch_email_bounced",
-                                         "preview" => "true",
+                                         "event" => "form_weekly_batch_email_complaint",
+                                         "job_id" => @job_id,
+                                         "job_class" => "ReceiveSubmissionBouncesAndComplaintsJob",
                                        ))
         end
-
-        it "does not alert to Sentry" do
-          allow(Sentry).to receive(:capture_message)
-          perform_enqueued_jobs
-          expect(Sentry).not_to have_received(:capture_message)
-        end
-      end
-
-      context "when there is a bounce object with detailed information" do
-        let(:ses_message_body) { { "mail" => { "messageId" => delivery_reference }, "eventType" => event_type, "bounce" => bounce } }
-        let(:bounce) { { "bounceType" => "Permanent", "bounceSubType" => "General", "bouncedRecipients" => bounced_recipients, "timestamp" => bounce_timestamp } }
-        let(:bounce_timestamp) { "2023-01-01T12:00:00Z" }
-        let(:bounced_recipients) { [{ "emailAddress" => "bounce@example.com" }] }
-
-        it "logs the bounce details" do
-          perform_enqueued_jobs
-
-          expect(log_lines).to include(
-            hash_including(
-              "ses_bounce" => hash_including(
-                "bounce_type" => "Permanent",
-                "bounce_sub_type" => "General",
-                "bounced_recipients" => [
-                  hash_including(
-                    "email_address" => "bounce@example.com",
-                  ),
-                ],
-              ),
-            ),
-          )
-        end
-
-        it "includes bounce details in the Sentry event" do
-          allow(Sentry).to receive(:capture_message)
-          perform_enqueued_jobs
-          expect(Sentry).to have_received(:capture_message).with(
-            a_string_including("Daily submission batch email bounced for form #{submission.form_id} - ReceiveSubmissionBouncesAndComplaintsJob"),
-            fingerprint: ["{{ default }}", submission.form_id],
-            extra: hash_including(
-              ses_bounce: hash_including(
-                bounce_type: "Permanent",
-                bounce_sub_type: "General",
-              ),
-            ),
-          )
-        end
-
-        it "does not include bounced recipients in the Sentry event" do
-          allow(Sentry).to receive(:capture_message)
-          perform_enqueued_jobs
-          expect(Sentry).not_to have_received(:capture_message).with(
-            anything,
-            extra: hash_including(
-              ses_bounce: hash_including(
-                :bounced_recipients,
-              ),
-            ),
-          )
-        end
-      end
-    end
-
-    describe "processing complaint notifications" do
-      let(:event_type) { "Complaint" }
-      let(:messages) { [sqs_message] }
-
-      before do
-        job = described_class.perform_later
-        @job_id = job.job_id
-      end
-
-      it "logs complaint event with correct details" do
-        perform_enqueued_jobs
-
-        expect(log_lines).to include(hash_including(
-                                       "level" => "INFO",
-                                       "form_id" => submission.form_id,
-                                       "preview" => "false",
-                                       "message" => "Form event",
-                                       "event" => "form_daily_batch_email_complaint",
-                                       "job_id" => @job_id,
-                                       "job_class" => "ReceiveSubmissionBouncesAndComplaintsJob",
-                                     ))
       end
     end
   end
