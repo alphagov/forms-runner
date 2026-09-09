@@ -6,6 +6,7 @@ class Form
   end
 
   delegate :declaration_text,
+           :declaration_markdown,
            :form_id,
            :form_slug,
            :name,
@@ -71,10 +72,6 @@ class Form
 
   def available_languages
     form_document.try(:available_languages) || []
-  end
-
-  def declaration_markdown
-    form_document.try(:declaration_markdown)
   end
 
   def has_custom_branding?
