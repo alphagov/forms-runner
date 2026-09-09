@@ -7,7 +7,7 @@ RSpec.describe Forms::SubmittedController, type: :request do
           start_page: 1,
           privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
           what_happens_next_markdown: "Your application will be processed within a few days.\n\nContact us if you need to:\n\n-change the details of your application\n-cancel your application",
-          declaration_text: "agree to the declaration",
+          declaration_markdown: "agree to the declaration",
           steps: steps_data)
   end
 

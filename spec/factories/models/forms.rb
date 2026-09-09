@@ -15,6 +15,7 @@ FactoryBot.define do
     payment_url { nil }
     language { "en" }
     declaration_text { nil }
+    declaration_markdown { nil }
     brand_id { nil }
 
     s3_bucket_name { nil }

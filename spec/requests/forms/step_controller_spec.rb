@@ -11,7 +11,7 @@ RSpec.describe Forms::StepController, :capture_logging, type: :request do
           start_page: first_step_id,
           privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
           what_happens_next_markdown: "Good things come to those that wait",
-          declaration_text: "agree to the declaration",
+          declaration_markdown: "agree to the declaration",
           available_languages:,
           send_copy_of_answers:,
           steps: steps_data)
@@ -64,7 +64,7 @@ RSpec.describe Forms::StepController, :capture_logging, type: :request do
       build(:v2_form_document, :with_support,
             id: 200,
             start_page: step_id,
-            declaration_text: "agree to the declaration",
+            declaration_markdown: "agree to the declaration",
             steps: [
               build(:v2_question_step, :with_text_settings,
                     id: step_id,

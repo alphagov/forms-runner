@@ -30,7 +30,7 @@ RSpec.describe Forms::SelectionNoneOfTheAboveController, type: :request do
           start_page: text_question_step.id,
           privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
           what_happens_next_markdown: "Good things come to those that wait",
-          declaration_text: "agree to the declaration",
+          declaration_markdown: "agree to the declaration",
           steps: steps_data)
   end
 
