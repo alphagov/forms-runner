@@ -13,7 +13,7 @@ RSpec.describe Forms::CheckYourAnswersController, :capture_logging, type: :reque
           start_page: 1,
           privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
           what_happens_next_markdown: "Good things come to those that wait",
-          declaration_text: "agree to the declaration",
+          declaration_markdown: "agree to the declaration",
           steps: steps_data,
           support_phone: "0203 222 2222",
           support_email: "help@example.gov.uk",

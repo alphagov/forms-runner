@@ -8,21 +8,36 @@
   "support_phone": "08000800",
   "support_url": null,
   "support_url_text": null,
-  "declaration_text": "",
-  "created_at": "2024-09-05T06:25:25.558Z",
-  "updated_at": "2024-09-05T06:25:25.637Z",
+  "declaration_text": null,
+  "created_at": "2026-08-25T10:38:30.171303Z",
+  "updated_at": "2026-08-25T10:38:30.261912Z",
   "creator_id": null,
-  "organisation_id": 1,
   "what_happens_next_markdown": "Test",
   "payment_url": null,
-  "start_page": 1,
+  "start_page": "uDdxskFA",
   "language": "en",
   "available_languages": ["en", "cy"],
+  "s3_bucket_name": null,
+  "s3_bucket_region": null,
+  "s3_bucket_aws_account_id": null,
+  "first_made_live_at": "2026-08-25T10:38:30.257406Z",
+  "copied_from_id": null,
+  "declaration_markdown": null,
+  "send_copy_of_answers": "disabled",
+  "brand_id": null,
+  "delivery_configurations": [
+    {
+      "formats": [
+      ],
+      "delivery_method": "email",
+      "delivery_schedule": "immediate"
+    }
+  ],
   "steps": [
     {
-      "id": 1,
+      "id": "uDdxskFA",
       "position": 1,
-      "next_step_id": 2,
+      "next_step_id": "kahErwcC",
       "type": "question",
       "data": {
         "question_text": "Single line of text",
@@ -36,12 +51,13 @@
         "guidance_markdown": null,
         "is_repeatable": false
       },
+      "exit_pages": [],
       "routing_conditions": []
     },
     {
-      "id": 2,
+      "id": "kahErwcC",
       "position": 2,
-      "next_step_id": 3,
+      "next_step_id": "5aTmmjSR",
       "type": "question",
       "data": {
         "question_text": "Number",
@@ -53,12 +69,13 @@
         "guidance_markdown": null,
         "is_repeatable": false
       },
+      "exit_pages": [],
       "routing_conditions": []
     },
     {
-      "id": 3,
+      "id": "5aTmmjSR",
       "position": 3,
-      "next_step_id": 4,
+      "next_step_id": "DcVvTbpD",
       "type": "question",
       "data": {
         "question_text": "Address",
@@ -75,12 +92,13 @@
         "guidance_markdown": null,
         "is_repeatable": false
       },
+      "exit_pages": [],
       "routing_conditions": []
     },
     {
-      "id": 4,
+      "id": "DcVvTbpD",
       "position": 4,
-      "next_step_id": 5,
+      "next_step_id": "RfUfTEqu",
       "type": "question",
       "data": {
         "question_text": "Email address",
@@ -92,12 +110,13 @@
         "guidance_markdown": null,
         "is_repeatable": false
       },
+      "exit_pages": [],
       "routing_conditions": []
     },
     {
-      "id": 5,
+      "id": "RfUfTEqu",
       "position": 5,
-      "next_step_id": 6,
+      "next_step_id": "KtuPUign",
       "type": "question",
       "data": {
         "question_text": "Todays Date",
@@ -111,12 +130,13 @@
         "guidance_markdown": null,
         "is_repeatable": false
       },
+      "exit_pages": [],
       "routing_conditions": []
     },
     {
-      "id": 6,
+      "id": "KtuPUign",
       "position": 6,
-      "next_step_id": 7,
+      "next_step_id": "4b9kztBN",
       "type": "question",
       "data": {
         "question_text": "National Insurance number",
@@ -128,12 +148,13 @@
         "guidance_markdown": null,
         "is_repeatable": false
       },
+      "exit_pages": [],
       "routing_conditions": []
     },
     {
-      "id": 7,
+      "id": "4b9kztBN",
       "position": 7,
-      "next_step_id": 8,
+      "next_step_id": "L5oYHqFU",
       "type": "question",
       "data": {
         "question_text": "Phone number",
@@ -145,12 +166,13 @@
         "guidance_markdown": null,
         "is_repeatable": false
       },
+      "exit_pages": [],
       "routing_conditions": []
     },
     {
-      "id": 8,
+      "id": "L5oYHqFU",
       "position": 8,
-      "next_step_id": 9,
+      "next_step_id": "PWjgyvkU",
       "type": "question",
       "data": {
         "question_text": "Selection from a list of options",
@@ -158,16 +180,19 @@
         "answer_type": "selection",
         "is_optional": true,
         "answer_settings": {
-          "only_one_option": "0",
+          "only_one_option": "false",
           "selection_options": [
             {
-              "name": "Option 1"
+              "name": "Option 1",
+              "value": "Option 1"
             },
             {
-              "name": "Option 2"
+              "name": "Option 2",
+              "value": "Option 2"
             },
             {
-              "name": "Option 3"
+              "name": "Option 3",
+              "value": "Option 3"
             }
           ]
         },
@@ -175,10 +200,11 @@
         "guidance_markdown": null,
         "is_repeatable": false
       },
+      "exit_pages": [],
       "routing_conditions": []
     },
     {
-      "id": 9,
+      "id": "PWjgyvkU",
       "position": 9,
       "next_step_id": null,
       "type": "question",
@@ -194,6 +220,7 @@
         "guidance_markdown": null,
         "is_repeatable": false
       },
+      "exit_pages": [],
       "routing_conditions": []
     }
   ]

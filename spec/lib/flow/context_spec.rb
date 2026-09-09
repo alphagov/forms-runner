@@ -17,7 +17,7 @@ RSpec.describe Flow::Context do
           start_page: 1,
           privacy_policy_url: "http://www.example.gov.uk/privacy_policy",
           what_happens_next_markdown: "Good things come to those that wait",
-          declaration_text: "agree to the declaration",
+          declaration_markdown: "agree to the declaration",
           steps:)
   end
   let(:form) { Form.new(form_document) }

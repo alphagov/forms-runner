@@ -8,6 +8,7 @@ FactoryBot.define do
     steps { [] }
 
     declaration_text { nil }
+    declaration_markdown { nil }
     payment_url { nil }
     privacy_policy_url { nil }
     submission_email { nil }

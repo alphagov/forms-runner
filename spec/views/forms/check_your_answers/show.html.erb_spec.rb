@@ -33,14 +33,14 @@ describe "forms/check_your_answers/show.html.erb" do
   end
 
   context "when the form has a declaration" do
-    let(:declaration_text) { "You should agree to all terms before submitting" }
+    let(:declaration_markdown) { "This is the markdown decalaration\n\nsecond paragraph" }
 
     it "displays the declaration heading" do
       expect(rendered).to have_css("h2", text: "Declaration")
     end
 
-    it "displays declaration text" do
-      expect(rendered).to have_css("p", text: form.declaration_text)
+    it "displays declaration markdown" do
+      expect(rendered).to have_css("p", text: "second paragraph")
     end
   end
 
@@ -62,14 +62,15 @@ describe "forms/check_your_answers/show.html.erb" do
   end
 
   context "when the form has a markdown declaration only" do
-    let(:declaration_markdown) { "This is the markdown decalaration\n\nsecond paragraph" }
+    let(:declaration_text) { "You should agree to all terms before submitting" }
+    let(:declaration_markdown) { nil }
 
-    it "displays the declaration heading" do
-      expect(rendered).to have_css("h2", text: "Declaration")
+    it "does not display the declaration heading" do
+      expect(rendered).not_to have_css("h2", text: "Declaration")
     end
 
-    it "displays declaration markdown" do
-      expect(rendered).to have_css("p", text: "second paragraph")
+    it "does not display declaration text" do
+      expect(rendered).not_to have_css("p", text: form.declaration_text)
     end
   end
 
